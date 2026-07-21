@@ -55,7 +55,7 @@
         "duration": {
           "type": "integer",
           "minimum": 1
-        },
+        }
       },
       "required": ["id", "type", "evening"],
       "allOf": [
@@ -76,7 +76,7 @@
               "properties": { "staffType": { "const": "COOK" } }
             },
             "then": {
-              "required": ["cookType"],
+              "required": ["cookType"]
             },
             "else": {
               "properties": {

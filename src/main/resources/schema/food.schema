@@ -15,7 +15,7 @@
         "$ref": "recipe.schema#/$defs/recipe"
       },
       "uniqueItems": true
-    },
-  }
+    }
+  },
   "required": ["ingredients", "recipes"]
 }

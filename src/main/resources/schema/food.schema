@@ -2,20 +2,20 @@
   "type": "object",
   "additionalProperties": false,
   "properties": {
-    "customerGroups": {
+    "ingredients": {
       "type": "array",
       "items": {
-        "$ref": "customerGroup.schema#/$defs/customerGroup"
+        "$ref": "ingredient.schema#/$defs/ingredient"
       },
       "uniqueItems": true
     },
-    "incidents": {
+    "recipes": {
       "type": "array",
       "items": {
-        "$ref": "incident.schema#/$defs/incident"
+        "$ref": "recipe.schema#/$defs/recipe"
       },
       "uniqueItems": true
-    }
-  },
-  "required": ["customerGroups", "incidents"]
+    },
+  }
+  "required": ["ingredients", "recipes"]
 }

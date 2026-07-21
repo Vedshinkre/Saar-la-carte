@@ -76,7 +76,7 @@ dependencies {
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
 
     // System Tests
-    "systemtestImplementation"("selab.systemtest:systemtest-api:0.7.2") { isChanging = true }
+    "systemtestImplementation"("selab.systemtest:systemtest-api:0.7.5") { isChanging = true }
     "systemtestImplementation"("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
     "systemtestImplementation"("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
 }
@@ -178,12 +178,12 @@ tasks.register<JavaExec>("serverExec") {
     group = "systemtest"
     dependsOn(tasks.jar)
     classpath(files("libs/selab.jar"))
-    args = listOf("--map", properties["MAP"].toString(),
-        "--farms", properties["FARMS"].toString(),
+    mainClass.set("de.unisaarland.cs.se.selab.MainKt")
+    args = listOf("--food", properties["FOOD"].toString(),
+        "--restaurants", properties["RESTAURANTS"].toString(),
         "--scenario", properties["SCENARIO"].toString(),
-        "--start_year_tick", properties["START_YEAR_TICK"].toString(),
-        "--max_ticks", properties["MAX_TICKS"].toString(),
-        "--log_level", properties["LOG_LEVEL"].toString(),
+        "--maxTicks", properties["MAX_TICKS"].toString(),
+        "--logLevel", properties["LOG_LEVEL"].toString(),
         "--out", properties["OUT"].toString()
     )
 }
@@ -193,7 +193,7 @@ tasks.register<JavaExec>("systemtestExec") {
     group = "systemtest"
     dependsOn(tasks.jar)
     classpath(files("libs/selab.jar"))
-    mainClass.set("de.unisaarland.cs.se.selab.systemtest.selab25.MainKt")
+    mainClass.set("de.unisaarland.cs.se.selab.systemtest.selab26.MainKt")
     val toRun = "reference_implementation"
 //    val toRun = "validation_mutants"
 //    val toRun = "simulation_mutants"

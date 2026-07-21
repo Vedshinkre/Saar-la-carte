@@ -1,12 +1,12 @@
-package de.unisaarland.cs.se.selab.systemtest.selab25.utils
+package de.unisaarland.cs.se.selab.systemtest.selab26.utils
 
 import de.unisaarland.cs.se.selab.systemtest.api.SystemTestAssertionError
-import de.unisaarland.cs.se.selab.systemtest.selab25.SystemTestSELab25
+import de.unisaarland.cs.se.selab.systemtest.selab26.SystemTestSELab26
 
 /**
  * Adds skips to basic systemtest class
  */
-abstract class ExampleSystemTestExtension : SystemTestSELab25() {
+abstract class ExampleSystemTestExtension : SystemTestSELab26() {
 
     /**
      * Skips until the given [startString] is found

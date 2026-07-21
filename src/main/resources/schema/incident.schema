@@ -6,86 +6,135 @@
       "properties": {
         "id": {
           "type": "integer",
-          "minimum": 0,
-          "maximum": 2147483647
+          "minimum": 0
         },
         "type": {
           "type": "string",
-          "enum": ["CLOUD_CREATION", "ANIMAL_ATTACK", "BEE_HAPPY", "DROUGHT", "BROKEN_MACHINE", "CITY_EXPANSION"]
+          "enum": ["STAFF", "RECIPE", "PACKAGING", "UNAVAILABLE"]
         },
-        "tick": {
+        "evening": {
           "type": "integer",
-          "minimum": 0,
-          "maximum": 2147483647
+          "minimum": 0
         },
-        "location": {
+        "restaurant": {
           "type": "integer",
-          "minimum": 0,
-          "maximum": 2147483647
+          "minimum": 0
         },
-        "radius": {
+        "number": {
           "type": "integer",
-          "minimum": 0,
-          "maximum": 2147483647
+          "not": { "const": 0 }
         },
-        "duration": {
-          "oneOf": [
-            { "type": "integer", "const": -1 },
-            { "type": "integer", "minimum": 1, "maximum": 2147483647 }
+        "staffType": {
+          "type": "string",
+          "enum": ["COOK", "WAITSTAFF", "DRIVER"]
+        },
+        "cookType": {
+          "type": "string",
+          "enum": [
+            "EXEC",
+            "SOUS",
+            "TOURNANT",
+            "SAUCE",
+            "FISH",
+            "ROAST",
+            "VEGETABLE",
+            "PASTRY"
           ]
         },
-        "amount": {
-          "type": "integer",
-          "minimum": 1,
-          "maximum": 2147483647
+        "ingredient": {
+          "$ref": "ingredient.schema#/$defs/ingredient/properties/name"
         },
-        "effect": {
+        "adaptation": {
           "type": "integer",
-          "minimum": 1,
-          "maximum": 2147483647
+          "not": { "const": 0 }
         },
-        "machineId": {
+        "packagingVolume": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "duration": {
           "type": "integer",
-          "minimum": 0,
-          "maximum": 2147483647
-        }
+          "minimum": 1
+        },
       },
-      "anyOf": [
+      "required": ["id", "type", "evening"],
+      "allOf": [
         {
-          "properties": {
-            "type": { "const": "CLOUD_CREATION" }
+          "if": {
+            "properties": { "type": { "const": "STAFF" } }
           },
-          "required": ["id", "type", "tick", "location", "radius", "duration", "amount"]
+          "then": {
+            "required": ["restaurant", "number", "staffType"],
+            "properties": {
+              "restaurantToMerge": false,
+              "ingredient": false,
+              "adaptation": false,
+              "packagingVolume": false,
+              "duration": false
+            },
+            "if": {
+              "properties": { "staffType": { "const": "COOK" } }
+            },
+            "then": {
+              "required": ["cookType"],
+            },
+            "else": {
+              "properties": {
+                "cookType": false
+              }
+            }
+          }
         },
         {
-          "properties": {
-            "type": { "const": "ANIMAL_ATTACK" }
+          "if": {
+            "properties": { "type": { "const": "RECIPE" } }
           },
-          "required": ["id", "type", "tick", "location", "radius"]
+          "then": {
+            "required": ["ingredient", "adaptation"],
+            "properties": {
+              "restaurant": false,
+              "restaurantToMerge": false,
+              "number": false,
+              "staffType": false,
+              "cookType": false,
+              "packagingVolume": false,
+              "duration": false
+            }
+          }
         },
         {
-          "properties": {
-            "type": { "const": "BEE_HAPPY" }
+          "if": {
+            "properties": { "type": { "const": "PACKAGING" } }
           },
-          "required": ["id", "type", "tick", "location", "radius", "effect"]
+          "then": {
+            "required": ["ingredient", "packagingVolume"],
+            "properties": {
+              "restaurant": false,
+              "restaurantToMerge": false,
+              "number": false,
+              "staffType": false,
+              "cookType": false,
+              "adaptation": false,
+              "duration": false
+            }
+          }
         },
         {
-          "properties": {
-            "type": { "const": "DROUGHT" }
+          "if": {
+            "properties": { "type": { "const": "UNAVAILABLE" } }
           },
-          "required": ["id", "type", "tick", "location", "radius"]
-        },
-        {
-          "properties": {
-            "type": { "const": "BROKEN_MACHINE" }
-          },
-          "required": ["id", "type", "tick", "duration", "machineId"]
-        },
-        {
-          "properties": {
-            "type": { "const": "CITY_EXPANSION" }
-          },
-          "required": ["id", "type", "tick", "location"]
+          "then": {
+            "required": ["ingredient", "duration"],
+            "properties": {
+              "restaurant": false,
+              "restaurantToMerge": false,
+              "number": false,
+              "staffType": false,
+              "cookType": false,
+              "adaptation": false,
+              "packagingVolume": false
+            }
+          }
         }
       ]
     }

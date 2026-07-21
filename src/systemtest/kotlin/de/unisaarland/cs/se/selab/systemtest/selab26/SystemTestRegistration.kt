@@ -1,6 +1,6 @@
-package de.unisaarland.cs.se.selab.systemtest.selab25
+package de.unisaarland.cs.se.selab.systemtest.selab26
 
-import de.unisaarland.cs.se.selab.systemtest.selab25.basictests.ExampleSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExampleSystemTest
 
 /**
  * Used for test registration
@@ -12,7 +12,7 @@ object SystemTestRegistration {
      * understood something correctly or not (everything should work
      * the same as their reference implementation)
      */
-    fun registerSystemTestsForReferenceImplementation(testSuite: SELab25TestSuite) {
+    fun registerSystemTestsForReferenceImplementation(testSuite: SELab26TestSuite) {
         testSuite.registerTest(ExampleSystemTest())
     }
 
@@ -22,7 +22,7 @@ object SystemTestRegistration {
      * be incorrect during the parsing/validation.
      * Everything after 'Simulation start' works correctly
      */
-    fun registerSystemTestsMutantValidation(testSuite: SELab25TestSuite) {
+    fun registerSystemTestsMutantValidation(testSuite: SELab26TestSuite) {
         testSuite.registerTest(ExampleSystemTest())
     }
 
@@ -30,7 +30,7 @@ object SystemTestRegistration {
      * The same as above, but the log message only (possibly) become incorrect
      * from the 'Simulation start' log onwards
      */
-    fun registerSystemTestsMutantSimulation(testSuite: SELab25TestSuite) {
+    fun registerSystemTestsMutantSimulation(testSuite: SELab26TestSuite) {
         testSuite.registerTest(ExampleSystemTest())
     }
 }

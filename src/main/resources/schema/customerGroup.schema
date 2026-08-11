@@ -120,7 +120,10 @@
               "eventEvening": false,
               "favoriteDishes": false
             },
-            "required": ["restaurantTypes", "visitingEvenings", "ratingLikelihood"]
+            "required": ["restaurantTypes", "visitingEvenings", "ratingLikelihood"],
+            "not": {
+              "required": ["tableType", "deliveryDistance"]
+            }
           }
         },
         {
@@ -152,13 +155,13 @@
         },
         "excludedIngredients": {
           "type": "array",
-          "items": { "type": "integer" },
+          "items": { "type": "string" },
           "minItems": 1,
           "uniqueItems": true
         },
         "preferredIngredients": {
           "type": "array",
-          "items": { "type": "integer" },
+          "items": { "type": "string" },
           "minItems": 1,
           "uniqueItems": true
         },

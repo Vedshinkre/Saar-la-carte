@@ -33,11 +33,11 @@
         "event": {
           "type": "boolean"
         },
-        "positiveReviews": {
+        "positiveRatings": {
           "type": "integer",
           "minimum": 0
         },
-        "negativeReviews": {
+        "negativeRatings": {
           "type": "integer",
           "minimum": 0
         },
@@ -73,8 +73,8 @@
         "openingTickEnd",
         "deliveryDrivers",
         "event",
-        "positiveReviews",
-        "negativeReviews",
+        "positiveRatings",
+        "negativeRatings",
         "recipes",
         "kitchenStaff",
         "waitstaff",

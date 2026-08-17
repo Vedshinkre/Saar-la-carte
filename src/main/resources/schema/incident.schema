@@ -31,7 +31,6 @@
         "cookType": {
           "type": "string",
           "enum": [
-            "EXEC",
             "SOUS",
             "TOURNANT",
             "SAUCE",

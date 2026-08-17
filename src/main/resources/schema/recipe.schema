@@ -15,7 +15,7 @@
         "duration": {
           "type": "integer",
           "minimum": 2,
-          "maximum": 30
+          "maximum": 40
         },
         "cookType": {
           "type": "array",

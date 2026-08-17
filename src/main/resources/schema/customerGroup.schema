@@ -23,7 +23,7 @@
         "visitingTick": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 22
+          "maximum": 21
         },
         "foodPreferences": {
           "type": "array",
@@ -96,7 +96,6 @@
             "properties": {
               "size": { "minimum": 1, "maximum": 10 },
               "restaurantTypes": false,
-              "occasion": false,
               "eventEvening": false,
               "favoriteDishes": false,
               "visitingEvenings": false,
@@ -116,7 +115,6 @@
               "visitingStart": false,
               "visitingPeriod": false,
               "restaurant": false,
-              "occasion": false,
               "eventEvening": false,
               "favoriteDishes": false
             },
@@ -140,7 +138,7 @@
               "deliveryDistance": false,
               "ratingLikelihood": false
             },
-            "required": ["restaurantTypes", "occasion", "eventEvening", "favoriteDishes"]
+            "required": ["restaurantTypes", "eventEvening", "favoriteDishes"]
           }
         }
       ]

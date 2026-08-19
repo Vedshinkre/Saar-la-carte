@@ -24,6 +24,6 @@ class ExampleSystemTest : ExampleSystemTestExtension() {
         assertCurrentLine("[IMPORTANT] Simulation Statistics: Restaurant 1 cooked 0 meals.")
         assertNextLine("[IMPORTANT] Simulation Statistics: Restaurant 1 served 0 customers.")
         assertNextLine("[IMPORTANT] Simulation Statistics: Restaurant 1 delivered meals to 0 customers.")
-        assertNextLine("[IMPORTANT] Simulation Statistics: Restaurant 1 received 6 reviews.")
+        assertNextLine("[IMPORTANT] Simulation Statistics: Restaurant 1 received 6 ratings.")
     }
 }

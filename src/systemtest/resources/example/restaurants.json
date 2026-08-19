@@ -8,8 +8,8 @@
       "openingTickEnd": 24,
       "deliveryDrivers": 0,
       "event": false,
-      "positiveReviews": 5,
-      "negativeReviews": 1,
+      "positiveRatings": 5,
+      "negativeRatings": 1,
       "recipes": [1],
       "kitchenStaff": {
         "EXEC": 1,

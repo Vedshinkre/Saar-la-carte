@@ -21,7 +21,7 @@
           "exclusiveMinimum": 0
         }
       },
-      "required": ["name", "unit", "packagingVolume"]
+      "required": ["name", "unit", "packagingVolume", "bestBefore"]
     }
   }
 }

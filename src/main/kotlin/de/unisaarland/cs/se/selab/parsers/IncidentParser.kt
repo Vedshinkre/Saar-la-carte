@@ -20,52 +20,42 @@ import java.io.PrintWriter
  * Handles validation and parsing of incident objects from scenario configuration files.
  */
 class IncidentParser {
-   fun  parseIncidentFile(filePath: String, stock: Stock, restaurants: List<Restaurant>): List<Incident> {#
-           val objectFilePath = File(filePath).readText()
-           val schema = SchemaLoader.forURL("src/main/resources/schema/incident.schema").load()
-           val schemaValidator = Validator.create(
-               schema,
-               ValidatorConfig(FormatValidationPolicy.ALWAYS)
-           )
-           val jsonInstance: JsonValue = JsonParser(objectFilePath).parse()
-           val failure: ValidationFailure? = schemaValidator.validate(jsonInstance)
-           if (failure != null) {
-               PrintWriter(System.err, true).println("Schema validation failed for file: $filePath")
-               //simConfig : IsValid set to false
-               Logger.logInitialization(false, filePath)
-           }
+    fun parseIncidentFile(filePath: String, stock: Stock, restaurants: List<Restaurant>): List<Incident> {
+        #
+        val objectFilePath = File(filePath).readText()
+        val schema = SchemaLoader.forURL("src/main/resources/schema/incident.schema").load()
+        val schemaValidator = Validator.create(
+            schema,
+            ValidatorConfig(FormatValidationPolicy.ALWAYS)
+        )
+        val jsonInstance: JsonValue = JsonParser(objectFilePath).parse()
+        val failure: ValidationFailure? = schemaValidator.validate(jsonInstance)
+        if (failure != null) {
+            PrintWriter(System.err, true).println("Schema validation failed for file: $filePath")
+            // simConfig : IsValid set to false
+            Logger.logInitialization(false, filePath)
+        }
 
+        val scenarioJson = JSONObject(objectFilePath)
+        val incidents = scenarioJson.getJSONArray(JsonFields.INCIDENTS).map {
+            parseIncident(
+                it as JSONObject,
+                restaurants,
+                stock
+            )
+        }
+        val validated_incidents = incidents.map { validateIncident(it) }
+        checkUniquenessOfIncident(validated_incidents)
+        checkDurationOverLapOfExistingIncidents(validated_incidents)
 
-
-
-       val scenarioJson = JSONObject(objectFilePath)
-       val incidents = scenarioJson.getJSONArray(JsonFields.INCIDENTS).map{
-           parseIncident(
-               it as JSONObject,
-               restaurants,
-               stock
-           )
-       }
-       val validated_incidents = incidents.map {validateIncident(it)}
-       checkUniquenessOfIncident(validated_incidents)
-       checkDurationOverLapOfExistingIncidents(validated_incidents)
-
-
-       return validated_incidents
-   }
-    private fun parseIncident(jsonObject: JSONObject, restaurants: List<Restaurant>,  stock: Stock) : Incident{
-
+        return validated_incidents
     }
-    private fun validateIncident(incident: Incident) : Incident {
-
+    private fun parseIncident(jsonObject: JSONObject, restaurants: List<Restaurant>, stock: Stock): Incident {
     }
-    private fun checkUniquenessOfIncident(incidents : List<Incident>): Boolean{
-
+    private fun validateIncident(incident: Incident): Incident {
     }
-    private fun checkDurationOverLapOfExistingIncidents(incidents :List<Incident>): Boolean{
-
+    private fun checkUniquenessOfIncident(incidents: List<Incident>): Boolean {
     }
-
-
-
+    private fun checkDurationOverLapOfExistingIncidents(incidents: List<Incident>): Boolean {
+    }
 }

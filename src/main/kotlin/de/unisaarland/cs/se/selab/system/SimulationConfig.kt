@@ -12,8 +12,6 @@ import de.unisaarland.cs.se.selab.food.Recipe
  * */
 
 class SimulationConfig() {
-    constructor(foodData: Any, restaurantData: Any, scenarioData: Any) : this()
-
     var restaurants : MutableList<Restaurant> = mutableListOf<Restaurant>()
     var customers: MutableList<CustomerGroup> = mutableListOf<CustomerGroup>()
     var incidents: MutableList<Incident> = mutableListOf<Incident>()

@@ -2,7 +2,6 @@ package de.unisaarland.cs.se.selab.system
 
 import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.incidents.Incident
-import de.unisaarland.cs.se.selab.parsers.ParserController
 import de.unisaarland.cs.se.selab.restaurant.BrowsingService
 import de.unisaarland.cs.se.selab.restaurant.Restaurant
 
@@ -21,11 +20,5 @@ class Simulation(simdata: SimulationConfig) {
  * The function that runs the simulation, gets called from main
  */
 fun runSimulation() {
-    var parser = ParserController()
-    parser.parseFiles(
-        foodFilePath = "src/systemtest/resources/example/food.json",
-        restaurantFilePath = "src/systemtest/resources/example/restaurants.json",
-        "src/systemtest/resources/example/restaurants.json"
-    )
     "weee"
 }

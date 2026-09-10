@@ -1,8 +1,9 @@
 package de.unisaarland.cs.se.selab.parsers
 
+import com.github.erosb.jsonsKema.JsonArray
 import de.unisaarland.cs.se.selab.customer.CustomerGroup
+import de.unisaarland.cs.se.selab.food.Ingredient
 import de.unisaarland.cs.se.selab.food.Recipe
-import de.unisaarland.cs.se.selab.food.Stock
 import de.unisaarland.cs.se.selab.incidents.Incident
 import de.unisaarland.cs.se.selab.restaurant.Restaurant
 
@@ -22,9 +23,9 @@ class ScenarioParser(
      * @return Pair containing list of parsed Incidents and list of parsed CustomerGroups,
      *         or null if parsing/validation fails.
      */
-    fun parseScenarioFile(filePath: String, restaurants: List<Restaurant>, recipes: List<Recipe>, stock: Stock): Pair<List<Incident>, List<CustomerGroup>> {
+    fun parseScenario(incident: JsonArray, customer: JsonArray, restaurants: List<Restaurant>, recipes: List<Recipe>, ingredients:List<Ingredient>): Pair<List<Incident>, List<CustomerGroup>> {
 
-        incidentParser.parseIncidentFile(filePath, stock, restaurants)
+        incidentParser.parseIncidentFile(incident, stock, restaurants)
         customerParser.parseCustomerFile(filePath)
 
         return Pair(incidents, customerGroups)

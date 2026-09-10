@@ -1,10 +1,10 @@
-package customer
+package de.unisaarland.cs.se.selab.customer
 
-import enums.RestaurantType
-import enums.TableType
-import types.Evening
-import types.Id
-import types.Tick
+import de.unisaarland.cs.se.selab.Evening
+import de.unisaarland.cs.se.selab.Id
+import de.unisaarland.cs.se.selab.Tick
+import de.unisaarland.cs.se.selab.enums.RestaurantType
+import de.unisaarland.cs.se.selab.enums.TableType
 
 class EventGroup(
     private val id: Id,

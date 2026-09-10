@@ -1,10 +1,10 @@
-package customer
+package de.unisaarland.cs.se.selab.customer
 
-import enums.TableType
-import food.Order
-import types.Evening
-import types.Id
-import types.Tick
+import de.unisaarland.cs.se.selab.Evening
+import de.unisaarland.cs.se.selab.Id
+import de.unisaarland.cs.se.selab.Tick
+import de.unisaarland.cs.se.selab.enums.TableType
+import de.unisaarland.cs.se.selab.food.Order
 
 class RegularGroup(
     private val id: Id,

@@ -1,9 +1,9 @@
-package restaurant
+package de.unisaarland.cs.se.selab.restaurant
 
-import enums.RestaurantType
-import food.Recipe
-import types.Id
-import types.Tick
+import de.unisaarland.cs.se.selab.Id
+import de.unisaarland.cs.se.selab.Tick
+import de.unisaarland.cs.se.selab.enums.RestaurantType
+import de.unisaarland.cs.se.selab.food.Recipe
 
 class RestaurantStats(
     private val restaurantId: Id,

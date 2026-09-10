@@ -1,10 +1,10 @@
-package actors
+package de.unisaarland.cs.se.selab.actors
 
-import customer.CustomerGroup
-import enums.DriverState
-import food.Order
-import types.Id
-import types.Tick
+import de.unisaarland.cs.se.selab.Id
+import de.unisaarland.cs.se.selab.Tick
+import de.unisaarland.cs.se.selab.customer.CustomerGroup
+import de.unisaarland.cs.se.selab.enums.DriverState
+import de.unisaarland.cs.se.selab.food.Order
 
 class Driver {
     var id: Id? = null

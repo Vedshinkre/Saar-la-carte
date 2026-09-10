@@ -1,7 +1,7 @@
-package actors
+package de.unisaarland.cs.se.selab.actors
 
-import enums.ActionType
-import types.Id
+import de.unisaarland.cs.se.selab.Id
+import de.unisaarland.cs.se.selab.enums.ActionType
 
 class Waiter {
     var id: Id? = null

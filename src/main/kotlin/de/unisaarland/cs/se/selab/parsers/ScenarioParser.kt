@@ -1,6 +1,5 @@
 package de.unisaarland.cs.se.selab.parsers
 
-import de.saar.la.carte.parsers.IncidentParser
 import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.food.Recipe
 import de.unisaarland.cs.se.selab.food.Stock

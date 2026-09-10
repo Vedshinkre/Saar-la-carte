@@ -1,4 +1,4 @@
-package de.saar.la.carte.parsers
+package de.unisaarland.cs.se.selab.parsers
 
 import com.github.erosb.jsonsKema.FormatValidationPolicy
 import com.github.erosb.jsonsKema.JsonParser
@@ -7,7 +7,6 @@ import com.github.erosb.jsonsKema.SchemaLoader
 import com.github.erosb.jsonsKema.ValidationFailure
 import com.github.erosb.jsonsKema.Validator
 import com.github.erosb.jsonsKema.ValidatorConfig
-import de.unisaarland.cs.se.selab.food.Recipe
 import de.unisaarland.cs.se.selab.food.Stock
 import de.unisaarland.cs.se.selab.incidents.Incident
 import de.unisaarland.cs.se.selab.loggers.Logger

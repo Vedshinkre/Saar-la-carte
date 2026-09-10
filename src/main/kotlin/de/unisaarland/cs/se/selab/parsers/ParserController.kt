@@ -16,8 +16,8 @@ import java.io.PrintWriter
 
 class ParserController {
 
-    // private var foodParser: FoodParser = FoodParser()
-    // private var restaurantParser: RestaurantParser = RestaurantParser()
+     private var foodParser: FoodParser = FoodParser()
+     private var restaurantParser: RestaurantParser = RestaurantParser()
     private var scenarioParser: ScenarioParser = ScenarioParser()
     private val simConfig: SimulationConfig = SimulationConfig()
 
@@ -29,17 +29,19 @@ class ParserController {
         validateFilesWithSchema(foodFilePath, "src/main/resources/schema/food.schema")
         validateFilesWithSchema(restaurantFilePath, "classpath:///src/main/resources/schema/restaurants.schema")
         validateFilesWithSchema(scenarioFilePath, "src/main/resources/schema/scenario.schema")
+        val foodStr = File(foodFilePath).readText()
+        val foodObject = Json.parseToJsonElement(foodStr).jsonObject
+        val ingredientJson = foodObject["ingredients"]!!.jsonArray
+        val recipeJson = foodObject["recipe"]!!.jsonArray
+        val restaurantStr = File(restaurantFilePath).readText()
+        val restaurantObject = Json.parseToJsonElement(restaurantStr).jsonObject
         val scenarioStr = File(scenarioFilePath).readText()
         val scenarioObject = Json.parseToJsonElement(scenarioStr).jsonObject
         val incidentJson = scenarioObject["incidents"]!!.jsonArray
         val customerJson = scenarioObject["customerGroups"]!!.jsonArray
 
-        // foodParser = foodParser(resolvePath(foodFilePath))
-        // restaurantParser = restaurantParser(resolvePath(restaurantFilePath))
-        // scenarioParser = scenarioParser(File(scenarioFilePath).readText())
-
-        // val foodData = foodParser.parseFood()
-        // val restaurantData = restaurantParser.parseRestaurants()
+        val foodData = foodParser.parse(incidentJson,recipeJson)
+        val restaurantData = restaurantParser.parse(restaurantObject)
 
         val scenarioData = scenarioParser.parseScenario(incidentJson, customerJson)
 

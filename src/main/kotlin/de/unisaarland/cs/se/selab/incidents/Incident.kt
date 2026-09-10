@@ -1,6 +1,6 @@
 package incidents
 
-import types.Evening
-import types.Id
+import Evening
+import Id
 
 abstract class Incident(private val id: Id, private val evening: Evening)

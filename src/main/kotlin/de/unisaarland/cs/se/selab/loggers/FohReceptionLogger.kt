@@ -2,9 +2,13 @@ package de.unisaarland.cs.se.selab.loggers
 
 import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.enums.LogLevel
-
+/**
+ * Handles FOH arrival, seating, and ordering logs.
+ */
 object FohReceptionLogger {
-
+    /**
+     * Logs a group's arrival.
+     */
     fun logRestaurantArrival(groupId: Id) {
         Logger.log(
             LogLevel.INFO,
@@ -13,6 +17,9 @@ object FohReceptionLogger {
         )
     }
 
+    /**
+     * Logs a group being seated.
+     */
     fun logFohSeating(
         groupId: Id,
         tableId: Id,
@@ -25,6 +32,9 @@ object FohReceptionLogger {
         )
     }
 
+    /**
+     * Logs tables being merged.
+     */
     fun logFohMergingTables(
         groupId: Id,
         oldTableIds: List<Id>,
@@ -37,6 +47,9 @@ object FohReceptionLogger {
         )
     }
 
+    /**
+     * Logs when no waitstaff is available.
+     */
     fun logFohNoSeatingNoWaitstaff(groupId: Id) {
         Logger.log(
             LogLevel.INFO,
@@ -45,6 +58,9 @@ object FohReceptionLogger {
         )
     }
 
+    /**
+     * Logs when no table is available.
+     */
     fun logFohNoSeating(
         groupId: Id,
         waitstaffId: Id
@@ -56,6 +72,9 @@ object FohReceptionLogger {
         )
     }
 
+    /**
+     * Logs an order being placed.
+     */
     fun logFohOrdering(
         groupId: Id,
         orderId: Id,
@@ -69,6 +88,9 @@ object FohReceptionLogger {
         )
     }
 
+    /**
+     * Logs when a group cannot place an order.
+     */
     fun logFohNoOrdering(
         groupId: Id,
         customerNumber: Int
@@ -81,6 +103,9 @@ object FohReceptionLogger {
         )
     }
 
+    /**
+     * Logs the seating status.
+     */
     fun logSeatingStatus(
         waitstaffNumber: Int,
         customerNumber: Int,
@@ -93,6 +118,9 @@ object FohReceptionLogger {
         )
     }
 
+    /**
+     * Logs the ordering status.
+     */
     fun logOrderingStatus(
         customerNumber: Int,
         tableNumber: Int

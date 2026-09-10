@@ -3,8 +3,13 @@ import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.Time.evening
 import de.unisaarland.cs.se.selab.enums.LogLevel
 import de.unisaarland.cs.se.selab.enums.MeasurementUnit
-
+/**
+ * Handles initialization and preparation logs.
+ */
 object InitialAndPrepLogger {
+    /**
+     * Logs the result of parsing a file.
+     */
     fun logInitialization(
         success: Boolean,
         filename: String
@@ -21,9 +26,17 @@ object InitialAndPrepLogger {
             )
         }
     }
+
+    /**
+     * Logs the start of the simulation.
+     */
     fun logSimulationStart() {
         Logger.log(LogLevel.INFO, "Simulation Info: Simulation started")
     }
+
+    /**
+     * Logs an incident.
+     */
     fun logIncident(incidentId: Id, incidentType: String) {
         Logger.log(
             LogLevel.IMPORTANT,
@@ -31,9 +44,17 @@ object InitialAndPrepLogger {
                 "occurred before evening $evening"
         )
     }
+
+    /**
+     * Logs the start of preparation.
+     */
     fun logPreparationStart() {
         Logger.log(LogLevel.IMPORTANT, "Preparation: Preparation for evening $evening starts.")
     }
+
+    /**
+     * Logs when a group has no reservation.
+     */
     fun logFohNoReservation(groupId: Id) {
         Logger.log(
             LogLevel.IMPORTANT,
@@ -42,6 +63,9 @@ object InitialAndPrepLogger {
         )
     }
 
+    /**
+     * Logs ingredients procured from the supplier.
+     */
     fun logPantryProcured(
         amount: Int,
         unit: MeasurementUnit,
@@ -54,6 +78,9 @@ object InitialAndPrepLogger {
         )
     }
 
+    /**
+     * Logs when the pantry is restocked.
+     */
     fun logPantryRestocked() {
         Logger.log(
             LogLevel.INFO,
@@ -61,6 +88,9 @@ object InitialAndPrepLogger {
         )
     }
 
+    /**
+     * Logs an ingredient removed from the pantry.
+     */
     fun logPantryRemovedIngredient(
         removedIngredientAmount: Int,
         ingredientName: String

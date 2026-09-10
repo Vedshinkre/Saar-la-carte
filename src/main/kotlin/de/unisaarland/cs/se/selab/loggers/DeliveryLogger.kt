@@ -2,9 +2,13 @@ package de.unisaarland.cs.se.selab.loggers
 
 import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.enums.LogLevel
-
+/**
+ * Handles delivery logs.
+ */
 object DeliveryLogger {
-
+    /**
+     * Logs a driver preparing a delivery.
+     */
     fun logDeliveryPreparation(
         driverId: Id,
         orderId: Id,
@@ -19,6 +23,9 @@ object DeliveryLogger {
         )
     }
 
+    /**
+     * Logs a driver during delivery.
+     */
     fun logDeliveryDriving(
         driverId: Id,
         distanceCovered: Int,
@@ -31,6 +38,9 @@ object DeliveryLogger {
         )
     }
 
+    /**
+     * Logs a driver arriving at a group.
+     */
     fun logDeliveryArrival(
         driverId: Id,
         groupId: Id,
@@ -43,6 +53,9 @@ object DeliveryLogger {
         )
     }
 
+    /**
+     * Logs a completed delivery.
+     */
     fun logDeliveryFinished(
         driverId: Id,
         orderId: Id,
@@ -55,6 +68,9 @@ object DeliveryLogger {
         )
     }
 
+    /**
+     * Logs a failed delivery.
+     */
     fun logDeliveryFailed(
         driverId: Id,
         orderId: Id,
@@ -67,6 +83,9 @@ object DeliveryLogger {
         )
     }
 
+    /**
+     * Logs when a group gives up waiting.
+     */
     fun logDeliveryGivenUp(
         groupId: Id,
         orderId: Id
@@ -78,6 +97,9 @@ object DeliveryLogger {
         )
     }
 
+    /**
+     * Logs a driver returning.
+     */
     fun logDeliveryReturned(
         driverId: Id
     ) {
@@ -88,6 +110,9 @@ object DeliveryLogger {
         )
     }
 
+    /**
+     * Logs a group finishing their delivered meal.
+     */
     fun logDeliveryFinishedEating(
         groupId: Id
     ) {

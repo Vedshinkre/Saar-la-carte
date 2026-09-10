@@ -4,9 +4,13 @@ import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.Time.evening
 import de.unisaarland.cs.se.selab.Time.tick
 import de.unisaarland.cs.se.selab.enums.LogLevel
-
+/**
+ * Handles simulation and tick status logs.
+ */
 object TickStatusLogger {
-
+    /**
+     * Logs the start of the serving phase.
+     */
     fun logServingStart() {
         Logger.log(
             LogLevel.IMPORTANT,
@@ -14,6 +18,9 @@ object TickStatusLogger {
         )
     }
 
+    /**
+     * Logs the current tick.
+     */
     fun logCurrentTick() {
         Logger.log(
             LogLevel.IMPORTANT,
@@ -21,6 +28,9 @@ object TickStatusLogger {
         )
     }
 
+    /**
+     * Logs a group's restaurant decision.
+     */
     fun logRestaurantDecision(
         groupId: Id,
         restId: Id
@@ -31,6 +41,9 @@ object TickStatusLogger {
         )
     }
 
+    /**
+     * Logs when a group cannot choose a restaurant.
+     */
     fun logRestaurantNoDecision(
         groupId: Id
     ) {
@@ -40,6 +53,9 @@ object TickStatusLogger {
         )
     }
 
+    /**
+     * Logs the start of a restaurant tick.
+     */
     fun logRestaurantStart() {
         Logger.log(
             LogLevel.DEBUG,
@@ -47,6 +63,9 @@ object TickStatusLogger {
         )
     }
 
+    /**
+     * Logs the end of a restaurant tick.
+     */
     fun logRestaurantEnd() {
         Logger.log(
             LogLevel.DEBUG,
@@ -54,6 +73,9 @@ object TickStatusLogger {
         )
     }
 
+    /**
+     * Logs the end of serving.
+     */
     fun logServingEnd() {
         Logger.log(
             LogLevel.IMPORTANT,

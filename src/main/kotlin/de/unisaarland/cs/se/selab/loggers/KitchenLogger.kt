@@ -2,9 +2,13 @@ package de.unisaarland.cs.se.selab.loggers
 
 import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.enums.LogLevel
-
+/**
+ * Handles kitchen logs.
+ */
 object KitchenLogger {
-
+    /**
+     * Logs a cook starting a dish.
+     */
     fun logKitchenDishAssignment(
         cookId: Id,
         cookType: String,
@@ -20,6 +24,10 @@ object KitchenLogger {
                 "based on order $baseOrderId for orders $allOrderIds"
         )
     }
+
+    /**
+     * Logs finished meals.
+     */
     fun logKitchenMealCooked(
         cookId: Id,
         numberOfMeals: Int,
@@ -28,11 +36,15 @@ object KitchenLogger {
     ) {
         Logger.log(
             LogLevel.IMPORTANT,
-            "Kitchen Meal Cooked (R ${Logger.restaurantID}): Cook ${cookId}" +
-                "finished cooking $numberOfMeals:number meals of dish $dishName" + " " + "${cookDurationTick}" +
+            "Kitchen Meal Cooked (R ${Logger.restaurantID}): Cook $cookId" +
+                "finished cooking $numberOfMeals:number meals of dish $dishName" + " " + "$cookDurationTick" +
                 "ticks after ordering."
         )
     }
+
+    /**
+     * Logs the kitchen status.
+     */
     fun logKitchenStatus(
         numberOfCooks: Int,
         totalNumberOfMeals: Int,

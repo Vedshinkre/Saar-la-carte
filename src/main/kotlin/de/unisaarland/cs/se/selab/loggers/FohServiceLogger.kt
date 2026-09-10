@@ -2,9 +2,13 @@ package de.unisaarland.cs.se.selab.loggers
 
 import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.enums.LogLevel
-
+/**
+ * Handles FOH serving, eating and escorting logs.
+ */
 object FohServiceLogger {
-
+    /**
+     * Logs a dish being served.
+     */
     fun logFohServing(
         waitstaffId: Id,
         dishNameToAmount: Map<String, Int>,
@@ -19,6 +23,9 @@ object FohServiceLogger {
         )
     }
 
+    /**
+     * Logs when meals could not be served.
+     */
     fun logFohNoServing(
         waitstaffId: Id,
         mealNumber: Int,
@@ -31,6 +38,9 @@ object FohServiceLogger {
         )
     }
 
+    /**
+     * Logs a delivery being handed to a driver.
+     */
     fun logFohDelivery(
         waitstaffId: Id,
         dishNameToAmount: Map<String, Int>,
@@ -44,6 +54,9 @@ object FohServiceLogger {
         )
     }
 
+    /**
+     * Logs the serving status.
+     */
     fun logFohServingStatus(
         waitstaffNumber: Int,
         mealTotalNumber: Int
@@ -55,6 +68,9 @@ object FohServiceLogger {
         )
     }
 
+    /**
+     * Logs when customers leave without eating.
+     */
     fun logRestaurantNoEating(
         customerNumber: Int,
         groupId: Id,
@@ -67,6 +83,9 @@ object FohServiceLogger {
         )
     }
 
+    /**
+     * Logs customers finishing their meal.
+     */
     fun logFohFinishedEating(
         customerNumber: Int,
         groupId: Id,
@@ -79,6 +98,9 @@ object FohServiceLogger {
         )
     }
 
+    /**
+     * Logs the eating status.
+     */
     fun logFohEatingStatus(
         numberOfEatingCustomers: Int,
         numberOfFinishedCustomers: Int
@@ -91,6 +113,9 @@ object FohServiceLogger {
         )
     }
 
+    /**
+     * Logs customers being escorted out.
+     */
     fun logFohEscorting(
         waitstaffId: Id,
         numberOfCustomers: Int,
@@ -105,6 +130,9 @@ object FohServiceLogger {
         )
     }
 
+    /**
+     * Logs a customer rating a restaurant.
+     */
     fun logCustomerRateRestaurant(
         groupID: Id,
         groupRating: Int,
@@ -120,6 +148,9 @@ object FohServiceLogger {
         )
     }
 
+    /**
+     * Logs the rating status.
+     */
     fun logRatingStatus(
         numberOfGroupsGivingRatings: Int
     ) {
@@ -130,6 +161,9 @@ object FohServiceLogger {
         )
     }
 
+    /**
+     * Logs the escorting status.
+     */
     fun logFohEscortingStatus(
         waitstaffNumber: Int,
         customerEscortingNumber: Int

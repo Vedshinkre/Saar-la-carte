@@ -1,11 +1,20 @@
 package de.unisaarland.cs.se.selab.loggers
 
 import de.unisaarland.cs.se.selab.enums.LogLevel
-
+/**
+ * Handles simulation statistics logs.
+ */
 object StatisticsLogger {
+    /**
+     * Logs that statistics were calculated.
+     */
     fun logSimulationStatsCalculated() {
         Logger.log(LogLevel.IMPORTANT, "Simulation Info: Simulation statistics are calculated.")
     }
+
+    /**
+     * Logs the number of cooked meals.
+     */
     fun logSimulationStatsCooked(numberOfCookedMeals: Int) {
         Logger.log(
             LogLevel.IMPORTANT,
@@ -13,6 +22,10 @@ object StatisticsLogger {
                 "$numberOfCookedMeals meals."
         )
     }
+
+    /**
+     * Logs the number of served customers.
+     */
     fun logSimulationStatsServed(numberOfCustomersServed: Int) {
         Logger.log(
             LogLevel.IMPORTANT,
@@ -20,6 +33,10 @@ object StatisticsLogger {
                 "$numberOfCustomersServed customers."
         )
     }
+
+    /**
+     * Logs the number of delivered customers.
+     */
     fun logSimulationStatsDelivered(numberOfCustomersDelivered: Int) {
         Logger.log(
             LogLevel.IMPORTANT,
@@ -27,6 +44,10 @@ object StatisticsLogger {
                 "meals to $numberOfCustomersDelivered customers."
         )
     }
+
+    /**
+     * Logs the number of groups that gave ratings.
+     */
     fun logSimulationStatsRatingsGiven(numberOfCustomersGivingRatings: Int) {
         Logger.log(
             LogLevel.IMPORTANT,

@@ -1,6 +1,6 @@
 package de.unisaarland.cs.se.selab
 
-import enums.LogLevel
+import de.unisaarland.cs.se.selab.enums.LogLevel
 
 /**
  * data class that contains all the command line arguments that get passed to main

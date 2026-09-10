@@ -1,9 +1,9 @@
 package de.unisaarland.cs.se.selab.system
 
-import customer.CustomerGroup
-import incidents.Incident
-import restaurant.BrowsingService
-import restaurant.Restaurant
+import de.unisaarland.cs.se.selab.customer.CustomerGroup
+import de.unisaarland.cs.se.selab.incidents.Incident
+import de.unisaarland.cs.se.selab.restaurant.BrowsingService
+import de.unisaarland.cs.se.selab.restaurant.Restaurant
 
 /**
  * Class that runs the simulation in the correct order of events

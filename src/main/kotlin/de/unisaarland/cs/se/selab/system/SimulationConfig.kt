@@ -1,11 +1,11 @@
 package de.unisaarland.cs.se.selab.system
 
-import restaurant.Restaurant
-import restaurant.RestaurantStats
-import customer.CustomerGroup
-import incidents.Incident
-import food.Ingredient
-import food.Recipe
+import de.unisaarland.cs.se.selab.restaurant.Restaurant
+import de.unisaarland.cs.se.selab.restaurant.RestaurantStats
+import de.unisaarland.cs.se.selab.customer.CustomerGroup
+import de.unisaarland.cs.se.selab.incidents.Incident
+import de.unisaarland.cs.se.selab.food.Ingredient
+import de.unisaarland.cs.se.selab.food.Recipe
 
 /**
  * Class that contains the data of the whole simulation

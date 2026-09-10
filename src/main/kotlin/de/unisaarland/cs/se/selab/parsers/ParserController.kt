@@ -1,9 +1,10 @@
-package de.unisaarland.cs.se.selab.parsersclass
+package de.unisaarland.cs.se.selab.parsers
 
 import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.enums.RestaurantType
 import de.unisaarland.cs.se.selab.food.Recipe
 import de.unisaarland.cs.se.selab.restaurant.Restaurant
+import de.unisaarland.cs.se.selab.system.SimulationConfig
 import java.io.File
 
 

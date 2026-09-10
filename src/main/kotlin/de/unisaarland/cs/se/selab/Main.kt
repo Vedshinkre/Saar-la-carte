@@ -27,10 +27,16 @@ private fun parseCommandLineArgs(args: Array<String>): Cliinfo {
         ArgType.String,
         fullName = "out",
     ).default("") // empty means stdout
+    val shouldPrintHelp by parser.option(ArgType.Boolean, fullName = "shouldPrintHelp").default(false)
 
     val logLevel: LogLevel = LogLevel.valueOf(logLevelStr)
 
     parser.parse(args)
 
     return Cliinfo(foodPath, restaurantsPath, scenarioPath, maxTicks, logLevel, outputFilePathStr, false)
+}
+
+
+private fun help() {
+
 }

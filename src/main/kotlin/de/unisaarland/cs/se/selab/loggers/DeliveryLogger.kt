@@ -1,13 +1,14 @@
 package de.unisaarland.cs.se.selab.loggers
 
+import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.enums.LogLevel
 
 object DeliveryLogger {
 
     fun logDeliveryPreparation(
-        driverId: Int,
-        orderId: Int,
-        groupId: Int,
+        driverId: Id,
+        orderId: Id,
+        groupId: Id,
         ticksRequiredToDeliver: Int
     ) {
         Logger.log(
@@ -19,7 +20,7 @@ object DeliveryLogger {
     }
 
     fun logDeliveryDriving(
-        driverId: Int,
+        driverId: Id,
         distanceCovered: Int,
         ticksRequiredToDelivers: Int
     ) {
@@ -31,9 +32,9 @@ object DeliveryLogger {
     }
 
     fun logDeliveryArrival(
-        driverId: Int,
-        groupId: Int,
-        orderId: Int
+        driverId: Id,
+        groupId: Id,
+        orderId: Id
     ) {
         Logger.log(
             LogLevel.INFO,
@@ -43,9 +44,9 @@ object DeliveryLogger {
     }
 
     fun logDeliveryFinished(
-        driverId: Int,
-        orderId: Int,
-        groupId: Int
+        driverId: Id,
+        orderId: Id,
+        groupId: Id
     ) {
         Logger.log(
             LogLevel.IMPORTANT,
@@ -55,9 +56,9 @@ object DeliveryLogger {
     }
 
     fun logDeliveryFailed(
-        driverId: Int,
-        orderId: Int,
-        groupId: Int
+        driverId: Id,
+        orderId: Id,
+        groupId: Id
     ) {
         Logger.log(
             LogLevel.IMPORTANT,
@@ -67,8 +68,8 @@ object DeliveryLogger {
     }
 
     fun logDeliveryGivenUp(
-        groupId: Int,
-        orderId: Int
+        groupId: Id,
+        orderId: Id
     ) {
         Logger.log(
             LogLevel.INFO,
@@ -78,7 +79,7 @@ object DeliveryLogger {
     }
 
     fun logDeliveryReturned(
-        driverId: Int
+        driverId: Id
     ) {
         Logger.log(
             LogLevel.INFO,
@@ -88,7 +89,7 @@ object DeliveryLogger {
     }
 
     fun logDeliveryFinishedEating(
-        groupId: Int
+        groupId: Id
     ) {
         Logger.log(
             LogLevel.INFO,

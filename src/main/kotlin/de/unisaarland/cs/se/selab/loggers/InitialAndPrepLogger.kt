@@ -1,4 +1,5 @@
 package de.unisaarland.cs.se.selab.loggers
+import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.Time.evening
 import de.unisaarland.cs.se.selab.enums.LogLevel
 import de.unisaarland.cs.se.selab.enums.MeasurementUnit
@@ -23,7 +24,7 @@ object InitialAndPrepLogger {
     fun logSimulationStart() {
         Logger.log(LogLevel.INFO, "Simulation Info: Simulation started")
     }
-    fun logIncident(incidentId: Int, incidentType: String) {
+    fun logIncident(incidentId: Id, incidentType: String) {
         Logger.log(
             LogLevel.IMPORTANT,
             "Incident: Incident $incidentId of type $incidentType" +
@@ -33,7 +34,7 @@ object InitialAndPrepLogger {
     fun logPreparationStart() {
         Logger.log(LogLevel.IMPORTANT, "Preparation: Preparation for evening $evening starts.")
     }
-    fun logFohNoReservation(groupId: Int) {
+    fun logFohNoReservation(groupId: Id) {
         Logger.log(
             LogLevel.IMPORTANT,
             "FOH No Reserving (R ${Logger.restaurantID}): No table could be" +

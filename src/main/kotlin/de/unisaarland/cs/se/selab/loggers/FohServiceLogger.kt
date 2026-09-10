@@ -1,13 +1,14 @@
 package de.unisaarland.cs.se.selab.loggers
 
+import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.enums.LogLevel
 
 object FohServiceLogger {
 
     fun logFohServing(
-        waitstaffId: Int,
+        waitstaffId: Id,
         dishNameToAmount: Map<String, Int>,
-        tableId: Int,
+        tableId: Id,
         orderDurationTick: Int
     ) {
         Logger.log(
@@ -19,9 +20,9 @@ object FohServiceLogger {
     }
 
     fun logFohNoServing(
-        waitstaffId: Int,
+        waitstaffId: Id,
         mealNumber: Int,
-        tableId: Int
+        tableId: Id
     ) {
         Logger.log(
             LogLevel.DEBUG,
@@ -31,10 +32,10 @@ object FohServiceLogger {
     }
 
     fun logFohDelivery(
-        waitstaffId: Int,
+        waitstaffId: Id,
         dishNameToAmount: Map<String, Int>,
-        driverId: Int,
-        orderId: Int
+        driverId: Id,
+        orderId: Id
     ) {
         Logger.log(
             LogLevel.IMPORTANT,
@@ -56,8 +57,8 @@ object FohServiceLogger {
 
     fun logRestaurantNoEating(
         customerNumber: Int,
-        groupId: Int,
-        tableId: Int
+        groupId: Id,
+        tableId: Id
     ) {
         Logger.log(
             LogLevel.INFO,
@@ -68,8 +69,8 @@ object FohServiceLogger {
 
     fun logFohFinishedEating(
         customerNumber: Int,
-        groupId: Int,
-        tableId: Int
+        groupId: Id,
+        tableId: Id
     ) {
         Logger.log(
             LogLevel.INFO,
@@ -91,10 +92,10 @@ object FohServiceLogger {
     }
 
     fun logFohEscorting(
-        waitstaffId: Int,
+        waitstaffId: Id,
         numberOfCustomers: Int,
-        groupId: Int,
-        tableId: Int
+        groupId: Id,
+        tableId: Id
     ) {
         Logger.log(
             LogLevel.IMPORTANT,
@@ -105,7 +106,7 @@ object FohServiceLogger {
     }
 
     fun logCustomerRateRestaurant(
-        groupID: Int,
+        groupID: Id,
         groupRating: Int,
         positiveRatingQuantity: Int,
         negativeRatingQuantity: Int

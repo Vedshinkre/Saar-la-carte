@@ -1,10 +1,11 @@
 package de.unisaarland.cs.se.selab.loggers
 
+import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.enums.LogLevel
 
 object FohReceptionLogger {
 
-    fun logRestaurantArrival(groupId: Int) {
+    fun logRestaurantArrival(groupId: Id) {
         Logger.log(
             LogLevel.INFO,
             "Restaurant Arrival (R ${Logger.restaurantID}): Group $groupId " +
@@ -13,9 +14,9 @@ object FohReceptionLogger {
     }
 
     fun logFohSeating(
-        groupId: Int,
-        tableId: Int,
-        waitstaffIds: List<Int>
+        groupId: Id,
+        tableId: Id,
+        waitstaffIds: List<Id>
     ) {
         Logger.log(
             LogLevel.IMPORTANT,
@@ -25,9 +26,9 @@ object FohReceptionLogger {
     }
 
     fun logFohMergingTables(
-        groupId: Int,
-        oldTableIds: List<Int>,
-        mergedTableId: Int
+        groupId: Id,
+        oldTableIds: List<Id>,
+        mergedTableId: Id
     ) {
         Logger.log(
             LogLevel.INFO,
@@ -36,7 +37,7 @@ object FohReceptionLogger {
         )
     }
 
-    fun logFohNoSeatingNoWaitstaff(groupId: Int) {
+    fun logFohNoSeatingNoWaitstaff(groupId: Id) {
         Logger.log(
             LogLevel.INFO,
             "FOH No Seating (R ${Logger.restaurantID}): No free waitstaff " +
@@ -45,8 +46,8 @@ object FohReceptionLogger {
     }
 
     fun logFohNoSeating(
-        groupId: Int,
-        waitstaffId: Int
+        groupId: Id,
+        waitstaffId: Id
     ) {
         Logger.log(
             LogLevel.INFO,
@@ -56,10 +57,10 @@ object FohReceptionLogger {
     }
 
     fun logFohOrdering(
-        groupId: Int,
-        orderId: Int,
+        groupId: Id,
+        orderId: Id,
         dishNameToAmount: Map<String, Int>,
-        waitstaffId: Int
+        waitstaffId: Id
     ) {
         Logger.log(
             LogLevel.IMPORTANT,
@@ -69,7 +70,7 @@ object FohReceptionLogger {
     }
 
     fun logFohNoOrdering(
-        groupId: Int,
+        groupId: Id,
         customerNumber: Int
     ) {
         Logger.log(

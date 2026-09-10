@@ -21,7 +21,7 @@ object KitchenLogger {
         )
     }
     fun logKitchenMealCooked(
-        cookId: Int,
+        cookId: Id,
         numberOfMeals: Int,
         dishName: String,
         cookDurationTick: Int

@@ -1,5 +1,6 @@
 package de.unisaarland.cs.se.selab.loggers
 
+import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.Time.evening
 import de.unisaarland.cs.se.selab.Time.tick
 import de.unisaarland.cs.se.selab.enums.LogLevel
@@ -21,8 +22,8 @@ object TickStatusLogger {
     }
 
     fun logRestaurantDecision(
-        groupId: Int,
-        restId: Int
+        groupId: Id,
+        restId: Id
     ) {
         Logger.log(
             LogLevel.DEBUG,
@@ -31,7 +32,7 @@ object TickStatusLogger {
     }
 
     fun logRestaurantNoDecision(
-        groupId: Int
+        groupId: Id
     ) {
         Logger.log(
             LogLevel.DEBUG,

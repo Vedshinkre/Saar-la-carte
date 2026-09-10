@@ -137,25 +137,18 @@ class ParserController {
     }
     private fun validateFilesWithSchema(filePath: String, schemaPath: String) {
         try {
-            val jsonString = File(filePath).readText()
-
+            val jsonInstance = JsonParser(File(filePath).readText()).parse()
             val schema = SchemaLoader.forURL(schemaPath).load()
+            val config = ValidatorConfig(FormatValidationPolicy.ALWAYS)
+            val validator = Validator.create(schema, config)
 
-            val schemaValidator = Validator.create(
-                schema,
-                ValidatorConfig(FormatValidationPolicy.ALWAYS)
-            )
-            val jsonInstance: JsonValue = JsonParser(jsonString).parse()
-            val failure: ValidationFailure? = schemaValidator.validate(jsonInstance)
-
-            if (failure != null) {
-                // simData.isValid = false
-                // Logger.logInitialization(false, filePath)
-            }
+            val failure = validator.validate(jsonInstance) ?: return
+            // Logger.logInitialization(false, filePath)
+            System.err.println(failure)
         } catch (e: IOException) {
-            PrintWriter(System.err, true).println(e.message)
+            System.err.println("Could not read file: ${e.message}")
         } catch (e: JsonParseException) {
-            PrintWriter(System.err, true).println(e.message)
+            System.err.println("Invalid JSON: ${e.message}")
         }
     }
 }

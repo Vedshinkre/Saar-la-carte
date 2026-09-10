@@ -16,8 +16,8 @@ import java.io.PrintWriter
 
 class ParserController {
 
-     private var foodParser: FoodParser = FoodParser()
-     private var restaurantParser: RestaurantParser = RestaurantParser()
+    private var foodParser: FoodParser = FoodParser()
+    private var restaurantParser: RestaurantParser = RestaurantParser()
     private var scenarioParser: ScenarioParser = ScenarioParser()
     private val simConfig: SimulationConfig = SimulationConfig()
 
@@ -43,11 +43,11 @@ class ParserController {
         val foodData = foodParser.parse(incidentJson,recipeJson)
         val restaurantData = restaurantParser.parse(restaurantObject)
 
-        val scenarioData = scenarioParser.parseScenario(incidentJson, customerJson)
+        val scenarioData = scenarioParser.parseScenario(incidentJson, customerJson,restaurantData[1] , foodData[1],foodData[0])
 
         val simConfig = SimulationConfig(
-            0,
-            0,
+            foodData = foodData,
+            restaurantData = restaurantData,
             scenarioData
         )
 

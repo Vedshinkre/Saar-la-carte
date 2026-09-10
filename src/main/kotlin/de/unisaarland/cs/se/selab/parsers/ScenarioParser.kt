@@ -6,6 +6,7 @@ import de.unisaarland.cs.se.selab.food.Ingredient
 import de.unisaarland.cs.se.selab.food.Recipe
 import de.unisaarland.cs.se.selab.incidents.Incident
 import de.unisaarland.cs.se.selab.restaurant.Restaurant
+import kotlinx.serialization.json.Json
 
 /**
  * Skeleton implementation for ScenarioParser.
@@ -23,10 +24,10 @@ class ScenarioParser(
      * @return Pair containing list of parsed Incidents and list of parsed CustomerGroups,
      *         or null if parsing/validation fails.
      */
-    fun parseScenario(incident: JsonArray, customer: JsonArray, restaurants: List<Restaurant>, recipes: List<Recipe>, ingredients:List<Ingredient>): Pair<List<Incident>, List<CustomerGroup>> {
+    fun parseScenario(incident: kotlinx.serialization.json.JsonArray, customer: kotlinx.serialization.json.JsonArray, restaurants: List<Restaurant>, recipes: List<Recipe>, ingredients:List<Ingredient>): Pair<List<Incident>, List<CustomerGroup>> {
 
-        incidentParser.parseIncidentFile(incident, stock, restaurants)
-        customerParser.parseCustomerFile(filePath)
+        incidentParser.parseIncidentFile(incident, ingredients, restaurants)
+        customerParser.parseCustomerFile(customer, restaurants)
 
         return Pair(incidents, customerGroups)
     }

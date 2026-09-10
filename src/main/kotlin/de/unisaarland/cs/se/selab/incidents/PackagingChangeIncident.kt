@@ -8,5 +8,5 @@ class PackagingChangeIncident(
     private val id: Id,
     private val evening: Evening,
     private val ingredient: Ingredient,
-    private val packagingVolume: Int
+    private val packagingVolume: Double
 ) : Incident(id, evening)

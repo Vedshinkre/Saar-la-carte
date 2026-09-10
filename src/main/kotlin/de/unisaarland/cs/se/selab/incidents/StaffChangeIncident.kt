@@ -1,17 +1,17 @@
-package incidents
+package de.unisaarland.cs.se.selab.incidents
 
-import Evening
-import Id
-import actors.RestaurantStaff
-import enums.CookType
-import enums.StaffType
+import de.unisaarland.cs.se.selab.Evening
+import de.unisaarland.cs.se.selab.Id
+import de.unisaarland.cs.se.selab.actors.RestaurantStaff
+import de.unisaarland.cs.se.selab.enums.CookType
+import de.unisaarland.cs.se.selab.enums.StaffType
 
 class StaffChangeIncident(
-	private val id: Id,
-	private val evening: Evening,
-	private val restaurantId: Id,
-	private val number: Int,
-	private val staffType: StaffType,
-	private val cookType: CookType,
-	private val restaurantStaff: RestaurantStaff
+    private val id: Id,
+    private val evening: Evening,
+    private val restaurantId: Id,
+    private val number: Int,
+    private val staffType: StaffType,
+    private val cookType: CookType,
+    private val restaurantStaff: RestaurantStaff
 ) : Incident(id, evening)

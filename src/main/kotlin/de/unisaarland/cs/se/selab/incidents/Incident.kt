@@ -1,6 +1,6 @@
-package incidents
+package de.unisaarland.cs.se.selab.incidents
 
-import Evening
-import Id
+import de.unisaarland.cs.se.selab.Evening
+import de.unisaarland.cs.se.selab.Id
 
 abstract class Incident(private val id: Id, private val evening: Evening)

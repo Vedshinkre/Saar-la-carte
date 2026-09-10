@@ -1,7 +1,7 @@
-package loggers
+package de.unisaarland.cs.se.selab.loggers
 
-import enums.LogLevel
-import types.Id
+import de.unisaarland.cs.se.selab.Id
+import de.unisaarland.cs.se.selab.enums.LogLevel
 import java.io.PrintWriter
 
 object Logger {

@@ -1,7 +1,8 @@
-package restaurant
+package de.unisaarland.cs.se.selab.restaurant
 
-import actors.Waiter
-import customer.CustomerGroup
+import de.unisaarland.cs.se.selab.actors.Driver
+import de.unisaarland.cs.se.selab.actors.Waiter
+import de.unisaarland.cs.se.selab.customer.CustomerGroup
 
 class FrontOfHouse(
     private val tables: List<Table>,

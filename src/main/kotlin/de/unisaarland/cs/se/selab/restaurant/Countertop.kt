@@ -1,7 +1,7 @@
-package restaurant
+package de.unisaarland.cs.se.selab.restaurant
 
-import actors.Cook
-import food.Order
-import java.util.*
+import de.unisaarland.cs.se.selab.actors.Cook
+import de.unisaarland.cs.se.selab.food.Order
+import restaurant.Pantry
 
-class Countertop(private val pantry: Pantry, private val orderQueue: Queue<Order>, private val cooks: List<Cook>)
+class Countertop(private val pantry: Pantry, private val orderQueue: ArrayDeque<Order>, private val cooks: List<Cook>)

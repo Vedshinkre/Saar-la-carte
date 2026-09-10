@@ -4,5 +4,9 @@ package de.unisaarland.cs.se.selab
  Main Function
  **/
 fun main(args: Array<String>) {
-    "Hello World"
+    // val cliinfo = parseCommandLineArgs(args)
 }
+
+// private fun parseCommandLineArgs(args: Array<String>) : Cliinfo
+// {
+// }

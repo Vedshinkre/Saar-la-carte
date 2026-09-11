@@ -1,7 +1,14 @@
 package de.unisaarland.cs.se.selab.parsers
 
-import com.github.erosb.jsonsKema.*
+import com.github.erosb.jsonsKema.FormatValidationPolicy
+import com.github.erosb.jsonsKema.JsonParseException
+import com.github.erosb.jsonsKema.JsonParser
+import com.github.erosb.jsonsKema.SchemaLoader
+import com.github.erosb.jsonsKema.Validator
+import com.github.erosb.jsonsKema.ValidatorConfig
 import de.unisaarland.cs.se.selab.food.Stock
+import de.unisaarland.cs.se.selab.incidents.Incident
+import de.unisaarland.cs.se.selab.incidents.UnavailabilityIncident
 import de.unisaarland.cs.se.selab.system.SimulationConfig
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
@@ -56,6 +63,7 @@ class ParserController {
             foodData.first,
             stock,
         )
+        crossvalidateIncidents()
 
         val simConfig = SimulationConfig(
             foodData = foodData,
@@ -125,30 +133,10 @@ class ParserController {
      TODO("Not yet implemented")
      }
 
-     private fun validateStaffChangeIncidents(): Boolean {
-     TODO("Not yet implemented")
-     }
-
-     private fun validatePackagingChangeIncidents(): Boolean {
-     TODO("Not yet implemented")
-     }
-
-     private fun validateRecipeChangeIncidents(): Boolean {
-     TODO("Not yet implemented")
-     }
-
      private fun getIngredientbyName(name: String): Boolean {
      TODO("Not yet implemented")
      }
-     private fun resolvePath(path: String): String {
-     val file = File(path)
-     return if (file.exists()) {
-     path
-     } else {
-     // fallback to systemtest resources
-     "src/systemtest/resources/$path"
-     }
-     }**/
+}**/
     private fun validateFilesWithSchema(filePath: String, schemaPath: String) {
         try {
             val jsonInstance = JsonParser(File(filePath).readText()).parse()
@@ -163,6 +151,27 @@ class ParserController {
             System.err.println("Could not read file: ${e.message}")
         } catch (e: JsonParseException) {
             System.err.println("Invalid JSON: ${e.message}")
+        }
+    }
+    private fun crossvalidateIncidents(): Boolean {
+        var incidents = simConfig.incidents
+        var restaurants = simConfig.restaurants
+        val seenIds = mutableSetOf<Int>()
+        for (incident in incidents) {
+            require(!seenIds.add(incident.getId()))
+        }
+        validateNoOverlappingUnavailability(incidents)
+        return true
+    }
+    private fun validateNoOverlappingUnavailability(incidents: List<Incident>) {
+        val unavailabilities = incidents.filterIsInstance<UnavailabilityIncident>()
+
+        for (i in unavailabilities.indices) {
+            for (j in i + 1 until unavailabilities.size) {
+                require(!unavailabilities[i].overlapsWith(unavailabilities[j])) {
+                    unavailabilities[i].conflictMessage(unavailabilities[j])
+                }
+            }
         }
     }
 }

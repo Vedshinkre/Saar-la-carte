@@ -7,51 +7,51 @@ import de.unisaarland.cs.se.selab.food.Ingredient
 import de.unisaarland.cs.se.selab.food.Recipe
 import kotlinx.serialization.json.*
 
+
+private const val KEY_NAME = "name"
+private const val KEY_UNIT = "unit"
+private const val MIN_DURATION = 2
+private const val MAX_DURATION = 40
+
 /**
- * Parses Ingrdients and Recipes  .
+ * Parses Ingredients and Recipes  .
  */
 class FoodParser {
-    fun parseFood(foodJson: JsonObject): Pair<List<Ingredient>, List<Recipe>>? {
+    /**
+     * Function to call Parse Ingredients and Recipes accordingly   .
+     */
+    fun parse(ingredientsArray: JsonArray, recipesArray: JsonArray): Pair<List<Ingredient>, List<Recipe>>? {
         try {
             // Parse Ingredients
-            val ingredientsArray = foodJson["ingredients"]?.jsonArray
-                ?: throw IllegalArgumentException("Missing 'ingredients' array in JSON")
-
             val ingredientsList = parseIngredients(ingredientsArray)
 
             // Parse Recipes
-            val recipesArray = foodJson["recipes"]?.jsonArray
-                ?: throw IllegalArgumentException("Missing 'recipes' array in JSON")
-
             val recipesList = parseRecipes(recipesArray, ingredientsList)
 
             return Pair(ingredientsList, recipesList)
         } catch (e: IllegalArgumentException) {
             println("Logical Validation Error: ${e.message}")
             return null
-        } catch (e: Exception) {
-            println("Unexpected Error: ${e.message}")
-            return null
         }
     }
-
+    /**
+     * Function to cParse Ingredients    .
+     */
     private fun parseIngredients(array: JsonArray): List<Ingredient> {
         val parsedIngredients = mutableListOf<Ingredient>()
 
         //  Must exist at least one ingredient
-        if (array.isEmpty()) {
-            throw IllegalArgumentException("The ingredients list cannot be empty.")
-        }
+        require(!array.isEmpty()) { "The ingredients list cannot be empty." }
 
         // Loop through every item
         for (i in 0 until array.size) {
             val ingredientJson = array[i].jsonObject
 
             //  Extract values
-            val name = ingredientJson["name"]?.jsonPrimitive?.content
+            val name = ingredientJson[KEY_NAME]?.jsonPrimitive?.content
                 ?: throw IllegalArgumentException("Ingredient is missing a 'name'")
 
-            val unitStr = ingredientJson["unit"]?.jsonPrimitive?.content
+            val unitStr = ingredientJson[KEY_UNIT]?.jsonPrimitive?.content
                 ?: throw IllegalArgumentException("Ingredient '$name' is missing a 'unit'")
 
             val packagingVolume = ingredientJson["packagingVolume"]?.jsonPrimitive?.int
@@ -62,9 +62,7 @@ class FoodParser {
 
             // check uniqueness
             val isUnique = checkUniquenessOfIngredient(name, parsedIngredients)
-            if (!isUnique) {
-                throw IllegalArgumentException("Duplicate ingredient name found: $name")
-            }
+            require(isUnique) { "Duplicate ingredient name found: $name" }
 
             // Convert to Enum
             val unitEnum = MeasurementUnit.valueOf(unitStr)
@@ -73,15 +71,16 @@ class FoodParser {
             val newIngredient = Ingredient(name, unitEnum, packagingVolume, bestBefore)
             val ingredientGood = validateIngredient(newIngredient)
             // validateIngredient
-            if (!ingredientGood) {
-                throw IllegalArgumentException("Ingredient $name failed logical validation.")
-            }
+            require(ingredientGood) { "Ingredient $name failed logical validation." }
+
             parsedIngredients.add(newIngredient)
         }
 
         return parsedIngredients
     }
-
+    /**
+     * Function to cross validate Ingredient    .
+     */
     // cross validation function
     private fun validateIngredient(ingredient: Ingredient): Boolean {
         //  Packaging volume must be greater than 0
@@ -96,7 +95,9 @@ class FoodParser {
         // if all checks pass
         return true
     }
-
+    /**
+     * Function to check uniqueness of Ingredient    .
+     */
     // check Uniqueness
     private fun checkUniquenessOfIngredient(name: String, parsedIngredients: List<Ingredient>): Boolean {
         for (existingIng in parsedIngredients) {
@@ -106,43 +107,39 @@ class FoodParser {
         }
         return true
     }
-
+    /**
+     * Function to parse recipes .
+     */
     private fun parseRecipes(array: JsonArray, availableIngredients: List<Ingredient>): List<Recipe> {
         val parsedRecipes = mutableListOf<Recipe>()
 
         for (i in 0 until array.size) {
-            val restaurantJson = array[i].jsonObject
+            val recipeJson = array[i].jsonObject
 
-            //  Extract values
-            val id = restaurantJson["id"]?.jsonPrimitive?.int
+            // Extract values
+            val id = recipeJson["id"]?.jsonPrimitive?.int
                 ?: throw IllegalArgumentException("Recipe is missing an 'id'")
-
-            val name = restaurantJson["name"]?.jsonPrimitive?.content
+            val name = recipeJson[KEY_NAME]?.jsonPrimitive?.content
                 ?: throw IllegalArgumentException("Recipe '$id' is missing a 'name'")
-
-            val duration = restaurantJson["duration"]?.jsonPrimitive?.int
+            val duration = recipeJson["duration"]?.jsonPrimitive?.int
                 ?: throw IllegalArgumentException("Recipe '$name' is missing 'duration'")
 
-            //  basic dish (can be null as well)
+            // basic dish (can be null as well)
             var basicDishFor: RestaurantType? = null
-            if (restaurantJson.containsKey("basicDishFor")) {
-                val restaurantTypeStr = restaurantJson["basicDishFor"]?.jsonPrimitive?.content
+            if (recipeJson.containsKey("basicDishFor")) {
+                val restaurantTypeStr = recipeJson["basicDishFor"]?.jsonPrimitive?.content
                 if (restaurantTypeStr != null) {
                     basicDishFor = RestaurantType.valueOf(restaurantTypeStr)
                 }
             }
             val isBasicDish = basicDishFor != null
 
-            //  check uniqueness
+            // check uniqueness
             val isUnique = checkUniquenessOfRecipe(id, name, isBasicDish, parsedRecipes)
-            if (!isUnique) {
-                throw IllegalArgumentException(
-                    "Recipe failed uniqueness check (Duplicate ID or conflicting basic dish name): $id / $name"
-                )
-            }
+            require(isUnique) { "Recipe failed uniqueness check (Duplicate ID or conflicting basic dish name)" }
 
             // cook types array
-            val cookTypesArray = restaurantJson["cookType"]?.jsonArray
+            val cookTypesArray = recipeJson["cookType"]?.jsonArray
                 ?: throw IllegalArgumentException("Recipe '$name' is missing 'cookType'")
 
             val allowedCooks = mutableListOf<CookType>()
@@ -152,72 +149,42 @@ class FoodParser {
             }
 
             // Ingredients Array
-            val recipeIngredientsArray = restaurantJson["ingredients"]?.jsonArray
+            val recipeIngredientsArray = recipeJson["ingredients"]?.jsonArray
                 ?: throw IllegalArgumentException("Recipe '$name' is missing 'ingredients'")
 
-            val recipeIngredientsMap = mutableMapOf<Ingredient, Int>()
-
-            for (k in 0 until recipeIngredientsArray.size) {
-                val recipeIngredientJson = recipeIngredientsArray[k].jsonObject
-
-                val recipeIngredientName = recipeIngredientJson["name"]?.jsonPrimitive?.content
-                    ?: throw IllegalArgumentException("Recipe ingredient missing 'name'")
-                val recipeIngredientUnitStr = recipeIngredientJson["unit"]?.jsonPrimitive?.content
-                    ?: throw IllegalArgumentException("Recipe ingredient missing 'unit'")
-                val recipeIngredientAmount = recipeIngredientJson["amount"]?.jsonPrimitive?.int
-                    ?: throw IllegalArgumentException("Recipe ingredient missing 'amount'")
-
-                // --- THE CROSS VALIDATION ---
-                if (recipeIngredientAmount <= 0) {
-                    throw IllegalArgumentException("Recipe ingredient amount must be greater than 0.")
-                }
-
-                // Convert string unit to MeasurementUnit enum
-                val recipeIngredientUnit = MeasurementUnit.valueOf(recipeIngredientUnitStr)
-
-                // get the ingredient from the available ingredients, if  it exists
-                val foundIngredient = checkIngredientExists(
-                    recipeIngredientName,
-                    recipeIngredientUnit,
-                    availableIngredients
-                )
-
-                // ingredient for the recipe not availabe
-                if (foundIngredient == null) {
-                    throw IllegalArgumentException(
-                        "Recipe '$name' requires '$recipeIngredientName', but it does not exist."
-                    )
-                }
-
-                // add valid ingredient and amount to the map
-                recipeIngredientsMap[foundIngredient] = recipeIngredientAmount
-            }
+            // helper function to parse ingredients(needed due to detekt tests)
+            val recipeIngredientsMap = parseRecipeIngredientsMap(
+                recipeIngredientsArray,
+                name,
+                availableIngredients
+            )
 
             // parse the recipe and add to the list
             val newRecipe = Recipe(id, name, duration, allowedCooks, recipeIngredientsMap, basicDishFor)
-            var isRecipeValid = validateRecipe(newRecipe)
-
-            if (!isRecipeValid) {
-                throw IllegalArgumentException("Recipe $name failed logical validation (duration out of bounds).")
-            }
+            val isRecipeValid = validateRecipe(newRecipe)
+            require(isRecipeValid) { "Recipe $name failed logical validation (duration out of bounds)." }
 
             parsedRecipes.add(newRecipe)
         }
 
         return parsedRecipes
     }
-
+    /**
+     * Function to cross validate Recipe    .
+     */
     private fun validateRecipe(recipe: Recipe): Boolean {
         val duration = recipe.getDuration()
 
         //  Duration must be 2 <= duration && duration <= 40
-        if (duration < 2 || duration > 40) {
+        if (duration < MIN_DURATION || duration > MAX_DURATION) {
             return false
         }
 
         return true
     }
-
+    /**
+     * Function to check uniqueness of recipe    .
+     */
     private fun checkUniquenessOfRecipe(
         id: Int,
         name: String,
@@ -242,7 +209,9 @@ class FoodParser {
         // completely unique
         return true
     }
-
+    /**
+     * Function to check whether the ingredient exists in the available ones   .
+     */
     private fun checkIngredientExists(
         name: String,
         unit: MeasurementUnit,
@@ -254,5 +223,45 @@ class FoodParser {
             }
         }
         return null
+    }
+
+    /**
+     * Helper function required to pass the detekt test, parses the ingredients required for a single recipe.
+     */
+    private fun parseRecipeIngredientsMap(
+        recipeIngredientsArray: JsonArray,
+        recipeName: String,
+        availableIngredients: List<Ingredient>
+    ): Map<Ingredient, Int> {
+        val recipeIngredientsMap = mutableMapOf<Ingredient, Int>()
+
+        for (k in 0 until recipeIngredientsArray.size) {
+            val recipeIngredientJson = recipeIngredientsArray[k].jsonObject
+
+            val recipeIngredientName = recipeIngredientJson[KEY_NAME]?.jsonPrimitive?.content
+                ?: throw IllegalArgumentException("Recipe ingredient missing 'name'")
+            val recipeIngredientUnitStr = recipeIngredientJson[KEY_UNIT]?.jsonPrimitive?.content
+                ?: throw IllegalArgumentException("Recipe ingredient missing 'unit'")
+            val recipeIngredientAmount = recipeIngredientJson["amount"]?.jsonPrimitive?.int
+                ?: throw IllegalArgumentException("Recipe ingredient missing 'amount'")
+
+            // --- THE CROSS VALIDATION ---
+            require(recipeIngredientAmount > 0) { "Recipe ingredient amount must be greater than 0." }
+
+            // Convert string unit to MeasurementUnit enum
+            val recipeIngredientUnit = MeasurementUnit.valueOf(recipeIngredientUnitStr)
+
+            // get the ingredient from the available ingredients, and crash if it does not exist
+            val foundIngredient = checkIngredientExists(
+                recipeIngredientName,
+                recipeIngredientUnit,
+                availableIngredients
+            ) ?: throw IllegalArgumentException("'$recipeName' requires '$recipeIngredientName' that does not exist.")
+
+            // add valid ingredient and amount to the map
+            recipeIngredientsMap[foundIngredient] = recipeIngredientAmount
+        }
+
+        return recipeIngredientsMap
     }
 }

@@ -43,7 +43,7 @@ class Ingredient(
     /**
      * Explicit setter for the Ingredient packagingVolume .
      */
-    fun setPackagingVolume(newVolume: Int) {
+    fun setPackagingVolume(newVolume: Double) {
         require(newVolume > 0) { "Packaging volume must be > 0." }
         packagingVolume = newVolume
     }

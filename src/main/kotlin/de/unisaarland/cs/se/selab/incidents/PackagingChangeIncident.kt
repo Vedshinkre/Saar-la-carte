@@ -4,9 +4,19 @@ import de.unisaarland.cs.se.selab.Evening
 import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.food.Ingredient
 
+/**
+ * This class handles Packaging Change Incident
+ */
 class PackagingChangeIncident(
     private val id: Id,
     private val evening: Evening,
     private val ingredient: Ingredient,
     private val packagingVolume: Double
-) : Incident(id, evening)
+) : Incident(id, evening) {
+    /**
+     * This function Handles the incident
+     */
+    fun apply() {
+        ingredient.setPackagingVolume(packagingVolume)
+    }
+}

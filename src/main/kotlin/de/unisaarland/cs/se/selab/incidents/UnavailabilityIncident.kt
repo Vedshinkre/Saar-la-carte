@@ -12,11 +12,22 @@ class UnavailabilityIncident(
     private val id: Id,
     private val evening: Evening,
     private val ingredient: Ingredient,
-    private val duration: Int,
+    private var duration: Int,
     private val stock: Stock
 ) : Incident(id, evening) {
     /**
      * to check Overlapping
+     */
+    fun apply() {
+        if (duration == 0) {
+            stock.setIngredientToAvailable(ingredient)
+        }
+        stock.setIngredientToUnavailable(ingredient)
+        duration -= 1
+    }
+
+    /**
+     * for cross Validation
      */
     fun overlapsWith(other: UnavailabilityIncident): Boolean {
         if (this.ingredient != other.ingredient) return false

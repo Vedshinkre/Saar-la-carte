@@ -29,25 +29,25 @@ class AllFunctionsLoggerTest {
 
         Logger.setup(printWriter)
         Logger.setup(LogLevel.DEBUG)
+
+        Logger.restaurantID = 0
     }
 
     @AfterEach
     fun tearDown() {
+        printWriter.flush()
         printWriter.close()
     }
 
     private fun getLoggedLines(): List<String> {
         printWriter.flush()
-        val content = stringWriter.toString()
 
-        if (content.isEmpty()) {
-            return emptyList()
-        }
-
-        return content
-            .trim()
-            .split("\\r?\\n".toRegex())
+        return stringWriter
+            .toString()
+            .lineSequence()
+            .filter { it.isNotBlank() }
             .map { it.trim() }
+            .toList()
     }
 
     private fun clearLog() {
@@ -70,113 +70,6 @@ class AllFunctionsLoggerTest {
         verifyEatingAndRatingPhase()
         verifySimulationEndPhase()
     }
-
-    private fun verifyInitializationPhase() {
-        logInitializationPhase()
-        assertInitializationPhase()
-        clearLog()
-    }
-
-    private fun logInitializationPhase() {
-        InitialAndPrepLogger.logInitialization(
-            success = true,
-            filename = "food.json"
-        )
-        InitialAndPrepLogger.logInitialization(
-            success = true,
-            filename = "restaurants.json"
-        )
-        InitialAndPrepLogger.logInitialization(
-            success = false,
-            filename = "invalid_scenario.json"
-        )
-        InitialAndPrepLogger.logSimulationStart()
-    }
-
-    private fun assertInitializationPhase() {
-        assertLoggedLines(
-            "[INFO] Initialization Info: food.json successfully parsed and validated.",
-            "[INFO] Initialization Info: restaurants.json successfully parsed and validated.",
-            "[IMPORTANT] Initialization Info: invalid_scenario.json is invalid.",
-            "[INFO] Simulation Info: Simulation started."
-        )
-    }
-
-    private fun verifyPreparationPhase() {
-        logPreparationPhase()
-        assertPreparationPhase()
-        clearLog()
-    }
-
-    private fun logPreparationPhase() {
-        InitialAndPrepLogger.logIncident(
-            incidentId = 1,
-            incidentType = "STAFF"
-        )
-        InitialAndPrepLogger.logPreparationStart()
-
-        Logger.restaurantID = 1
-
-        InitialAndPrepLogger.logFohNoReservation(groupId = 6)
-        InitialAndPrepLogger.logPantryRemovedIngredient(
-            removedIngredientAmount = 300,
-            ingredientName = "beef"
-        )
-        InitialAndPrepLogger.logPantryRemovedIngredient(
-            removedIngredientAmount = 500,
-            ingredientName = "pasta"
-        )
-        InitialAndPrepLogger.logPantryProcured(
-            amount = 1000,
-            unit = MeasurementUnit.G,
-            name = "chicken"
-        )
-        InitialAndPrepLogger.logPantryProcured(
-            amount = 2000,
-            unit = MeasurementUnit.G,
-            name = "rice"
-        )
-        InitialAndPrepLogger.logPantryRestocked()
-    }
-
-    private fun assertPreparationPhase() {
-        assertLoggedLines(
-            "[IMPORTANT] Incident: Incident 1 of type STAFF occurred before evening 1.",
-            "[IMPORTANT] Preparation: Preparation for evening 1 starts.",
-            "[IMPORTANT] FOH No Reserving (R 1): No table could be reserved for group 6.",
-            "[DEBUG] Pantry (R 1): Removed 300 G of beef from the pantry.",
-            "[DEBUG] Pantry (R 1): Removed 500 G of pasta from the pantry.",
-            "[DEBUG] Pantry (R 1): Procured 1000 G of chicken from the supplier.",
-            "[DEBUG] Pantry (R 1): Procured 2000 G of rice from the supplier.",
-            "[INFO] Pantry (R 1): Restocked ingredients."
-        )
-    }
-
-    private fun verifyServingDecisionPhase() {
-        logServingDecisionPhase()
-        assertServingDecisionPhase()
-        clearLog()
-    }
-
-    private fun logServingDecisionPhase() {
-        TickStatusLogger.logServingStart()
-        TickStatusLogger.logCurrentTick()
-        TickStatusLogger.logRestaurantDecision(
-            groupId = 1,
-            restId = 1
-        )
-        TickStatusLogger.logRestaurantNoDecision(groupId = 2)
-    }
-
-    private fun assertServingDecisionPhase() {
-        assertLoggedLines(
-            "[IMPORTANT] Serving: Serving of evening 1 starts.",
-            "[IMPORTANT] Simulation: Tick 1 (1) started.",
-            "[DEBUG] Restaurant Decision: Group 1 decided on restaurant 1.",
-            "[DEBUG] Restaurant No Decision: Group 2 could not decide for a restaurant."
-        )
-    }
-
     private fun verifyRestaurantActionPhase() {
         logRestaurantActionPhase()
         assertRestaurantActionPhase()
@@ -185,22 +78,32 @@ class AllFunctionsLoggerTest {
 
     private fun logRestaurantActionPhase() {
         TickStatusLogger.logRestaurantStart()
-        FohReceptionLogger.logRestaurantArrival(groupId = 1)
+
+        FohReceptionLogger.logRestaurantArrival(
+            groupId = 1
+        )
+
         FohReceptionLogger.logFohMergingTables(
             groupId = 1,
             oldTableIds = listOf(4, 3, 5),
             mergedTableId = 3
         )
+
         FohReceptionLogger.logFohSeating(
             groupId = 1,
             tableId = 3,
             waitstaffIds = listOf(2, 1)
         )
-        FohReceptionLogger.logFohNoSeatingNoWaitstaff(groupId = 3)
+
+        FohReceptionLogger.logFohNoSeatingNoWaitstaff(
+            groupId = 3
+        )
+
         FohReceptionLogger.logFohNoSeating(
             groupId = 4,
             waitstaffId = 2
         )
+
         FohReceptionLogger.logFohOrdering(
             groupId = 1,
             orderId = 10,
@@ -210,15 +113,18 @@ class AllFunctionsLoggerTest {
             ),
             waitstaffId = 1
         )
+
         FohReceptionLogger.logFohNoOrdering(
             groupId = 5,
             customerNumber = 2
         )
+
         FohReceptionLogger.logSeatingStatus(
             waitstaffNumber = 2,
             customerNumber = 8,
             tableNumber = 1
         )
+
         FohReceptionLogger.logOrderingStatus(
             customerNumber = 3,
             tableNumber = 1
@@ -244,46 +150,6 @@ class AllFunctionsLoggerTest {
         )
     }
 
-    private fun verifyKitchenPhase() {
-        logKitchenPhase()
-        assertKitchenPhase()
-        clearLog()
-    }
-
-    private fun logKitchenPhase() {
-        KitchenLogger.logKitchenDishAssignment(
-            cookId = 1,
-            cookType = "TOURNANT",
-            numberOfMeals = 2,
-            dishName = "chicken rice",
-            baseOrderId = 10,
-            allOrderIds = listOf(10, 11)
-        )
-        KitchenLogger.logKitchenMealCooked(
-            cookId = 1,
-            numberOfMeals = 2,
-            dishName = "chicken rice",
-            cookDurationTick = 2
-        )
-        KitchenLogger.logKitchenStatus(
-            numberOfCooks = 1,
-            totalNumberOfMeals = 2,
-            finishedNumberOfMeals = 2,
-            servableMeals = 2
-        )
-    }
-
-    private fun assertKitchenPhase() {
-        assertLoggedLines(
-            "[IMPORTANT] Kitchen Dish Assignment (R 1): Cook 1 of type TOURNANT starts " +
-                "cooking 2 meals of dish chicken rice based on order 10 for orders 10,11.",
-            "[IMPORTANT] Kitchen Meal Cooked (R 1): Cook 1 finished cooking 2 meals of " +
-                "dish chicken rice 2 ticks after ordering.",
-            "[DEBUG] Kitchen Status (R 1): 1 cooks were active cooking 2 and finishing 2 " +
-                "meals. 2 meals can be served by the waitstaff."
-        )
-    }
-
     private fun verifyServiceAndDeliveryPhase() {
         logServicePhase()
         logDeliveryPhase()
@@ -298,17 +164,20 @@ class AllFunctionsLoggerTest {
             tableId = 3,
             orderDurationTick = 1
         )
+
         FohServiceLogger.logFohNoServing(
             waitstaffId = 1,
             mealNumber = 1,
             tableId = 3
         )
+
         FohServiceLogger.logFohDelivery(
             waitstaffId = 1,
             dishNameToAmount = mapOf("potato soup" to 1),
             driverId = 1,
             orderId = 12
         )
+
         FohServiceLogger.logFohServingStatus(
             waitstaffNumber = 1,
             mealTotalNumber = 3
@@ -322,32 +191,43 @@ class AllFunctionsLoggerTest {
             groupId = 2,
             ticksRequiredToDeliver = 3
         )
+
         DeliveryLogger.logDeliveryDriving(
             driverId = 1,
             distanceCovered = 5,
             ticksRequiredToDelivers = 2
         )
+
         DeliveryLogger.logDeliveryArrival(
             driverId = 1,
             groupId = 2,
             orderId = 12
         )
+
         DeliveryLogger.logDeliveryFinished(
             driverId = 1,
             orderId = 12,
             groupId = 2
         )
+
         DeliveryLogger.logDeliveryFailed(
             driverId = 1,
             orderId = 13,
             groupId = 3
         )
+
         DeliveryLogger.logDeliveryGivenUp(
             groupId = 3,
             orderId = 13
         )
-        DeliveryLogger.logDeliveryReturned(driverId = 1)
-        DeliveryLogger.logDeliveryFinishedEating(groupId = 2)
+
+        DeliveryLogger.logDeliveryReturned(
+            driverId = 1
+        )
+
+        DeliveryLogger.logDeliveryFinishedEating(
+            groupId = 2
+        )
     }
 
     private fun assertServiceAndDeliveryPhase() {
@@ -372,51 +252,188 @@ class AllFunctionsLoggerTest {
             "[INFO] Delivery Finished Eating (R 1): Group 2 has finished eating."
         )
     }
+    private fun verifyInitializationPhase() {
+        InitialAndPrepLogger.logInitialization(
+            success = true,
+            filename = "food.json"
+        )
 
-    private fun verifyEatingAndRatingPhase() {
-        logEatingAndRatingPhase()
-        assertEatingAndRatingPhase()
+        InitialAndPrepLogger.logInitialization(
+            success = true,
+            filename = "restaurants.json"
+        )
+
+        InitialAndPrepLogger.logInitialization(
+            success = false,
+            filename = "invalid_scenario.json"
+        )
+
+        InitialAndPrepLogger.logSimulationStart()
+
+        assertLoggedLines(
+            "[INFO] Initialization Info: food.json successfully parsed and validated.",
+            "[INFO] Initialization Info: restaurants.json successfully parsed and validated.",
+            "[IMPORTANT] Initialization Info: invalid_scenario.json is invalid.",
+            "[INFO] Simulation Info: Simulation started."
+        )
+
         clearLog()
     }
 
-    private fun logEatingAndRatingPhase() {
+    private fun verifyPreparationPhase() {
+        InitialAndPrepLogger.logIncident(
+            incidentId = 1,
+            incidentType = "STAFF"
+        )
+
+        InitialAndPrepLogger.logPreparationStart()
+
+        Logger.restaurantID = 1
+
+        InitialAndPrepLogger.logFohNoReservation(
+            groupId = 6
+        )
+
+        InitialAndPrepLogger.logPantryRemovedIngredient(
+            removedIngredientAmount = 300,
+            ingredientName = "beef"
+        )
+
+        InitialAndPrepLogger.logPantryRemovedIngredient(
+            removedIngredientAmount = 500,
+            ingredientName = "pasta"
+        )
+
+        InitialAndPrepLogger.logPantryProcured(
+            amount = 1000,
+            unit = MeasurementUnit.G,
+            name = "chicken"
+        )
+
+        InitialAndPrepLogger.logPantryProcured(
+            amount = 2000,
+            unit = MeasurementUnit.G,
+            name = "rice"
+        )
+
+        InitialAndPrepLogger.logPantryRestocked()
+
+        assertLoggedLines(
+            "[IMPORTANT] Incident: Incident 1 of type STAFF occurred before evening 1.",
+            "[IMPORTANT] Preparation: Preparation for evening 1 starts.",
+            "[IMPORTANT] FOH No Reserving (R 1): No table could be reserved for group 6.",
+            "[DEBUG] Pantry (R 1): Removed 300 G of beef from the pantry.",
+            "[DEBUG] Pantry (R 1): Removed 500 G of pasta from the pantry.",
+            "[DEBUG] Pantry (R 1): Procured 1000 G of chicken from the supplier.",
+            "[DEBUG] Pantry (R 1): Procured 2000 G of rice from the supplier.",
+            "[INFO] Pantry (R 1): Restocked ingredients."
+        )
+
+        clearLog()
+    }
+
+    private fun verifyServingDecisionPhase() {
+        TickStatusLogger.logServingStart()
+        TickStatusLogger.logCurrentTick()
+
+        TickStatusLogger.logRestaurantDecision(
+            groupId = 1,
+            restId = 1
+        )
+
+        TickStatusLogger.logRestaurantNoDecision(
+            groupId = 2
+        )
+
+        assertLoggedLines(
+            "[IMPORTANT] Serving: Serving of evening 1 starts.",
+            "[IMPORTANT] Simulation: Tick 1 (1) started.",
+            "[DEBUG] Restaurant Decision: Group 1 decided on restaurant 1.",
+            "[DEBUG] Restaurant No Decision: Group 2 could not decide for a restaurant."
+        )
+
+        clearLog()
+    }
+
+    private fun verifyKitchenPhase() {
+        KitchenLogger.logKitchenDishAssignment(
+            cookId = 1,
+            cookType = "TOURNANT",
+            numberOfMeals = 2,
+            dishName = "chicken rice",
+            baseOrderId = 10,
+            allOrderIds = listOf(10, 11)
+        )
+
+        KitchenLogger.logKitchenMealCooked(
+            cookId = 1,
+            numberOfMeals = 2,
+            dishName = "chicken rice",
+            cookDurationTick = 2
+        )
+
+        KitchenLogger.logKitchenStatus(
+            numberOfCooks = 1,
+            totalNumberOfMeals = 2,
+            finishedNumberOfMeals = 2,
+            servableMeals = 2
+        )
+
+        assertLoggedLines(
+            "[IMPORTANT] Kitchen Dish Assignment (R 1): Cook 1 of type TOURNANT starts " +
+                "cooking 2 meals of dish chicken rice based on order 10 for orders 10,11.",
+            "[IMPORTANT] Kitchen Meal Cooked (R 1): Cook 1 finished cooking 2 meals of " +
+                "dish chicken rice 2 ticks after ordering.",
+            "[DEBUG] Kitchen Status (R 1): 1 cooks were active cooking 2 and finishing 2 " +
+                "meals. 2 meals can be served by the waitstaff."
+        )
+
+        clearLog()
+    }
+
+    private fun verifyEatingAndRatingPhase() {
         FohServiceLogger.logRestaurantNoEating(
             customerNumber = 2,
             groupId = 1,
             tableId = 3
         )
+
         FohServiceLogger.logFohFinishedEating(
             customerNumber = 6,
             groupId = 1,
             tableId = 3
         )
+
         FohServiceLogger.logFohEatingStatus(
             numberOfEatingCustomers = 0,
             numberOfFinishedCustomers = 6
         )
+
         FohServiceLogger.logFohEscorting(
             waitstaffId = 1,
             numberOfCustomers = 6,
             groupId = 1,
             tableId = 3
         )
+
         FohServiceLogger.logFohEscortingStatus(
             waitstaffNumber = 1,
             customerEscortingNumber = 6
         )
+
         FohServiceLogger.logCustomerRateRestaurant(
             groupID = 1,
             groupRating = 5,
             positiveRatingQuantity = 12,
             negativeRatingQuantity = 5
         )
+
         FohServiceLogger.logRatingStatus(
             numberOfGroupsGivingRatings = 1
         )
-        TickStatusLogger.logRestaurantEnd()
-    }
 
-    private fun assertEatingAndRatingPhase() {
+        TickStatusLogger.logRestaurantEnd()
+
         assertLoggedLines(
             "[INFO] Restaurant No Eating (R 1): 2 customers of group 1 leave table 3 " +
                 "due to not being served.",
@@ -432,27 +449,31 @@ class AllFunctionsLoggerTest {
             "[DEBUG] Rating Status (R 1): 1 groups performed ratings this tick.",
             "[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick."
         )
+
+        clearLog()
     }
 
     private fun verifySimulationEndPhase() {
-        logSimulationEndPhase()
-        assertSimulationEndPhase()
-    }
-
-    private fun logSimulationEndPhase() {
         TickStatusLogger.logServingEnd()
+
         StatisticsLogger.logSimulationStatsCalculated()
-        StatisticsLogger.logSimulationStatsCooked(numberOfCookedMeals = 120)
-        StatisticsLogger.logSimulationStatsServed(numberOfCustomersServed = 98)
+
+        StatisticsLogger.logSimulationStatsCooked(
+            numberOfCookedMeals = 120
+        )
+
+        StatisticsLogger.logSimulationStatsServed(
+            numberOfCustomersServed = 98
+        )
+
         StatisticsLogger.logSimulationStatsDelivered(
             numberOfCustomersDelivered = 22
         )
+
         StatisticsLogger.logSimulationStatsRatingsGiven(
             numberOfCustomersGivingRatings = 15
         )
-    }
 
-    private fun assertSimulationEndPhase() {
         assertLoggedLines(
             "[IMPORTANT] Serving: Serving of evening 1 ends.",
             "[IMPORTANT] Simulation Info: Simulation statistics are calculated.",

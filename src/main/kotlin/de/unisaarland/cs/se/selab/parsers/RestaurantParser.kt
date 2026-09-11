@@ -18,6 +18,7 @@ import de.unisaarland.cs.se.selab.restaurant.Table
 import kotlinx.serialization.json.*
 
 // TODO: in parser controller correctly catch and handle IllegalArgumentExceptions from require()
+// TODO: satisfy detekt
 
 class RestaurantParser {
     private var recipes: List<Recipe> = emptyList()
@@ -25,6 +26,7 @@ class RestaurantParser {
     private val restaurantNames = mutableSetOf<String>()
     private val tableIds = mutableSetOf<Id>()
     private val parsedStats = mutableListOf<RestaurantStats>()
+    private val restaurantTypes = mutableSetOf<RestaurantType>()
 
     fun parseRestaurants(
         restaurantArray: JsonArray,
@@ -39,9 +41,14 @@ class RestaurantParser {
         restaurantNames.clear()
         tableIds.clear()
         parsedStats.clear()
+        restaurantTypes.clear()
 
         val parsedRestaurants = restaurantArray.map { element ->
             parseRestaurant(element.jsonObject, ingredients, recipes, stock)
+        }
+
+        require(checkBasicDishCoverageForRestaurantTypes(restaurantTypes, recipes)) {
+            "Every restaurant type present must have at least one basic dish default recipe"
         }
 
         return Pair(parsedStats.toList(), parsedRestaurants)
@@ -69,6 +76,7 @@ class RestaurantParser {
         tableIds.clear()
 
         val type = enumValue<RestaurantType>(jsonObject.getValue("type").jsonPrimitive.content, "type")
+        restaurantTypes.add(type)
         val openingTickStart = jsonObject.getValue("openingTickStart").jsonPrimitive.int
         val openingTickEnd = jsonObject.getValue("openingTickEnd").jsonPrimitive.int
         require(checkStartEndTicks(openingTickStart, openingTickEnd)) { "Restaurant opening ticks must satisfy 1 <= start < end <= 24" }
@@ -76,8 +84,11 @@ class RestaurantParser {
         val recipeArray = jsonObject.getValue("recipes").jsonArray
         val recipeIds = recipeArray.map { it.jsonPrimitive.int }
         require(recipeIds.all { it >= 0 }) { "Restaurant recipe IDs must be non-negative" }
-        require(checkRestaurantRecipesExist(recipeIds, recipes.map { it.id })) { "Restaurant $id references a recipe that does not exist" }
+        require(checkRestaurantRecipesExist(recipeIds, recipes.map { it.getId() })) { "Restaurant $id references a recipe that does not exist" }
         require(recipeIds.isNotEmpty()) { "Restaurant $id has no recipes" }
+        require(checkUniqueDishNamesInRestaurant(recipeIds, recipes)) {
+            "Restaurant $id must not have multiple recipes with the same dish name"
+        }
 
         val kitchenStaff = parseKitchenStaff(jsonObject.getValue("kitchenStaff").jsonObject)
         val waitstaffCount = jsonObject.getValue("waitstaff").jsonPrimitive.int
@@ -94,8 +105,7 @@ class RestaurantParser {
         require(tablesJson.isNotEmpty()) { "Restaurant $id has no tables" }
         val tables = tablesJson.map { element -> parseTable(element.jsonObject) }
 
-        // TODO: have Ved set recipe id public
-        val menu = recipeIds.map { recipeId -> recipes.first { it.id == recipeId } }
+        val menu = recipeIds.map { recipeId -> recipes.first { it.getId() == recipeId } }
         val event = jsonObject.getValue("event").jsonPrimitive.boolean
         // TODO: consider renaming to isEvent / acceptsEvents
         val stats = RestaurantStats(
@@ -167,6 +177,21 @@ class RestaurantParser {
     private fun checkRestaurantRecipesExist(recipeIdsInRestaurant: List<Int>, recipeIds: List<Int>): Boolean {
         return recipeIdsInRestaurant.distinct().size == recipeIdsInRestaurant.size &&
                 recipeIdsInRestaurant.all { it in recipeIds }
+    }
+
+    private fun checkUniqueDishNamesInRestaurant(recipeIdsInRestaurant: List<Int>, recipes: List<Recipe>): Boolean {
+        val menu = recipeIdsInRestaurant.map { recipeId -> recipes.first { it.getId() == recipeId } }
+        return menu.map { it.getName() }.distinct().size == menu.size
+    }
+
+    // cross validation
+    private fun checkBasicDishCoverageForRestaurantTypes(
+        restaurantTypes: Set<RestaurantType>,
+        recipes: List<Recipe>
+    ): Boolean {
+        return restaurantTypes.all { restaurantType ->
+            recipes.any { it.getBasicDishFor() == restaurantType }
+        }
     }
 
     private fun checkStartEndTicks(openingTickStart: Tick, openingTickEnd: Tick): Boolean {

@@ -6,12 +6,13 @@ import de.unisaarland.cs.se.selab.enums.ExperienceType
 import de.unisaarland.cs.se.selab.enums.TableType
 import de.unisaarland.cs.se.selab.food.Order
 
+/** Represents an abstract customer group. */
 abstract class CustomerGroup(
-    private val id: Id,
+    val id: Id,
     private val size: Int,
     private val tableType: TableType,
     private val visitingAt: Tick,
-    private val foodPreference: List<FoodPreference>,
+    private val foodPreferences: List<FoodPreference>,
 ) {
     private val waitingSince: Tick? = null
     private var currentlySeatedCustomers = size

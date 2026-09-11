@@ -56,6 +56,18 @@ class Cook(
         return type
     }
     /**
+     *explicit getter to get if the chef is cooking .
+     */
+    fun getIsCooking():  Boolean{
+        return isCooking
+    }
+    /**
+     *explicit getter to get id to the cook .
+     */
+    fun getId():Int? {
+        return id
+    }
+    /**
      *explicit setter to set id to the cook .
      */
     fun setId(givenId: Int) {
@@ -130,5 +142,6 @@ class Cook(
 
         return CookResult(true, totalAssignedMeals, 0)
     }
+
 }
 

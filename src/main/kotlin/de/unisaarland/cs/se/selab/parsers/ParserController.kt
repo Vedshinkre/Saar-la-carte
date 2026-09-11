@@ -1,6 +1,11 @@
 package de.unisaarland.cs.se.selab.parsers
 
-import com.github.erosb.jsonsKema.*
+import com.github.erosb.jsonsKema.FormatValidationPolicy
+import com.github.erosb.jsonsKema.JsonParseException
+import com.github.erosb.jsonsKema.JsonParser
+import com.github.erosb.jsonsKema.SchemaLoader
+import com.github.erosb.jsonsKema.Validator
+import com.github.erosb.jsonsKema.ValidatorConfig
 import de.unisaarland.cs.se.selab.food.Stock
 import de.unisaarland.cs.se.selab.incidents.Incident
 import de.unisaarland.cs.se.selab.incidents.UnavailabilityIncident
@@ -30,13 +35,13 @@ class ParserController {
         restaurantsFilePath: String,
         scenarioFilePath: String
     ): SimulationConfig {
-        validateFilesWithSchema(foodFilePath, "src/main/resources/schema/food.schema")
-        validateFilesWithSchema(restaurantsFilePath, "classpath:///src/main/resources/schema/restaurants.schema")
-        validateFilesWithSchema(scenarioFilePath, "src/main/resources/schema/scenario.schema")
+        validateFilesWithSchema(foodFilePath, "classpath:/schema/food.schema")
+        validateFilesWithSchema(restaurantsFilePath, "classpath:/schema/restaurants.schema")
+        validateFilesWithSchema(scenarioFilePath, "classpath:/schema/scenario.schema")
         val foodStr = File(foodFilePath).readText()
         val foodObject = Json.parseToJsonElement(foodStr).jsonObject
         val ingredientArray = foodObject["ingredients"] as JsonArray
-        val recipeArray = foodObject["recipe"] as JsonArray
+        val recipeArray = foodObject["recipes"] as JsonArray
         val restaurantsStr = File(restaurantsFilePath).readText()
         val restaurantsArray = Json.parseToJsonElement(restaurantsStr).jsonObject["restaurants"]!!.jsonArray
         val scenarioStr = File(scenarioFilePath).readText()
@@ -48,9 +53,8 @@ class ParserController {
         val stock = Stock(foodData!!.first)
         val restaurantData = restaurantParser.parseRestaurants(
             restaurantsArray,
-            foodData.first,
             foodData.second,
-            stock
+            stock,
         )
 
         val scenarioData = scenarioParser.parseScenario(

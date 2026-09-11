@@ -15,7 +15,7 @@ class IngredientPackage(
     constructor(ingredient: Ingredient) : this(
         ingredient = ingredient,
         amount = ingredient.getPackagingVolume(),
-        expiryDate = Time.getEvening() + ingredient.getBestBefore(), // TODO ONCE TIME IS IMPLEMENTED
+        expiryDate = 1 + ingredient.getBestBefore(), // TODO ONCE TIME IS IMPLEMENTED
         isOpen = false
     )
 
@@ -43,7 +43,7 @@ class IngredientPackage(
     // functions with logic
     /** tells if the ingredients is expired or not  */
     fun hasExpired(): Boolean {
-        return Time.getEvening() >= this.expiryDate //  TODO ONCE TIME IS IMPLEMENTED
+        return Time.evening >= this.expiryDate //  TODO ONCE TIME IS IMPLEMENTED
     }
 
     /** we remove quantity sized data from amount if it is possible  */

@@ -53,14 +53,14 @@ class Stock(
     /**
      * Explicit getter to get Ingredients if it's in the stock else null  .
      */
-    // fun getIngredient(ingredient: Ingredient): Ingredient? {
-    //   for (key in ingredients.keys) {
-    //       if (key.getName() == ingredient.getName()) {
-    //          return key
-    //       }
-    //   }
-    //  return null
-    // }
+     fun getIngredient(ingredient: Ingredient): Ingredient? {
+      for (key in ingredients.keys) {
+          if (key.getName() == ingredient.getName()) {
+              return key
+           }
+       }
+        return null
+      }
     /**
      * checks if the ingredient is available or not   .
      */

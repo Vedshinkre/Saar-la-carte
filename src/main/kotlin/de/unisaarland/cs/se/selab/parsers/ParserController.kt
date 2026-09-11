@@ -1,11 +1,6 @@
 package de.unisaarland.cs.se.selab.parsers
 
-import com.github.erosb.jsonsKema.FormatValidationPolicy
-import com.github.erosb.jsonsKema.JsonParseException
-import com.github.erosb.jsonsKema.JsonParser
-import com.github.erosb.jsonsKema.SchemaLoader
-import com.github.erosb.jsonsKema.Validator
-import com.github.erosb.jsonsKema.ValidatorConfig
+import com.github.erosb.jsonsKema.*
 import de.unisaarland.cs.se.selab.food.Stock
 import de.unisaarland.cs.se.selab.system.SimulationConfig
 import kotlinx.serialization.json.Json
@@ -29,16 +24,16 @@ class ParserController {
      **/
     fun parseFiles(
         foodFilePath: String,
-        restaurantFilePath: String,
+        restaurantsFilePath: String,
         scenarioFilePath: String
     ): SimulationConfig {
         validateFilesWithSchema(foodFilePath, "src/main/resources/schema/food.schema")
-        validateFilesWithSchema(restaurantFilePath, "classpath:///src/main/resources/schema/restaurants.schema")
+        validateFilesWithSchema(restaurantsFilePath, "classpath:///src/main/resources/schema/restaurants.schema")
         validateFilesWithSchema(scenarioFilePath, "src/main/resources/schema/scenario.schema")
         val foodStr = File(foodFilePath).readText()
         val foodObject = Json.parseToJsonElement(foodStr).jsonObject
-        val restaurantStr = File(restaurantFilePath).readText()
-        val restaurantObject = Json.parseToJsonElement(restaurantStr).jsonObject
+        val restaurantsStr = File(restaurantsFilePath).readText()
+        val restaurantsArray = Json.parseToJsonElement(restaurantsStr).jsonObject["restaurants"]!!.jsonArray
         val scenarioStr = File(scenarioFilePath).readText()
         val scenarioObject = Json.parseToJsonElement(scenarioStr).jsonObject
         val incidentJson = scenarioObject["incidents"]!!.jsonArray
@@ -46,8 +41,8 @@ class ParserController {
 
         val foodData = foodParser.parseFood(foodJson = foodObject)
         val stock = Stock(foodData!!.first)
-        val restaurantData = restaurantParser.parseRestaurantFile(
-            restaurantObject,
+        val restaurantData = restaurantParser.parseRestaurants(
+            restaurantsArray,
             foodData.first,
             foodData.second,
             stock

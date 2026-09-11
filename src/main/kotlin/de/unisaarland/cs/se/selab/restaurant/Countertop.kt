@@ -39,7 +39,7 @@ class Countertop(
                 }
             }
             val cookTypes = recipe.getCookTypes()
-            val eligibleCooks = cooks.filter { !it.isCooking && cookTypes.contains(it.getCookType()) }
+            val eligibleCooks = cooks.filter { !it.getIsCooking() && cookTypes.contains(it.getCookType()) }
 
             if (available && eligibleCooks.isNotEmpty()) {
                 availableRecipes.add(recipe)

@@ -27,7 +27,7 @@ class RestaurantParser {
     private val tableIds = mutableSetOf<Id>()
     private val parsedStats = mutableListOf<RestaurantStats>()
 
-    fun parseRestaurantsArray(
+    fun parseRestaurants(
         restaurantArray: JsonArray,
         ingredients: List<Ingredient>,
         recipes: List<Recipe>,

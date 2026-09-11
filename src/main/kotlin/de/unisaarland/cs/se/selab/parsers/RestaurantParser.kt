@@ -17,8 +17,7 @@ import de.unisaarland.cs.se.selab.restaurant.RestaurantStats
 import de.unisaarland.cs.se.selab.restaurant.Table
 import kotlinx.serialization.json.*
 
-// TODO: make recipe id public
-// TODO: either throw IllegalArgumentException with require() and catch or return a bool
+// TODO: in parser controller correctly catch and handle IllegalArgumentExceptions from require()
 
 class RestaurantParser {
     private var recipes: List<Recipe> = emptyList()
@@ -48,12 +47,14 @@ class RestaurantParser {
         return Pair(parsedStats.toList(), parsedRestaurants)
     }
 
+    // TODO: remove this getter
     fun getRecipes(): List<Recipe> {
         return recipes
     }
 
     private fun parseRestaurant(
         jsonObject: JsonObject,
+        // TODO: remove ingredients
         ingredients: List<Ingredient>,
         recipes: List<Recipe>,
         stock: Stock
@@ -75,7 +76,7 @@ class RestaurantParser {
         val recipeArray = jsonObject.getValue("recipes").jsonArray
         val recipeIds = recipeArray.map { it.jsonPrimitive.int }
         require(recipeIds.all { it >= 0 }) { "Restaurant recipe IDs must be non-negative" }
-        require(checkRestaurantRecipesExsit(recipeIds, recipes.map { it.id })) { "Restaurant $id references a recipe that does not exist" }
+        require(checkRestaurantRecipesExist(recipeIds, recipes.map { it.id })) { "Restaurant $id references a recipe that does not exist" }
         require(recipeIds.isNotEmpty()) { "Restaurant $id has no recipes" }
 
         val kitchenStaff = parseKitchenStaff(jsonObject.getValue("kitchenStaff").jsonObject)
@@ -93,6 +94,7 @@ class RestaurantParser {
         require(tablesJson.isNotEmpty()) { "Restaurant $id has no tables" }
         val tables = tablesJson.map { element -> parseTable(element.jsonObject) }
 
+        // TODO: have Ved set recipe id public
         val menu = recipeIds.map { recipeId -> recipes.first { it.id == recipeId } }
         val event = jsonObject.getValue("event").jsonPrimitive.boolean
         // TODO: consider renaming to isEvent / acceptsEvents
@@ -162,9 +164,9 @@ class RestaurantParser {
                 jsonObject.getValue("waitstaff").jsonPrimitive.int > 0
     }
 
-    private fun checkRestaurantRecipesExsit(recepieIdsInRestaurant: List<Int>, recepieIds: List<Int>): Boolean {
-        return recepieIdsInRestaurant.distinct().size == recepieIdsInRestaurant.size &&
-                recepieIdsInRestaurant.all { it in recepieIds }
+    private fun checkRestaurantRecipesExist(recipeIdsInRestaurant: List<Int>, recipeIds: List<Int>): Boolean {
+        return recipeIdsInRestaurant.distinct().size == recipeIdsInRestaurant.size &&
+                recipeIdsInRestaurant.all { it in recipeIds }
     }
 
     private fun checkStartEndTicks(openingTickStart: Tick, openingTickEnd: Tick): Boolean {

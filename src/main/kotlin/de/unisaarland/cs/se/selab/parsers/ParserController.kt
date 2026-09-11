@@ -1,6 +1,11 @@
 package de.unisaarland.cs.se.selab.parsers
 
-import com.github.erosb.jsonsKema.*
+import com.github.erosb.jsonsKema.FormatValidationPolicy
+import com.github.erosb.jsonsKema.JsonParseException
+import com.github.erosb.jsonsKema.JsonParser
+import com.github.erosb.jsonsKema.SchemaLoader
+import com.github.erosb.jsonsKema.Validator
+import com.github.erosb.jsonsKema.ValidatorConfig
 import de.unisaarland.cs.se.selab.food.Stock
 import de.unisaarland.cs.se.selab.incidents.Incident
 import de.unisaarland.cs.se.selab.incidents.UnavailabilityIncident
@@ -48,9 +53,8 @@ class ParserController {
         val stock = Stock(foodData!!.first)
         val restaurantData = restaurantParser.parseRestaurants(
             restaurantsArray,
-            foodData.first,
             foodData.second,
-            stock
+            stock,
         )
 
         val scenarioData = scenarioParser.parseScenario(

@@ -6,16 +6,17 @@ import de.unisaarland.cs.se.selab.Tick
 import de.unisaarland.cs.se.selab.enums.TableType
 import de.unisaarland.cs.se.selab.food.Order
 
+/** Represents a regular customer group. */
 class RegularGroup(
-    private val id: Id,
-    val size: Int,
-    val tableType: TableType,
-    private val visitingAt: Tick,
-    private val foodPreference: List<FoodPreference>,
+    id: Id,
+    size: Int,
+    tableType: TableType,
+    visitingAt: Tick,
+    foodPreferences: List<FoodPreference>,
     val visitingStart: Evening,
     val visitingPeriod: Tick,
     val restaurantId: Id,
-) : CustomerGroup(id, size, tableType, visitingAt, foodPreference) {
+) : CustomerGroup(id, size, tableType, visitingAt, foodPreferences) {
     private val orderHistory: MutableList<Order> = mutableListOf()
     private var failedReservations: Int = 0
 }

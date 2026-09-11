@@ -1,18 +1,17 @@
 package de.unisaarland.cs.se.selab.parsers
 
+import de.unisaarland.cs.se.selab.enums.CookType
 import de.unisaarland.cs.se.selab.enums.MeasurementUnit
 import de.unisaarland.cs.se.selab.enums.RestaurantType
-import de.unisaarland.cs.se.selab.enums.CookType
 import de.unisaarland.cs.se.selab.food.Ingredient
 import de.unisaarland.cs.se.selab.food.Recipe
 import kotlinx.serialization.json.*
-
 
 /**
  * Parses Ingrdients and Recipes  .
  */
 class FoodParser {
-    fun parseFood(foodJson: JsonObject): Pair<List<Ingredient>, List<Recipe>>?{
+    fun parseFood(foodJson: JsonObject): Pair<List<Ingredient>, List<Recipe>>? {
         try {
             // Parse Ingredients
             val ingredientsArray = foodJson["ingredients"]?.jsonArray
@@ -27,7 +26,6 @@ class FoodParser {
             val recipesList = parseRecipes(recipesArray, ingredientsList)
 
             return Pair(ingredientsList, recipesList)
-
         } catch (e: IllegalArgumentException) {
             println("Logical Validation Error: ${e.message}")
             return null
@@ -47,7 +45,6 @@ class FoodParser {
 
         // Loop through every item
         for (i in 0 until array.size) {
-
             val ingredientJson = array[i].jsonObject
 
             //  Extract values
@@ -64,7 +61,7 @@ class FoodParser {
                 ?: throw IllegalArgumentException("Ingredient '$name' is missing 'bestBefore'")
 
             // check uniqueness
-            val isUnique = checkUniquenessOfIngredient(name,parsedIngredients)
+            val isUnique = checkUniquenessOfIngredient(name, parsedIngredients)
             if (!isUnique) {
                 throw IllegalArgumentException("Duplicate ingredient name found: $name")
             }
@@ -84,6 +81,7 @@ class FoodParser {
 
         return parsedIngredients
     }
+
     // cross validation function
     private fun validateIngredient(ingredient: Ingredient): Boolean {
         //  Packaging volume must be greater than 0
@@ -98,6 +96,7 @@ class FoodParser {
         // if all checks pass
         return true
     }
+
     // check Uniqueness
     private fun checkUniquenessOfIngredient(name: String, parsedIngredients: List<Ingredient>): Boolean {
         for (existingIng in parsedIngredients) {
@@ -108,7 +107,7 @@ class FoodParser {
         return true
     }
 
-    private fun parseRecipes(array: JsonArray, availableIngredients: List<Ingredient>): List<Recipe>{
+    private fun parseRecipes(array: JsonArray, availableIngredients: List<Ingredient>): List<Recipe> {
         val parsedRecipes = mutableListOf<Recipe>()
 
         for (i in 0 until array.size) {
@@ -137,7 +136,9 @@ class FoodParser {
             //  check uniqueness
             val isUnique = checkUniquenessOfRecipe(id, name, isBasicDish, parsedRecipes)
             if (!isUnique) {
-                throw IllegalArgumentException("Recipe failed uniqueness check (Duplicate ID or conflicting basic dish name): $id / $name")
+                throw IllegalArgumentException(
+                    "Recipe failed uniqueness check (Duplicate ID or conflicting basic dish name): $id / $name"
+                )
             }
 
             // cook types array
@@ -175,11 +176,17 @@ class FoodParser {
                 val recipeIngredientUnit = MeasurementUnit.valueOf(recipeIngredientUnitStr)
 
                 // get the ingredient from the available ingredients, if  it exists
-                val foundIngredient = checkIngredientExists(recipeIngredientName, recipeIngredientUnit, availableIngredients)
+                val foundIngredient = checkIngredientExists(
+                    recipeIngredientName,
+                    recipeIngredientUnit,
+                    availableIngredients
+                )
 
                 // ingredient for the recipe not availabe
                 if (foundIngredient == null) {
-                    throw IllegalArgumentException("Recipe '$name' requires '$recipeIngredientName', but it does not exist.")
+                    throw IllegalArgumentException(
+                        "Recipe '$name' requires '$recipeIngredientName', but it does not exist."
+                    )
                 }
 
                 // add valid ingredient and amount to the map
@@ -198,7 +205,6 @@ class FoodParser {
         }
 
         return parsedRecipes
-
     }
 
     private fun validateRecipe(recipe: Recipe): Boolean {

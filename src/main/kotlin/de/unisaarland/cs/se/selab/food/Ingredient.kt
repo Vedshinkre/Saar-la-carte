@@ -18,28 +18,32 @@ class Ingredient(
     fun getName(): String {
         return name
     }
+
     /**
      * Explicit getter for the Ingredient Unit .
      */
     fun getUnit(): MeasurementUnit {
         return unit
     }
+
     /**
      * Explicit getter for the Ingredient packagingVolume .
      */
     fun getPackagingVolume(): Int {
         return packagingVolume
     }
+
     /**
      * Explicit getter for the Ingredient Best Before Tick .
      */
     fun getBestBefore(): Int {
         return bestBefore
     }
+
     /**
      * Explicit setter for the Ingredient packagingVolume .
      */
-    fun setPackagingVolume(newVolume: Int): Unit {
+    fun setPackagingVolume(newVolume: Int) {
         require(newVolume > 0) { "Packaging volume must be > 0." }
         packagingVolume = newVolume
     }

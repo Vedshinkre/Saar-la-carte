@@ -39,7 +39,6 @@ class IncidentParser {
         val id = json.requiredInt("id")
         val evening = json.requiredInt("evening")
         return when (json.requiredString("type")) {
-
             "STAFF" -> {
                 val staffType =
                     json.requiredEnum<StaffType>("staffType")
@@ -51,11 +50,13 @@ class IncidentParser {
                     number = json.requiredInt("number"),
                     staffType = staffType,
                     cookType =
-                        (if (CookType!! == StaffType.COOK) {
+                    (
+                        if (CookType!! == StaffType.COOK) {
                             json.requiredEnum<CookType>("cookType")
                         } else {
                             null
-                        })!!
+                        }
+                        )!!
                 )
             }
 
@@ -82,21 +83,19 @@ class IncidentParser {
 
             else -> error("Unknown incident type")
         }
-
     }
-        private fun JsonObject.requiredString(key: String): String =
-            this[key]?.jsonPrimitive?.content
-                ?: error("Missing string property: $key")
+    private fun JsonObject.requiredString(key: String): String =
+        this[key]?.jsonPrimitive?.content
+            ?: error("Missing string property: $key")
 
-        private fun JsonObject.requiredInt(key: String): Int =
-            this[key]?.jsonPrimitive?.int
-                ?: error("Missing integer property: $key")
+    private fun JsonObject.requiredInt(key: String): Int =
+        this[key]?.jsonPrimitive?.int
+            ?: error("Missing integer property: $key")
 
-        private fun JsonObject.requiredDouble(key: String): Double =
-            this[key]?.jsonPrimitive?.double
-                ?: error("Missing decimal property: $key")
+    private fun JsonObject.requiredDouble(key: String): Double =
+        this[key]?.jsonPrimitive?.double
+            ?: error("Missing decimal property: $key")
 
-        private inline fun <reified T : Enum<T>> JsonObject.requiredEnum(key: String): T =
-            enumValueOf(requiredString(key))
-
+    private inline fun <reified T : Enum<T>> JsonObject.requiredEnum(key: String): T =
+        enumValueOf(requiredString(key))
 }

@@ -6,7 +6,7 @@ package de.unisaarland.cs.se.selab.food
 class Stock(
     private val ingredients: MutableMap<Ingredient, Boolean>
 ) {
-    //explicit constructor with only ingredients
+    // explicit constructor with only ingredients
     constructor(ingredientList: List<Ingredient>) : this(mutableMapOf()) {
         for (item in ingredientList) {
             this.ingredients[item] = true
@@ -18,7 +18,7 @@ class Stock(
     /**
      * Explicit setter to set Ingredients to Unavailable .
      */
-    fun setIngredientToUnavailable(ingredient: Ingredient): Unit {
+    fun setIngredientToUnavailable(ingredient: Ingredient) {
         var found = false
         for (key in ingredients.keys) {
             if (key.getName() == ingredient.getName()) {
@@ -36,7 +36,7 @@ class Stock(
     /**
      * Explicit setter to set Ingredients to Available .
      */
-    fun setIngredientToAvailable(ingredient: Ingredient): Unit {
+    fun setIngredientToAvailable(ingredient: Ingredient) {
         var found = false
         for (key in ingredients.keys) {
             if (key.getName() == ingredient.getName()) {
@@ -53,14 +53,14 @@ class Stock(
     /**
      * Explicit getter to get Ingredients if it's in the stock else null  .
      */
-    //fun getIngredient(ingredient: Ingredient): Ingredient? {
+    // fun getIngredient(ingredient: Ingredient): Ingredient? {
     //   for (key in ingredients.keys) {
     //       if (key.getName() == ingredient.getName()) {
     //          return key
     //       }
     //   }
     //  return null
-   // }
+    // }
     /**
      * checks if the ingredient is available or not   .
      */

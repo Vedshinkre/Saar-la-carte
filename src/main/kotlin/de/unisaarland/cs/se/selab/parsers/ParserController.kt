@@ -11,8 +11,6 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import java.io.File
 import java.io.IOException
-import java.io.PrintWriter
-
 
 class ParserController {
 
@@ -40,10 +38,16 @@ class ParserController {
         val incidentJson = scenarioObject["incidents"]!!.jsonArray
         val customerJson = scenarioObject["customerGroups"]!!.jsonArray
 
-        val foodData = foodParser.parse(incidentJson,recipeJson)
+        val foodData = foodParser.parse(incidentJson, recipeJson)
         val restaurantData = restaurantParser.parse(restaurantObject)
 
-        val scenarioData = scenarioParser.parseScenario(incidentJson, customerJson,restaurantData[1] , foodData[1],foodData[0])
+        val scenarioData = scenarioParser.parseScenario(
+            incidentJson,
+            customerJson,
+            restaurantData[1],
+            foodData[1],
+            foodData[0]
+        )
 
         val simConfig = SimulationConfig(
             foodData = foodData,

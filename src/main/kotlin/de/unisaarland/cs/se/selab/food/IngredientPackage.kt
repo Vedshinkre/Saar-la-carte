@@ -11,11 +11,11 @@ class IngredientPackage(
     private var isOpen: Boolean
 ) {
 
-    //explicit constructor with only ingredients
+    // explicit constructor with only ingredients
     constructor(ingredient: Ingredient) : this(
         ingredient = ingredient,
         amount = ingredient.getPackagingVolume(),
-        expiryDate = Time.getEvening() + ingredient.getBestBefore(), //TODO ONCE TIME IS IMPLEMENTED
+        expiryDate = Time.getEvening() + ingredient.getBestBefore(), // TODO ONCE TIME IS IMPLEMENTED
         isOpen = false
     )
 
@@ -24,14 +24,17 @@ class IngredientPackage(
     fun getIngredient(): Ingredient {
         return ingredient
     }
+
     /** Explicit getter to get amount of ingredient in the package */
     fun getCurrentAmount(): Int {
         return amount
     }
+
     /** Explicit getter to tell if the packet is open */
     fun isOpen(): Boolean {
         return isOpen
     }
+
     /** Explicit getter to get the expiry date of the Ingredient */
     fun getExpiryDate(): Int {
         return expiryDate
@@ -40,8 +43,9 @@ class IngredientPackage(
     // functions with logic
     /** tells if the ingredients is expired or not  */
     fun hasExpired(): Boolean {
-       return Time.getEvening() >= this.expiryDate //  TODO ONCE TIME IS IMPLEMENTED
+        return Time.getEvening() >= this.expiryDate //  TODO ONCE TIME IS IMPLEMENTED
     }
+
     /** we remove quantity sized data from amount if it is possible  */
     fun removeAmount(quantity: Int): Int {
         // we remove quantity sized data from amount if it is possible ,
@@ -49,7 +53,7 @@ class IngredientPackage(
         if (quantity <= 0) {
             return 0
         }
-       val actualRemoved =
+        val actualRemoved =
             if (quantity > this.amount) {
                 // check if we can remove the requested quantity from the package, else make it empty
                 this.amount
@@ -66,4 +70,3 @@ class IngredientPackage(
         return actualRemoved
     }
 }
-

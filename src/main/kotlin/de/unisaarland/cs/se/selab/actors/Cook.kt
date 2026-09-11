@@ -142,5 +142,6 @@ class Cook(
 
         return CookResult(true, totalAssignedMeals, 0)
     }
+
 }
 

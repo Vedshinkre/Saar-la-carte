@@ -5,7 +5,6 @@ import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.customer.EventGroup
 import de.unisaarland.cs.se.selab.food.Order
 import de.unisaarland.cs.se.selab.food.Stock
-import restaurant.Pantry
 
 class Restaurant(
     private val restaurantStats: RestaurantStats,
@@ -25,5 +24,18 @@ class Restaurant(
         val countertop: Countertop = Countertop(pantry, orderQueue, staff.cooks)
         frontOfHouse = FrontOfHouse(tables, staff.waiters, staff.drivers, countertop)
         kitchen = Kitchen(staff.cooks, pantry, orderQueue)
+    }
+
+    /**
+     * sake of detect
+     */
+    fun getRestaurantStats(): RestaurantStats {
+        return restaurantStats
+    }
+    /**
+     * sake of detect
+     */
+    fun getRestaurantStaff(): RestaurantStaff {
+        return staff
     }
 }

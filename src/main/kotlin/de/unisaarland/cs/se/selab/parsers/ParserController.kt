@@ -4,6 +4,7 @@ import com.github.erosb.jsonsKema.*
 import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.enums.RestaurantType
 import de.unisaarland.cs.se.selab.food.Recipe
+import de.unisaarland.cs.se.selab.food.Stock
 import de.unisaarland.cs.se.selab.restaurant.Restaurant
 import de.unisaarland.cs.se.selab.system.SimulationConfig
 import kotlinx.serialization.json.Json
@@ -39,6 +40,7 @@ class ParserController {
         val customerJson = scenarioObject["customerGroups"]!!.jsonArray
 
         val foodData = foodParser.parse(incidentJson, recipeJson)
+        val stock = Stock(foodData[0])
         val restaurantData = restaurantParser.parse(restaurantObject)
 
         val scenarioData = scenarioParser.parseScenario(
@@ -46,7 +48,8 @@ class ParserController {
             customerJson,
             restaurantData[1],
             foodData[1],
-            foodData[0]
+            foodData[0],
+            stock ,
         )
 
         val simConfig = SimulationConfig(

@@ -4,6 +4,7 @@ import com.github.erosb.jsonsKema.JsonArray
 import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.food.Ingredient
 import de.unisaarland.cs.se.selab.food.Recipe
+import de.unisaarland.cs.se.selab.food.Stock
 import de.unisaarland.cs.se.selab.incidents.Incident
 import de.unisaarland.cs.se.selab.restaurant.Restaurant
 
@@ -28,9 +29,10 @@ class ScenarioParser(
         customer: kotlinx.serialization.json.JsonArray,
         restaurants: List<Restaurant>,
         recipes: List<Recipe>,
-        ingredients: List<Ingredient>
+        ingredients: List<Ingredient>,
+        stock: Stock
     ): Pair<List<Incident>, List<CustomerGroup>> {
-        incidentParser.parseIncidentFile(incident, ingredients, restaurants)
+        incidentParser.parseIncidentFile(incident, ingredients, stock, recipes, restaurants,)
         customerParser.parseCustomerFile(customer, restaurants)
 
         return Pair(incidents, customerGroups)

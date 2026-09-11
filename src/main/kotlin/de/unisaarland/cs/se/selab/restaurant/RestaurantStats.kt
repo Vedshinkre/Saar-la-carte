@@ -6,7 +6,7 @@ import de.unisaarland.cs.se.selab.enums.RestaurantType
 import de.unisaarland.cs.se.selab.food.Recipe
 
 class RestaurantStats(
-    private val restaurantId: Id,
+    val restaurantId: Id,
     private val restaurantType: RestaurantType,
     private val openingTickStart: Tick,
     private val openingTickEnd: Tick,

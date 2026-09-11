@@ -15,6 +15,7 @@ import de.unisaarland.cs.se.selab.food.Stock
 import de.unisaarland.cs.se.selab.restaurant.Restaurant
 import de.unisaarland.cs.se.selab.restaurant.RestaurantStats
 import de.unisaarland.cs.se.selab.restaurant.Table
+import kotlinx.serialization.json.JsonObject
 import org.json.JSONObject
 import java.io.File
 
@@ -30,7 +31,7 @@ class RestaurantParser {
     private val parsedStats = mutableListOf<RestaurantStats>()
 
     fun parseRestaurantFile(
-        filePath: String,
+        filePath: JsonObject,
         ingredients: List<Ingredient>,
         recipes: List<Recipe>,
         stock: Stock

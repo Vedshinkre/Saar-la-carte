@@ -9,7 +9,6 @@ import de.unisaarland.cs.se.selab.actors.Waiter
 import de.unisaarland.cs.se.selab.enums.CookType
 import de.unisaarland.cs.se.selab.enums.RestaurantType
 import de.unisaarland.cs.se.selab.enums.TableType
-import de.unisaarland.cs.se.selab.food.Ingredient
 import de.unisaarland.cs.se.selab.food.Recipe
 import de.unisaarland.cs.se.selab.food.Stock
 import de.unisaarland.cs.se.selab.restaurant.Restaurant
@@ -17,9 +16,17 @@ import de.unisaarland.cs.se.selab.restaurant.RestaurantStats
 import de.unisaarland.cs.se.selab.restaurant.Table
 import kotlinx.serialization.json.*
 
+private const val MIN_TABLE_SIZE = 2
+private const val MAX_TABLE_SIZE = 30
+private const val MIN_OPENING_TICK = 1
+private const val MAX_OPENING_TICK = 24
+
 // TODO: in parser controller correctly catch and handle IllegalArgumentExceptions from require()
 // TODO: satisfy detekt
 
+/**
+ * Parses and validates restaurants
+ */
 class RestaurantParser {
     private var recipes: List<Recipe> = emptyList()
     private val restaurantIds = mutableSetOf<Id>()
@@ -28,9 +35,11 @@ class RestaurantParser {
     private val parsedStats = mutableListOf<RestaurantStats>()
     private val restaurantTypes = mutableSetOf<RestaurantType>()
 
+    /**
+     * Parses and validates restaurants from a JSONArray
+     */
     fun parseRestaurants(
         restaurantArray: JsonArray,
-        ingredients: List<Ingredient>,
         recipes: List<Recipe>,
         stock: Stock
     ): Pair<List<RestaurantStats>, List<Restaurant>> {
@@ -44,7 +53,7 @@ class RestaurantParser {
         restaurantTypes.clear()
 
         val parsedRestaurants = restaurantArray.map { element ->
-            parseRestaurant(element.jsonObject, ingredients, recipes, stock)
+            parseRestaurant(element.jsonObject, recipes, stock)
         }
 
         require(checkBasicDishCoverageForRestaurantTypes(restaurantTypes, recipes)) {
@@ -54,15 +63,8 @@ class RestaurantParser {
         return Pair(parsedStats.toList(), parsedRestaurants)
     }
 
-    // TODO: remove this getter
-    fun getRecipes(): List<Recipe> {
-        return recipes
-    }
-
     private fun parseRestaurant(
         jsonObject: JsonObject,
-        // TODO: remove ingredients
-        ingredients: List<Ingredient>,
         recipes: List<Recipe>,
         stock: Stock
     ): Restaurant {
@@ -71,7 +73,9 @@ class RestaurantParser {
         require(id >= 0) { "Restaurant ID must be non-negative" }
         require(name.isNotEmpty()) { "Restaurant name must not be empty" }
         require(checkUniquenessOfRestaurant(id, name)) { "Restaurant IDs and names must be unique" }
-        require(checkPresenceOfSingleCookWaiterTableRecipe(jsonObject)) { "Restaurant must define recipes, waitstaff, and tables" }
+        require(
+            checkPresenceOfSingleCookWaiterTableRecipe(jsonObject)
+        ) { "Restaurant must define recipes, waitstaff, and tables" }
 
         tableIds.clear()
 
@@ -79,12 +83,16 @@ class RestaurantParser {
         restaurantTypes.add(type)
         val openingTickStart = jsonObject.getValue("openingTickStart").jsonPrimitive.int
         val openingTickEnd = jsonObject.getValue("openingTickEnd").jsonPrimitive.int
-        require(checkStartEndTicks(openingTickStart, openingTickEnd)) { "Restaurant opening ticks must satisfy 1 <= start < end <= 24" }
+        require(
+            checkStartEndTicks(openingTickStart, openingTickEnd)
+        ) { "Restaurant opening ticks must satisfy 1 <= start < end <= 24" }
 
         val recipeArray = jsonObject.getValue("recipes").jsonArray
         val recipeIds = recipeArray.map { it.jsonPrimitive.int }
         require(recipeIds.all { it >= 0 }) { "Restaurant recipe IDs must be non-negative" }
-        require(checkRestaurantRecipesExist(recipeIds, recipes.map { it.getId() })) { "Restaurant $id references a recipe that does not exist" }
+        require(
+            checkRestaurantRecipesExist(recipeIds, recipes.map { it.getId() })
+        ) { "Restaurant $id references a recipe that does not exist" }
         require(recipeIds.isNotEmpty()) { "Restaurant $id has no recipes" }
         require(checkUniqueDishNamesInRestaurant(recipeIds, recipes)) {
             "Restaurant $id must not have multiple recipes with the same dish name"
@@ -107,7 +115,6 @@ class RestaurantParser {
 
         val menu = recipeIds.map { recipeId -> recipes.first { it.getId() == recipeId } }
         val event = jsonObject.getValue("event").jsonPrimitive.boolean
-        // TODO: consider renaming to isEvent / acceptsEvents
         val stats = RestaurantStats(
             restaurantId = id,
             restaurantType = type,
@@ -135,7 +142,9 @@ class RestaurantParser {
         require(checkUniquenessOfTable(id)) { "Duplicate table ID: $id" }
 
         val size = jsonObject.getValue("size").jsonPrimitive.int
-        require(size in 2..30) { "Table $id size must be between 2 and 30" }
+        require(size in MIN_TABLE_SIZE..MAX_TABLE_SIZE) {
+            "Table $id size must be between $MIN_TABLE_SIZE and $MAX_TABLE_SIZE"
+        }
 
         val type = enumValue<TableType>(jsonObject.getValue("type").jsonPrimitive.content, "table type")
 
@@ -170,13 +179,13 @@ class RestaurantParser {
 
     private fun checkPresenceOfSingleCookWaiterTableRecipe(jsonObject: JsonObject): Boolean {
         return jsonObject.getValue("recipes").jsonArray.isNotEmpty() &&
-                jsonObject.getValue("tables").jsonArray.isNotEmpty() &&
-                jsonObject.getValue("waitstaff").jsonPrimitive.int > 0
+            jsonObject.getValue("tables").jsonArray.isNotEmpty() &&
+            jsonObject.getValue("waitstaff").jsonPrimitive.int > 0
     }
 
     private fun checkRestaurantRecipesExist(recipeIdsInRestaurant: List<Int>, recipeIds: List<Int>): Boolean {
         return recipeIdsInRestaurant.distinct().size == recipeIdsInRestaurant.size &&
-                recipeIdsInRestaurant.all { it in recipeIds }
+            recipeIdsInRestaurant.all { it in recipeIds }
     }
 
     private fun checkUniqueDishNamesInRestaurant(recipeIdsInRestaurant: List<Int>, recipes: List<Recipe>): Boolean {
@@ -195,9 +204,9 @@ class RestaurantParser {
     }
 
     private fun checkStartEndTicks(openingTickStart: Tick, openingTickEnd: Tick): Boolean {
-        return openingTickStart in 1..24 &&
-                openingTickEnd in 1..24 &&
-                openingTickEnd > openingTickStart
+        return openingTickStart in MIN_OPENING_TICK..MAX_OPENING_TICK &&
+            openingTickEnd in MIN_OPENING_TICK..MAX_OPENING_TICK &&
+            openingTickEnd > openingTickStart
     }
 
     private fun checkUniquenessOfTable(id: Id): Boolean {

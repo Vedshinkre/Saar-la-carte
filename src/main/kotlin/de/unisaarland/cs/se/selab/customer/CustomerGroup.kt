@@ -7,10 +7,10 @@ import de.unisaarland.cs.se.selab.enums.TableType
 import de.unisaarland.cs.se.selab.food.Order
 
 /** Represents an abstract customer group. */
-abstract class CustomerGroup(
+sealed class CustomerGroup(
     val id: Id,
-    private val size: Int,
-    private val tableType: TableType,
+    val size: Int,
+    val tableType: TableType,
     private val visitingAt: Tick,
     private val foodPreferences: List<FoodPreference>,
 ) {

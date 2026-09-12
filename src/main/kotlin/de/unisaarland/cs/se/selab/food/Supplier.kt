@@ -12,6 +12,7 @@ class Supplier(
     fun isAvailable(ingredient: Ingredient): Boolean {
         return stock.isIngredientAvailable(ingredient)
     }
+
     /**
      * gets the ingredient package from the stock
      */

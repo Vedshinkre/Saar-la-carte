@@ -49,6 +49,13 @@ object Time {
     }
 
     /**
+     * sets the max ticks
+     */
+    fun setMaxTicks(maxTicks: Tick) {
+        this.maxTicks = maxTicks
+    }
+
+    /**
      * increments the tick by 1
      */
     fun incrementTick() {

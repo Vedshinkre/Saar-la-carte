@@ -58,7 +58,7 @@ class CustomerParser {
                 restaurantStats
             )
         }
-        validateCustomerGroupUniqueness(customerGroups)
+        validateCustomerGroupUniquenessById(customerGroups)
         return jsonArray.parseListOf { customerGroup ->
             parseCustomer(
                 customerGroup.jsonObject,
@@ -69,7 +69,7 @@ class CustomerParser {
         }
     }
 
-    private fun validateCustomerGroupUniqueness(customerGroups: List<CustomerGroup>) =
+    private fun validateCustomerGroupUniquenessById(customerGroups: List<CustomerGroup>) =
         require(customerGroups.distinctBy { it.id }.size == customerGroups.size)
 
     @Throws

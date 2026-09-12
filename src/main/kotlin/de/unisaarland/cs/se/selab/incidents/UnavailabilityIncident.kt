@@ -9,8 +9,8 @@ import de.unisaarland.cs.se.selab.food.Stock
  * Unavailablity Incident Class
  */
 class UnavailabilityIncident(
-    private val id: Id,
-    private val evening: Evening,
+    override val id: Id,
+    override var evening: Evening,
     private val ingredient: Ingredient,
     private var duration: Int,
     private val stock: Stock
@@ -19,11 +19,7 @@ class UnavailabilityIncident(
      * to check Overlapping
      */
     fun apply() {
-        if (duration == 0) {
-            stock.setIngredientToAvailable(ingredient)
-        }
-        stock.setIngredientToUnavailable(ingredient)
-        duration -= 1
+        //set duration in Int to stock <ingredient,<bool;int>>
     }
 
     /**

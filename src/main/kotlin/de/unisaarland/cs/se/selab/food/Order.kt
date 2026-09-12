@@ -7,7 +7,7 @@ import de.unisaarland.cs.se.selab.enums.DishStatus
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
- * The order that a customer orders. This class is used as a way to keep track of the status of an order aswell.
+ * The order that a customer orders. This class is used as a way to keep track of the status of an order as well.
  * It is created by the Fron Of House and then used
  */
 class Order(private val dishes: List<Dish>) {
@@ -32,14 +32,14 @@ class Order(private val dishes: List<Dish>) {
 
     // explicit getters for relevant functions
     /**
-     * returns Id of the order
+     * returns id of the order
      */
     fun getId(): Int {
         return id
     }
 
     /**
-     * returns the list of dishes inside of an order
+     * returns the list of dishes inside an order
      */
     fun getDishes(): List<Dish> {
         return dishes
@@ -112,7 +112,7 @@ class Order(private val dishes: List<Dish>) {
     }
 
     /**
-     * returns true if all the dishes in this order have been served or aborted
+     * returns true if 2 ticks have passed since the order has been placed
      */
     fun needsToBePartiallyServed(): Boolean {
         val currentTime = Time.tick

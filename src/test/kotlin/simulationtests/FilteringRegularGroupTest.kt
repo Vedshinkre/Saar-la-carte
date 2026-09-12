@@ -1,18 +1,18 @@
 package simulationtests
 
-import de.unisaarland.cs.se.selab.customer.CasualGroup
-import de.unisaarland.cs.se.selab.customer.CustomerGroup
-import de.unisaarland.cs.se.selab.customer.EventGroup
-import de.unisaarland.cs.se.selab.customer.FoodPreference
-import de.unisaarland.cs.se.selab.customer.RegularGroup
+import de.unisaarland.cs.se.selab.customer.*
 import de.unisaarland.cs.se.selab.enums.RatingLikelihood
 import de.unisaarland.cs.se.selab.enums.RestaurantType
 import de.unisaarland.cs.se.selab.enums.TableType
+import de.unisaarland.cs.se.selab.system.Simulation
+import de.unisaarland.cs.se.selab.system.SimulationConfig
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
 
 class FilteringRegularGroupTest {
+    private val simulation = Simulation(SimulationConfig())
+
     @Test
     fun `filtering returns regular groups in their original order`() {
         val firstRegularGroup = regularGroup(id = 1)
@@ -45,7 +45,7 @@ class FilteringRegularGroupTest {
             secondRegularGroup
         )
 
-        val result = customers.filterIsInstance<RegularGroup>()
+        val result = simulation.filterRegularGroups(customers)
 
         assertEquals(listOf(firstRegularGroup, secondRegularGroup), result)
         assertSame(firstRegularGroup, result[0])
@@ -68,7 +68,7 @@ class FilteringRegularGroupTest {
             )
         )
 
-        assertEquals(emptyList(), customers.filterIsInstance<RegularGroup>())
+        assertEquals(emptyList(), simulation.filterRegularGroups(customers))
     }
 
     private fun regularGroup(id: Int) = RegularGroup(
@@ -81,4 +81,5 @@ class FilteringRegularGroupTest {
         visitingPeriod = 2,
         restaurantId = 10
     )
+
 }

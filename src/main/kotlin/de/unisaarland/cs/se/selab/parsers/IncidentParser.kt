@@ -19,7 +19,7 @@ private const val ADAPTATION = "adaptation"
 private const val PACKAGING_VOLUME = "packagingVolume"
 private const val DURATION = "duration"
 private const val STAFF_TYPE = "staffType"
-private const val RESTAURANT_ID = "restaurantId"
+private const val RESTAURANT_ID = "restaurantId" // change "restaurantId" to "restaurant"
 private const val COOK_TYPE = "cookType"
 private const val NUMBER = "number"
 

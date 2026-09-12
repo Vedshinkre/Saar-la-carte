@@ -24,6 +24,10 @@ class Order(private val dishes: List<Dish>) {
         require(id >= 1)
     }
 
+    // TODO: some simple getters: getOrderedAt(), getFirstCookedAt(), areAllDishesServed()
+    // TODO: have a servingStarted bool attribute and these methods: hasServingStarted(), startServing(), markFullyServed()
+    // markServed() will set servedAt to currentTick if servedAt == null && areAllDishesServed()
+
     /** get dishes in the order that can be served this tick, ordered by basic dishes first then ascending recipe id */
     fun getServableDishes(): List<Dish> {
         val cookedDishes = dishes.filter { it.getStatus() == DishStatus.COOKED }

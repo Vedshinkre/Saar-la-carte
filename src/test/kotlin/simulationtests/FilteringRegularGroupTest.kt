@@ -1,17 +1,33 @@
 package simulationtests
 
-import de.unisaarland.cs.se.selab.customer.*
+import de.unisaarland.cs.se.selab.customer.CasualGroup
+import de.unisaarland.cs.se.selab.customer.CustomerGroup
+import de.unisaarland.cs.se.selab.customer.EventGroup
+import de.unisaarland.cs.se.selab.customer.FoodPreference
+import de.unisaarland.cs.se.selab.customer.RegularGroup
 import de.unisaarland.cs.se.selab.enums.RatingLikelihood
 import de.unisaarland.cs.se.selab.enums.RestaurantType
 import de.unisaarland.cs.se.selab.enums.TableType
+import de.unisaarland.cs.se.selab.food.Ingredient
+import de.unisaarland.cs.se.selab.food.Recipe
+import de.unisaarland.cs.se.selab.incidents.Incident
+import de.unisaarland.cs.se.selab.restaurant.Restaurant
+import de.unisaarland.cs.se.selab.restaurant.RestaurantStats
 import de.unisaarland.cs.se.selab.system.Simulation
 import de.unisaarland.cs.se.selab.system.SimulationConfig
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertIs
 import kotlin.test.assertSame
 
 class FilteringRegularGroupTest {
-    private val simulation = Simulation(SimulationConfig())
+    private val simulation = Simulation(
+        SimulationConfig(
+            foodData = emptyList<Ingredient>() to emptyList<Recipe>(),
+            restaurantData = emptyList<RestaurantStats>() to emptyList<Restaurant>(),
+            scenarioData = emptyList<Incident>() to emptyList<CustomerGroup>()
+        )
+    )
 
     @Test
     fun `filtering returns regular groups in their original order`() {
@@ -45,7 +61,7 @@ class FilteringRegularGroupTest {
             secondRegularGroup
         )
 
-        val result = simulation.filterRegularGroups(customers)
+        val result = filterRegularGroups(customers)
 
         assertEquals(listOf(firstRegularGroup, secondRegularGroup), result)
         assertSame(firstRegularGroup, result[0])
@@ -68,7 +84,7 @@ class FilteringRegularGroupTest {
             )
         )
 
-        assertEquals(emptyList(), simulation.filterRegularGroups(customers))
+        assertEquals(emptyList(), filterRegularGroups(customers))
     }
 
     private fun regularGroup(id: Int) = RegularGroup(
@@ -82,4 +98,10 @@ class FilteringRegularGroupTest {
         restaurantId = 10
     )
 
+    private fun filterRegularGroups(customers: List<CustomerGroup>): List<RegularGroup> {
+        val method = Simulation::class.java.getDeclaredMethod("filterRegularGroups", List::class.java)
+        method.isAccessible = true
+        val result = assertIs<List<*>>(method.invoke(simulation, customers))
+        return result.map { assertIs<RegularGroup>(it) }
+    }
 }

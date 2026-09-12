@@ -1,6 +1,10 @@
 package simulationtests
 
-import de.unisaarland.cs.se.selab.customer.*
+import de.unisaarland.cs.se.selab.customer.CasualGroup
+import de.unisaarland.cs.se.selab.customer.CustomerGroup
+import de.unisaarland.cs.se.selab.customer.EventGroup
+import de.unisaarland.cs.se.selab.customer.FoodPreference
+import de.unisaarland.cs.se.selab.customer.RegularGroup
 import de.unisaarland.cs.se.selab.enums.RatingLikelihood
 import de.unisaarland.cs.se.selab.enums.RestaurantType
 import de.unisaarland.cs.se.selab.enums.TableType
@@ -45,7 +49,7 @@ class FilteringRegularGroupTest {
             secondRegularGroup
         )
 
-        val result = simulation.filterRegularGroups(customers)
+        val result = filterRegularGroups(customers)
 
         assertEquals(listOf(firstRegularGroup, secondRegularGroup), result)
         assertSame(firstRegularGroup, result[0])
@@ -68,7 +72,7 @@ class FilteringRegularGroupTest {
             )
         )
 
-        assertEquals(emptyList(), simulation.filterRegularGroups(customers))
+        assertEquals(emptyList(), filterRegularGroups(customers))
     }
 
     private fun regularGroup(id: Int) = RegularGroup(
@@ -82,4 +86,10 @@ class FilteringRegularGroupTest {
         restaurantId = 10
     )
 
+    private fun filterRegularGroups(customers: List<CustomerGroup>): List<RegularGroup> {
+        val method = Simulation::class.java.getDeclaredMethod("filterRegularGroups", List::class.java)
+        method.isAccessible = true
+        val result = assertIs<List<*>>(method.invoke(simulation, customers))
+        return result.map { assertIs<RegularGroup>(it) }
+    }
 }

@@ -6,7 +6,6 @@ import de.unisaarland.cs.se.selab.customer.EventGroup
 import de.unisaarland.cs.se.selab.customer.RegularGroup
 import de.unisaarland.cs.se.selab.Time
 import de.unisaarland.cs.se.selab.incidents.Incident
-import de.unisaarland.cs.se.selab.parsers.ParserController
 import de.unisaarland.cs.se.selab.loggers.InitialAndPrepLogger
 import de.unisaarland.cs.se.selab.loggers.Logger
 import de.unisaarland.cs.se.selab.loggers.StatisticsLogger
@@ -83,7 +82,7 @@ class Simulation(simdata: SimulationConfig) {
      */
     private fun executePreparationPhase() {
         val evening = Time.getEvening()
-        TickStatusLogger.logEveningStarted(evening)
+        InitialAndPrepLogger.logPreparationStart()
 
         // Event groups actually visiting tonight (to be seated/served), as opposed to
         // getEventGroupsForReservation() below, which is about groups whose *future*

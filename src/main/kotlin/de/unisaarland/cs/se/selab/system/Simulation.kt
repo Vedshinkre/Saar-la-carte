@@ -1,22 +1,18 @@
 package de.unisaarland.cs.se.selab.system
 
-import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.customer.CasualGroup
 import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.customer.EventGroup
 import de.unisaarland.cs.se.selab.customer.RegularGroup
 import de.unisaarland.cs.se.selab.Time
 import de.unisaarland.cs.se.selab.incidents.Incident
+import de.unisaarland.cs.se.selab.parsers.ParserController
 import de.unisaarland.cs.se.selab.loggers.InitialAndPrepLogger
 import de.unisaarland.cs.se.selab.loggers.Logger
 import de.unisaarland.cs.se.selab.loggers.StatisticsLogger
 import de.unisaarland.cs.se.selab.loggers.TickStatusLogger
 import de.unisaarland.cs.se.selab.restaurant.BrowsingService
 import de.unisaarland.cs.se.selab.restaurant.Restaurant
-
-// This revision follows design_revised_sequence-2.pdf (the "single tick" sequence
-// diagram) rather than the earlier, higher-level spec text. A few call shapes changed
-// from the previous version of this file - noted inline below wherever it happened.
 
 /**
  * Class that runs the simulation in the correct order of events: incidents ->

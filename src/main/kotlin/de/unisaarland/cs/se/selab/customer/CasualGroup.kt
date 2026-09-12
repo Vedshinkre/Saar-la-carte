@@ -7,14 +7,15 @@ import de.unisaarland.cs.se.selab.enums.RatingLikelihood
 import de.unisaarland.cs.se.selab.enums.RestaurantType
 import de.unisaarland.cs.se.selab.enums.TableType
 
+/** Represents a casual customer group. */
 class CasualGroup(
-    private val id: Id,
-    val size: Int,
-    val tableType: TableType,
-    private val visitingAt: Tick,
-    private val foodPreference: List<FoodPreference>,
+    id: Id,
+    size: Int,
+    tableType: TableType,
+    visitingAt: Tick,
+    foodPreferences: List<FoodPreference>,
     val restaurantTypes: List<RestaurantType>,
     private val visitingEvenings: List<Evening>,
     private val deliveryDistance: Int,
     val ratingLikelihood: RatingLikelihood
-) : CustomerGroup(id, size, tableType, visitingAt, foodPreference)
+) : CustomerGroup(id, size, tableType, visitingAt, foodPreferences)

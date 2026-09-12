@@ -12,6 +12,8 @@ class StaffChangeIncident(
     private val restaurantId: Id,
     private val number: Int,
     private val staffType: StaffType,
-    private val cookType: CookType,
+    private val cookType: CookType?,
     private val restaurantStaff: RestaurantStaff
-) : Incident(id, evening)
+) : Incident(id, evening) {
+
+}

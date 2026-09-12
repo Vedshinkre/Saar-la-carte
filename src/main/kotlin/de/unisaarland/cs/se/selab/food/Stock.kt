@@ -1,3 +1,75 @@
 package de.unisaarland.cs.se.selab.food
 
-class Stock(private val ingredients: MutableSet<Ingredient>)
+/**
+ * Represents what ingredients are availabe and what's not .
+ */
+class Stock(
+    private val ingredients: MutableMap<Ingredient, Boolean>
+) {
+    // explicit constructor with only ingredients
+    constructor(ingredientList: List<Ingredient>) : this(mutableMapOf()) {
+        for (item in ingredientList) {
+            this.ingredients[item] = true
+        }
+    }
+
+    // functions with logic
+    // functions with logic
+    /**
+     * Explicit setter to set Ingredients to Unavailable .
+     */
+    fun setIngredientToUnavailable(ingredient: Ingredient) {
+        var found = false
+        for (key in ingredients.keys) {
+            if (key.getName() == ingredient.getName()) {
+                ingredients[key] = false
+                found = true
+                break // stop searching once found
+            }
+        }
+        // should never happen, but for safety reasons, as can change during simulation
+        require(found) {
+            "Cannot make ingredient '${ingredient.getName()}' unavailable because it does not exist in stock."
+        }
+    }
+
+    /**
+     * Explicit setter to set Ingredients to Available .
+     */
+    fun setIngredientToAvailable(ingredient: Ingredient) {
+        var found = false
+        for (key in ingredients.keys) {
+            if (key.getName() == ingredient.getName()) {
+                ingredients[key] = true
+                found = true
+                break // stop searching once found
+            }
+        }
+        // should never happen , but for safety reasons , as can change during simulation
+        require(found) {
+            "Cannot make ingredient '${ingredient.getName()}' available because it does not exist in stock."
+        }
+    }
+    /**
+     * Explicit getter to get Ingredients if it's in the stock else null  .
+     */
+     fun getIngredient(ingredient: Ingredient): Ingredient? {
+      for (key in ingredients.keys) {
+          if (key.getName() == ingredient.getName()) {
+              return key
+           }
+       }
+        return null
+      }
+    /**
+     * checks if the ingredient is available or not   .
+     */
+    fun isIngredientAvailable(ingredient: Ingredient): Boolean {
+        for ((key, value) in ingredients) {
+            if (key.getName() == ingredient.getName()) {
+                return value
+            }
+        }
+        return false
+    }
+}

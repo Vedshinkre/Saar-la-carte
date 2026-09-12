@@ -1,12 +1,12 @@
-package de.saar.la.carte.parsers
+package de.unisaarland.cs.se.selab.parsers
 
+import com.github.erosb.jsonsKema.JsonArray
 import de.unisaarland.cs.se.selab.customer.CustomerGroup
+import de.unisaarland.cs.se.selab.food.Ingredient
 import de.unisaarland.cs.se.selab.food.Recipe
 import de.unisaarland.cs.se.selab.food.Stock
 import de.unisaarland.cs.se.selab.incidents.Incident
 import de.unisaarland.cs.se.selab.restaurant.Restaurant
-import org.json.JSONObject
-import java.io.File
 
 /**
  * Skeleton implementation for ScenarioParser.
@@ -24,10 +24,16 @@ class ScenarioParser(
      * @return Pair containing list of parsed Incidents and list of parsed CustomerGroups,
      *         or null if parsing/validation fails.
      */
-    fun parseScenarioFile(filePath: String, restaurants: List<Restaurant>, recipes: List<Recipe>, stock: Stock): Pair<List<Incident>, List<CustomerGroup>> {
-
-        incidentParser.parseIncidentFile(filePath: String, stock: Stock, restaurants: List<Restaurant>)
-        customerParser.parseCustomerFile(filePath: String)
+    fun parseScenario(
+        incident: kotlinx.serialization.json.JsonArray,
+        customer: kotlinx.serialization.json.JsonArray,
+        restaurants: List<Restaurant>,
+        recipes: List<Recipe>,
+        ingredients: List<Ingredient>,
+        stock: Stock
+    ): Pair<List<Incident>, List<CustomerGroup>> {
+        incidentParser.parseIncidentFile(incident, ingredients, stock, recipes, restaurants,)
+        customerParser.parseCustomerFile(customer, restaurants)
 
         return Pair(incidents, customerGroups)
     }

@@ -1,8 +1,6 @@
 package de.unisaarland.cs.se.selab
 
 import de.unisaarland.cs.se.selab.enums.LogLevel
-import de.unisaarland.cs.se.selab.Time
-import de.unisaarland.cs.se.selab.loggers.InitialAndPrepLogger
 import de.unisaarland.cs.se.selab.loggers.Logger
 import de.unisaarland.cs.se.selab.loggers.StatisticsLogger
 import de.unisaarland.cs.se.selab.parsers.ParserController
@@ -39,7 +37,7 @@ fun main(args: Array<String>) {
 }
 
 /**
- * Parses the raw CLI [args] into a [CliInfo] instance.
+ * Parses the raw CLI [args] into a [Cliinfo] instance.
  */
 private fun parseCommandLineArgs(args: Array<String>): Cliinfo {
     val parser = ArgParser("SaarLaCarte cli parser")

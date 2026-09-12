@@ -37,7 +37,7 @@ class UnavailabilityIncident(
     }
 
     /**
-     * to put Error in case of conficting Durations
+     * to put Error in case of tconflicting Durations
      */
 
     fun conflictMessage(other: UnavailabilityIncident): String =

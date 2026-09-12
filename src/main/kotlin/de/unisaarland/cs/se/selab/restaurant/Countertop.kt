@@ -47,4 +47,28 @@ class Countertop(
         }
         return availableRecipes
     }
+
+    /**
+     * updates the inventory inside the pantry after a recipe was chosen to order
+     */
+    fun reserveIngredients(recipe: Recipe) {
+        val ingredients = recipe.getIngredients()
+        for (ingredient in ingredients) {
+            var amount = ingredient.value
+            val packages = pantry.getPackagesForIngredient(ingredient.key)
+            val packageIterator = packages.iterator()
+            while (amount != 0 && packageIterator.hasNext()) {
+                val pkg = packageIterator.next()
+                val removedAmount = pkg.removeAmount(amount)
+                amount -= removedAmount
+            }
+        }
+    }
+
+    /**
+     * adds the order to the Order queue (shared via reference with the kitchen)
+     */
+    fun addOrder(newOrder: Order) {
+        orderQueue.add(newOrder)
+    }
 }

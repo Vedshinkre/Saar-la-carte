@@ -15,26 +15,22 @@ class IngredientPackage(
     constructor(ingredient: Ingredient) : this(
         ingredient = ingredient,
         amount = ingredient.getPackagingVolume(),
-        expiryDate = 1 + ingredient.getBestBefore(), // TODO ONCE TIME IS IMPLEMENTED
+        expiryDate = Time.evening + ingredient.getBestBefore(), // TODO ONCE TIME IS IMPLEMENTED
         isOpen = false
     )
-
     // explicit getters for relevant functions
     /** Explicit getter for the Ingredient in the Package */
     fun getIngredient(): Ingredient {
         return ingredient
     }
-
     /** Explicit getter to get amount of ingredient in the package */
     fun getCurrentAmount(): Int {
         return amount
     }
-
     /** Explicit getter to tell if the packet is open */
     fun isOpen(): Boolean {
         return isOpen
     }
-
     /** Explicit getter to get the expiry date of the Ingredient */
     fun getExpiryDate(): Int {
         return expiryDate
@@ -45,7 +41,6 @@ class IngredientPackage(
     fun hasExpired(): Boolean {
         return Time.evening >= this.expiryDate
     }
-
     /** we remove quantity sized data from amount if it is possible  */
     fun removeAmount(quantity: Int): Int {
         // we remove quantity sized data from amount if it is possible ,

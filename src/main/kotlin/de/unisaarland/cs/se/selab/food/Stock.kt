@@ -5,6 +5,14 @@ package de.unisaarland.cs.se.selab.food
  */
 class Stock(
     private val ingredients: MutableMap<Ingredient, Boolean>
+    /* TODO
+    We need a way to keep track for how long an ingredient is unavailable.
+    Easiest way is to change the map to <Ingredient, Pair<Boolean, Int>>
+    The default for an ingredient would be (true, 0) and then the incident would change it to (false, duration)
+    We also need a way to decrement and change the availability of an ingredient once the duration has passed.
+    An idea would be to have isIngredientAvailable() decrement the counter before it returns false
+     */
+
 ) {
     // explicit constructor with only ingredients
     constructor(ingredientList: List<Ingredient>) : this(mutableMapOf()) {

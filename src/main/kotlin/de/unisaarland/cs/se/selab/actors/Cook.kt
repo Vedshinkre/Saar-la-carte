@@ -1,6 +1,5 @@
 package de.unisaarland.cs.se.selab.actors
 
-
 import de.unisaarland.cs.se.selab.enums.CookType
 import de.unisaarland.cs.se.selab.enums.DishStatus
 import de.unisaarland.cs.se.selab.food.Dish
@@ -8,15 +7,7 @@ import de.unisaarland.cs.se.selab.food.Order
 import de.unisaarland.cs.se.selab.food.Recipe
 import kotlin.math.ceil
 
-/**
- * Represents the output of function cook .
- */
-// rather than outputting tuple for the cook function , we return dataclass object
-data class CookResult(
-    val chefWasActive: Boolean,
-    val totalAssignedMeals: Int,
-    val finishedThisTick: Int
-)
+
 private const val MINUTES_PER_TICK = 10.0
 /**
  * Represents the cook in a kitchen .
@@ -82,7 +73,7 @@ class Cook(
         return assignedDishes
     }
     // functions with logic
-     /**
+    /**
      * function to start cooking with .
      */
     fun startCooking(
@@ -144,4 +135,3 @@ class Cook(
     }
 
 }
-

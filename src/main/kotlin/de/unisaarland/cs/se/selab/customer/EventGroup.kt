@@ -19,4 +19,5 @@ class EventGroup(
 ) : CustomerGroup(id, size, tableType, visitingAt, foodPreferences) {
     private var currentRestaurantType: RestaurantType? = null
     private var failedReservations: Int = 0
+    // faildeReservations should exist only for EventGroups it seems from the spec
 }

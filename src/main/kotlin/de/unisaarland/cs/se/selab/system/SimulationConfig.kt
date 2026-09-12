@@ -11,8 +11,7 @@ import de.unisaarland.cs.se.selab.restaurant.RestaurantStats
  * Class that contains the data of the whole simulation
  * */
 
-class SimulationConfig() {
-    constructor(foodData: Any, restaurantData: Any, scenarioData: Any) : this()
+class SimulationConfig {
 
     var restaurants: MutableList<Restaurant> = mutableListOf<Restaurant>()
     var customers: MutableList<CustomerGroup> = mutableListOf<CustomerGroup>()

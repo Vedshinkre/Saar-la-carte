@@ -3,12 +3,11 @@ package de.unisaarland.cs.se.selab.actors
 import de.unisaarland.cs.se.selab.enums.CookType
 import de.unisaarland.cs.se.selab.enums.DishStatus
 import de.unisaarland.cs.se.selab.food.Dish
-import de.unisaarland.cs.se.selab.food.Order
 import de.unisaarland.cs.se.selab.food.Recipe
 import kotlin.math.ceil
 
-
 private const val MINUTES_PER_TICK = 10.0
+
 /**
  * Represents the cook in a kitchen .
  */
@@ -20,11 +19,11 @@ class Cook(
     private var currentRecipe: Recipe?,
     private var remainingTicks: Int,
     private var isCooking: Boolean
-){
+) {
     // Internal attribute to store the list of dishes to be worked on
     private val assignedDishes = mutableListOf<Dish>()
 
-    //explicit constructor with only Cook type
+    // explicit constructor with only Cook type
     constructor(type: CookType) : this(
         id = null,
         orderId = null,
@@ -46,18 +45,21 @@ class Cook(
     fun getCookType(): CookType {
         return type
     }
+
     /**
      *explicit getter to get if the chef is cooking .
      */
-    fun getIsCooking():  Boolean{
+    fun getIsCooking(): Boolean {
         return isCooking
     }
+
     /**
      *explicit getter to get id to the cook .
      */
-    fun getId():Int? {
+    fun getId(): Int? {
         return id
     }
+
     /**
      *explicit setter to set id to the cook .
      */
@@ -66,6 +68,7 @@ class Cook(
             id = givenId
         }
     }
+
     /**
      * explicit getter of the dishes hat the cook has to cook .
      */
@@ -80,8 +83,8 @@ class Cook(
         recipe: Recipe,
         dishes: List<Dish>,
         baseOrderId: Int,
-        ordersHavingSameRecipe: List<Order>
-    ): Unit{
+        ordersHavingSameRecipe: MutableList<Int>
+    ) {
         currentRecipe = recipe
         orderId = baseOrderId
         isCooking = true
@@ -102,6 +105,7 @@ class Cook(
             dish.setStatus(DishStatus.COOKING)
         }
     }
+
     /**
      * logs the cook status and sets dishes to cooked if finished cooking .
      */
@@ -111,7 +115,7 @@ class Cook(
         }
 
         val totalAssignedMeals = assignedDishes.size
-        if (remainingTicks == 0){
+        if (remainingTicks == 0) {
             isCooking = false
         }
         if (remainingTicks > 0) {
@@ -133,5 +137,4 @@ class Cook(
 
         return CookResult(true, totalAssignedMeals, 0)
     }
-
 }

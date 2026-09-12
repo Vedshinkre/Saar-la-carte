@@ -5,8 +5,11 @@ import de.unisaarland.cs.se.selab.enums.MeasurementUnit
 import de.unisaarland.cs.se.selab.enums.RestaurantType
 import de.unisaarland.cs.se.selab.food.Ingredient
 import de.unisaarland.cs.se.selab.food.Recipe
-import kotlinx.serialization.json.*
-
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.int
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 
 private const val KEY_NAME = "name"
 private const val KEY_UNIT = "unit"
@@ -20,20 +23,16 @@ class FoodParser {
     /**
      * Function to call Parse Ingredients and Recipes accordingly   .
      */
-    fun parse(ingredientsArray: JsonArray, recipesArray: JsonArray): Pair<List<Ingredient>, List<Recipe>>? {
-        try {
-            // Parse Ingredients
-            val ingredientsList = parseIngredients(ingredientsArray)
+    fun parse(ingredientsArray: JsonArray, recipesArray: JsonArray): Pair<List<Ingredient>, List<Recipe>> {
+        // Parse Ingredients
+        val ingredientsList = parseIngredients(ingredientsArray)
 
-            // Parse Recipes
-            val recipesList = parseRecipes(recipesArray, ingredientsList)
+        // Parse Recipes
+        val recipesList = parseRecipes(recipesArray, ingredientsList)
 
-            return Pair(ingredientsList, recipesList)
-        } catch (e: IllegalArgumentException) {
-            println("Logical Validation Error: ${e.message}")
-            return null
-        }
+        return Pair(ingredientsList, recipesList)
     }
+
     /**
      * Function to cParse Ingredients    .
      */
@@ -78,6 +77,7 @@ class FoodParser {
 
         return parsedIngredients
     }
+
     /**
      * Function to cross validate Ingredient    .
      */
@@ -95,6 +95,7 @@ class FoodParser {
         // if all checks pass
         return true
     }
+
     /**
      * Function to check uniqueness of Ingredient    .
      */
@@ -107,6 +108,7 @@ class FoodParser {
         }
         return true
     }
+
     /**
      * Function to parse recipes .
      */
@@ -169,6 +171,7 @@ class FoodParser {
 
         return parsedRecipes
     }
+
     /**
      * Function to cross validate Recipe    .
      */
@@ -182,6 +185,7 @@ class FoodParser {
 
         return true
     }
+
     /**
      * Function to check uniqueness of recipe    .
      */
@@ -209,6 +213,7 @@ class FoodParser {
         // completely unique
         return true
     }
+
     /**
      * Function to check whether the ingredient exists in the available ones   .
      */

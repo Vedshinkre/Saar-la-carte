@@ -13,7 +13,7 @@ class Recipe(
     private val cookType: List<CookType>,
     private val ingredients: Map<Ingredient, Int>,
     private val basicDishFor: RestaurantType?
-){
+) {
     // explicit getters for relevant functions
     /**
      *explicit getter for ID.
@@ -21,30 +21,35 @@ class Recipe(
     fun getId(): Int {
         return id
     }
+
     /**
      *explicit getter for Ingredients in a recipe.
      */
     fun getIngredients(): Map<Ingredient, Int> {
         return ingredients
     }
+
     /**
      *explicit getter for Cook Duration of a recipe.
      */
     fun getDuration(): Int {
         return duration
     }
+
     /**
      *explicit getter for allowed Cooks to cook the recipe.
      */
     fun getCookTypes(): List<CookType> {
         return cookType
     }
+
     /**
      *explicit getter to get the recipe name.
      */
     fun getName(): String {
         return name
     }
+
     /**
      *explicit getter to get which Restaurant type the recipe is Basic For.
      */
@@ -52,4 +57,3 @@ class Recipe(
         return basicDishFor
     }
 }
-

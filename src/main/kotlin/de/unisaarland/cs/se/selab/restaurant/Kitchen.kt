@@ -1,14 +1,13 @@
 package de.unisaarland.cs.se.selab.restaurant
 
-
 import de.unisaarland.cs.se.selab.actors.Cook
 import de.unisaarland.cs.se.selab.enums.CookType
 import de.unisaarland.cs.se.selab.enums.DishStatus
 import de.unisaarland.cs.se.selab.enums.RestaurantType
 import de.unisaarland.cs.se.selab.food.Dish
+import de.unisaarland.cs.se.selab.food.Ingredient
 import de.unisaarland.cs.se.selab.food.Order
 import de.unisaarland.cs.se.selab.food.Recipe
-
 
 private const val EXEC = 1
 private const val SOUS = 2
@@ -30,20 +29,20 @@ class Kitchen(
     private var finishedNumberOfMeals: Int,
     private var numberOfCookedMeals: Int,
     private var restaurantType: RestaurantType
-){  // INTERNAL ATTRIBUTE: The ticket dispenser for Cook IDs
+) { // INTERNAL ATTRIBUTE: The ticket dispenser for Cook IDs
     private var nextAvailableCookId: Int = 1
 
-    //explicit constructor with only list of cooks, pantry and orderQueue
-    constructor(cooks: List<Cook>, pantry: Pantry, orderQueue: MutableList<Order>,restaurantType: RestaurantType) :
-            this(
-                cooks = cooks,
-                pantry = pantry,
-                orderQueue = orderQueue,
-                restaurantType = restaurantType,
-                readyDishes = mutableListOf(),
-                finishedNumberOfMeals = 0,
-                numberOfCookedMeals = 0
-            )
+    // explicit constructor with only list of cooks, pantry and orderQueue
+    constructor(cooks: List<Cook>, pantry: Pantry, orderQueue: MutableList<Order>, restaurantType: RestaurantType) :
+        this(
+            cooks = cooks,
+            pantry = pantry,
+            orderQueue = orderQueue,
+            restaurantType = restaurantType,
+            readyDishes = mutableListOf(),
+            finishedNumberOfMeals = 0,
+            numberOfCookedMeals = 0
+        )
     // sorting function
     /**
      * Sorts the cooks ONLY on the basis of their ids, null id is put at last .
@@ -61,6 +60,7 @@ class Kitchen(
 
         return sortedCooks
     }
+
     /**
      * Sorts the recipes first by basicness first and then by id  .
      */
@@ -97,11 +97,12 @@ class Kitchen(
 
         return finalSortedList
     }
+
     /**
      * Reset everything in the end of the evening with the cooks   .
      */
     // functions with logic
-    fun resetCooks():Unit{
+    fun resetCooks() {
         // TODO skerdi reset everything in each cook at the end of the evening
     }
 
@@ -126,7 +127,6 @@ class Kitchen(
 
             // check if we already have this recipe in our list
             for (item in uniqueRecipes) {
-
                 if (item.getName() == currentRecipe.getName()) {
                     isAlreadyAdded = true
                     break // Stop searching as we already have this recipe
@@ -141,6 +141,7 @@ class Kitchen(
 
         return uniqueRecipes
     }
+
     /**
      * gets number of servable dishes in that tick .
      */
@@ -159,6 +160,7 @@ class Kitchen(
 
         return servableCount
     }
+
     /**
      * Choose the perfect cook for a given recipe.
      */
@@ -187,6 +189,7 @@ class Kitchen(
 
         return chosenCook
     }
+
     /**
      * Gives every cook type a rank for selection purposes.
      */
@@ -257,5 +260,239 @@ class Kitchen(
         return chosenCook
     }
 
+    /**
+     * Collects all dishes from an order that match the given recipe.
+     */
+    fun collectRecipes(recipe: Recipe, order: Order): Pair<Int, List<Dish>> {
+        val matchingDishes = mutableListOf<Dish>()
 
+        // Iterate through all dishes in the order
+        for (dish in order.getDishes()) { // TODO WAITING FOR ORDER IMPLEMENTATION
+            // Match the recipe by its unique ID
+            val dishRecipe = dish.getRecipe()
+            if (dishRecipe.getId() == recipe.getId()) {
+                matchingDishes.add(dish)
+            }
+        }
+
+        return Pair(order.getId(), matchingDishes) // TODO WAITING FOR ORDER IMPLEMENTATION
+    }
+
+    /**
+     * Creates the total shopping list for the evening.
+     */
+    fun createShoppingList(
+        ingredientsFromHistory: Map<Recipe, Int>,
+        frontCapacity: Int,
+        menu: List<Recipe>
+    ): Map<Ingredient, Int> {
+        val shoppingList = mutableMapOf<Ingredient, Int>()
+
+        //  ingredients from History of orders (regulars & events)
+        for ((recipe, count) in ingredientsFromHistory) {
+            addRecipeToShoppingList(recipe, count, shoppingList)
+        }
+
+        // estimated ingredients for remaining front of house seats
+        val estimatedVariable = (frontCapacity + 9) / 10 // can also be simulated by ceil function,but need Int
+
+        if (estimatedVariable > 0) {
+            for (recipe in menu) {
+                addRecipeToShoppingList(recipe, estimatedVariable, shoppingList)
+            }
+        }
+
+        return shoppingList
+    }
+
+    /**
+     * Helper function to multiply and add ingredients to the map for dishes from order history(detekt tests).
+     */
+    private fun addRecipeToShoppingList(
+        recipe: Recipe,
+        multiplier: Int,
+        shoppingList: MutableMap<Ingredient, Int>
+    ) {
+        val recipeIngredients = recipe.getIngredients()
+
+        for ((ingredient, amount) in recipeIngredients) {
+            val amountToAdd = amount * multiplier
+
+            if (shoppingList.containsKey(ingredient)) {
+                val currentTotal = shoppingList[ingredient] ?: 0
+                shoppingList[ingredient] = currentTotal + amountToAdd
+            } else {
+                // ingredient not in map yet, so we add amount
+                shoppingList[ingredient] = amountToAdd
+            }
+        }
+    }
+
+    /**
+     * Plans and procures the ingredients required for the upcoming evening.
+     */
+    fun planForIngredients(
+        orderHistory: List<Order>,
+        frontCapacity: Int,
+        menu: List<Recipe>,
+        eventGroupFavDishes: List<Pair<Recipe, Int>>
+    ) {
+        //  Throw all expired ingredients from the pantry
+        pantry.throwExpiredIngredients()
+
+        // Calculate known order history from Regulars and Events
+        val knownOrderHistory = mutableMapOf<Recipe, Int>()
+
+        // Add history from Regular groups
+        for (order in orderHistory) {
+            // TODO WAITING FOR ORDER IMPLEMENTATION
+
+            for (dish in order.getDishes()) {
+                val recipe = dish.getRecipe()
+
+                if (knownOrderHistory.containsKey(recipe)) {
+                    val currentCount = knownOrderHistory[recipe] ?: 0
+                    knownOrderHistory[recipe] = currentCount + 1
+                } else {
+                    knownOrderHistory[recipe] = 1
+                }
+            }
+        }
+
+        // pre-ordered favorite dishes from Event groups
+        for (eventPair in eventGroupFavDishes) {
+            val recipe = eventPair.first
+            val numberOfCustomers = eventPair.second
+
+            if (knownOrderHistory.containsKey(recipe)) {
+                val currentCount = knownOrderHistory[recipe] ?: 0
+                knownOrderHistory[recipe] = currentCount + numberOfCustomers
+            } else {
+                knownOrderHistory[recipe] = numberOfCustomers
+            }
+        }
+
+        //  final shopping list
+        val shoppingList = createShoppingList(knownOrderHistory, frontCapacity, menu)
+
+        //  the pantry checks inventory and procure missing ingredients
+        pantry.ensureQuantities(shoppingList)
+    }
+
+    /**
+     * Processes all cooking activities for the current tick.
+     */
+    fun processCooking() {
+        cleanOrderQueue()
+        assignRecipesToCooks()
+        executeCookingStep()
+    }
+
+    /**
+     * Removes orders that are fully served or aborted.
+     */
+    private fun cleanOrderQueue() {
+        // loop through the order queue
+        var i = orderQueue.size - 1
+        while (i >= 0) {
+            val currentOrder = orderQueue[i]
+            // TODO WAITING FOR ORDER IMPLEMENTATION:
+            if (currentOrder.areAllDishesServedOrAborted()) {
+                orderQueue.removeAt(i)
+            }
+            i--
+        }
+    }
+
+    /**
+     * Find uncooked recipes and assigns them to eligible cooks.
+     */
+    private fun assignRecipesToCooks() {
+        val uncookedDishes = mutableListOf<Dish>()
+
+        // get all uncooked dishes from the orders in the order queue
+        for (order in orderQueue) {
+            // TODO WAITING FOR ORDER IMPLEMENTATION:
+            for (dish in order.getUncookedDishes()) {
+                uncookedDishes.add(dish)
+            }
+        }
+
+        if (uncookedDishes.isEmpty()) {
+            return
+        }
+
+        //  extract unique recipes and sort them
+        val uniqueRecipes = getUniqueRecipes(uncookedDishes)
+        val sortedRecipes = sortRecipesByBasicnessAndId(uniqueRecipes)
+
+        // assign each recipe to an eligible cook
+        for (recipe in sortedRecipes) {
+            val chosenCook = chooseCook(recipe)
+
+            if (chosenCook != null) {
+                findDishesForRecipe(recipe, chosenCook)
+            }
+        }
+    }
+
+    /**
+     * Helper to collect all dishes of a specific recipe across all orders and assign to a cook.
+     */
+    private fun findDishesForRecipe(recipe: Recipe, cook: Cook) {
+        val allDishes = mutableListOf<Dish>()
+        val allOrderIds = mutableListOf<Int>()
+        var baseOrderId = -1
+
+        for (order in orderQueue) {
+            val (orderId, matchingDishes) = collectRecipes(recipe, order)
+
+            if (matchingDishes.isNotEmpty()) {
+                for (dish in matchingDishes) {
+                    allDishes.add(dish)
+                }
+                allOrderIds.add(orderId)
+
+                // The first order we find becomes the base order ID
+                if (baseOrderId == -1) {
+                    baseOrderId = orderId
+                }
+            }
+        }
+
+        if (allDishes.isNotEmpty()) {
+            cook.startCooking(recipe, allDishes, baseOrderId, allOrderIds)
+            // TODO: kitchenLogger.logKitchenDishAssignment(...)
+        }
+    }
+
+    /**
+     * Tells all cooks to cook for the tick and accumulates their statistics.
+     */
+    private fun executeCookingStep() {
+        var activeCooks = 0
+        var totalMeals = 0
+        var finishedMeals = 0
+
+        val sortedCooks = getCooksSorted()
+
+        for (cook in sortedCooks) {
+            // access the output of cookDishes()
+            val (chefWasActive, totalAssigned, finished) = cook.cookDishes()
+
+            if (chefWasActive) {
+                activeCooks += 1
+            }
+            totalMeals += totalAssigned
+            finishedMeals += finished
+
+            if (finished > 0) {
+                // TODO: kitchenLogger.logKitchenMealCooked(...)
+                // (You will extract the dish name and tick duration here for the logger)
+            }
+        }
+
+        val servableMeals = getServableDishesNumber()
+        // TODO: kitchenLogger.logKitchenStatus(activeCooks, totalMeals, finishedMeals, servableMeals)
+    }
 }

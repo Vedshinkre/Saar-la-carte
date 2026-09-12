@@ -4,33 +4,26 @@ package de.unisaarland.cs.se.selab.food
  * Represents what ingredients are available and what's not .
  */
 class Stock(
-    private val ingredients: MutableMap<Ingredient, Boolean>
-    /* TODO
-    We need a way to keep track for how long an ingredient is unavailable.
-    Easiest way is to change the map to <Ingredient, Pair<Boolean, Int>>
-    The default for an ingredient would be (true, 0) and then the incident would change it to (false, duration)
-    We also need a way to decrement and change the availability of an ingredient once the duration has passed.
-    An idea would be to have isIngredientAvailable() decrement the counter before it returns false
-     */
-
+    // 0 means available, > 0 means the number of evenings it remains unavailable
+    private val ingredients: MutableMap<Ingredient, Int>
 ) {
     // explicit constructor with only ingredients
     constructor(ingredientList: List<Ingredient>) : this(mutableMapOf()) {
         for (item in ingredientList) {
-            this.ingredients[item] = true
+            //  default value  0 as ingredient is fully available
+            this.ingredients[item] = 0
         }
     }
 
     // functions with logic
-    // functions with logic
     /**
      * Explicit setter to set Ingredients to Unavailable .
      */
-    fun setIngredientToUnavailable(ingredient: Ingredient) {
+    fun setIngredientToUnavailable(ingredient: Ingredient, duration: Int) {
         var found = false
         for (key in ingredients.keys) {
             if (key.getName() == ingredient.getName()) {
-                ingredients[key] = false
+                ingredients[key] = duration
                 found = true
                 break // stop searching once found
             }
@@ -48,7 +41,7 @@ class Stock(
         var found = false
         for (key in ingredients.keys) {
             if (key.getName() == ingredient.getName()) {
-                ingredients[key] = true
+                ingredients[key] = 0
                 found = true
                 break // stop searching once found
             }
@@ -77,9 +70,26 @@ class Stock(
     fun isIngredientAvailable(ingredient: Ingredient): Boolean {
         for ((key, value) in ingredients) {
             if (key.getName() == ingredient.getName()) {
-                return value
+                if (value == 0) {
+                    return true
+                } else {
+                    return false
+                }
             }
         }
         return false
+    }
+
+    /**
+     * Decrements the duration of unavailability by 1 for all affected ingredients.
+     * Should be called once during the preparation phase of each evening.
+     */
+    fun decrementUnavailableDurations() {
+        for ((key, value) in ingredients) {
+            if (value > 0) {
+                val newDuration = value - 1
+                ingredients[key] = newDuration
+            }
+        }
     }
 }

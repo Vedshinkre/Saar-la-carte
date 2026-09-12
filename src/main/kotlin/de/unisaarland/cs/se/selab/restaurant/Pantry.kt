@@ -9,11 +9,13 @@ import de.unisaarland.cs.se.selab.food.Supplier
  * Represents the pantry of the restaurant .
  */
 class Pantry(
-    private val inventory: MutableList<IngredientPackage>, private val supplier: Supplier
+    private val inventory: MutableList<IngredientPackage>,
+    private val supplier: Supplier
 ) {
-    //explicit constructor with only stock used to create the supplier
+    // explicit constructor with only stock used to create the supplier
     constructor(stock: Stock) : this(
-        inventory = mutableListOf<IngredientPackage>(), supplier = Supplier(stock)
+        inventory = mutableListOf<IngredientPackage>(),
+        supplier = Supplier(stock)
     )
     // functions with logic
     /**
@@ -37,6 +39,7 @@ class Pantry(
             return totalAvailable
         }
     }
+
     /**
      *  Return a list of all packages in the pantry matching the given ingredient.
      */
@@ -51,11 +54,11 @@ class Pantry(
         }
         return matchingPackages
     }
+
     /**
      *  Removes  packages that have expired based on the current evening.
      */
-    fun throwExpiredIngredients(): Unit {
-
+    fun throwExpiredIngredients() {
         val activePackages = mutableListOf<IngredientPackage>()
 
         for (pkg in inventory) {
@@ -68,12 +71,12 @@ class Pantry(
         inventory.clear()
         inventory.addAll(activePackages)
     }
+
     /**
      *  Check current Stock and procure new packages from the supplier if needed .
      */
 
     fun ensureQuantities(ingredientsToEnsure: Map<Ingredient, Int>) {
-
         throwExpiredIngredients()
 
         for ((ingredient, requiredAmount) in ingredientsToEnsure) {
@@ -141,6 +144,7 @@ class Pantry(
             amountNeeded -= removed
         }
     }
+
     /**
      * Remove desired amount of ingredients from pantry .
      */
@@ -150,4 +154,3 @@ class Pantry(
         }
     }
 }
-

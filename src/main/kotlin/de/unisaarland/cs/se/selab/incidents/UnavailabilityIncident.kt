@@ -19,11 +19,7 @@ class UnavailabilityIncident(
      * to check Overlapping
      */
     fun apply() {
-        if (duration == 0) {
-            stock.setIngredientToAvailable(ingredient)
-        }
-        stock.setIngredientToUnavailable(ingredient)
-        duration -= 1
+        //set duration in Int to stock <ingredient,<bool;int>>
     }
 
     /**

@@ -1,7 +1,7 @@
 package de.unisaarland.cs.se.selab.food
 
 /**
- * Represents what ingredients are availabe and what's not .
+ * Represents what ingredients are available and what's not .
  */
 class Stock(
     private val ingredients: MutableMap<Ingredient, Boolean>
@@ -50,17 +50,19 @@ class Stock(
             "Cannot make ingredient '${ingredient.getName()}' available because it does not exist in stock."
         }
     }
+
     /**
      * Explicit getter to get Ingredients if it's in the stock else null  .
      */
-     fun getIngredient(ingredient: Ingredient): Ingredient? {
-      for (key in ingredients.keys) {
-          if (key.getName() == ingredient.getName()) {
-              return key
-           }
-       }
+    fun getIngredient(ingredient: Ingredient): Ingredient? {
+        for (key in ingredients.keys) {
+            if (key.getName() == ingredient.getName()) {
+                return key
+            }
+        }
         return null
-      }
+    }
+
     /**
      * checks if the ingredient is available or not   .
      */

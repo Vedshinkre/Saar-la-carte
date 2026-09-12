@@ -24,22 +24,25 @@ class Dish(
     fun getRecipe(): Recipe {
         return recipe
     }
+
     /**
      * explicit getter to get if the recipe is basic or not.
      */
     fun getIsBasic(): Boolean {
         return isBasic
     }
+
     /**
      * explicit getter to get the dish status.
      */
     fun getStatus(): DishStatus {
         return status
     }
+
     /**
      * explicit setter to change the status of the dish.
      */
-    fun setStatus(newStatus: DishStatus): Unit {
+    fun setStatus(newStatus: DishStatus) {
         status = newStatus
     }
 
@@ -47,7 +50,7 @@ class Dish(
     /**
      * to update eating action per tick.
      */
-    fun updateEating(): Unit {
+    fun updateEating() {
         // If the progress hits 0, the guest has finished eating the dish
         if (eatingProgress == 0) {
             status = DishStatus.EATEN

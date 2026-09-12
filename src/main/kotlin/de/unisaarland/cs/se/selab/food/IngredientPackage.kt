@@ -43,7 +43,7 @@ class IngredientPackage(
     // functions with logic
     /** tells if the ingredients is expired or not  */
     fun hasExpired(): Boolean {
-        return Time.evening >= this.expiryDate //  TODO ONCE TIME IS IMPLEMENTED
+        return Time.evening >= this.expiryDate
     }
 
     /** we remove quantity sized data from amount if it is possible  */

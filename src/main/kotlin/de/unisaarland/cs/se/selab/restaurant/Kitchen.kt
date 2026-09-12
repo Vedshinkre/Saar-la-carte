@@ -9,14 +9,13 @@ import de.unisaarland.cs.se.selab.food.Ingredient
 import de.unisaarland.cs.se.selab.food.Order
 import de.unisaarland.cs.se.selab.food.Recipe
 
-private const val EXEC = 1
-private const val SOUS = 2
-private const val TOURNANT = 3
-private const val SAUCE = 4
-private const val FISH = 5
-private const val ROAST = 6
-private const val VEGETABLE = 7
-private const val PASTRY = 8
+private const val SOUS = 1
+private const val TOURNANT = 2
+private const val SAUCE = 3
+private const val FISH = 4
+private const val ROAST = 5
+private const val VEGETABLE = 6
+private const val PASTRY = 7
 
 /**
  * Kitchen class where all the cooking and chef handling happens .
@@ -196,7 +195,6 @@ class Kitchen(
     // Helper to give the cook types rank (1 is highest rank, 8 is lowest rank)
     private fun getNumericalRank(type: CookType): Int {
         return when (type) {
-            CookType.EXEC -> EXEC
             CookType.SOUS -> SOUS
             CookType.TOURNANT -> TOURNANT
             CookType.SAUCE -> SAUCE

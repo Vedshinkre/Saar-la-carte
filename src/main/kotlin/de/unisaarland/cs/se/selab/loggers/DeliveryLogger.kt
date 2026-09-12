@@ -17,8 +17,8 @@ object DeliveryLogger {
     ) {
         Logger.log(
             LogLevel.INFO,
-            "Delivery Preparation (R ${Logger.restaurantID}): Driver $driverId\n" +
-                "prepares driving order $orderId to group $groupId, which will take\n" +
+            "Delivery Preparation (R ${Logger.restaurantID}): Driver $driverId" +
+                "prepares driving order $orderId to group $groupId, which will take" +
                 "$ticksRequiredToDeliver ticks."
         )
     }
@@ -33,7 +33,7 @@ object DeliveryLogger {
     ) {
         Logger.log(
             LogLevel.DEBUG,
-            "Delivery Driving (R ${Logger.restaurantID}): Driver $driverId drove\n" +
+            "Delivery Driving (R ${Logger.restaurantID}): Driver $driverId drove" +
                 "$distanceCovered km and needs $ticksRequiredToDelivers more ticks."
         )
     }
@@ -48,7 +48,7 @@ object DeliveryLogger {
     ) {
         Logger.log(
             LogLevel.INFO,
-            "Delivery Arrival (R ${Logger.restaurantID}): Driver $driverId arrived\n" +
+            "Delivery Arrival (R ${Logger.restaurantID}): Driver $driverId arrived" +
                 "at group $groupId with order $orderId."
         )
     }
@@ -63,7 +63,7 @@ object DeliveryLogger {
     ) {
         Logger.log(
             LogLevel.IMPORTANT,
-            "Delivery Finished (R ${Logger.restaurantID}): Driver $driverId\n" +
+            "Delivery Finished (R ${Logger.restaurantID}): Driver $driverId" +
                 "gave delivery of order $orderId to group $groupId."
         )
     }
@@ -78,7 +78,7 @@ object DeliveryLogger {
     ) {
         Logger.log(
             LogLevel.IMPORTANT,
-            "Delivery Failed (R ${Logger.restaurantID}): Driver $driverId\n" +
+            "Delivery Failed (R ${Logger.restaurantID}): Driver $driverId" +
                 "failed to deliver order $orderId to group $groupId."
         )
     }
@@ -92,7 +92,7 @@ object DeliveryLogger {
     ) {
         Logger.log(
             LogLevel.INFO,
-            "Delivery Given Up (R ${Logger.restaurantID}): Group $groupId gave up on\n" +
+            "Delivery Given Up (R ${Logger.restaurantID}): Group $groupId gave up on" +
                 "waiting for delivery of order $orderId."
         )
     }
@@ -105,7 +105,7 @@ object DeliveryLogger {
     ) {
         Logger.log(
             LogLevel.INFO,
-            "Delivery Returned (R ${Logger.restaurantID}): Driver $driverId has\n" +
+            "Delivery Returned (R ${Logger.restaurantID}): Driver $driverId has" +
                 "returned."
         )
     }
@@ -118,7 +118,7 @@ object DeliveryLogger {
     ) {
         Logger.log(
             LogLevel.INFO,
-            "Delivery Finished Eating (R ${Logger.restaurantID}): Group $groupId has\n" +
+            "Delivery Finished Eating (R ${Logger.restaurantID}): Group $groupId has" +
                 "finished eating."
         )
     }

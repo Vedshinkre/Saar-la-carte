@@ -37,7 +37,7 @@ object KitchenLogger {
         Logger.log(
             LogLevel.IMPORTANT,
             "Kitchen Meal Cooked (R ${Logger.restaurantID}): Cook $cookId" +
-                "finished cooking $numberOfMeals:number meals of dish $dishName" + " " + "$cookDurationTick" +
+                "finished cooking $numberOfMeals:number meals of dish $dishName $cookDurationTick" +
                 "ticks after ordering."
         )
     }

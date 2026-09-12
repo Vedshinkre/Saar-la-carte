@@ -11,16 +11,12 @@ import de.unisaarland.cs.se.selab.restaurant.RestaurantStats
  * Class that contains the data of the whole simulation
  * */
 
-class SimulationConfig(
-    foodData: Pair<List<Ingredient>, List<Recipe>>,
-    restaurantData: Pair<List<RestaurantStats>, List<Restaurant>>,
-    scenarioData: Pair<List<Incident>, List<CustomerGroup>>
-) {
+class SimulationConfig {
 
-    var restaurants: MutableList<Restaurant> = restaurantData.second.toMutableList()
-    var customers: MutableList<CustomerGroup> = scenarioData.second.toMutableList()
-    var incidents: MutableList<Incident> = scenarioData.first.toMutableList()
-    var ingredients: MutableList<Ingredient> = foodData.first.toMutableList()
-    var recipes: MutableList<Recipe> = foodData.second.toMutableList()
-    var restaurantStats: MutableList<RestaurantStats> = restaurantData.first.toMutableList()
+    var restaurants: MutableList<Restaurant> = mutableListOf<Restaurant>()
+    var customers: MutableList<CustomerGroup> = mutableListOf<CustomerGroup>()
+    var incidents: MutableList<Incident> = mutableListOf<Incident>()
+    var ingredients: MutableList<Ingredient> = mutableListOf<Ingredient>()
+    var recipes: MutableList<Recipe> = mutableListOf<Recipe>()
+    var restaurantStats: MutableList<RestaurantStats> = mutableListOf<RestaurantStats>()
 }

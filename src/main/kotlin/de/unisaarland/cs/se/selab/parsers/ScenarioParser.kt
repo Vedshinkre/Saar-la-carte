@@ -1,6 +1,5 @@
 package de.unisaarland.cs.se.selab.parsers
 
-import com.github.erosb.jsonsKema.JsonArray
 import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.food.Ingredient
 import de.unisaarland.cs.se.selab.food.Recipe
@@ -32,8 +31,9 @@ class ScenarioParser(
         ingredients: List<Ingredient>,
         stock: Stock
     ): Pair<List<Incident>, List<CustomerGroup>> {
-        incidentParser.parseIncidentFile(incident, ingredients, stock, recipes, restaurants,)
-        customerParser.parseCustomerFile(customer, restaurants)
+        val incidents = incidentParser.parseIncidentFile(incident, ingredients, stock, recipes, restaurants,)
+        val restaurantStats = restaurants.map { it.getRestaurantStats() }
+        val customerGroups = customerParser.parseCustomers(customer, recipes, ingredients, restaurantStats,)
 
         return Pair(incidents, customerGroups)
     }

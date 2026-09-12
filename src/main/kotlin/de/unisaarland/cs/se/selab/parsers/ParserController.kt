@@ -67,78 +67,16 @@ class ParserController {
         )
         crossvalidateIncidents()
 
-        val simConfig = SimulationConfig(
-            foodData = foodData,
-            restaurantData = restaurantData,
-            scenarioData
-        )
+        simConfig.restaurants = restaurantData.second.toMutableList()
+        simConfig.ingredients = foodData.first.toMutableList()
+        simConfig.recipes = foodData.second.toMutableList()
+        simConfig.restaurantStats = restaurantData.first.toMutableList()
+        simConfig.incidents = scenarioData.first.toMutableList()
+        simConfig.customers = scenarioData.second.toMutableList()
 
         return simConfig
     }
 
-    /**    private fun crossValidateRestaurantFood(): Boolean {
-    TODO("Not yet implemented")
-    }
-
-    private fun crossValidateFoodScenario(): Boolean {
-    TODO("Not yet implemented")
-    }
-
-    private fun crossValidateRestaurantScenario(): Boolean {
-    TODO("Not yet implemented")
-    }
-
-    private fun crossValidateIncidents(): Boolean {
-    TODO("Not yet implemented")
-    }
-
-    private fun crossValidateCustomers(): Boolean {
-    TODO("Not yet implemented")
-    }
-
-    private fun crossValidateRegularsToRestaurants(
-    customerGroups: List<CustomerGroup>,
-    restaurants: List<Restaurant>
-    ): Boolean {
-    TODO("Not yet implemented")
-    }
-
-    private fun getRestaurantbyId(id: Int): Boolean {
-    TODO("Not yet implemented")
-    }
-
-    private fun crossValidateBasicDishforRestaurant(
-    restaurants: List<Restaurant>
-    ): Boolean {
-    TODO("Not yet implemented")
-    }
-
-    private fun getRecipesByType(
-    restaurantType: RestaurantType
-    ): List<Recipe> {
-    TODO("Not yet implemented")
-    }
-
-    private fun crossValidateDeliveries(): Boolean {
-    TODO("Not yet implemented")
-    }
-
-    private fun getCustomerGroupsByDelivery(): List<CustomerGroup> {
-    TODO("Not yet implemented")
-    }
-
-    private fun validateVisitingTick(): Boolean {
-    TODO("Not yet implemented")
-    }
-
-    private fun crossvalidateIncidents(): Boolean {
-    TODO("Not yet implemented")
-    }
-
-    private fun getIngredientbyName(name: String): Boolean {
-    TODO("Not yet implemented")
-    }
-    }**/
     private fun validateFilesWithSchema(filePath: String, schemaPath: String) {
         try {
             val jsonInstance = JsonParser(File(filePath).readText()).parse()
@@ -160,7 +98,7 @@ class ParserController {
         var restaurants = simConfig.restaurants
         val seenIds = mutableSetOf<Int>()
         for (incident in incidents) {
-            require(!seenIds.add(incident.getId()))
+            require(!seenIds.add(incident.id))
         }
         validateNoOverlappingUnavailability(incidents)
         return true

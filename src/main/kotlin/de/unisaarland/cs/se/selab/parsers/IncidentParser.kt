@@ -93,7 +93,7 @@ class IncidentParser {
                 evening = evening,
                 ingredientName = json.requiredString(INGREDIENT),
                 ingredients = ingredients,
-                packagingVolume = json.requiredDouble(PACKAGING_VOLUME)
+                packagingVolume = json.requiredInt(PACKAGING_VOLUME)
             )
 
             "UNAVAILABLE" -> parseUnavailabilityIncident(
@@ -135,7 +135,7 @@ class IncidentParser {
         evening: Int,
         ingredientName: String,
         ingredients: List<Ingredient>,
-        packagingVolume: Double
+        packagingVolume: Int
     ): PackagingChangeIncident {
         val ingredient = ingredients.requiredIngredient(ingredientName)
 

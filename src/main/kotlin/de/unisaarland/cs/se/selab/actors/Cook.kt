@@ -61,6 +61,13 @@ class Cook(
     }
 
     /**
+     *explicit getter to getcurrent recipe .
+     */
+    fun getCurrentRecipe(): Recipe? {
+        return currentRecipe
+    }
+
+    /**
      *explicit setter to set id to the cook .
      */
     fun setId(givenId: Int) {

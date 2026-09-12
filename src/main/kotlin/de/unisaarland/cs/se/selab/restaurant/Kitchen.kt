@@ -8,6 +8,7 @@ import de.unisaarland.cs.se.selab.food.Dish
 import de.unisaarland.cs.se.selab.food.Ingredient
 import de.unisaarland.cs.se.selab.food.Order
 import de.unisaarland.cs.se.selab.food.Recipe
+import de.unisaarland.cs.se.selab.loggers.KitchenLogger
 
 private const val EXEC = 1
 private const val SOUS = 2
@@ -17,6 +18,8 @@ private const val FISH = 5
 private const val ROAST = 6
 private const val VEGETABLE = 7
 private const val PASTRY = 8
+private const val CEIL_TOP = 9
+private const val CEIL_DENOMINATOR = 10
 
 /**
  * Kitchen class where all the cooking and chef handling happens .
@@ -294,7 +297,8 @@ class Kitchen(
         }
 
         // estimated ingredients for remaining front of house seats
-        val estimatedVariable = (frontCapacity + 9) / 10 // can also be simulated by ceil function,but need Int
+        val estimatedVariable = (frontCapacity + CEIL_TOP) / CEIL_DENOMINATOR
+        // can also be simulated by ceil function,but need Int
 
         if (estimatedVariable > 0) {
             for (recipe in menu) {
@@ -462,7 +466,17 @@ class Kitchen(
 
         if (allDishes.isNotEmpty()) {
             cook.startCooking(recipe, allDishes, baseOrderId, allOrderIds)
-            // TODO: kitchenLogger.logKitchenDishAssignment(...)
+            val cookIDCurrent = cook.getId() ?: -1
+            val cookTypeCurrent = cook.getCookType().name
+            val curDishName = recipe.getName()
+            KitchenLogger.logKitchenDishAssignment(
+                cookId = cookIDCurrent,
+                cookType = cookTypeCurrent,
+                numberOfMeals = allDishes.size,
+                dishName = curDishName,
+                baseOrderId = baseOrderId,
+                allOrderIds = allOrderIds
+            )
         }
     }
 
@@ -487,12 +501,26 @@ class Kitchen(
             finishedMeals += finished
 
             if (finished > 0) {
-                // TODO: kitchenLogger.logKitchenMealCooked(...)
-                // (You will extract the dish name and tick duration here for the logger)
+                val dishRecipe = cook.getCurrentRecipe()
+                val cookId = cook.getId() ?: -1
+                val dishName = dishRecipe?.getName() ?: "Unknown Dish"
+                val cookDurationTick = dishRecipe?.getDuration() ?: 0
+
+                KitchenLogger.logKitchenMealCooked(
+                    cookId = cookId,
+                    numberOfMeals = finished,
+                    dishName = dishName,
+                    cookDurationTick = cookDurationTick
+                )
             }
         }
 
         val servableMeals = getServableDishesNumber()
-        // TODO: kitchenLogger.logKitchenStatus(activeCooks, totalMeals, finishedMeals, servableMeals)
+        KitchenLogger.logKitchenStatus(
+            numberOfCooks = activeCooks,
+            totalNumberOfMeals = totalMeals,
+            finishedNumberOfMeals = finishedMeals,
+            servableMeals = servableMeals
+        )
     }
 }

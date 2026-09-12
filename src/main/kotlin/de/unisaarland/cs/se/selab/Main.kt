@@ -41,7 +41,7 @@ fun main(args: Array<String>) {
 /**
  * Parses the raw CLI [args] into a [CliInfo] instance.
  */
-private fun parseCommandLineArgs(args: Array<String>): CliInfo {
+private fun parseCommandLineArgs(args: Array<String>): Cliinfo {
     val parser = ArgParser("SaarLaCarte cli parser")
     val foodPath by parser.option(ArgType.String, fullName = "food").required()
     val restaurantsPath by parser.option(ArgType.String, fullName = "restaurants").required()
@@ -58,7 +58,7 @@ private fun parseCommandLineArgs(args: Array<String>): CliInfo {
 
     val logLevel = LogLevel.valueOf(logLevelStr)
 
-    return CliInfo(
+    return Cliinfo(
         foodFilePath = foodPath,
         restaurantFilePath = restaurantsPath,
         scenarioFilePath = scenarioPath,
@@ -73,7 +73,7 @@ private fun parseCommandLineArgs(args: Array<String>): CliInfo {
  * Wires up the global [Logger] singleton: the requested log level and the output
  * handle (stdout, unless an output file path was given).
  */
-private fun setupLogging(cli: CliInfo) {
+private fun setupLogging(cli: Cliinfo) {
     Logger.setup(cli.logLevel)
     val writer = if (cli.outputPath.isNullOrEmpty()) {
         PrintWriter(System.out)

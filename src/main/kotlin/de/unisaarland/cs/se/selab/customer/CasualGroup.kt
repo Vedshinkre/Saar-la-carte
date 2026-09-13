@@ -12,10 +12,10 @@ class CasualGroup(
     id: Id,
     size: Int,
     tableType: TableType,
-    visitingAt: Tick,
+    visitingAt: Tick, //I also want to access this
     foodPreferences: List<FoodPreference>,
     val restaurantTypes: List<RestaurantType>,
     private val visitingEvenings: List<Evening>,
-    private val deliveryDistance: Int,
+    val deliveryDistance: Int,
     val ratingLikelihood: RatingLikelihood
 ) : CustomerGroup(id, size, tableType, visitingAt, foodPreferences)

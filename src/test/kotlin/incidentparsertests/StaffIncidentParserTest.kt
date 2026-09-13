@@ -4,13 +4,13 @@ import de.unisaarland.cs.se.selab.actors.RestaurantStaff
 import de.unisaarland.cs.se.selab.enums.MeasurementUnit
 import de.unisaarland.cs.se.selab.enums.RestaurantType
 import de.unisaarland.cs.se.selab.food.Ingredient
+import de.unisaarland.cs.se.selab.food.Recipe
 import de.unisaarland.cs.se.selab.food.Stock
 import de.unisaarland.cs.se.selab.parsers.IncidentParser
 import de.unisaarland.cs.se.selab.restaurant.Restaurant
 import de.unisaarland.cs.se.selab.restaurant.RestaurantStats
 import kotlinx.serialization.json.addJsonObject
 import kotlinx.serialization.json.buildJsonArray
-import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.put
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -34,6 +34,8 @@ class StaffIncidentParserTest {
     private val testStock: Stock = Stock(
         ingredientList = ingredientsList
     )
+
+    private val recipes: List<Recipe> = emptyList()
 
     private val fakeStaff: RestaurantStaff = RestaurantStaff(
         cooks = mutableListOf(),
@@ -67,7 +69,7 @@ class StaffIncidentParserTest {
     // EXCEPTION tests (Negative case scenarios)
 
     @Test
-    fun staff_Incident_Unknown_Staff_Type_Enum_Fails() {
+    fun `staff Incident-Unknown Staff type Enum-Fails`() {
         val jsonArray = buildJsonArray {
             addJsonObject {
                 put("id", 1)
@@ -79,7 +81,314 @@ class StaffIncidentParserTest {
             }
         }
         assertThrows<IllegalArgumentException> {
-            parser.parseIncidentFile(jsonArray, ingredientsList, testStock, emptyList(), restaurantsList)
+            parser.parseIncidentFile(jsonArray, ingredientsList, testStock, recipes, restaurantsList)
+        }
+    }
+
+    @Test
+    fun `staff Incident-Missing Restaurant Property-Fails`() {
+        val jsonArray = buildJsonArray {
+            addJsonObject {
+                put("id", 2)
+                put("evening", 1)
+                put("type", "STAFF")
+                put("staffType", "DRIVER")
+                put("number", 1)
+            }
+        }
+        assertThrows<IllegalArgumentException> {
+            parser.parseIncidentFile(jsonArray, ingredientsList, testStock, recipes, restaurantsList)
+        }
+    }
+
+    @Test
+    fun `staff Incident-Unknown Restaurant Id-Fails`() {
+        val jsonArray = buildJsonArray {
+            addJsonObject {
+                put("id", 3)
+                put("evening", 1)
+                put("type", "STAFF")
+                put("restaurant", 999)
+                put("staffType", "WAITSTAFF")
+                put("number", 1)
+            }
+        }
+        assertThrows<IllegalArgumentException> {
+            parser.parseIncidentFile(jsonArray, ingredientsList, testStock, recipes, restaurantsList)
+        }
+    }
+
+    @Test
+    fun `staff Incident-Negative Restaurant Id-Fails`() {
+        val jsonArray = buildJsonArray {
+            addJsonObject {
+                put("id", 4)
+                put("evening", 1)
+                put("type", "STAFF")
+                put("restaurant", -10)
+                put("staffType", "WAITSTAFF")
+                put("number", 1)
+            }
+        }
+        assertThrows<IllegalArgumentException> {
+            parser.parseIncidentFile(jsonArray, ingredientsList, testStock, recipes, restaurantsList)
+        }
+    }
+
+    @Test
+    fun `staff Incident-Cook Missing Cook Type-Fails`() {
+        val jsonArray = buildJsonArray {
+            addJsonObject {
+                put("id", 5)
+                put("evening", 1)
+                put("type", "STAFF")
+                put("restaurant", 10)
+                put("staffType", "COOK")
+                put("number", 1)
+            }
+        }
+        assertThrows<IllegalArgumentException> {
+            parser.parseIncidentFile(jsonArray, ingredientsList, testStock, recipes, restaurantsList)
+        }
+    }
+
+    @Test
+    fun `staff Incident-Cook Invalid Cook Type Enum-Fails`() {
+        val jsonArray = buildJsonArray {
+            addJsonObject {
+                put("id", 6)
+                put("evening", 1)
+                put("type", "STAFF")
+                put("restaurant", 10)
+                put("staffType", "COOK")
+                put("cookType", "Walter_White")
+                put("number", 1)
+            }
+        }
+        assertThrows<IllegalArgumentException> {
+            parser.parseIncidentFile(jsonArray, ingredientsList, testStock, recipes, restaurantsList)
+        }
+    }
+
+    @Test
+    fun `staff Incident-Missing Number Property-Fails`() {
+        val jsonArray = buildJsonArray {
+            addJsonObject {
+                put("id", 7)
+                put("evening", 1)
+                put("type", "STAFF")
+                put("restaurant", 10)
+                put("staffType", "WAITSTAFF")
+            }
+        }
+        assertThrows<IllegalArgumentException> {
+            parser.parseIncidentFile(jsonArray, ingredientsList, testStock, recipes, restaurantsList)
+        }
+    }
+
+    @Test
+    fun `staff Incident-Non Integer Number-Fails`() {
+        val jsonArray = buildJsonArray {
+            addJsonObject {
+                put("id", 8)
+                put("evening", 1)
+                put("type", "STAFF")
+                put("restaurant", 10)
+                put("staffType", "DRIVER")
+                put("number", "ONE")
+            }
+        }
+        assertThrows<IllegalArgumentException> {
+            parser.parseIncidentFile(jsonArray, ingredientsList, testStock, recipes, restaurantsList)
+        }
+    }
+
+    @Test
+    fun `staff Incident-Missing Evening-Fails`() {
+        val jsonArray = buildJsonArray {
+            addJsonObject {
+                put("id", 9)
+                put("type", "STAFF")
+                put("restaurant", 10)
+                put("staffType", "COOK")
+                put("cookType", "SOUS")
+                put("number", 1)
+            }
+        }
+        assertThrows<IllegalArgumentException> {
+            parser.parseIncidentFile(jsonArray, ingredientsList, testStock, recipes, restaurantsList)
+        }
+    }
+
+    @Test
+    fun `staff Incident-Missing Id-Fails`() {
+        val jsonArray = buildJsonArray {
+            addJsonObject {
+                put("evening", 1)
+                put("type", "STAFF")
+                put("restaurant", 10)
+                put("staffType", "WAITSTAFF")
+                put("number", 1)
+            }
+        }
+        assertThrows<IllegalArgumentException> {
+            parser.parseIncidentFile(jsonArray, ingredientsList, testStock, recipes, restaurantsList)
+        }
+    }
+
+    @Test
+    fun `staff Incident-Missing Type Property-Fails`() {
+        val jsonArray = buildJsonArray {
+            addJsonObject {
+                put("id", 11)
+                put("evening", 1)
+                put("restaurant", 10)
+                put("staffType", "WAITSTAFF")
+                put("number", 1)
+            }
+        }
+        assertThrows<IllegalArgumentException> {
+            parser.parseIncidentFile(jsonArray, ingredientsList, testStock, recipes, restaurantsList)
+        }
+    }
+
+    @Test
+    fun `staff Incident-Missing StaffType Property-Fails`() {
+        val jsonArray = buildJsonArray {
+            addJsonObject {
+                put("id", 12)
+                put("evening", 1)
+                put("type", "STAFF")
+                put("restaurant", 10)
+                put("number", 1)
+            }
+        }
+        assertThrows<IllegalArgumentException> {
+            parser.parseIncidentFile(jsonArray, ingredientsList, testStock, recipes, restaurantsList)
+        }
+    }
+
+    @Test
+    fun `staff Incident-Zero Staff Number-Fails`() {
+        val jsonArray = buildJsonArray {
+            addJsonObject {
+                put("id", 13)
+                put("evening", 1)
+                put("type", "STAFF")
+                put("restaurant", 10)
+                put("staffType", "WAITSTAFF")
+                put("number", 0)
+            }
+        }
+        assertThrows<IllegalArgumentException> {
+            parser.parseIncidentFile(jsonArray, ingredientsList, testStock, recipes, restaurantsList)
+        }
+    }
+
+    @Test
+    fun `staff Incident-Cook Type Exec Forbidden-Fails`() {
+        val jsonArray = buildJsonArray {
+            addJsonObject {
+                put("id", 14)
+                put("evening", 1)
+                put("type", "STAFF")
+                put("restaurant", 10)
+                put("staffType", "COOK")
+                put("cookType", "EXEC")
+                put("number", 1)
+            }
+        }
+        assertThrows<IllegalArgumentException> {
+            parser.parseIncidentFile(jsonArray, ingredientsList, testStock, recipes, restaurantsList)
+        }
+    }
+
+    @Test
+    fun `staff Incident-Waitstaff With CookType Defined-Fails`() {
+        val jsonArray = buildJsonArray {
+            addJsonObject {
+                put("id", 15)
+                put("evening", 1)
+                put("type", "STAFF")
+                put("restaurant", 10)
+                put("staffType", "WAITSTAFF")
+                put("cookType", "SOUS")
+                put("number", 1)
+            }
+        }
+        assertThrows<IllegalArgumentException> {
+            parser.parseIncidentFile(jsonArray, ingredientsList, testStock, recipes, restaurantsList)
+        }
+    }
+
+    @Test
+    fun `staff Incident-Driver With CookType Defined-Fails`() {
+        val jsonArray = buildJsonArray {
+            addJsonObject {
+                put("id", 16)
+                put("evening", 1)
+                put("type", "STAFF")
+                put("restaurant", 10)
+                put("staffType", "DRIVER")
+                put("cookType", "SOUS")
+                put("number", 1)
+            }
+        }
+        assertThrows<IllegalArgumentException> {
+            parser.parseIncidentFile(jsonArray, ingredientsList, testStock, recipes, restaurantsList)
+        }
+    }
+
+    @Test
+    fun `staff Incident-Negative Evening-Fails`() {
+        val jsonArray = buildJsonArray {
+            addJsonObject {
+                put("id", 17)
+                put("evening", -1)
+                put("type", "STAFF")
+                put("restaurant", 10)
+                put("staffType", "DRIVER")
+                put("number", 1)
+            }
+        }
+        assertThrows<IllegalArgumentException> {
+            parser.parseIncidentFile(jsonArray, ingredientsList, testStock, recipes, restaurantsList)
+        }
+    }
+
+    @Test
+    fun `staff Incident-Unknown Incident Type Enum-Fails`() {
+        val jsonArray = buildJsonArray {
+            addJsonObject {
+                put("id", 18)
+                put("evening", 1)
+                put("type", "DEPRESSION")
+                put("restaurant", 10)
+                put("staffType", "WAITSTAFF")
+                put("number", 1)
+            }
+        }
+        assertThrows<IllegalArgumentException> {
+            parser.parseIncidentFile(jsonArray, ingredientsList, testStock, recipes, restaurantsList)
+        }
+    }
+
+    @Test
+    fun `staff Incident- Ingredient Property Defined-Fails`() {
+        val jsonArray = buildJsonArray {
+            addJsonObject {
+                put("id", 19)
+                put("evening", 1)
+                put("type", "STAFF")
+                put("restaurant", 10)
+                put("staffType", "WAITSTAFF")
+                put("number", 1)
+                put("ingredient", "garlic")
+            }
+        }
+        assertThrows<IllegalArgumentException> {
+            parser.parseIncidentFile(jsonArray, ingredientsList, testStock, recipes, restaurantsList)
         }
     }
 }
+

@@ -16,6 +16,6 @@ class CasualGroup(
     foodPreferences: List<FoodPreference>,
     val restaurantTypes: List<RestaurantType>,
     private val visitingEvenings: List<Evening>,
-    private val deliveryDistance: Int, //could you make this public
+    val deliveryDistance: Int,
     val ratingLikelihood: RatingLikelihood
 ) : CustomerGroup(id, size, tableType, visitingAt, foodPreferences)

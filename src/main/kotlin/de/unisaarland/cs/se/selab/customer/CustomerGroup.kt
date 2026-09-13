@@ -11,8 +11,8 @@ sealed class CustomerGroup(
     val id: Id,
     val size: Int,
     val tableType: TableType,
-    private val visitingAt: Tick,
-    private val foodPreferences: List<FoodPreference>,
+    private val visitingAt: Tick, // Could you make this public
+    private val foodPreferences: List<FoodPreference>, // Could you make this public
 ) {
     private val waitingSince: Tick? = null
     private var currentlySeatedCustomers = size

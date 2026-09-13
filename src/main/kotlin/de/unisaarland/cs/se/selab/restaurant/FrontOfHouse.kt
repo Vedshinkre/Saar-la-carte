@@ -9,11 +9,17 @@ import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.customer.EventGroup
 import de.unisaarland.cs.se.selab.customer.RegularGroup
 import de.unisaarland.cs.se.selab.enums.ActionType
+import de.unisaarland.cs.se.selab.enums.DishStatus
 import de.unisaarland.cs.se.selab.enums.DriverState
+import de.unisaarland.cs.se.selab.enums.ExperienceType
 import de.unisaarland.cs.se.selab.enums.TableStatus
 import de.unisaarland.cs.se.selab.food.Dish
 import de.unisaarland.cs.se.selab.food.Order
+import de.unisaarland.cs.se.selab.loggers.DeliveryLogger
 import de.unisaarland.cs.se.selab.loggers.FohServiceLogger
+import kotlin.math.ceil
+
+// TODO: move all of these constants to Constants.kt
 
 private const val THREE_QUARTERS: Double = 3.0 / 4.0
 
@@ -22,6 +28,17 @@ private const val PARTIAL_SERVING_WAIT_TICKS = 1
 private const val REGULAR_PRIORITY = 0
 private const val EVENT_PRIORITY = 1
 private const val CASUAL_PRIORITY = 2
+
+private const val DISTANCE_PER_TICK = 5.0
+
+/** group fully leaves if nothing was served within this many ticks of ordering */
+private const val UNSERVED_WAIT_TICKS = 5
+
+/** additional ticks individual customers will wait for after at least one dish was served to the group */
+private const val ADDITIONAL_WAIT_TICKS = 2
+
+/** food arriving within this many ticks of ordering counts as a positive experience. */
+private const val EXPECTATION_WINDOW_TICKS = 4
 
 /** Represents the front of the house. */
 class FrontOfHouse(
@@ -157,21 +174,29 @@ class FrontOfHouse(
         var mergeSize = 0
 
         for (table in tables) {
-            if (customerGroup.size <= mergeSize) { break }
+            if (customerGroup.size <= mergeSize) {
+                break
+            }
             acc.addLast(table)
             mergeSize += table.size
         }
 
-        if (mergeSize < customerGroup.size) { return null }
+        if (mergeSize < customerGroup.size) {
+            return null
+        }
 
         for (table in acc) {
             if (customerGroup.size < mergeSize && customerGroup.size <= mergeSize - table.size) {
                 acc.removeFirst()
                 mergeSize -= table.size
-            } else { break }
+            } else {
+                break
+            }
         }
 
-        if (threeQuarters && mergeSize.toDouble() * THREE_QUARTERS > customerGroup.size) { return null }
+        if (threeQuarters && mergeSize.toDouble() * THREE_QUARTERS > customerGroup.size) {
+            return null
+        }
 
         return acc
     }
@@ -193,7 +218,7 @@ class FrontOfHouse(
     }
 
     private fun serveInHouseGroups() {
-        val sortedGroups = getInHouseGroups().sortedWith(compareBy({ servingPriority(it) }, { it.id }))
+        val sortedGroups = getInHouseGroups().sortedWith(compareBy({ getServingPriority(it) }, { it.id }))
         for (group in sortedGroups) {
             val order = group.currentOrder ?: continue
             if (group is EventGroup) {
@@ -204,8 +229,9 @@ class FrontOfHouse(
         }
     }
 
-    /** can't have "magic numbers" must store priorities as global constants */
-    private fun servingPriority(group: CustomerGroup): Int = when (group) {
+    // can't have "magic numbers" must store priorities as global constants
+    // TODO: would be better to store this as an attribute in customerGroup that is overridden by each type of group
+    private fun getServingPriority(group: CustomerGroup): Int = when (group) {
         is RegularGroup -> REGULAR_PRIORITY
         is EventGroup -> EVENT_PRIORITY
         else -> CASUAL_PRIORITY
@@ -385,4 +411,146 @@ class FrontOfHouse(
     }
 
     // SERVING END
+
+    // DELIVERING START (drivers were served in SERVING)
+
+    /** main delivering function: starts driving drivers who just received full order, advances already driving drivers */
+    fun processDelivering() {
+        val readyDrivers = drivers.filter { it.state == DriverState.WAITING }
+            .sortedBy { it.targetGroup?.id ?: Int.MAX_VALUE }
+        for (driver in readyDrivers) {
+            prepareDelivery(driver)
+        }
+
+        val activeDrivers = drivers.filter { it.state == DriverState.DELIVERING || it.state == DriverState.RETURNING }
+            .sortedBy { it.targetGroup?.id ?: Int.MAX_VALUE }
+        for (driver in activeDrivers) {
+            driver.processTick()
+        }
+    }
+
+    /** whether any driver is currently free to take on a new delivery */
+    fun isDriverAvailable(): Boolean = drivers.any { it.state == DriverState.IDLE }
+
+    /** computes the trip length and starts driving the driver */
+    private fun prepareDelivery(driver: Driver) {
+        val group = driver.targetGroup as? CasualGroup ?: return
+        val order = driver.currentOrder ?: return
+        val driverId = driver.id ?: return
+
+        val ticks = ceil(group.deliveryDistance / DISTANCE_PER_TICK).toInt()
+        driver.setTicksToDest(ticks)
+        driver.setTotalTripTicks(ticks * 2)
+        driver.state = DriverState.DELIVERING
+
+        DeliveryLogger.logDeliveryPreparation(driverId, order.getId(), group.id, ticks)
+    }
+
+    // DELIVERING END
+
+    // EATING START
+
+    /** main eating function: makes customers that waited too long leave and customers eating progress eating */
+    fun processEating() {
+        var eatingCount = 0
+        var finishedCount = 0
+        // for logging
+
+        val sortedGroups = getInHouseGroups().sortedWith(compareBy({ getServingPriority(it) }, { it.id }))
+        for (group in sortedGroups) {
+            val order = group.currentOrder ?: continue
+            val tableId = getAssignedTableId(group) ?: continue
+
+            handleLeavingCustomers(group, order, tableId)
+            handleFullyServedOrder(group, order) // for experience
+
+            val (eating, finished) = progressEating(order)
+            eatingCount += eating
+            finishedCount += finished
+            if (finished > 0) {
+                FohServiceLogger.logFohFinishedEating(finished, group.id, tableId)
+            }
+        }
+
+        processDeliveryEating()
+        FohServiceLogger.logFohEatingStatus(eatingCount, finishedCount)
+    }
+
+    /** aborts dishes and drops customers who have waited too long */
+    private fun handleLeavingCustomers(group: CustomerGroup, order: Order, tableId: Id) {
+        val unservedDishes = order.getDishes().filter {
+            it.getStatus() == DishStatus.UNCOOKED || it.getStatus() == DishStatus.COOKING
+        }
+        if (unservedDishes.isEmpty()) return // everyone served
+
+        val ticksSinceOrder = Time.tick - order.getOrderedAt()
+
+        val noDishServed = !(order.getDishes().any { wasServed(it) })
+        val unservedCustomersLeave = if (noDishServed) {
+            ticksSinceOrder >= UNSERVED_WAIT_TICKS
+        } else {
+            ticksSinceOrder >= UNSERVED_WAIT_TICKS + ADDITIONAL_WAIT_TICKS
+            // wait another 2 ticks if someone in the group was served
+        }
+
+        if (!unservedCustomersLeave) return
+
+        // all unserved customers leave, any unserved dish is aborted, customers remaining decremented
+        unservedDishes.forEach { it.setStatus(DishStatus.ABORTED) }
+        group.customersRemainingInRestaurant -= if (noDishServed) {
+            group.customersRemainingInRestaurant
+        } else {
+            unservedDishes.size
+        }
+        group.experience = ExperienceType.NEGATIVE
+        FohServiceLogger.logRestaurantNoEating(unservedDishes.size, group.id, tableId)
+    }
+
+    /** decides the customer's experience first time the order is fully served */
+    private fun handleFullyServedOrder(group: CustomerGroup, order: Order) {
+        if (order.servedAt != null) return // run the function only as soon as the order is first completely served
+
+        val fullyServed = order.getDishes().all { wasServed(it) }
+        if (!fullyServed) return
+
+        order.servedAt = Time.tick
+        val sinceOrder = Time.tick - order.getOrderedAt()
+        group.experience = if (sinceOrder <= EXPECTATION_WINDOW_TICKS) {
+            ExperienceType.POSITIVE
+        } else {
+            ExperienceType.NEUTRAL
+        }
+    }
+
+    // helpers
+
+    private fun wasServed(dish: Dish): Boolean =
+        dish.getStatus() == DishStatus.SERVED || dish.getStatus() == DishStatus.EATEN
+
+    private fun progressEating(order: Order): Pair<Int, Int> {
+        var eating = 0
+        var finished = 0
+        for (dish in order.getServedDishes()) {
+            dish.updateEating()
+            if (dish.getStatus() == DishStatus.EATEN) finished++ else eating++
+        }
+        return Pair(eating, finished)
+    }
+
+    // delivery orders only start eating once the order is delivered
+    private fun processDeliveryEating() {
+        for (group in deliveryGroups.sortedBy { it.id }) {
+            val order = group.currentOrder ?: continue
+            if (order.deliveredAt == null || order.areAllDishesEaten()) continue
+
+            for (dish in order.getDishes()) {
+                if (dish.getStatus() == DishStatus.SERVED) dish.updateEating()
+            }
+            if (order.areAllDishesEaten()) {
+                DeliveryLogger.logDeliveryFinishedEating(group.id)
+            }
+        }
+    }
+
+    // EATING END
 }

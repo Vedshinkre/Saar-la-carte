@@ -4,7 +4,6 @@ import de.unisaarland.cs.se.selab.food.Ingredient
 import de.unisaarland.cs.se.selab.food.IngredientPackage
 import de.unisaarland.cs.se.selab.food.Stock
 import de.unisaarland.cs.se.selab.food.Supplier
-import de.unisaarland.cs.se.selab.loggers.InitialAndPrepLogger
 
 /**
  * Represents the pantry of the restaurant .
@@ -61,30 +60,16 @@ class Pantry(
      */
     fun throwExpiredIngredients() {
         val activePackages = mutableListOf<IngredientPackage>()
-        val removedQuantity = mutableMapOf<Ingredient, Int>()
+
         for (pkg in inventory) {
             if (!pkg.hasExpired()) {
                 activePackages.add(pkg) // Keep the ones that are still good
-            } else {
-                // Track the amount being thrown away
-                val ingredient = pkg.getIngredient()
-                val currentAmount = pkg.getCurrentAmount()
-                val existingAmount = removedQuantity[ingredient] ?: 0
-                removedQuantity[ingredient] = existingAmount + currentAmount
             }
         }
 
         // update the inventory
         inventory.clear()
         inventory.addAll(activePackages)
-
-        // Log removed ingredients in ascending alphabetic order
-        val sortedIngredients = removedQuantity.keys.sortedBy { it.getName() }
-        for (ingredient in sortedIngredients) {
-            val amount = removedQuantity[ingredient] ?: 0
-            // TODO WAIT FOR SKERDI TO CHANGE THE LOGGER
-            //  InitialAndPrepLogger.logPantryRemovedIngredient(amount, ingredient.getUnit(), ingredient.getName())
-        }
     }
 
     /**
@@ -93,7 +78,6 @@ class Pantry(
 
     fun ensureQuantities(ingredientsToEnsure: Map<Ingredient, Int>) {
         throwExpiredIngredients()
-        val procuredQuantity = mutableMapOf<Ingredient, Int>()
 
         for ((ingredient, requiredAmount) in ingredientsToEnsure) {
             val currentAvailable = checkInventory(ingredient, requiredAmount)
@@ -104,29 +88,11 @@ class Pantry(
                 val newPackages = supplier.procure(ingredient, deficit)
 
                 // Add the newly procured packages to our pantry inventory
-                var totalProcuredForIngredient = 0
                 for (pkg in newPackages) {
                     inventory.add(pkg)
-                    totalProcuredForIngredient += pkg.getCurrentAmount()
                 }
-                //  the exact amount of ingredient delivered by the supplier
-                procuredQuantity[ingredient] = totalProcuredForIngredient
             }
         }
-
-        // sort ingredients in ascending alphabetic order
-        val sortedIngredients = mutableListOf<Ingredient>()
-        for (ingredient in procuredQuantity.keys) {
-            sortedIngredients.add(ingredient)
-        }
-        sortedIngredients.sortBy { it.getName() }
-        // Log procured ingredients in ascending alphabetic order
-        for (ingredient in sortedIngredients) {
-            val amount = procuredQuantity[ingredient] ?: 0
-            InitialAndPrepLogger.logPantryProcured(amount, ingredient.getUnit(), ingredient.getName())
-        }
-
-        InitialAndPrepLogger.logPantryRestocked()
     }
 
     /**

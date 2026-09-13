@@ -26,6 +26,9 @@ class Restaurant(
         kitchen = Kitchen(staff.cooks, pantry, orderQueue)
     }
 
+    // TODO: acceptDeliveryOrder(order, openingEndTick): Boolean
+    // acceptDeliveryOrder returns if the maximum cook ticks of a dish in the order + current tick <= openingEndTick
+
     /**
      * sake of detect
      */
@@ -38,4 +41,7 @@ class Restaurant(
     fun getRestaurantStaff(): RestaurantStaff {
         return staff
     }
+
+    /** returns whether a driver is available */
+    fun isDriverAvailable(): Boolean = frontOfHouse.isDriverAvailable()
 }

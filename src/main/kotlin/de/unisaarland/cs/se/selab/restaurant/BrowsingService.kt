@@ -21,17 +21,17 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
     /**
      * gives eligible Restaurants
      */
-    fun getEligibleRestaurants(group: CustomerGroup): List<RestaurantStats> {
+    fun getEligibleRestaurants(group: CustomerGroup): Int? {
         require(group is CasualGroup || group is EventGroup) {
             "Group must be either CasualGroup or EventGroup"
         }
-        when (group) {
-            is CasualGroup -> return getELigibleRestaurantsForCasuals(group)
-            is EventGroup -> return getELigibleRestaurantsForEvent(group)
+        return when (group) {
+            is CasualGroup -> getELigibleRestaurantsForCasuals(group)
+            is EventGroup -> getELigibleRestaurantsForEvent(group)
         }
     }
-    private fun getELigibleRestaurantsForCasuals(group: CasualGroup): MutableList<RestaurantStats> {
-        var list = mutableListOf<RestaurantStats>()
+    private fun getELigibleRestaurantsForCasuals(group: CasualGroup): Int? {
+        val list = mutableListOf<RestaurantStats>()
         if (group.deliveryDistance == 0) {
             val visitingTick = group.getVisitingAt()
 
@@ -43,16 +43,23 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
                     list.add(stats)
                 }
             }
-            var llist = mutableListOf<RestaurantStats>()
+            val llist = mutableListOf<RestaurantStats>()
             list.forEach { stats ->
                 if (stats.availableSeats[group.tableType]!! >= group.size) {
                     llist.plus(stats)
                 }
             }
             llist.filter { isDietaryCompatible(it, group) }
-            return llist
+            val res = llist.maxWithOrNull(
+                compareBy<RestaurantStats> { it.positiveRatings - it.negativeRatings }
+                    .thenByDescending { it.restaurantId } // Reversed because maxWithOrNull picks highest, but we want lowest ID on tie
+            )
+            if (res != null) {
+                res.availableSeats[group.tableType] =res.availableSeats[group.tableType]!! - group.size
+            }
+            return res?.restaurantId
         } else {
-            var deliveryRests = mutableListOf<RestaurantStats>()
+            val deliveryRests = mutableListOf<RestaurantStats>()
             val decisionTick = group.visitingAt - ceil(group.deliveryDistance.toDouble() / DPT).toInt() - 3
             restaurantStats.filter { it.restaurantType in group.restaurantTypes }.forEach { stats ->
                 if (
@@ -63,12 +70,19 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
                 }
             }
             deliveryRests.filter { it.availableDrivers > 0 }.filter { isDietaryCompatible(it, group) }
-            return deliveryRests
+            val res = deliveryRests.maxWithOrNull(
+                compareBy<RestaurantStats> { it.positiveRatings - it.negativeRatings }
+                    .thenByDescending { it.restaurantId } // Reversed because maxWithOrNull picks highest, but we want lowest ID on tie
+            )
+            if (res != null) {
+                res.availableDrivers = res.availableDrivers -1
+            }
+            return res?.restaurantId
         }
     }
-    private fun getELigibleRestaurantsForEvent(group: EventGroup): List<RestaurantStats> {
-        var eventRests = mutableListOf<RestaurantStats>()
-        var result = mutableListOf<RestaurantStats>()
+    private fun getELigibleRestaurantsForEvent(group: EventGroup): Int? {
+        val eventRests = mutableListOf<RestaurantStats>()
+        val result = mutableListOf<RestaurantStats>()
         restaurantStats.filter { it.restaurantType in group.restaurantTypes }.filter { it.event }.forEach { stats ->
             if (
                 stats.openingTickStart < group.visitingAt &&
@@ -83,7 +97,14 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
             }
         }
         result.filter { isDietaryCompatible(it, group) }
-        return result
+        val res =  result.maxWithOrNull(
+            compareBy<RestaurantStats> { it.positiveRatings - it.negativeRatings }
+                .thenByDescending { it.restaurantId } // Reversed because maxWithOrNull picks highest, but we want lowest ID on tie
+        )
+        if (res != null) {
+            res.availableEventSeats[group.tableType] =res.availableEventSeats[group.tableType]!! - group.size
+        }
+        return res?.restaurantId
     }
 
     private fun matchPreference(menu: List<Recipe>, fp: FoodPreference): Boolean {

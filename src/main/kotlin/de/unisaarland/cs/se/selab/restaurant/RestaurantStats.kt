@@ -15,8 +15,8 @@ class RestaurantStats(
     val openingTickStart: Tick,
     val openingTickEnd: Tick,
     val event: Boolean,
-    private var positiveRatings: Int,
-    private var negativeRatings: Int,
+    var positiveRatings: Int,
+    var negativeRatings: Int,
     val menu: List<Recipe>,
 ) {
     var availableDrivers: Int = 0

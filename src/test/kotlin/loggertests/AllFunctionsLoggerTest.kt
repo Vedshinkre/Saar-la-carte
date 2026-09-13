@@ -296,11 +296,13 @@ class AllFunctionsLoggerTest {
 
         InitialAndPrepLogger.logPantryRemovedIngredient(
             removedIngredientAmount = 300,
+            unit = MeasurementUnit.G,
             ingredientName = "beef"
         )
 
         InitialAndPrepLogger.logPantryRemovedIngredient(
             removedIngredientAmount = 500,
+            unit = MeasurementUnit.G,
             ingredientName = "pasta"
         )
 

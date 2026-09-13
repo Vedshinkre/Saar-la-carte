@@ -1,5 +1,6 @@
 package de.unisaarland.cs.se.selab.restaurant
 
+import de.unisaarland.cs.se.selab.Time
 import de.unisaarland.cs.se.selab.actors.Cook
 import de.unisaarland.cs.se.selab.enums.CookType
 import de.unisaarland.cs.se.selab.enums.DishStatus
@@ -154,7 +155,7 @@ class Kitchen(
         // check in each order in kitchen
         for (order in orderQueue) {
             // Check every dish within that order
-            for (dish in order.getDishes()) { // TODO WAITING FOR ORDER IMPLEMENTATION
+            for (dish in order.getDishes()) {
                 if (dish.getStatus() == DishStatus.COOKED) {
                     servableCount += 1
                 }
@@ -270,7 +271,7 @@ class Kitchen(
         val matchingDishes = mutableListOf<Dish>()
 
         // Iterate through all dishes in the order
-        for (dish in order.getDishes()) { // TODO WAITING FOR ORDER IMPLEMENTATION
+        for (dish in order.getUncookedDishes()) { // CHANGE: we get uncooked dishes now, not getdishes()
             // Match the recipe by its unique ID
             val dishRecipe = dish.getRecipe()
             if (dishRecipe.getId() == recipe.getId()) {
@@ -278,7 +279,7 @@ class Kitchen(
             }
         }
 
-        return Pair(order.getId(), matchingDishes) // TODO WAITING FOR ORDER IMPLEMENTATION
+        return Pair(order.getId(), matchingDishes)
     }
 
     /**
@@ -349,7 +350,6 @@ class Kitchen(
 
         // Add history from Regular groups
         for (order in orderHistory) {
-            // TODO WAITING FOR ORDER IMPLEMENTATION
 
             for (dish in order.getDishes()) {
                 val recipe = dish.getRecipe()
@@ -400,7 +400,6 @@ class Kitchen(
         var i = orderQueue.size - 1
         while (i >= 0) {
             val currentOrder = orderQueue[i]
-            // TODO WAITING FOR ORDER IMPLEMENTATION:
             if (currentOrder.areAllDishesServedOrAborted()) {
                 orderQueue.removeAt(i)
             }
@@ -412,30 +411,26 @@ class Kitchen(
      * Find uncooked recipes and assigns them to eligible cooks.
      */
     private fun assignRecipesToCooks() {
-        val uncookedDishes = mutableListOf<Dish>()
-
         // get all uncooked dishes from the orders in the order queue
         for (order in orderQueue) {
-            // TODO WAITING FOR ORDER IMPLEMENTATION:
-            for (dish in order.getUncookedDishes()) {
-                uncookedDishes.add(dish)
+            // Extract unique recipes strictly from this order's remaining uncooked dishes.
+            val uncookedDishesForOrder = order.getUncookedDishes()
+            if (uncookedDishesForOrder.isEmpty()) {
+                continue
             }
-        }
 
-        if (uncookedDishes.isEmpty()) {
-            return
-        }
+            val uniqueRecipes = getUniqueRecipes(uncookedDishesForOrder)
 
-        //  extract unique recipes and sort them
-        val uniqueRecipes = getUniqueRecipes(uncookedDishes)
-        val sortedRecipes = sortRecipesByBasicnessAndId(uniqueRecipes)
+            //  within this order: basic dishes first, then lower recipe id
+            val sortedRecipes = sortRecipesByBasicnessAndId(uniqueRecipes)
 
-        // assign each recipe to an eligible cook
-        for (recipe in sortedRecipes) {
-            val chosenCook = chooseCook(recipe)
+            // Assign each recipe in this order to an eligible cook
+            for (recipe in sortedRecipes) {
+                val chosenCook = chooseCook(recipe)
 
-            if (chosenCook != null) {
-                findDishesForRecipe(recipe, chosenCook)
+                if (chosenCook != null) {
+                    findDishesForRecipe(recipe, chosenCook)
+                }
             }
         }
     }
@@ -465,7 +460,7 @@ class Kitchen(
         }
 
         if (allDishes.isNotEmpty()) {
-            cook.startCooking(recipe, allDishes, baseOrderId, allOrderIds)
+            cook.startCooking(recipe, allDishes, baseOrderId)
             val cookIDCurrent = cook.getId() ?: -1
             val cookTypeCurrent = cook.getCookType().name
             val curDishName = recipe.getName()
@@ -475,7 +470,7 @@ class Kitchen(
                 numberOfMeals = allDishes.size,
                 dishName = curDishName,
                 baseOrderId = baseOrderId,
-                allOrderIds = allOrderIds
+                allOrderIds = allOrderIds.sorted()
             )
         }
     }
@@ -504,7 +499,22 @@ class Kitchen(
                 val dishRecipe = cook.getCurrentRecipe()
                 val cookId = cook.getId() ?: -1
                 val dishName = dishRecipe?.getName() ?: "Unknown Dish"
-                val cookDurationTick = dishRecipe?.getDuration() ?: 0
+                // base order id of the dish that started this cooking
+                val baseOrderId = cook.getOrderId()
+                // get the base order
+                var baseOrder: Order? = null
+                for (order in orderQueue) {
+                    if (order.getId() == baseOrderId) {
+                        baseOrder = order
+                        break
+                    }
+                }
+
+                // time since the order has been ordered
+                var cookDurationTick = 0
+                if (baseOrder != null) {
+                    cookDurationTick = Time.tick - baseOrder.getOrderedAt() // TODO wait for getoprderedat getter
+                }
 
                 KitchenLogger.logKitchenMealCooked(
                     cookId = cookId,

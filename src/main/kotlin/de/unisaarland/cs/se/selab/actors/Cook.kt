@@ -77,6 +77,13 @@ class Cook(
     }
 
     /**
+     *explicit getter to get base order id recipe .
+     */
+    fun getOrderId(): Int? {
+        return orderId
+    }
+
+    /**
      * explicit getter of the dishes hat the cook has to cook .
      */
     fun getDishes(): List<Dish> {
@@ -89,8 +96,7 @@ class Cook(
     fun startCooking(
         recipe: Recipe,
         dishes: List<Dish>,
-        baseOrderId: Int,
-        ordersHavingSameRecipe: MutableList<Int>
+        baseOrderId: Int
     ) {
         currentRecipe = recipe
         orderId = baseOrderId

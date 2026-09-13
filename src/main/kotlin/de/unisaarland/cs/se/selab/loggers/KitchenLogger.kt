@@ -20,8 +20,8 @@ object KitchenLogger {
         Logger.log(
             LogLevel.IMPORTANT,
             "Kitchen Dish Assignment (R ${Logger.restaurantID}): Cook $cookId" +
-                "of type $cookType starts cooking $numberOfMeals meals of dish $dishName" +
-                "based on order $baseOrderId for orders $allOrderIds"
+                " of type $cookType starts cooking $numberOfMeals meals of dish $dishName" +
+                " based on order $baseOrderId for orders $allOrderIds."
         )
     }
 
@@ -37,8 +37,8 @@ object KitchenLogger {
         Logger.log(
             LogLevel.IMPORTANT,
             "Kitchen Meal Cooked (R ${Logger.restaurantID}): Cook $cookId" +
-                "finished cooking $numberOfMeals:number meals of dish $dishName $cookDurationTick" +
-                "ticks after ordering."
+                " finished cooking $numberOfMeals meals of dish $dishName $cookDurationTick" +
+                " ticks after ordering."
         )
     }
 
@@ -52,10 +52,10 @@ object KitchenLogger {
         servableMeals: Int
     ) {
         Logger.log(
-            LogLevel.IMPORTANT,
+            LogLevel.DEBUG,
             "Kitchen Status (R ${Logger.restaurantID}): $numberOfCooks cooks were" +
-                "active cooking $totalNumberOfMeals and finishing $finishedNumberOfMeals" +
-                "meals. $servableMeals meals can be served by the waitstaff."
+                " active cooking $totalNumberOfMeals and finishing $finishedNumberOfMeals" +
+                " meals. $servableMeals meals can be served by the waitstaff."
         )
     }
 }

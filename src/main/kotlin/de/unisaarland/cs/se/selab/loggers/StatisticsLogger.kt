@@ -19,7 +19,7 @@ object StatisticsLogger {
         Logger.log(
             LogLevel.IMPORTANT,
             "Simulation Statistics: Restaurant ${Logger.restaurantID} cooked" +
-                "$numberOfCookedMeals meals."
+                " $numberOfCookedMeals meals."
         )
     }
 
@@ -30,7 +30,7 @@ object StatisticsLogger {
         Logger.log(
             LogLevel.IMPORTANT,
             "Simulation Statistics: Restaurant ${Logger.restaurantID} served" +
-                "$numberOfCustomersServed customers."
+                " $numberOfCustomersServed customers."
         )
     }
 
@@ -41,7 +41,7 @@ object StatisticsLogger {
         Logger.log(
             LogLevel.IMPORTANT,
             "Simulation Statistics: Restaurant ${Logger.restaurantID} delivered" +
-                "meals to $numberOfCustomersDelivered customers."
+                " meals to $numberOfCustomersDelivered customers."
         )
     }
 
@@ -52,7 +52,7 @@ object StatisticsLogger {
         Logger.log(
             LogLevel.IMPORTANT,
             "Simulation Statistics: Restaurant ${Logger.restaurantID} received" +
-                "$numberOfCustomersGivingRatings ratings."
+                " $numberOfCustomersGivingRatings ratings."
         )
     }
 }

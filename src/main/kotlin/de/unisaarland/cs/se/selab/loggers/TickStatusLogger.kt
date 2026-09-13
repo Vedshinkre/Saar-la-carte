@@ -24,7 +24,7 @@ object TickStatusLogger {
     fun logCurrentTick() {
         Logger.log(
             LogLevel.IMPORTANT,
-            "Simulation: Tick $tick started."
+            "Simulation: Tick $tick ($evening) started."
         )
     }
 

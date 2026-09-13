@@ -18,11 +18,11 @@ object InitialAndPrepLogger {
             true -> Logger.log(
                 LogLevel.INFO,
                 "Initialization Info: $filename successfully parsed and" +
-                    "validated."
+                    " validated."
             )
             false -> Logger.log(
                 LogLevel.IMPORTANT,
-                "Initialization Info: $filename is invalid"
+                "Initialization Info: $filename is invalid."
             )
         }
     }
@@ -31,7 +31,7 @@ object InitialAndPrepLogger {
      * Logs the start of the simulation.
      */
     fun logSimulationStart() {
-        Logger.log(LogLevel.INFO, "Simulation Info: Simulation started")
+        Logger.log(LogLevel.INFO, "Simulation Info: Simulation started.")
     }
 
     /**
@@ -41,7 +41,7 @@ object InitialAndPrepLogger {
         Logger.log(
             LogLevel.IMPORTANT,
             "Incident: Incident $incidentId of type $incidentType" +
-                "occurred before evening $evening"
+                " occurred before evening $evening."
         )
     }
 
@@ -59,7 +59,7 @@ object InitialAndPrepLogger {
         Logger.log(
             LogLevel.IMPORTANT,
             "FOH No Reserving (R ${Logger.restaurantID}): No table could be" +
-                "reserved for group $groupId."
+                " reserved for group $groupId."
         )
     }
 
@@ -73,8 +73,8 @@ object InitialAndPrepLogger {
     ) {
         Logger.log(
             LogLevel.DEBUG,
-            "Pantry (R ${Logger.restaurantID}): Procured $amount$unit of $name" +
-                "from the supplier."
+            "Pantry (R ${Logger.restaurantID}): Procured $amount $unit of $name" +
+                " from the supplier."
         )
     }
 
@@ -93,12 +93,13 @@ object InitialAndPrepLogger {
      */
     fun logPantryRemovedIngredient(
         removedIngredientAmount: Int,
+        unit: MeasurementUnit,
         ingredientName: String
     ) {
         Logger.log(
             LogLevel.DEBUG,
-            "Pantry (R ${Logger.restaurantID}): Removed $removedIngredientAmount" +
-                "of $ingredientName from the pantry."
+            "Pantry (R ${Logger.restaurantID}): Removed $removedIngredientAmount " +
+                "$unit of $ingredientName from the pantry."
         )
     }
 }

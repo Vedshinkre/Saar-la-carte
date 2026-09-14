@@ -11,6 +11,20 @@ object Logger {
     private var outputHandle: PrintWriter = PrintWriter(System.out)
     var restaurantID: Id = -1
 
+    /**
+     *  In case a list of Ids must be
+     * logged, output string of a comma-separated list of Ids, (e.g., 3,5,7,8).
+     */
+    fun formatIds(ids: List<Id>): String = ids.sorted().joinToString(",")
+
+    /**
+     *  In case key-value mapping must be
+     * logged, output string of a comma-separated list of key:value pairs, (e.g., A:3,B:5,C:7,D:8).
+     */
+    fun formatKeyValueMap(values: Map<String, Int>): String = values.entries
+        .sortedBy { it.key }
+        .joinToString(",") { "${it.key}:${it.value}" }
+
     private fun shouldLog(level: LogLevel?): Boolean {
         return when (currentLevel) {
             LogLevel.DEBUG -> true

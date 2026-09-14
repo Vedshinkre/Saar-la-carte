@@ -18,7 +18,7 @@ object FohServiceLogger {
         Logger.log(
             LogLevel.IMPORTANT,
             "FOH Serving (R ${Logger.restaurantID}): Waitstaff $waitstaffId " +
-                "serves $dishNameToAmount meals to table $tableId " +
+                "serves ${Logger.formatKeyValueMap(dishNameToAmount)} meals to table $tableId " +
                 "$orderDurationTick ticks after ordering."
         )
     }
@@ -50,7 +50,8 @@ object FohServiceLogger {
         Logger.log(
             LogLevel.IMPORTANT,
             "FOH Delivery (R ${Logger.restaurantID}): Waitstaff $waitstaffId " +
-                "serves $dishNameToAmount meals to driver $driverId for order $orderId."
+                "serves ${Logger.formatKeyValueMap(dishNameToAmount)} meals to driver " +
+                "$driverId for order $orderId."
         )
     }
 

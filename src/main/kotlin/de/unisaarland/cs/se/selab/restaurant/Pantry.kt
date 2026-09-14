@@ -10,11 +10,13 @@ import de.unisaarland.cs.se.selab.loggers.InitialAndPrepLogger
  * Represents the pantry of the restaurant .
  */
 class Pantry(
-    private val inventory: MutableList<IngredientPackage>, private val supplier: Supplier
+    private val inventory: MutableList<IngredientPackage>,
+    private val supplier: Supplier
 ) {
     // explicit constructor with only stock used to create the supplier
     constructor(stock: Stock) : this(
-        inventory = mutableListOf<IngredientPackage>(), supplier = Supplier(stock)
+        inventory = mutableListOf<IngredientPackage>(),
+        supplier = Supplier(stock)
     ) // functions with logic
 
     /**

@@ -38,15 +38,15 @@ class Kitchen(
 
     // explicit constructor with only list of cooks, pantry and orderQueue
     constructor(cooks: List<Cook>, pantry: Pantry, orderQueue: MutableList<Order>, restaurantType: RestaurantType) :
-            this(
-                cooks = cooks,
-                pantry = pantry,
-                orderQueue = orderQueue,
-                restaurantType = restaurantType,
-                readyDishes = mutableListOf(),
-                finishedNumberOfMeals = 0,
-                numberOfCookedMeals = 0
-            )
+        this(
+            cooks = cooks,
+            pantry = pantry,
+            orderQueue = orderQueue,
+            restaurantType = restaurantType,
+            readyDishes = mutableListOf(),
+            finishedNumberOfMeals = 0,
+            numberOfCookedMeals = 0
+        )
     // sorting function
     /**
      * Sorts the cooks ONLY on the basis of their ids, null id is put at last .
@@ -350,7 +350,6 @@ class Kitchen(
 
         // Add history from Regular groups
         for (order in orderHistory) {
-
             for (dish in order.getDishes()) {
                 val recipe = dish.recipe
 
@@ -462,8 +461,8 @@ class Kitchen(
         if (allDishes.isNotEmpty()) {
             cook.startCooking(recipe, allDishes, baseOrderId)
             val cookIDCurrent = cook.id ?: -1
-            val cookTypeCurrent = cook.getCookType().name
-            val curDishName = recipe.getName()
+            val cookTypeCurrent = cook.type.name
+            val curDishName = recipe.name
             KitchenLogger.logKitchenDishAssignment(
                 cookId = cookIDCurrent,
                 cookType = cookTypeCurrent,

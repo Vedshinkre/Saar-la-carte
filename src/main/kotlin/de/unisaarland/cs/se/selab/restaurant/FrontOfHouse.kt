@@ -1,6 +1,7 @@
 package de.unisaarland.cs.se.selab.restaurant
 
 import de.unisaarland.cs.se.selab.Constants
+import de.unisaarland.cs.se.selab.Constants.ACTION_LIMIT
 import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.Time
 import de.unisaarland.cs.se.selab.actors.Driver
@@ -344,12 +345,11 @@ class FrontOfHouse(
             }
         }
     }
-    private fun recruitWaiterForServing(customerGroup: CustomerGroup) : List<Waiter> {
+    private fun recruitWaiterForServing(customerGroup: CustomerGroup): List<Waiter> {
         val required = customerGroup.currentOrder?.getServableDishes()?.size ?: 0
         val eligible = waiters.filter { it.getTickLoad(ActionType.SERVE) < ACTION_LIMIT }
         val waiterToCookedDishes: MutableMap<Waiter, Int> = mutableMapOf()
-        eligible.forEach {
-                targetWaiter ->
+        eligible.forEach { targetWaiter ->
             var res = 0
             val customerGroups = inHouseGroupsToWaiter.filterValues {
                 it == targetWaiter
@@ -361,12 +361,20 @@ class FrontOfHouse(
             waiterToCookedDishes[targetWaiter] = res
         }
         val sortedWaiterToCookedDishes: MutableMap<Waiter, Int> =
-            waiterToCookedDishes.entries
+            waiterToCookedDishes.entries.sortedBy { it.key.id }
                 .sortedByDescending { it.value }
                 .associate { it.key to it.value }
                 .toMutableMap()
-        var sortedWaiterList = mutableListOf<Waiter>()
-        val result = sortedWaiterToCookedDishes.keys.take(required).toList()
+        val sortedWaiters = sortedWaiterToCookedDishes.keys.toList()
+        var result = mutableListOf<Waiter>()
+        var recruitedCapacity = 0
+        for (waiter in sortedWaiters) {
+            if (recruitedCapacity >= required) {
+                break
+            }
+            result.add(waiter)
+            recruitedCapacity += ACTION_LIMIT - waiter.getTickLoad(ActionType.SERVE)
+        }
         return result
     }
 

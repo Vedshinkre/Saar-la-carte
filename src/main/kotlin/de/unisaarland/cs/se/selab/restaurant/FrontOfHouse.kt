@@ -507,8 +507,6 @@ class FrontOfHouse(
         }
     }
 
-    // TODO: implement getNextDriverId()
-
     // helpers
 
     /** serves as many given dishes as waiter's remaining capacity allows. */

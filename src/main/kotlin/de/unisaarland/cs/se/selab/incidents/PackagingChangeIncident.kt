@@ -16,7 +16,7 @@ class PackagingChangeIncident(
     /**
      * This function Handles the incident
      */
-    fun apply() {
+    override fun apply() {
         ingredient.setPackagingVolume(packagingVolume)
     }
 }

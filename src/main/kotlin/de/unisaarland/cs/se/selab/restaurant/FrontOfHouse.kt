@@ -10,12 +10,7 @@ import de.unisaarland.cs.se.selab.customer.CasualGroup
 import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.customer.EventGroup
 import de.unisaarland.cs.se.selab.customer.RegularGroup
-import de.unisaarland.cs.se.selab.enums.ActionType
-import de.unisaarland.cs.se.selab.enums.DishStatus
-import de.unisaarland.cs.se.selab.enums.DriverState
-import de.unisaarland.cs.se.selab.enums.ExperienceType
-import de.unisaarland.cs.se.selab.enums.RatingType
-import de.unisaarland.cs.se.selab.enums.TableStatus
+import de.unisaarland.cs.se.selab.enums.*
 import de.unisaarland.cs.se.selab.food.Dish
 import de.unisaarland.cs.se.selab.food.Order
 import de.unisaarland.cs.se.selab.food.Recipe
@@ -26,7 +21,10 @@ import de.unisaarland.cs.se.selab.loggers.FohServiceLogger.logCustomerRateRestau
 import de.unisaarland.cs.se.selab.loggers.FohServiceLogger.logFohEscorting
 import de.unisaarland.cs.se.selab.loggers.FohServiceLogger.logFohEscortingStatus
 import de.unisaarland.cs.se.selab.loggers.FohServiceLogger.logRatingStatus
+<<<<<<< Updated upstream
 import de.unisaarland.cs.se.selab.loggers.InitialAndPrepLogger
+=======
+>>>>>>> Stashed changes
 import kotlin.math.ceil
 import kotlin.math.min
 
@@ -65,16 +63,11 @@ class FrontOfHouse(
     }
 
     private fun getAssignedWaiter(customerId: Id): Waiter {
-        return inHouseGroupsToWaiter.entries
-            .first { it.key.id == customerId }
-            .value
+        return inHouseGroupsToWaiter.entries.first { it.key.id == customerId }.value
     }
 
     private fun getAssignedTableId(customerId: Id): List<Id> {
-        return customerToTable.entries
-            .first { it.key.id == customerId }
-            .value
-            .map { it.id }
+        return customerToTable.entries.first { it.key.id == customerId }.value.map { it.id }
     }
 
     /** Call with CustomerGroup and menu.
@@ -167,6 +160,7 @@ class FrontOfHouse(
         val sortedTables: List<Table> = getSortedPreferredFreeTables(regularOrEventCustomerGroup)
 
         // Step 2 and 3: Perfect fit or single table with three quarters rule
+<<<<<<< Updated upstream
         trySingleTable(regularOrEventCustomerGroup, sortedTables, true)
             ?.also { return reserveSingleTable(it) }
 
@@ -245,6 +239,30 @@ class FrontOfHouse(
         // Step 4: Multiple tables with three quarters rule
         mergeTables(casualGroup, sortedTables, true)
             ?.also { return reserveMultipleTables(it) }
+=======
+        trySingleTable(regularOrEventCustomerGroup, sortedTables, true)?.also {
+            reserveSingleTable(it)
+            return true
+        }
+
+        // Step 4: Multiple tables with three quarters rule
+        mergeTables(regularOrEventCustomerGroup, sortedTables, true)?.also {
+            reserveMultipleTables(it)
+            return true
+        }
+
+        // Step 5: Single table without three quarters rule
+        trySingleTable(regularOrEventCustomerGroup, sortedTables, false)?.also {
+            reserveSingleTable(it)
+            return true
+        }
+
+        // Step 6: Multiple tables without three quarters rule
+        mergeTables(regularOrEventCustomerGroup, sortedTables, false)?.also {
+            reserveMultipleTables(it)
+            return true
+        }
+>>>>>>> Stashed changes
 
         return false
     }
@@ -290,6 +308,7 @@ class FrontOfHouse(
         return sortedTables
     }
 
+<<<<<<< Updated upstream
     private fun successfulSeating(customerGroup: CustomerGroup, waiters: List<Waiter>) {
         val assignedTables: List<Table> = customerToTable[customerGroup]!!
         val mergeId: Id = assignedTables.minBy { it.id }.id
@@ -299,6 +318,26 @@ class FrontOfHouse(
                 assignedTables.map { it.id }.sorted(),
                 mergeId
             )
+=======
+    private fun trySingleTable(customerGroup: CustomerGroup, tables: List<Table>, threeQuarters: Boolean): Table? {
+        val groupFitsPredicate: (Table) -> Boolean = { customerGroup.size <= it.size }
+        val threeQuartersPredicate: (Table) -> Boolean =
+            { it.size.toDouble() * THREE_QUARTERS <= customerGroup.size && groupFitsPredicate(it) }
+
+        return tables.find(if (threeQuarters) threeQuartersPredicate else groupFitsPredicate)
+    }
+
+    private fun mergeTables(customerGroup: CustomerGroup, tables: List<Table>, threeQuarters: Boolean): List<Table>? {
+        val acc: MutableList<Table> = mutableListOf()
+        var mergeSize = 0
+
+        for (table in tables) {
+            if (customerGroup.size <= mergeSize) {
+                break
+            }
+            acc.addLast(table)
+            mergeSize += table.size
+>>>>>>> Stashed changes
         }
 
         numberOfCustomersSeated += customerGroup.size
@@ -313,8 +352,7 @@ class FrontOfHouse(
     // TODO: instead of using explicit getters for e.g. inHouseGroups, have a public attribute whose get function returns the keys of inHouseGroupsToWaiter
 
     /** serves cooked meals from kitchen to in-house groups and drivers, logs SERVING actions performed */
-    fun processServing() {
-        // split into three private function calls (unlike sequence diagram)
+    fun processServing() { // split into three private function calls (unlike sequence diagram)
         serveInHouseGroups()
         serveDeliveryGroups()
         logServingStatus()
@@ -343,14 +381,13 @@ class FrontOfHouse(
     /** serves a REGULAR or CASUAL group who always have an assigned waiter */
     private fun serveAssignedWaiterTable(group: CustomerGroup, order: Order) {
         val waiter = inHouseGroupsToWaiter[group] ?: return
-        val tableId = getAssignedTableId(group) ?: return
-        // TODO: relies on an invariant, maybe assert it
+        val tableId = getAssignedTableId(group) ?: return // TODO: relies on an invariant, maybe assert it
 
         val servableDishes = order.getServableDishes()
         if (servableDishes.isEmpty()) return
 
         val complete = order.areAllDishesCooked()
-        val capacity = Constants.ACTION_LIMIT - waiter.getTickLoad(ActionType.SERVE)
+        val capacity = ACTION_LIMIT - waiter.getTickLoad(ActionType.SERVE)
 
         // proceed only if order is either complete or can be partially served yet
         if (!order.hasServingStarted() && !complete && isWithinTimeWindow(order)) {
@@ -360,8 +397,7 @@ class FrontOfHouse(
 
         // if order is complete (and not started serving), waiter must be able to serve ALL servable dishes at once
         if (!order.hasServingStarted() && complete && capacity < servableDishes.size) {
-            order.startServing()
-            // waiter doesn't have capacity to serve ALL servable dishes in the complete order, so they don't serve ANY
+            order.startServing() // waiter doesn't have capacity to serve ALL servable dishes in the complete order, so they don't serve ANY
             logNoServing(waiter, servableDishes.size, tableId)
             return
         }
@@ -377,8 +413,7 @@ class FrontOfHouse(
 
     /** serves an EVENT group, recruits as many waiters as needed. */
     private fun serveEventTable(group: EventGroup, order: Order) {
-        val tableId = getAssignedTableId(group) ?: return
-        // invariant, could be asserted
+        val tableId = getAssignedTableId(group) ?: return // invariant, could be asserted
 
         val readyDishes = order.getServableDishes()
         if (readyDishes.isEmpty()) return
@@ -386,17 +421,16 @@ class FrontOfHouse(
         val complete = order.areAllDishesCooked()
 
         // proceed only if order is either complete or can be partially served
-        if (!order.hasServingStarted() && !complete && isWithinTimeWindow(order)) {
-            // log with the FIRST waiter that could've served
+        if (!order.hasServingStarted() && !complete && isWithinTimeWindow(order)) { // log with the FIRST waiter that could've served
             // TODO: action type is also
             val candidate = recruitWaitersForEventGroup(ActionType.SERVE, group).firstOrNull()
             logNoServing(candidate, readyDishes.size, tableId)
             return
         }
 
-        val recruitedWaiters = recruitWaitersForEventGroup(ActionType.SERVE , group)
-        val totalCapacity = recruitedWaiters.sumOf { Constants.ACTION_LIMIT - it.getTickLoad(ActionType.SERVE) }
-        // if order is complete (and not started serving), recruited waiters must be able to serve ALL servable dishes
+        val recruitedWaiters = recruitWaitersForEventGroup(ActionType.SERVE, group)
+        val totalCapacity =
+            recruitedWaiters.sumOf { ACTION_LIMIT - it.getTickLoad(ActionType.SERVE) } // if order is complete (and not started serving), recruited waiters must be able to serve ALL servable dishes
         if (!order.hasServingStarted() && complete && totalCapacity < readyDishes.size) {
             order.startServing()
             logNoServing(recruitedWaiters.firstOrNull(), readyDishes.size, tableId)
@@ -416,13 +450,11 @@ class FrontOfHouse(
         order.markFullyServed()
     }
 
-    /** recruit waiters for an EVENT group, accumulates enough (ordered by asc id) to cover group's servable dishes. */
-    // TODO: implement recruitWaitersForEventGroup()
-    private fun recruitWaitersForEventGroup(actionType: ActionType, eventGroup: EventGroup):List<Waiter> {
+    /** recruit waiters for an EVENT group, accumulates enough (ordered by asc id) to cover group's servable dishes. */ // TODO: implement recruitWaitersForEventGroup()
+    private fun recruitWaitersForEventGroup(actionType: ActionType, eventGroup: EventGroup): List<Waiter> {
         when (actionType) {
-            ActionType.SEAT ->
-               return waiters.filter { it.getTickLoad(ActionType.SEAT) < ACTION_LIMIT }
-                    .sortedByDescending { it.currentLoad }
+            ActionType.SEAT -> return waiters.filter { it.getTickLoad(ActionType.SEAT) < ACTION_LIMIT }
+                .sortedByDescending { it.currentLoad }
 
             ActionType.TAKE_ORDER -> TODO()
             ActionType.SERVE -> return recruitWaiterForServing(eventGroup)
@@ -448,10 +480,8 @@ class FrontOfHouse(
             waiterToCookedDishes[targetWaiter] = res
         }
         val sortedWaiterToCookedDishes: MutableMap<Waiter, Int> =
-            waiterToCookedDishes.entries.sortedBy { it.key.id }
-                .sortedByDescending { it.value }
-                .associate { it.key to it.value }
-                .toMutableMap()
+            waiterToCookedDishes.entries.sortedBy { it.key.id }.sortedByDescending { it.value }
+                .associate { it.key to it.value }.toMutableMap()
         val sortedWaiters = sortedWaiterToCookedDishes.keys.toList()
         var result = mutableListOf<Waiter>()
         var recruitedCapacity = 0
@@ -466,8 +496,7 @@ class FrontOfHouse(
     }
 
     private fun serveDeliveryGroups() {
-        val readyGroups = deliveryGroups
-            .filter { it.currentOrder?.areAllDishesCooked() == true }
+        val readyGroups = deliveryGroups.filter { it.currentOrder?.areAllDishesCooked() == true }
             .sortedBy { it.currentOrder?.id ?: Int.MAX_VALUE }
 
         for (group in readyGroups) {
@@ -482,8 +511,12 @@ class FrontOfHouse(
 
     /** picks waiter to serve driver delivery meals: waiter with min id whose SERVING tick load < action limit */
     private fun assignWaiterForDelivery(): Waiter? =
+<<<<<<< Updated upstream
         waiters.filter { it.getTickLoad(ActionType.SERVE) < Constants.ACTION_LIMIT }
             .minByOrNull { it.id ?: Int.MAX_VALUE }
+=======
+        waiters.filter { it.getTickLoad(ActionType.SERVE) < ACTION_LIMIT }.minByOrNull { it.id ?: Int.MAX_VALUE }
+>>>>>>> Stashed changes
 
     private fun getOrAssignDriver(group: CustomerGroup, order: Order): Driver? {
         val assigned = drivers.find { it.targetGroup == group && it.currentOrder == order }
@@ -503,7 +536,7 @@ class FrontOfHouse(
         var remaining = dishes
         while (remaining.isNotEmpty()) {
             val waiter = assignWaiterForDelivery() ?: break
-            val capacity = Constants.ACTION_LIMIT - waiter.getTickLoad(ActionType.SERVE)
+            val capacity = ACTION_LIMIT - waiter.getTickLoad(ActionType.SERVE)
             val batch = remaining.take(capacity)
             waiter.serve(batch)
             waiter.addToTickLoad(ActionType.SERVE, batch.size)
@@ -523,7 +556,7 @@ class FrontOfHouse(
 
     /** serves as many given dishes as waiter's remaining capacity allows. */
     private fun serveBatch(waiter: Waiter, dishes: List<Dish>, tableId: Id, order: Order): List<Dish> {
-        val capacity = Constants.ACTION_LIMIT - waiter.getTickLoad(ActionType.SERVE)
+        val capacity = ACTION_LIMIT - waiter.getTickLoad(ActionType.SERVE)
         if (capacity <= 0) return dishes
         val batch = dishes.take(capacity)
         waiter.serve(batch)
@@ -571,8 +604,8 @@ class FrontOfHouse(
 
     /** main delivering function: starts driving drivers who just received full order, advances already driving drivers */
     fun processDelivering() {
-        val readyDrivers = drivers.filter { it.state == DriverState.WAITING }
-            .sortedBy { it.targetGroup?.id ?: Int.MAX_VALUE }
+        val readyDrivers =
+            drivers.filter { it.state == DriverState.WAITING }.sortedBy { it.targetGroup?.id ?: Int.MAX_VALUE }
         for (driver in readyDrivers) {
             prepareDelivery(driver)
         }
@@ -608,8 +641,7 @@ class FrontOfHouse(
     /** main eating function: makes customers that waited too long leave and customers eating progress eating */
     fun processEating() {
         var eatingCount = 0
-        var finishedCount = 0
-        // for logging
+        var finishedCount = 0 // for logging
 
         val sortedGroups = getInHouseGroups().sortedWith(compareBy({ getServingPriority(it) }, { it.id }))
         for (group in sortedGroups) {
@@ -644,8 +676,7 @@ class FrontOfHouse(
         val unservedCustomersLeave = if (noDishServed) {
             ticksSinceOrder >= Constants.UNSERVED_WAIT_TICKS
         } else {
-            ticksSinceOrder >= Constants.UNSERVED_WAIT_TICKS + Constants.ADDITIONAL_UNSERVED_WAIT_TICKS
-            // wait another 2 ticks if someone in the group was served
+            ticksSinceOrder >= Constants.UNSERVED_WAIT_TICKS + Constants.ADDITIONAL_UNSERVED_WAIT_TICKS // wait another 2 ticks if someone in the group was served
         }
 
         if (!unservedCustomersLeave) return
@@ -680,8 +711,7 @@ class FrontOfHouse(
 
     // helpers
 
-    private fun wasServed(dish: Dish): Boolean =
-        dish.status == DishStatus.SERVED || dish.status == DishStatus.EATEN
+    private fun wasServed(dish: Dish): Boolean = dish.status == DishStatus.SERVED || dish.status == DishStatus.EATEN
 
     private fun progressEating(order: Order): Pair<Int, Int> {
         var eating = 0
@@ -717,17 +747,14 @@ class FrontOfHouse(
     // ESCORTING START
     // TODO(maybe customerID as parameter is more work than just customer)
     private fun dismantleTable(customerId: Id) {
-        val tables = customerToTable.entries
-            .first { it.key.id == customerId }
-            .value
+        val tables = customerToTable.entries.first { it.key.id == customerId }.value
 
         tables.forEach {
             it.status = TableStatus.FREE
         }
 
         customerToTable.remove(
-            customerToTable.keys.first { it.id == customerId }
-        )
+            customerToTable.keys.first { it.id == customerId })
     }
 
     /**
@@ -739,27 +766,24 @@ class FrontOfHouse(
      * dismantled.
      */
     fun processEscorting() {
-        val inHouseGroups = getInHouseGroups()
-            .sortedWith(compareBy({ getServingPriority(it) }, { it.id }))
+        val inHouseGroups = getInHouseGroups().sortedWith(compareBy({ getServingPriority(it) }, { it.id }))
         var waitstaffNumber = 0
         var customerEscortingNumber = 0
         inHouseGroups.forEach {
             val order = it.currentOrder
             if (order != null) {
                 if (order.areAllDishesEaten()) {
-                    if (it is EventGroup) {
-                        // TODO(EVENT GROUP ESCORTING)
+                    if (it is EventGroup) { // TODO(EVENT GROUP ESCORTING)
+                        val waiters = recruitWaitersForEventGroup(ActionType.ESCORT, it)
+
+
                     } else {
                         val waiter = getAssignedWaiter(it.id)
                         val customersBefore = it.customersRemainingInRestaurant
                         waiter.escort(it)
-                        val customersEscorted =
-                            customersBefore - it.customersRemainingInRestaurant
+                        val customersEscorted = customersBefore - it.customersRemainingInRestaurant
                         logFohEscorting(
-                            waiter.id!!,
-                            customersEscorted,
-                            it.id,
-                            getAssignedTableId(it.id).min()
+                            waiter.id!!, customersEscorted, it.id, getAssignedTableId(it.id).min()
                         )
 
                         waitstaffNumber++
@@ -772,8 +796,7 @@ class FrontOfHouse(
             }
         }
         logFohEscortingStatus(
-            waitstaffNumber,
-            customerEscortingNumber
+            waitstaffNumber, customerEscortingNumber
         )
     }
 
@@ -786,28 +809,21 @@ class FrontOfHouse(
      * @return updated positive and negative rating counts
      */
     fun processRatings(
-        positiveRatings: Int,
-        negativeRatings: Int
+        positiveRatings: Int, negativeRatings: Int
     ): Pair<Int, Int> {
         var positive = positiveRatings
         var negative = negativeRatings
-        val filteredInHouseGroups = getInHouseGroups()
-            .filter { it.customersRemainingInRestaurant == 0 }
+        val filteredInHouseGroups = getInHouseGroups().filter { it.customersRemainingInRestaurant == 0 }
 
         val filteredDeliveryGroups = deliveryGroups.filter {
             val order = it.currentOrder
 
-            (order == null) ||
-                    order.areAllDishesEaten() ||
-                    order.dishes.any { dish ->
-                        dish.status == DishStatus.ABORTED
-                    }
+            (order == null) || order.areAllDishesEaten() || order.dishes.any { dish ->
+                dish.status == DishStatus.ABORTED
+            }
         }
-        val groupsToRate = (
-            filteredInHouseGroups +
-                filteredDeliveryGroups +
-                turnedAwayGroups
-            ).sortedWith(compareBy({ getServingPriority(it) }, { it.id })
+        val groupsToRate = (filteredInHouseGroups + filteredDeliveryGroups + turnedAwayGroups).sortedWith(
+            compareBy({ getServingPriority(it) }, { it.id })
         )
         var groupsGivingRatings = 0
         groupsToRate.forEach {
@@ -817,21 +833,16 @@ class FrontOfHouse(
                     groupsGivingRatings++
 
                     logCustomerRateRestaurant(
-                         it.id,
-                         RatingType.POSITIVE,
-                         positive,
-                        negative
+                        it.id, RatingType.POSITIVE, positive, negative
                     )
                 }
+
                 RatingType.NEGATIVE -> {
                     negative++
                     groupsGivingRatings++
 
                     logCustomerRateRestaurant(
-                        it.id,
-                        RatingType.NEGATIVE,
-                        positive,
-                        negative
+                        it.id, RatingType.NEGATIVE, positive, negative
                     )
                 }
 
@@ -841,6 +852,5 @@ class FrontOfHouse(
         }
         logRatingStatus(groupsGivingRatings)
         return Pair(positive, negative)
-    }
-    //RATING END
+    } //RATING END
 }

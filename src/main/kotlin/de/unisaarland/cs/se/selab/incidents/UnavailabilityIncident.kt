@@ -18,8 +18,7 @@ class UnavailabilityIncident(
     /**
      * to check Overlapping
      */
-    fun apply() {
-        // set duration in Int to stock <ingredient,<bool;int>>
+    override fun apply() { // set duration in Int to stock <ingredient,<bool;int>>
         stock.setIngredientToUnavailable(ingredient, duration)
     }
 
@@ -38,6 +37,5 @@ class UnavailabilityIncident(
      */
 
     fun conflictMessage(other: UnavailabilityIncident): String =
-        "Ingredient $ingredient: incident $id (evening $evening, duration $duration) " +
-            "overlaps incident ${other.id} (evening ${other.evening}, duration ${other.duration})"
+        "Ingredient $ingredient: incident $id (evening $evening, duration $duration) " + "overlaps incident ${other.id} (evening ${other.evening}, duration ${other.duration})"
 }

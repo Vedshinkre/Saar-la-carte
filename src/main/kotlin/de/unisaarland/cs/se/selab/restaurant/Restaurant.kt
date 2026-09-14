@@ -64,7 +64,39 @@ class Restaurant(
      * Simulates one tick
      */
     fun simulateTick() {
-        frontOfHouse.processArrivalSeatingOrdering(customerQueue.first(), restaurantStats.menu)
+        processArrivalSeatingOrdering()
+
+        kitchen.processCooking()
+
+        frontOfHouse.processServing()
+        frontOfHouse.processDelivering()
+        frontOfHouse.processEating()
+        frontOfHouse.processEscorting()
+
+        val (positiveRatings, negativeRatings) = frontOfHouse.processRatings(
+            restaurantStats.positiveRatings,
+            restaurantStats.negativeRatings
+        )
+        restaurantStats.positiveRatings = positiveRatings
+        restaurantStats.negativeRatings = negativeRatings
+    }
+
+    /**
+     * Processes arrival, seating and ordering for every customer group currently in the
+     * queue, removing groups that are done per FrontOfHouse.processArrivalSeatingOrdering's
+     * keep-in-queue formula, then logs and resets the tick's seating/ordering status.
+     */
+    private fun processArrivalSeatingOrdering() {
+        val iterator = customerQueue.iterator()
+        while (iterator.hasNext()) {
+            val customerGroup = iterator.next()
+            val keepInQueue = frontOfHouse.processArrivalSeatingOrdering(customerGroup, restaurantStats.menu) ||
+                customerGroup.isWaitingToBeSeated
+            if (!keepInQueue) {
+                iterator.remove()
+            }
+        }
+        frontOfHouse.logAndResetSeatingOrderingTickStatus()
     }
 
     /** returns whether a driver is available */
@@ -72,17 +104,17 @@ class Restaurant(
 
     // statistics
     /**
-     * gets number of cooked meals
+     * gets a number of cooked meals
      */
     fun getNumberOfCookedMeals(): Int = kitchen.numberOfCookedMeals
 
     /**
-     * gets number of cooked meals
+     * gets a number of cooked meals
      */
     fun getNumberOfCustomersServed(): Int = frontOfHouse.numberOfCustomersServed
 
     /**
-     * gets number of cooked meals
+     * gets a number of cooked meals
      */
     fun getNumberOfCustomersDelivered(): Int = frontOfHouse.numberOfCustomersDelivered
 

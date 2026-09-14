@@ -1,5 +1,6 @@
 package de.unisaarland.cs.se.selab.actors
 
+import de.unisaarland.cs.se.selab.Constants
 import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.Tick
 import de.unisaarland.cs.se.selab.Time
@@ -10,7 +11,6 @@ import de.unisaarland.cs.se.selab.enums.DriverState
 import de.unisaarland.cs.se.selab.enums.ExperienceType
 import de.unisaarland.cs.se.selab.food.Order
 import de.unisaarland.cs.se.selab.loggers.DeliveryLogger
-import de.unisaarland.cs.se.selab.Constants
 
 /** driver: waits idle, carries an order out to a customer, then returns */
 class Driver {
@@ -38,7 +38,6 @@ class Driver {
         val order = currentOrder ?: return
         val driverId = id ?: return
 
-        // TODO: make visitingAt public or provide a getter
         if (Time.tick > group.visitingAt + Constants.CUSTOMER_DELIVERY_WAIT_TICKS) {
             abortOrder(order)
             group.experience = ExperienceType.NEGATIVE
@@ -48,7 +47,7 @@ class Driver {
         }
 
         ticksToDest -= 1
-        DeliveryLogger.logDeliveryDriving(driverId, Constants.DRIVER_SPEED, ticksToDest)
+        DeliveryLogger.logDeliveryDriving(driverId, Constants.DRIVER_SPEED.toInt(), ticksToDest)
 
         if (ticksToDest <= 0) {
             arriveAtCustomer(driverId, group, order)

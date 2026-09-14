@@ -729,28 +729,26 @@ class FrontOfHouse(
         var customerEscortingNumber = 0
         inHouseGroups.forEach {
             val order = it.currentOrder
-            if (order != null) {
-                if (order.areAllDishesEaten()) {
-                    if (it is EventGroup) { // TODO(EVENT GROUP ESCORTING)
-                    } else {
-                        val waiter = getAssignedWaiter(it.id)
-                        val customersBefore = it.customersRemainingInRestaurant
-                        waiter.escort(it)
-                        val customersEscorted = customersBefore - it.customersRemainingInRestaurant
-                        logFohEscorting(
-                            waiter.id!!,
-                            customersEscorted,
-                            it.id,
-                            getAssignedTableId(it.id).min()
-                        )
+            if (order != null && order.areAllDishesEaten()) {
+                if (it is EventGroup) { // TODO(EVENT GROUP ESCORTING)
+                } else {
+                    val waiter = getAssignedWaiter(it.id)
+                    val customersBefore = it.customersRemainingInRestaurant
+                    waiter.escort(it)
+                    val customersEscorted = customersBefore - it.customersRemainingInRestaurant
+                    logFohEscorting(
+                        waiter.id!!,
+                        customersEscorted,
+                        it.id,
+                        getAssignedTableId(it.id).min()
+                    )
 
-                        waitstaffNumber++
-                        customerEscortingNumber += it.size
-                    }
+                    waitstaffNumber++
+                    customerEscortingNumber += customersEscorted
                 }
-                if (it.customersRemainingInRestaurant == 0) {
-                    if (it is CasualGroup) dismantleTable(it.id)
-                }
+            }
+            if (it.customersRemainingInRestaurant == 0) {
+                if (it is CasualGroup) dismantleTable(it.id)
             }
         }
         logFohEscortingStatus(
@@ -758,8 +756,8 @@ class FrontOfHouse(
             customerEscortingNumber
         )
     }
-
     // ESCORTING END
+
     // RATING START
     /**
      * Processes customer ratings and updates the positive and negative rating counts.
@@ -778,7 +776,7 @@ class FrontOfHouse(
         val filteredDeliveryGroups = deliveryGroups.filter {
             val order = it.currentOrder
 
-            (order == null) || order.areAllDishesEaten() || order.dishes.any { dish ->
+            order == null || order.areAllDishesEaten() || order.dishes.any { dish ->
                 dish.status == DishStatus.ABORTED
             }
         }

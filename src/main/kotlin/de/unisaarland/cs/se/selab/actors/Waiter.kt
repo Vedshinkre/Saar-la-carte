@@ -1,5 +1,6 @@
 package de.unisaarland.cs.se.selab.actors
 
+import de.unisaarland.cs.se.selab.Constants.ACTION_LIMIT
 import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.enums.ActionType
@@ -57,7 +58,7 @@ class Waiter {
      */
     fun escort(cg: CustomerGroup) {
         val escortLoad = getTickLoad(ActionType.ESCORT)
-        val remainingCapacity = TICK_MAX - escortLoad
+        val remainingCapacity = ACTION_LIMIT - escortLoad
 
         val customersToEscort = minOf(
             cg.customersRemainingInRestaurant,

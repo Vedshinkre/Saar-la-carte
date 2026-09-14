@@ -6,7 +6,7 @@ import de.unisaarland.cs.se.selab.enums.ActionType
 import de.unisaarland.cs.se.selab.enums.DishStatus
 import de.unisaarland.cs.se.selab.food.Dish
 
-// TODO: maybe get rid of explicit getters and setters in favour of kotlin's default get(), set()
+const val TICK_MAX = 10
 
 /** waiter */
 class Waiter {
@@ -57,7 +57,7 @@ class Waiter {
      */
     fun escort(cg: CustomerGroup) {
         val escortLoad = getTickLoad(ActionType.ESCORT)
-        val remainingCapacity = 10 - escortLoad
+        val remainingCapacity = TICK_MAX - escortLoad
 
         val customersToEscort = minOf(
             cg.customersRemainingInRestaurant,

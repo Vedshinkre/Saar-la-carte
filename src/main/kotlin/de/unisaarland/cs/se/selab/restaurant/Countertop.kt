@@ -52,17 +52,13 @@ class Countertop(
      * updates the inventory inside the pantry after a recipe was chosen to order
      */
     fun reserveIngredients(recipe: Recipe) {
-        val ingredients = recipe.getIngredients()
+        val ingredients = recipe.ingredients
+        var ingredientToAmount = mutableMapOf<Ingredient, Int>()
         for (ingredient in ingredients) {
             var amount = ingredient.value
-            val packages = pantry.getPackagesForIngredient(ingredient.key)
-            val packageIterator = packages.iterator()
-            while (amount != 0 && packageIterator.hasNext()) {
-                val pkg = packageIterator.next()
-                val removedAmount = pkg.removeAmount(amount)
-                amount -= removedAmount
-            }
+            ingredientToAmount[ingredient] = amount
         }
+        pantry.reserveIngredients(ingredients)
     }
 
     /**

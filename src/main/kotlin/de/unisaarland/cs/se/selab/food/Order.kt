@@ -10,8 +10,8 @@ import java.util.concurrent.atomic.AtomicInteger
  * The order that a customer orders. This class is used as a way to keep track of the status of an order as well.
  * It is created by the Fron Of House and then used
  */
-class Order(private val dishes: List<Dish>) {
-    private val id: Id = nextId.getAndIncrement()
+class Order(val dishes: List<Dish>) {
+    val id: Id = nextId.getAndIncrement()
     var firstDishCookedAt: Tick? = null
     var lastDishServedAt: Tick? = null
     val orderedAt: Tick = Time.tick
@@ -61,20 +61,6 @@ class Order(private val dishes: List<Dish>) {
         return cookedDishes.sortedWith(compareBy({ !it.isBasic }, { it.recipe.id }))
     }
 
-    // explicit getters for relevant functions
-    /**
-     * returns id of the order
-     */
-    fun getId(): Int {
-        return id
-    }
-
-    /**
-     * returns the list of dishes inside an order
-     */
-    fun getDishes(): List<Dish> {
-        return dishes
-    }
     // functions with logic
 
     /**

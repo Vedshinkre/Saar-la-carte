@@ -79,7 +79,7 @@ class FrontOfHouse(
         if (customerGroup is RegularGroup || (customerGroup is CasualGroup && !customerGroup.wantsDelivery)) {
             val waiter: Waiter = assignWaiter(customerGroup) ?: run {
                 FohReceptionLogger.logFohNoSeatingNoWaitstaff(customerGroup.id)
-                if (!customerGroup.isWaitingToBeSeated) { // TODO: set experience here
+                if (!customerGroup.isWaitingToBeSeated) {
                     when (customerGroup) {
                         is RegularGroup -> {
                             customerToTable.remove(customerGroup)
@@ -88,6 +88,7 @@ class FrontOfHouse(
                         is CasualGroup -> Unit
                     }
                     turnedAwayGroups.addLast(customerGroup)
+                    customerGroup.experience = ExperienceType.NEGATIVE
                 }
                 return false
             }
@@ -95,8 +96,9 @@ class FrontOfHouse(
             when (customerGroup) {
                 is RegularGroup -> Unit
                 is CasualGroup -> if (!assignTables(customerGroup)) {
-                    FohReceptionLogger.logFohNoSeating(customerGroup.id, waiter.id!!) // TODO: set experience here
+                    FohReceptionLogger.logFohNoSeating(customerGroup.id, waiter.id!!)
                     turnedAwayGroups.addLast(customerGroup)
+                    customerGroup.experience = ExperienceType.NEGATIVE
                     customerGroup.isWaitingToBeSeated = false
                     return false
                 }
@@ -137,6 +139,8 @@ class FrontOfHouse(
         if (eventGroupSize != 0) {
             FohReceptionLogger.logFohNoSeatingNoWaitstaff(eventGroup.id)
             customerToTable.remove(eventGroup)
+            turnedAwayGroups.addLast(eventGroup)
+            eventGroup.experience = ExperienceType.NEGATIVE
             return false
         }
 

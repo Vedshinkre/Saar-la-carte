@@ -5,6 +5,7 @@ import de.unisaarland.cs.se.selab.enums.LogLevel
 /**
  * data class that contains all the command line arguments that get passed to main
  */
+// TODO: rename to CliInfo
 data class Cliinfo(
     val foodFilePath: String,
     val restaurantFilePath: String,

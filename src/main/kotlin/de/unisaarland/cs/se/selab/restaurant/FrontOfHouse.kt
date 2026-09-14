@@ -411,7 +411,6 @@ class FrontOfHouse(
         order.markFullyServed()
     }
 
-    /** recruit waiters for an EVENT group, accumulates enough (ordered by asc id) to cover group's servable dishes. */ // TODO: implement recruitWaitersForEventGroup()
     private fun recruitWaitersForEventGroup(actionType: ActionType, eventGroup: EventGroup): List<Waiter> {
         when (actionType) {
             ActionType.SEAT -> return waiters.sortedBy { it.id }
@@ -424,7 +423,6 @@ class FrontOfHouse(
             }.sortedByDescending { it.currentLoad }
         }
     }
-
 
     private fun recruitWaiterForServing(customerGroup: EventGroup): List<Waiter> {
         val required = customerGroup.currentOrder?.getServableDishes()?.size ?: 0

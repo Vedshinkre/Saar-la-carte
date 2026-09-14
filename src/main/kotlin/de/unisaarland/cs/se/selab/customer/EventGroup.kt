@@ -17,7 +17,5 @@ class EventGroup(
     val eventEvening: Evening,
     private val eventDishes: Map<RestaurantType, String>
 ) : CustomerGroup(id, size, tableType, visitingAt, foodPreferences) {
-    private var currentRestaurantType: RestaurantType? = null
-    private var failedReservations: Int = 0
-    // faildeReservations should exist only for EventGroups it seems from the spec
+    var currentRestaurantType: RestaurantType? = null
 }

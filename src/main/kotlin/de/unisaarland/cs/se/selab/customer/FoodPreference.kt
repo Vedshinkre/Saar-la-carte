@@ -7,14 +7,6 @@ import de.unisaarland.cs.se.selab.food.Recipe
 /**
  * Represents a food preference: which ingredients a customer refuses/prefers, and
  * which dishes they like, used to decide what they order.
- *
- * NOTE: switched the constructor properties from public `val` to private with
- * explicit getters below, to match how every other class in this project exposes
- * its fields (getStatus(), getId(), getIngredients(), ...) - the class diagram
- * lists `getExcludedIngredients()` etc. as real methods, not raw property access.
- * Constructor call sites using named/positional args are unaffected; only direct
- * property access like `foodPreference.excludedIngredients` would need to become
- * `foodPreference.getExcludedIngredients()`.
  */
 class FoodPreference(
     val excludedIngredients: List<Ingredient>,
@@ -28,51 +20,82 @@ class FoodPreference(
 
     /**
      * Picks a dish for a customer with this preference to order, given the recipes
-     * currently available to cook and, for event groups, the one dish they
-     * specifically favor for tonight's restaurant type ([eventFavourite]; pass an
-     * empty string when not applicable, as the sequence diagram does for
+     * currently available to cook, or `null` if none of the available recipes work
+     * for them at all.
+     *
+     * For event groups, [eventFavourite] is the one dish they favor specifically for
+     * tonight's restaurant type; pass an empty string when not applicable (i.e. for
      * non-event customers).
      *
-     * Order of consideration, per the sequence diagram:
-     *  1. Any recipe containing an excluded ingredient is dropped entirely.
-     *  2. Among what's left, recipes matching a favorite dish (this customer's own
-     *     [favoriteDishes], or [eventFavourite]) are preferred.
-     *  3. Among what's left after that, recipes containing a preferred ingredient
-     *     are preferred.
-     *  4. If more than one candidate remains after all of the above - including
-     *     the case where there were no preferences to narrow anything down at all -
-     *     the highest-id recipe wins. This matches the diagram's own example: with
-     *     no exclusions/favorites/preferred ingredients, the recipe with the
-     *     highest id was chosen.
-     *
-     * The sequence diagram never actually shows favorites and preferred
-     * ingredients disagreeing with each other, so the exact priority between
-     * steps 2 and 3 above is my best reading of "we choose based on favorite
-     * dishes and preferred ingredients" - double check this against the written
-     * spec (section 2.2) if the order matters for your validation tests.
+     * Selection order:
+     *  1. Only recipes containing none of [excludedIngredients] are considered at
+     *     all. If none qualify, return `null`.
+     *  2. For event customers ([eventFavourite] non-empty): if a qualifying recipe
+     *     matches [eventFavourite], it's chosen outright - this takes priority over
+     *     the customer's own favorite dishes or preferred ingredients.
+     *  3. Otherwise (or if the event favorite wasn't available): walk
+     *     [favoriteDishes] in order and return the first one that matches a
+     *     qualifying recipe.
+     *  4. If no favorite matched (including the case of no favorites at all),
+     *     narrow to whichever qualifying recipe(s) contain the most distinct
+     *     [preferredIngredients] - counted by enumeration (how many of them
+     *     appear in the recipe), not by quantity. With no preferred ingredients
+     *     either, every recipe ties at zero here.
+     *  5. Any remaining tie (including the "no preferences at all" case) is
+     *     broken by the highest recipe id.
      */
-    fun decideDish(availableMenu: List<Recipe>, eventFavourite: String): Dish {
+    fun decideDish(availableMenu: List<Recipe>, eventFavourite: String): Dish? {
         val notExcluded = availableMenu.filter { recipe ->
             excludedIngredients.none { it in recipe.ingredients.keys }
         }
-
-        val favoriteMatches = notExcluded.filter { recipe ->
-            recipe.name in favoriteDishes || recipe.name == eventFavourite
+        if (notExcluded.isEmpty()) {
+            return null
         }
-        val afterFavorites = favoriteMatches.ifEmpty { notExcluded }
 
-        val preferredMatches = afterFavorites.filter { recipe ->
-            preferredIngredients.any { it in recipe.ingredients.keys }
+        if (eventFavourite.isNotEmpty()) {
+            val eventMatch = notExcluded.firstOrNull { it.name == eventFavourite }
+            if (eventMatch != null) {
+                return Dish(eventMatch)
+            }
         }
-        val candidates = preferredMatches.ifEmpty { afterFavorites }
 
-        // NOTE: Recipe.getId()/getID() isn't in my copy of the class diagram (only
-        // the private `id` field is listed, no getter) but it's called throughout
-        // the sequence diagrams (e.g. sorting by "highest id" right here, and
-        // elsewhere for basic-dish-then-id sorting), so I'm assuming it exists.
-        val chosen = candidates.maxByOrNull { it.id }
-            ?: error("decideDish called with no recipes available to choose from")
+        val favouriteMatch = firstMatchingFavorite(notExcluded)
+        if (favouriteMatch != null) {
+            return Dish(favouriteMatch)
+        }
 
+        val chosen = mostPreferredIngredients(notExcluded).maxByOrNull { it.id } ?: return null
         return Dish(chosen)
+    }
+
+    /**
+     * The first recipe in [candidates] whose name matches this customer's
+     * favorite dishes, trying [favoriteDishes] in order (not menu order) so that
+     * their most-preferred favorite wins if more than one happens to be available.
+     */
+    private fun firstMatchingFavorite(candidates: List<Recipe>): Recipe? {
+        for (favoriteName in favoriteDishes) {
+            val match = candidates.firstOrNull { it.name == favoriteName }
+            if (match != null) {
+                return match
+            }
+        }
+        return null
+    }
+
+    /**
+     * The subset of [candidates] containing the most [preferredIngredients],
+     * counted by how many distinct preferred ingredients appear in the recipe
+     * (not by the quantities used). If [preferredIngredients] is empty, or none
+     * of it appears in any candidate, every candidate ties at zero and the whole
+     * list is returned unchanged.
+     */
+    private fun mostPreferredIngredients(candidates: List<Recipe>): List<Recipe> {
+        val maxCount = candidates.maxOf { recipe ->
+            preferredIngredients.count { it in recipe.ingredients.keys }
+        }
+        return candidates.filter { recipe ->
+            preferredIngredients.count { it in recipe.ingredients.keys } == maxCount
+        }
     }
 }

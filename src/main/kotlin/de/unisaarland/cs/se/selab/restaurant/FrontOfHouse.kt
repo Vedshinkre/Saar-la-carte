@@ -331,6 +331,44 @@ class FrontOfHouse(
 
     /** recruit waiters for an EVENT group, accumulates enough (ordered by asc id) to cover group's servable dishes. */
     // TODO: implement recruitWaitersForEventGroup()
+    private fun recruitWaitersForEventGroup(actionType: ActionType, customerGroup: CustomerGroup) {
+        when (actionType) {
+            ActionType.SEAT ->
+                waiters.filter { it.getTickLoad(ActionType.SEAT) < ACTION_LIMIT }
+                    .sortedByDescending { it.currentLoad }
+
+            ActionType.TAKE_ORDER -> TODO()
+            ActionType.SERVE -> recruitWaiterForServing(customerGroup)
+            ActionType.ESCORT -> waiters.filter {
+                it.getTickLoad(ActionType.ESCORT) < ACTION_LIMIT
+            }
+        }
+    }
+    private fun recruitWaiterForServing(customerGroup: CustomerGroup) : List<Waiter> {
+        val required = customerGroup.currentOrder?.getServableDishes()?.size ?: 0
+        val eligible = waiters.filter { it.getTickLoad(ActionType.SERVE) < ACTION_LIMIT }
+        val waiterToCookedDishes: MutableMap<Waiter, Int> = mutableMapOf()
+        eligible.forEach {
+                targetWaiter ->
+            var res = 0
+            val customerGroups = inHouseGroupsToWaiter.filterValues {
+                it == targetWaiter
+            }.keys
+            customerGroups.forEach {
+                val num = it.currentOrder!!.getServableDishes().size
+                res += num
+            }
+            waiterToCookedDishes[targetWaiter] = res
+        }
+        val sortedWaiterToCookedDishes: MutableMap<Waiter, Int> =
+            waiterToCookedDishes.entries
+                .sortedByDescending { it.value }
+                .associate { it.key to it.value }
+                .toMutableMap()
+        var sortedWaiterList = mutableListOf<Waiter>()
+        val result = sortedWaiterToCookedDishes.keys.take(required).toList()
+        return result
+    }
 
     private fun serveDeliveryGroups() {
         val readyGroups = deliveryGroups

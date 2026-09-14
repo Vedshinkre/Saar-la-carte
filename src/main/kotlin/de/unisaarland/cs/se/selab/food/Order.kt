@@ -12,9 +12,11 @@ import java.util.concurrent.atomic.AtomicInteger
  */
 class Order(private val dishes: List<Dish>) {
     private val id: Id = nextId.getAndIncrement()
-    private val orderedAt: Tick = Time.tick
-    var servedAt: Tick? = null
+    var firstDishCookedAt: Tick? = null
+    var lastDishServedAt: Tick? = null
+    val orderedAt: Tick = Time.tick
     var deliveredAt: Tick? = null
+    private var servingStarted: Boolean = false
 
     private companion object {
         val nextId = AtomicInteger(1)
@@ -24,14 +26,39 @@ class Order(private val dishes: List<Dish>) {
         require(id >= 1)
     }
 
-    // TODO: some simple getters: getOrderedAt(), getFirstCookedAt(), areAllDishesServed()
-    // TODO: have a servingStarted bool attribute and these methods: hasServingStarted(), startServing(), markFullyServed()
-    // markServed() will set servedAt to currentTick if servedAt == null && areAllDishesServed()
+    /**
+     * returns true if all dishes have been served, false if not
+     */
+    fun areAllDishesServed(): Boolean {
+        return dishes.all { it.status == DishStatus.SERVED }
+    }
+
+    /**
+     * returns true if serving has started
+     */
+    fun hasServingStarted(): Boolean {
+        return servingStarted
+    }
+
+    /**
+     * returns true if any dish has been served already
+     */
+    fun startServing() {
+        servingStarted = true
+    }
+
+    /**
+     * resets servingStarted, sets servedAt to the currentTick
+     */
+    fun markFullyServed() {
+        servingStarted = false
+        lastDishServedAt = Time.tick
+    }
 
     /** get dishes in the order that can be served this tick, ordered by basic dishes first then ascending recipe id */
     fun getServableDishes(): List<Dish> {
-        val cookedDishes = dishes.filter { it.getStatus() == DishStatus.COOKED }
-        return cookedDishes.sortedWith(compareBy({ !it.getIsBasic() }, { it.getRecipe().getId() }))
+        val cookedDishes = dishes.filter { it.status == DishStatus.COOKED }
+        return cookedDishes.sortedWith(compareBy({ !it.isBasic }, { it.recipe.id }))
     }
 
     // explicit getters for relevant functions
@@ -56,7 +83,7 @@ class Order(private val dishes: List<Dish>) {
     fun getServedDishes(): List<Dish> {
         val servedDishes = mutableListOf<Dish>()
         for (dish in dishes) {
-            if (dish.getStatus() == DishStatus.SERVED) {
+            if (dish.status == DishStatus.SERVED) {
                 servedDishes.add(dish)
             }
         }
@@ -69,7 +96,7 @@ class Order(private val dishes: List<Dish>) {
     fun getUncookedDishes(): List<Dish> {
         val uncookedDishes = mutableListOf<Dish>()
         for (dish in dishes) {
-            if (dish.getStatus() == DishStatus.UNCOOKED) {
+            if (dish.status == DishStatus.UNCOOKED) {
                 uncookedDishes.add(dish)
             }
         }
@@ -81,7 +108,7 @@ class Order(private val dishes: List<Dish>) {
      */
     fun areAllDishesCooked(): Boolean {
         for (dish in dishes) {
-            if (dish.getStatus() != DishStatus.COOKED) {
+            if (dish.status != DishStatus.COOKED) {
                 return false
             }
         }
@@ -93,7 +120,7 @@ class Order(private val dishes: List<Dish>) {
      */
     fun areAllDishesEaten(): Boolean {
         for (dish in dishes) {
-            if (dish.getStatus() != DishStatus.EATEN) {
+            if (dish.status != DishStatus.EATEN) {
                 return false
             }
         }
@@ -105,7 +132,7 @@ class Order(private val dishes: List<Dish>) {
      */
     fun areAllDishesServedOrAborted(): Boolean {
         for (dish in dishes) {
-            val status = dish.getStatus()
+            val status = dish.status
 
             // If even a single dish is still being processed, the whole order is NOT done
             if (status != DishStatus.SERVED && status != DishStatus.ABORTED) {

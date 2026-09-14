@@ -38,15 +38,15 @@ class Kitchen(
 
     // explicit constructor with only list of cooks, pantry and orderQueue
     constructor(cooks: List<Cook>, pantry: Pantry, orderQueue: MutableList<Order>, restaurantType: RestaurantType) :
-            this(
-                cooks = cooks,
-                pantry = pantry,
-                orderQueue = orderQueue,
-                restaurantType = restaurantType,
-                readyDishes = mutableListOf(),
-                finishedNumberOfMeals = 0,
-                numberOfCookedMeals = 0
-            )
+        this(
+            cooks = cooks,
+            pantry = pantry,
+            orderQueue = orderQueue,
+            restaurantType = restaurantType,
+            readyDishes = mutableListOf(),
+            finishedNumberOfMeals = 0,
+            numberOfCookedMeals = 0
+        )
     // sorting function
     /**
      * Sorts the cooks ONLY on the basis of their ids, null id is put at last .
@@ -58,7 +58,7 @@ class Kitchen(
 
         // sort cooks based on their ids in ascending orders, where ids don't exist we ut it in the end of the list
         sortedCooks.sortBy { cook ->
-            val id = cook.getId()
+            val id = cook.id
             id ?: Int.MAX_VALUE
         }
 
@@ -74,7 +74,7 @@ class Kitchen(
 
         //  Separate the recipes into two distinct lists
         for (recipe in recipes) {
-            if (recipe.getBasicDishFor() == this.restaurantType) {
+            if (recipe.basicDishFor == this.restaurantType) {
                 basicRecipes.add(recipe)
             } else {
                 normalRecipes.add(recipe)
@@ -82,9 +82,9 @@ class Kitchen(
         }
 
         //  Sort both lists individually by ID
-        basicRecipes.sortBy { recipe -> recipe.getId() }
+        basicRecipes.sortBy { recipe -> recipe.id }
 
-        normalRecipes.sortBy { recipe -> recipe.getId() }
+        normalRecipes.sortBy { recipe -> recipe.id }
 
         //  Combine them back together
         val finalSortedList = mutableListOf<Recipe>()
@@ -126,12 +126,12 @@ class Kitchen(
         val uniqueRecipes = mutableListOf<Recipe>()
 
         for (dish in currentDishes) {
-            val currentRecipe = dish.getRecipe()
+            val currentRecipe = dish.recipe
             var isAlreadyAdded = false
 
             // check if we already have this recipe in our list
             for (item in uniqueRecipes) {
-                if (item.getName() == currentRecipe.getName()) {
+                if (item.name == currentRecipe.name) {
                     isAlreadyAdded = true
                     break // Stop searching as we already have this recipe
                 }
@@ -156,7 +156,7 @@ class Kitchen(
         for (order in orderQueue) {
             // Check every dish within that order
             for (dish in order.getDishes()) {
-                if (dish.getStatus() == DishStatus.COOKED) {
+                if (dish.status == DishStatus.COOKED) {
                     servableCount += 1
                 }
             }
@@ -187,7 +187,7 @@ class Kitchen(
         val chosenCook = findLowestRankingCook(eligibleCooks)
 
         //  assign an ID if none exists
-        if (chosenCook.getId() == null) {
+        if (chosenCook.id == null) {
             chosenCook.setId(getNextCookId())
         }
 
@@ -216,12 +216,12 @@ class Kitchen(
      */
     private fun isCookEligible(cook: Cook, recipe: Recipe): Boolean {
         // If they are already cooking, they are not eligible
-        if (cook.getIsCooking()) {
+        if (cook.isCooking) {
             return false
         }
-        val cookType = cook.getCookType()
+        val cookType = cook.type
         // Check if this cook's type is in the recipe's allowed list
-        for (allowedType in recipe.getCookTypes()) {
+        for (allowedType in recipe.cookType) {
             if (cookType == allowedType) {
                 return true
             }
@@ -235,11 +235,11 @@ class Kitchen(
      */
     private fun findLowestRankingCook(eligibleCooks: List<Cook>): Cook {
         var chosenCook = eligibleCooks[0]
-        var lowestRankValue = getNumericalRank(chosenCook.getCookType())
+        var lowestRankValue = getNumericalRank(chosenCook.type)
 
         for (i in 1 until eligibleCooks.size) {
             val currentCook = eligibleCooks[i]
-            val currentRankValue = getNumericalRank(currentCook.getCookType())
+            val currentRankValue = getNumericalRank(currentCook.type)
 
             // If the current cook has a lower rank we choose them
             if (currentRankValue > lowestRankValue) {
@@ -248,8 +248,8 @@ class Kitchen(
             }
             // tie-break by lowest ID for same rank
             else if (currentRankValue == lowestRankValue) {
-                val chosenId = chosenCook.getId()
-                val currentId = currentCook.getId()
+                val chosenId = chosenCook.id
+                val currentId = currentCook.id
 
                 // chefs can be without ids as well
                 val safeChosenId = chosenId ?: Int.MAX_VALUE
@@ -273,13 +273,13 @@ class Kitchen(
         // Iterate through all dishes in the order
         for (dish in order.getUncookedDishes()) { // CHANGE: we get uncooked dishes now, not getdishes()
             // Match the recipe by its unique ID
-            val dishRecipe = dish.getRecipe()
-            if (dishRecipe.getId() == recipe.getId()) {
+            val dishRecipe = dish.recipe
+            if (dishRecipe.id == recipe.id) {
                 matchingDishes.add(dish)
             }
         }
 
-        return Pair(order.getId(), matchingDishes)
+        return Pair(order.id, matchingDishes) // TODO WAITING FRO VLAD TO CHANGE order
     }
 
     /**
@@ -318,7 +318,7 @@ class Kitchen(
         multiplier: Int,
         shoppingList: MutableMap<Ingredient, Int>
     ) {
-        val recipeIngredients = recipe.getIngredients()
+        val recipeIngredients = recipe.ingredients
 
         for ((ingredient, amount) in recipeIngredients) {
             val amountToAdd = amount * multiplier
@@ -350,9 +350,8 @@ class Kitchen(
 
         // Add history from Regular groups
         for (order in orderHistory) {
-
             for (dish in order.getDishes()) {
-                val recipe = dish.getRecipe()
+                val recipe = dish.recipe
 
                 if (knownOrderHistory.containsKey(recipe)) {
                     val currentCount = knownOrderHistory[recipe] ?: 0
@@ -461,9 +460,9 @@ class Kitchen(
 
         if (allDishes.isNotEmpty()) {
             cook.startCooking(recipe, allDishes, baseOrderId)
-            val cookIDCurrent = cook.getId() ?: -1
-            val cookTypeCurrent = cook.getCookType().name
-            val curDishName = recipe.getName()
+            val cookIDCurrent = cook.id ?: -1
+            val cookTypeCurrent = cook.type.name
+            val curDishName = recipe.name
             KitchenLogger.logKitchenDishAssignment(
                 cookId = cookIDCurrent,
                 cookType = cookTypeCurrent,
@@ -496,15 +495,15 @@ class Kitchen(
             finishedMeals += finished
 
             if (finished > 0) {
-                val dishRecipe = cook.getCurrentRecipe()
-                val cookId = cook.getId() ?: -1
-                val dishName = dishRecipe?.getName() ?: "Unknown Dish"
+                val dishRecipe = cook.currentRecipe
+                val cookId = cook.id ?: -1
+                val dishName = dishRecipe?.name ?: "Unknown Dish"
                 // base order id of the dish that started this cooking
-                val baseOrderId = cook.getOrderId()
+                val baseOrderId = cook.orderId
                 // get the base order
                 var baseOrder: Order? = null
                 for (order in orderQueue) {
-                    if (order.getId() == baseOrderId) {
+                    if (order.id == baseOrderId) {
                         baseOrder = order
                         break
                     }
@@ -513,7 +512,7 @@ class Kitchen(
                 // time since the order has been ordered
                 var cookDurationTick = 0
                 if (baseOrder != null) {
-                    cookDurationTick = Time.tick - baseOrder.getOrderedAt() // TODO wait for getoprderedat getter
+                    cookDurationTick = Time.tick - baseOrder.orderedat // TODO wait for getoprderedat getter
                 }
 
                 KitchenLogger.logKitchenMealCooked(

@@ -42,7 +42,7 @@ class Driver {
         if (Time.tick > group.visitingAt + Constants.CUSTOMER_DELIVERY_WAIT_TICKS) {
             abortOrder(order)
             group.experience = ExperienceType.NEGATIVE
-            DeliveryLogger.logDeliveryGivenUp(group.id, order.getId())
+            DeliveryLogger.logDeliveryGivenUp(group.id, order.id)
             startReturnTrip()
             return
         }
@@ -57,13 +57,13 @@ class Driver {
 
     /** "hand over" food to the customer if the order wasn't aborted */
     private fun arriveAtCustomer(driverId: Id, group: CasualGroup, order: Order) {
-        DeliveryLogger.logDeliveryArrival(driverId, group.id, order.getId())
+        DeliveryLogger.logDeliveryArrival(driverId, group.id, order.id)
 
-        if (order.getDishes().any { it.getStatus() == DishStatus.ABORTED }) {
-            DeliveryLogger.logDeliveryFailed(driverId, order.getId(), group.id)
+        if (order.dishes.any { it.status == DishStatus.ABORTED }) {
+            DeliveryLogger.logDeliveryFailed(driverId, order.id, group.id)
         } else {
             order.deliveredAt = Time.tick
-            DeliveryLogger.logDeliveryFinished(driverId, order.getId(), group.id)
+            DeliveryLogger.logDeliveryFinished(driverId, order.id, group.id)
             group.experience = when {
                 Time.tick < group.visitingAt -> ExperienceType.POSITIVE
                 Time.tick == group.visitingAt -> ExperienceType.NEUTRAL
@@ -75,9 +75,9 @@ class Driver {
     }
 
     private fun abortOrder(order: Order) {
-        for (dish in order.getDishes()) {
-            if (dish.getStatus() != DishStatus.EATEN) {
-                dish.setStatus(DishStatus.ABORTED)
+        for (dish in order.dishes) {
+            if (dish.status != DishStatus.EATEN) {
+                dish.status = DishStatus.ABORTED
             }
         }
     }

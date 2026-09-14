@@ -1,5 +1,6 @@
 package de.unisaarland.cs.se.selab
 
+/** shared constants */
 object Constants {
     const val DRIVER_SPEED = 5.0
     const val CUSTOMER_DELIVERY_WAIT_TICKS = 3

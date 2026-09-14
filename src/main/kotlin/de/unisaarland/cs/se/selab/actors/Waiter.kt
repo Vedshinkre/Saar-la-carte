@@ -39,7 +39,7 @@ class Waiter {
     /** mark the given dishes as served */
     fun serve(dishes: List<Dish>) {
         for (dish in dishes) {
-            dish.setStatus(DishStatus.SERVED)
+            dish.status = DishStatus.SERVED
         }
     }
 

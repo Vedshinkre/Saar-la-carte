@@ -37,5 +37,6 @@ class UnavailabilityIncident(
      */
 
     fun conflictMessage(other: UnavailabilityIncident): String =
-        "Ingredient $ingredient: incident $id (evening $evening, duration $duration) " + "overlaps incident ${other.id} (evening ${other.evening}, duration ${other.duration})"
+        "Ingredient $ingredient: incident $id (evening $evening, duration $duration) " +
+            "overlaps incident ${other.id} (evening ${other.evening}, duration ${other.duration})"
 }

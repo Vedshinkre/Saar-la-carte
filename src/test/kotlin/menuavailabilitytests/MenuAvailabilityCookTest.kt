@@ -19,7 +19,7 @@ class MenuAvailabilityCookTest {
 
     // --- Helpers ---
 
-    private val testIngredient = Ingredient("tomato", MeasurementUnit.G, 50, 100)
+    private val testIngredient = Ingredient("tomato", MeasurementUnit.G, 10, 100)
 
     private fun createDummyRecipe(requiredAmount: Int): Recipe {
         return Recipe(
@@ -66,7 +66,7 @@ class MenuAvailabilityCookTest {
     // --- Tests ---
 
     @Test
-    fun `getAvailableRecipes - Eligible Cook Is Free - Succeeds`() {
+    fun `getAvailableRecipes-Eligible Cook Is Free-Succeeds`() {
         val recipe = createDummyRecipe(requiredAmount = 50)
         val pkg = IngredientPackage(testIngredient)
 
@@ -80,7 +80,7 @@ class MenuAvailabilityCookTest {
     }
 
     @Test
-    fun `getAvailableRecipes - Eligible Cook Is Busy - Excludes Recipe`() {
+    fun `getAvailableRecipes- Eligible Cook Is Busy -fails`() {
         val recipe = createDummyRecipe(requiredAmount = 50)
         val pkg = IngredientPackage(testIngredient)
 
@@ -94,7 +94,7 @@ class MenuAvailabilityCookTest {
     }
 
     @Test
-    fun `getAvailableRecipes - No Cook Of Required Type - Excludes Recipe`() {
+    fun `getAvailableRecipes-No Cook Of Required Type-fails`() {
         val recipe = createDummyRecipe(requiredAmount = 50)
         val pkg = IngredientPackage(testIngredient)
 
@@ -108,7 +108,7 @@ class MenuAvailabilityCookTest {
     }
 
     @Test
-    fun `getAvailableRecipes - One Busy One Free Eligible Cook - Includes Recipe`() {
+    fun `getAvailableRecipes-One Busy One Free Eligible Cook-Succeeds`() {
         val recipe = createDummyRecipe(requiredAmount = 50)
         val pkg = IngredientPackage(testIngredient)
 
@@ -120,5 +120,66 @@ class MenuAvailabilityCookTest {
         val available = countertop.getAvailableRecipes(listOf(recipe))
 
         assertTrue(available.contains(recipe))
+    }
+
+    @Test
+    fun `getAvailableRecipes-Insufficient Ingredients-fails`() {
+        val recipe = createDummyRecipe(requiredAmount = 50)
+        // Only 40g available, recipe needs 50g
+        val pkg = IngredientPackage(testIngredient, 40, Int.MAX_VALUE, true)
+        val cook = createDummyCook(CookType.TOURNANT, isCooking = false)
+
+        val countertop = setupCountertop(listOf(pkg), listOf(cook))
+        val available = countertop.getAvailableRecipes(listOf(recipe))
+
+        assertFalse(available.contains(recipe))
+    }
+
+    @Test
+    fun `getAvailableRecipes-Zero Inventory-fails`() {
+        val recipe = createDummyRecipe(requiredAmount = 50)
+        val cook = createDummyCook(CookType.TOURNANT, isCooking = false)
+
+        // Pantry is completely empty
+        val countertop = setupCountertop(emptyList(), listOf(cook))
+        val available = countertop.getAvailableRecipes(listOf(recipe))
+
+        assertFalse(available.contains(recipe))
+    }
+
+    @Test
+    fun `getAvailableRecipes-Splitting Across Packages-Succeeds`() {
+        val recipe = createDummyRecipe(requiredAmount = 50)
+        // Two separate packages of 25g each
+        val pkg1 = IngredientPackage(testIngredient, 25, Int.MAX_VALUE, true)
+        val pkg2 = IngredientPackage(testIngredient, 100, Int.MAX_VALUE, false)
+        val cook = createDummyCook(CookType.TOURNANT, isCooking = false)
+
+        val countertop = setupCountertop(listOf(pkg1, pkg2), listOf(cook))
+        val available = countertop.getAvailableRecipes(listOf(recipe))
+
+        assertTrue(available.contains(recipe))
+    }
+
+    @Test
+    fun `getAvailableRecipes- Missing One Ingredient -ExcludesRecipe`() {
+        val beefIngredient = Ingredient("beef", MeasurementUnit.G, 5, 100)
+        val complexRecipe = Recipe(
+            id = 2,
+            name = "Meat Sauce",
+            duration = 10,
+            cookType = listOf(CookType.TOURNANT),
+            ingredients = mapOf(testIngredient to 50, beefIngredient to 100),
+            basicDishFor = null
+        )
+
+        // We have tomato and no beef
+        val tomatoPkg = IngredientPackage(testIngredient, 75, Int.MAX_VALUE, true)
+        val cook = createDummyCook(CookType.TOURNANT, isCooking = false)
+
+        val countertop = setupCountertop(listOf(tomatoPkg), listOf(cook))
+        val available = countertop.getAvailableRecipes(listOf(complexRecipe))
+
+        assertFalse(available.contains(complexRecipe))
     }
 }

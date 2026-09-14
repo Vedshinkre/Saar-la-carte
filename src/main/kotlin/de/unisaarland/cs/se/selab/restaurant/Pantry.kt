@@ -28,9 +28,9 @@ class Pantry(
         for (pkg in inventory) {
             // Only count packages that haven't expired and match the ingredient name
             val isExpired = pkg.hasExpired()
-            val currentIngredient = pkg.getIngredient()
-            if (currentIngredient.getName() == ingredient.getName() && !isExpired) {
-                totalAvailable += pkg.getCurrentAmount()
+            val currentIngredient = pkg.ingredient
+            if (currentIngredient.name == ingredient.name && !isExpired) {
+                totalAvailable += pkg.currentAmount
             }
         }
         // Return the requested amount if we have enough, else return what's actually left
@@ -48,8 +48,8 @@ class Pantry(
     fun getPackagesForIngredient(ingredient: Ingredient): List<IngredientPackage> {
         val matchingPackages = mutableListOf<IngredientPackage>()
         for (pkg in inventory) {
-            val currentIngredient = pkg.getIngredient()
-            if (currentIngredient.getName() == ingredient.getName()) {
+            val currentIngredient = pkg.ingredient
+            if (currentIngredient.name == ingredient.name) {
                 matchingPackages.add(pkg)
             }
         }
@@ -67,8 +67,8 @@ class Pantry(
                 activePackages.add(pkg) // Keep the ones that are still good
             } else {
                 // Track the amount being thrown away
-                val ingredient = pkg.getIngredient()
-                val currentAmount = pkg.getCurrentAmount()
+                val ingredient = pkg.ingredient
+                val currentAmount = pkg.currentAmount
                 val existingAmount = removedQuantity[ingredient] ?: 0
                 removedQuantity[ingredient] = existingAmount + currentAmount
             }
@@ -79,11 +79,11 @@ class Pantry(
         inventory.addAll(activePackages)
 
         // Log removed ingredients in ascending alphabetic order
-        val sortedIngredients = removedQuantity.keys.sortedBy { it.getName() }
+        val sortedIngredients = removedQuantity.keys.sortedBy { it.name }
         for (ingredient in sortedIngredients) {
             val amount = removedQuantity[ingredient] ?: 0
 
-            InitialAndPrepLogger.logPantryRemovedIngredient(amount, ingredient.getUnit(), ingredient.getName())
+            InitialAndPrepLogger.logPantryRemovedIngredient(amount, ingredient.unit, ingredient.name)
         }
     }
 
@@ -107,7 +107,7 @@ class Pantry(
                 var totalProcuredForIngredient = 0
                 for (pkg in newPackages) {
                     inventory.add(pkg)
-                    totalProcuredForIngredient += pkg.getCurrentAmount()
+                    totalProcuredForIngredient += pkg.currentAmount
                 }
                 //  the exact amount of ingredient delivered by the supplier
                 procuredQuantity[ingredient] = totalProcuredForIngredient
@@ -119,11 +119,11 @@ class Pantry(
         for (ingredient in procuredQuantity.keys) {
             sortedIngredients.add(ingredient)
         }
-        sortedIngredients.sortBy { it.getName() }
+        sortedIngredients.sortBy { it.name }
         // Log procured ingredients in ascending alphabetic order
         for (ingredient in sortedIngredients) {
             val amount = procuredQuantity[ingredient] ?: 0
-            InitialAndPrepLogger.logPantryProcured(amount, ingredient.getUnit(), ingredient.getName())
+            InitialAndPrepLogger.logPantryProcured(amount, ingredient.unit, ingredient.name)
         }
 
         InitialAndPrepLogger.logPantryRestocked()
@@ -140,8 +140,8 @@ class Pantry(
         val matchingPackages = mutableListOf<IngredientPackage>()
         for (pkg in inventory) {
             val isExpired = pkg.hasExpired()
-            val currentIngredient = pkg.getIngredient()
-            if (!isExpired && currentIngredient.getName() == ingredient.getName()) {
+            val currentIngredient = pkg.ingredient
+            if (!isExpired && currentIngredient.name == ingredient.name) {
                 matchingPackages.add(pkg)
             }
         }
@@ -152,7 +152,7 @@ class Pantry(
 
         // Sort them into their respective lists
         for (pkg in matchingPackages) {
-            if (pkg.isOpen()) {
+            if (pkg.isOpen) {
                 openList.add(pkg)
             } else {
                 closedList.add(pkg)
@@ -160,8 +160,8 @@ class Pantry(
         }
 
         // Sort each list by expiry date (earliest expiry first)
-        openList.sortBy { pkg -> pkg.getExpiryDate() }
-        closedList.sortBy { pkg -> pkg.getExpiryDate() }
+        openList.sortBy { pkg -> pkg.expiryDate }
+        closedList.sortBy { pkg -> pkg.expiryDate }
 
         // Open packages first, then Closed packages
         matchingPackages.clear()

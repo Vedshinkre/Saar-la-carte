@@ -22,7 +22,7 @@ class Stock(
     fun setIngredientToUnavailable(ingredient: Ingredient, duration: Int) {
         var found = false
         for (key in ingredients.keys) {
-            if (key.getName() == ingredient.getName()) {
+            if (key.name == ingredient.name) {
                 ingredients[key] = duration
                 found = true
                 break // stop searching once found
@@ -30,7 +30,7 @@ class Stock(
         }
         // should never happen, but for safety reasons, as can change during simulation
         require(found) {
-            "Cannot make ingredient '${ingredient.getName()}' unavailable because it does not exist in stock."
+            "Cannot make ingredient '${ingredient.name}' unavailable because it does not exist in stock."
         }
     }
 
@@ -40,7 +40,7 @@ class Stock(
     fun setIngredientToAvailable(ingredient: Ingredient) {
         var found = false
         for (key in ingredients.keys) {
-            if (key.getName() == ingredient.getName()) {
+            if (key.name == ingredient.name) {
                 ingredients[key] = 0
                 found = true
                 break // stop searching once found
@@ -48,7 +48,7 @@ class Stock(
         }
         // should never happen , but for safety reasons , as can change during simulation
         require(found) {
-            "Cannot make ingredient '${ingredient.getName()}' available because it does not exist in stock."
+            "Cannot make ingredient '${ingredient.name}' available because it does not exist in stock."
         }
     }
 
@@ -57,7 +57,7 @@ class Stock(
      */
     fun getIngredient(ingredient: Ingredient): Ingredient? {
         for (key in ingredients.keys) {
-            if (key.getName() == ingredient.getName()) {
+            if (key.name == ingredient.name) {
                 return key
             }
         }
@@ -69,7 +69,7 @@ class Stock(
      */
     fun isIngredientAvailable(ingredient: Ingredient): Boolean {
         for ((key, value) in ingredients) {
-            if (key.getName() == ingredient.getName()) {
+            if (key.name == ingredient.name) {
                 if (value == 0) {
                     return true
                 } else {

@@ -12,8 +12,8 @@ import de.unisaarland.cs.se.selab.food.Dish
 class Waiter {
 
     var id: Id? = null
-    private var currentLoad: Int = 0
-    private val tickLoads = mutableMapOf(
+    var currentLoad: Int = 0
+    val tickLoads = mutableMapOf(
         Pair(ActionType.SEAT, 0),
         Pair(ActionType.TAKE_ORDER, 0),
         Pair(ActionType.SERVE, 0),

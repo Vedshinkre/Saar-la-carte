@@ -49,4 +49,10 @@ class Restaurant(
     fun getNumberOfCookedMeals(): Int = kitchen.numberOfCookedMeals
     fun getNumberOfCustomersServed(): Int = frontOfHouse.numberOfCustomersServed
     fun getNumberOfCustomersDelivered(): Int = frontOfHouse.numberOfCustomersDelivered
+
+    /** Call with CustomerGroup.
+     *  Adds customerGroup to customerQueue. */
+    fun addToCustomerQueue(customerGroup: CustomerGroup) {
+        customerQueue.add(customerGroup)
+    }
 }

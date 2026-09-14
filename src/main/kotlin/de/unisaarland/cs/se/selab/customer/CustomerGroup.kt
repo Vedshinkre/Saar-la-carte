@@ -2,6 +2,7 @@ package de.unisaarland.cs.se.selab.customer
 
 import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.Tick
+import de.unisaarland.cs.se.selab.Time
 import de.unisaarland.cs.se.selab.actors.Waiter
 import de.unisaarland.cs.se.selab.enums.ActionType
 import de.unisaarland.cs.se.selab.enums.ExperienceType
@@ -11,20 +12,18 @@ import de.unisaarland.cs.se.selab.food.Dish
 import de.unisaarland.cs.se.selab.food.Order
 import de.unisaarland.cs.se.selab.food.Recipe
 import de.unisaarland.cs.se.selab.restaurant.Countertop
-import kotlin.math.exp
 
 /** Represents an abstract customer group. */
 sealed class CustomerGroup(
     val id: Id,
     val size: Int,
     val tableType: TableType,
-    private val visitingAt: Tick, // Could you make this public
+    val visitingAt: Tick,
     private val foodPreferences: List<FoodPreference>, // Could you make this public
 ) {
-    private val waitingSince: Tick? = null
+    open var isWaitingToBeSeated: Boolean = true
+        get() = Time.tick - visitingAt == 0 && field
     var experience = ExperienceType.NEUTRAL
-
-
 
     // relevant to F27
     var currentOrder: Order? = null

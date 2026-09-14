@@ -4,6 +4,7 @@ object Constants {
     const val DRIVER_SPEED = 5.0
     const val CUSTOMER_DELIVERY_WAIT_TICKS = 3
     const val ACTION_LIMIT = 10
+    const val MIN_TABLE_OCCUPANCY: Double = 3.0 / 4.0
 
     const val PARTIAL_SERVING_WAIT_TICKS = 1 // ticks to wait until an order can start being served partially
     const val UNSERVED_WAIT_TICKS = 5 // max number of ticks a customer waits to be served

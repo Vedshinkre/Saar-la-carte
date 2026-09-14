@@ -16,7 +16,7 @@ class CasualGroup(
     id: Id,
     size: Int,
     tableType: TableType,
-    visitingAt: Tick, //I also want to access this
+    visitingAt: Tick,
     foodPreferences: List<FoodPreference>,
     val restaurantTypes: List<RestaurantType>,
     private val visitingEvenings: List<Evening>,
@@ -24,7 +24,6 @@ class CasualGroup(
     val ratingLikelihood: RatingLikelihood
 ) : CustomerGroup(id, size, tableType, visitingAt, foodPreferences) {
 
-    // TODO: make visitingAt public
     // TODO: isVisitingTonight(), isVisitingThisTick(), deliveryOrderTick(), determineRating()
     // isVisitingThisTick() = check if currentTick equals visitingAt (if no delivery) else deliveryOrderTick (according to spec calculation)
 

@@ -44,11 +44,16 @@ class IncidentParser {
 
             try {
                 parseIncident(
-                    json = json, restaurants = restaurants, ingredients = ingredients, stock = stock, recipes = recipes
+                    json = json,
+                    restaurants = restaurants,
+                    ingredients = ingredients,
+                    stock = stock,
+                    recipes = recipes
                 )
             } catch (exception: IllegalArgumentException) {
                 throw IllegalArgumentException(
-                    "Invalid incident: $element", exception
+                    "Invalid incident: $element",
+                    exception
                 )
             }
         }
@@ -65,7 +70,10 @@ class IncidentParser {
         val evening = json.requiredInt(EVENING)
         return when (val type = json.requiredString(TYPE)) {
             "STAFF" -> parseStaffIncident(
-                json = json, id = id, evening = evening, restaurants = restaurants
+                json = json,
+                id = id,
+                evening = evening,
+                restaurants = restaurants
             )
 
             "RECIPE" -> parseRecipeChangeIncident(
@@ -101,22 +109,38 @@ class IncidentParser {
     }
 
     private fun parseUnavailabilityIncident(
-        id: Int, evening: Int, ingredientName: String, ingredients: List<Ingredient>, duration: Int, stock: Stock
+        id: Int,
+        evening: Int,
+        ingredientName: String,
+        ingredients: List<Ingredient>,
+        duration: Int,
+        stock: Stock
     ): UnavailabilityIncident {
         val ingredient = ingredients.requiredIngredient(ingredientName)
 
         return UnavailabilityIncident(
-            id = id, evening = evening, ingredient = ingredient, stock = stock, duration = duration
+            id = id,
+            evening = evening,
+            ingredient = ingredient,
+            stock = stock,
+            duration = duration
         )
     }
 
     private fun parsePackagingChangeIncident(
-        id: Int, evening: Int, ingredientName: String, ingredients: List<Ingredient>, packagingVolume: Int
+        id: Int,
+        evening: Int,
+        ingredientName: String,
+        ingredients: List<Ingredient>,
+        packagingVolume: Int
     ): PackagingChangeIncident {
         val ingredient = ingredients.requiredIngredient(ingredientName)
 
         return PackagingChangeIncident(
-            id = id, evening = evening, ingredient = ingredient, packagingVolume = packagingVolume
+            id = id,
+            evening = evening,
+            ingredient = ingredient,
+            packagingVolume = packagingVolume
         )
     }
 
@@ -131,12 +155,19 @@ class IncidentParser {
         val ingredient = ingredients.requiredIngredient(ingredientName)
 
         return RecipeChangeIncident(
-            id = id, evening = evening, ingredient = ingredient, adaptation = adaptation, recipes = recipes
+            id = id,
+            evening = evening,
+            ingredient = ingredient,
+            adaptation = adaptation,
+            recipes = recipes
         )
     }
 
     private fun parseStaffIncident(
-        json: JsonObject, id: Int, evening: Int, restaurants: List<Restaurant>
+        json: JsonObject,
+        id: Int,
+        evening: Int,
+        restaurants: List<Restaurant>
     ): StaffChangeIncident {
         val staffType = json.requiredEnum<StaffType>(STAFF_TYPE)
         val restaurantId = json.requiredInt(RESTAURANT_ID)
@@ -200,7 +231,8 @@ class IncidentParser {
             enumValueOf<T>(value)
         } catch (exception: IllegalArgumentException) {
             throw IllegalArgumentException(
-                "Invalid value '$value' for enum property '$key'.", exception
+                "Invalid value '$value' for enum property '$key'.",
+                exception
             )
         }
     }

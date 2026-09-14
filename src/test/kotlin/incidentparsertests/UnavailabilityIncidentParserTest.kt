@@ -23,7 +23,7 @@ class UnavailabilityIncidentParserTest {
         name = "garlic",
         unit = MeasurementUnit.G,
         bestBefore = 50,
-        packagingVolume = 1
+        initialPackagingVolume = 0
     )
     private val ingredientsList: List<Ingredient> = listOf(testIngredient)
     private val testStock: Stock = Stock(ingredientList = ingredientsList)
@@ -147,4 +147,3 @@ class UnavailabilityIncidentParserTest {
         }
     }
 }
-

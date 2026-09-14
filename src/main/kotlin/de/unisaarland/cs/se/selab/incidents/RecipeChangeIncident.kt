@@ -6,8 +6,8 @@ import de.unisaarland.cs.se.selab.food.Ingredient
 import de.unisaarland.cs.se.selab.food.Recipe
 
 class RecipeChangeIncident(
-    private val id: Id,
-    private val evening: Evening,
+    override val id: Id,
+    override val evening: Evening,
     private val ingredient: Ingredient,
     private val adaptation: Int,
     private val recipes: List<Recipe>

@@ -11,6 +11,6 @@ data class Recipe(
     val name: String,
     val duration: Int,
     val cookType: List<CookType>,
-    val ingredients: Map<Ingredient, Int>,
+    val ingredients: MutableMap<Ingredient, Int>,
     val basicDishFor: RestaurantType?
 )

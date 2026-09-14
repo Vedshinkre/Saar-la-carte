@@ -22,7 +22,7 @@ class RecipeChangeIncident(
      * applies the recipe change incident (adapts the amount of [ingredient]
      * in every recipe that uses it by [adaptation] percent)
      */
-    fun apply() {
+    override fun apply() {
         val factor = 1.0 + adaptation / 100.0
         for (recipe in recipes) {
             val currentAmount = recipe.ingredients[ingredient] ?: continue

@@ -32,7 +32,7 @@ class Supplier(
         val actualIngredient = stock.getIngredient(ingredient) ?: ingredient
 
         // Get the standard size of one single package for this ingredient
-        val packageSize = actualIngredient.getPackagingVolume()
+        val packageSize = actualIngredient.packagingVolume
 
         val procuredPackages = mutableListOf<IngredientPackage>()
         var accumulatedAmount = 0

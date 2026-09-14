@@ -1,3 +1,10 @@
 package de.unisaarland.cs.se.selab.actors
 
-class RestaurantStaff(val cooks: MutableList<Cook>, val waiters: MutableList<Waiter>, val drivers: MutableList<Driver>)
+/**
+ * beep beep I;m a document
+ */
+data class RestaurantStaff(
+    val cooks: MutableList<Cook>,
+    val waiters: MutableList<Waiter>,
+    val drivers: MutableList<Driver>
+)

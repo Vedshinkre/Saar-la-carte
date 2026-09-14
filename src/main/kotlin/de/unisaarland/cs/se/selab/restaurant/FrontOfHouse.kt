@@ -129,7 +129,7 @@ class FrontOfHouse(
                 waiter.id = nextWaiterId
             }
 
-            val remainingSeatingLoad: Int = Constants.ACTION_LIMIT - waiter.tickLoads[ActionType.SEAT]!!
+            val remainingSeatingLoad: Int = ACTION_LIMIT - waiter.tickLoads[ActionType.SEAT]!!
             val seatingLoad: Int = min(remainingSeatingLoad, eventGroupSize)
             waiter.tickLoads[ActionType.SEAT] = waiter.tickLoads[ActionType.SEAT]!! + seatingLoad
             eventGroupSize -= seatingLoad
@@ -199,13 +199,13 @@ class FrontOfHouse(
 
     private fun assignWaiter(customerGroup: CustomerGroup): Waiter? {
         val freeWaiters: List<Waiter> =
-            waiters.filter { it.tickLoads[ActionType.SEAT]!! + customerGroup.size <= Constants.ACTION_LIMIT }
+            waiters.filter { it.tickLoads[ActionType.SEAT]!! + customerGroup.size <= ACTION_LIMIT }
 
         if (freeWaiters.isEmpty()) {
             return null
         }
 
-        val currentLoadPool: List<Waiter> = freeWaiters.filter { it.currentLoad < Constants.ACTION_LIMIT }
+        val currentLoadPool: List<Waiter> = freeWaiters.filter { it.currentLoad < ACTION_LIMIT }
 
         if (currentLoadPool.isNotEmpty()) {
             return currentLoadPool.sortedWith(compareByDescending(nullsLast()) { it.id }).sortedBy { it.currentLoad }
@@ -296,9 +296,7 @@ class FrontOfHouse(
         val mergeId: Id = assignedTables.minBy { it.id }.id
         if (assignedTables.size > 1) {
             FohReceptionLogger.logFohMergingTables(
-                customerGroup.id,
-                assignedTables.map { it.id }.sorted(),
-                mergeId
+                customerGroup.id, assignedTables.map { it.id }.sorted(), mergeId
             )
         }
 
@@ -349,7 +347,7 @@ class FrontOfHouse(
         if (servableDishes.isEmpty()) return
 
         val complete = order.areAllDishesCooked()
-        val capacity = Constants.ACTION_LIMIT - waiter.getTickLoad(ActionType.SERVE)
+        val capacity = ACTION_LIMIT - waiter.getTickLoad(ActionType.SERVE)
 
         // proceed only if order is either complete or can be partially served yet
         if (!order.hasServingStarted() && !complete && isWithinTimeWindow(order)) {
@@ -391,10 +389,9 @@ class FrontOfHouse(
         }
 
         val recruitedWaiters = recruitWaitersForEventGroup(ActionType.SERVE, group)
-        val totalCapacity =
-            recruitedWaiters.sumOf {
-                Constants.ACTION_LIMIT - it.getTickLoad(ActionType.SERVE)
-            } // if order is complete (and not started serving), recruited waiters must be able to serve ALL servable dishes
+        val totalCapacity = recruitedWaiters.sumOf {
+            ACTION_LIMIT - it.getTickLoad(ActionType.SERVE)
+        } // if order is complete (and not started serving), recruited waiters must be able to serve ALL servable dishes
         if (!order.hasServingStarted() && complete && totalCapacity < readyDishes.size) {
             order.startServing()
             logNoServing(recruitedWaiters.firstOrNull(), readyDishes.size, tableId)
@@ -417,21 +414,21 @@ class FrontOfHouse(
     /** recruit waiters for an EVENT group, accumulates enough (ordered by asc id) to cover group's servable dishes. */ // TODO: implement recruitWaitersForEventGroup()
     private fun recruitWaitersForEventGroup(actionType: ActionType, eventGroup: EventGroup): List<Waiter> {
         when (actionType) {
-            ActionType.SEAT ->
-                return waiters.filter { it.getTickLoad(ActionType.SEAT) < ACTION_LIMIT }
-                    .sortedByDescending { it.currentLoad }
+            ActionType.SEAT -> return waiters.sortedBy { it.id }
+                .filter { it.getTickLoad(ActionType.SEAT) < ACTION_LIMIT }.sortedByDescending { it.currentLoad }
 
             ActionType.TAKE_ORDER -> TODO()
             ActionType.SERVE -> return recruitWaiterForServing(eventGroup)
-            ActionType.ESCORT -> return waiters.filter {
+            ActionType.ESCORT -> return waiters.sortedBy { it.id }.filter {
                 it.getTickLoad(ActionType.ESCORT) < ACTION_LIMIT
-            }
+            }.sortedByDescending { it.currentLoad }
         }
     }
 
+
     private fun recruitWaiterForServing(customerGroup: EventGroup): List<Waiter> {
         val required = customerGroup.currentOrder?.getServableDishes()?.size ?: 0
-        val eligible = waiters.filter { it.getTickLoad(ActionType.SERVE) < ACTION_LIMIT }
+        val eligible = waiters.sortedBy { it.id }.filter { it.getTickLoad(ActionType.SERVE) < ACTION_LIMIT }
         val waiterToCookedDishes: MutableMap<Waiter, Int> = mutableMapOf()
         eligible.forEach { targetWaiter ->
             var res = 0
@@ -476,8 +473,7 @@ class FrontOfHouse(
 
     /** picks waiter to serve driver delivery meals: waiter with min id whose SERVING tick load < action limit */
     private fun assignWaiterForDelivery(): Waiter? =
-        waiters.filter { it.getTickLoad(ActionType.SERVE) < Constants.ACTION_LIMIT }
-            .minByOrNull { it.id ?: Int.MAX_VALUE }
+        waiters.filter { it.getTickLoad(ActionType.SERVE) < ACTION_LIMIT }.minByOrNull { it.id ?: Int.MAX_VALUE }
 
     private fun getOrAssignDriver(group: CustomerGroup, order: Order): Driver? {
         val assigned = drivers.find { it.targetGroup == group && it.currentOrder == order }
@@ -497,7 +493,7 @@ class FrontOfHouse(
         var remaining = dishes
         while (remaining.isNotEmpty()) {
             val waiter = assignWaiterForDelivery() ?: break
-            val capacity = Constants.ACTION_LIMIT - waiter.getTickLoad(ActionType.SERVE)
+            val capacity = ACTION_LIMIT - waiter.getTickLoad(ActionType.SERVE)
             val batch = remaining.take(capacity)
             waiter.serve(batch)
             waiter.addToTickLoad(ActionType.SERVE, batch.size)
@@ -515,7 +511,7 @@ class FrontOfHouse(
 
     /** serves as many given dishes as waiter's remaining capacity allows. */
     private fun serveBatch(waiter: Waiter, dishes: List<Dish>, tableId: Id, order: Order): List<Dish> {
-        val capacity = Constants.ACTION_LIMIT - waiter.getTickLoad(ActionType.SERVE)
+        val capacity = ACTION_LIMIT - waiter.getTickLoad(ActionType.SERVE)
         if (capacity <= 0) return dishes
         val batch = dishes.take(capacity)
         waiter.serve(batch)
@@ -713,8 +709,7 @@ class FrontOfHouse(
         }
 
         customerToTable.remove(
-            customerToTable.keys.first { it.id == customerId }
-        )
+            customerToTable.keys.first { it.id == customerId })
     }
 
     /**
@@ -739,10 +734,7 @@ class FrontOfHouse(
                     waiter.escort(it)
                     val customersEscorted = customersBefore - it.customersRemainingInRestaurant
                     logFohEscorting(
-                        waiter.id!!,
-                        customersEscorted,
-                        it.id,
-                        getAssignedTableId(it.id).min()
+                        waiter.id!!, customersEscorted, it.id, getAssignedTableId(it.id).min()
                     )
 
                     waitstaffNumber++
@@ -754,11 +746,9 @@ class FrontOfHouse(
             }
         }
         logFohEscortingStatus(
-            waitstaffNumber,
-            customerEscortingNumber
+            waitstaffNumber, customerEscortingNumber
         )
-    }
-    // ESCORTING END
+    } // ESCORTING END
 
     // RATING START
     /**
@@ -768,8 +758,7 @@ class FrontOfHouse(
      * @return updated positive and negative rating counts
      */
     fun processRatings(
-        positiveRatings: Int,
-        negativeRatings: Int
+        positiveRatings: Int, negativeRatings: Int
     ): Pair<Int, Int> {
         var positive = positiveRatings
         var negative = negativeRatings
@@ -793,10 +782,7 @@ class FrontOfHouse(
                     groupsGivingRatings++
 
                     logCustomerRateRestaurant(
-                        it.id,
-                        RatingType.POSITIVE,
-                        positive,
-                        negative
+                        it.id, RatingType.POSITIVE, positive, negative
                     )
                 }
 
@@ -805,10 +791,7 @@ class FrontOfHouse(
                     groupsGivingRatings++
 
                     logCustomerRateRestaurant(
-                        it.id,
-                        RatingType.NEGATIVE,
-                        positive,
-                        negative
+                        it.id, RatingType.NEGATIVE, positive, negative
                     )
                 }
 

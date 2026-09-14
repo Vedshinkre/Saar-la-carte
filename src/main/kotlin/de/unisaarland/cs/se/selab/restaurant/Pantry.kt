@@ -82,8 +82,8 @@ class Pantry(
         val sortedIngredients = removedQuantity.keys.sortedBy { it.getName() }
         for (ingredient in sortedIngredients) {
             val amount = removedQuantity[ingredient] ?: 0
-            // TODO WAIT FOR SKERDI TO CHANGE THE LOGGER
-            //  InitialAndPrepLogger.logPantryRemovedIngredient(amount, ingredient.getUnit(), ingredient.getName())
+
+            InitialAndPrepLogger.logPantryRemovedIngredient(amount, ingredient.getUnit(), ingredient.getName())
         }
     }
 

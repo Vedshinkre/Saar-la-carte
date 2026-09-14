@@ -105,6 +105,8 @@ class FrontOfHouse(
             waiter.tickLoads[ActionType.SEAT] = waiter.tickLoads[ActionType.SEAT]!! + customerGroup.size
             waiter.currentLoad += customerGroup.size
         }
+
+        return turnedAwayGroups.first().visitingAt == customerGroup.visitingAt
     }
 
     /** Call with CustomerGroup and menu. (Method overloading redirects EventGroups to this implementation)
@@ -139,6 +141,7 @@ class FrontOfHouse(
         }
 
         successfulSeating(eventGroup, consumedWaiters)
+        return turnedAwayGroups.first().visitingAt == eventGroup.visitingAt
     }
 
     /** Call only with Regular- or EventGroup.
@@ -289,7 +292,9 @@ class FrontOfHouse(
         val mergeId: Id = assignedTables.minBy { it.id }.id
         if (assignedTables.size > 1) {
             FohReceptionLogger.logFohMergingTables(
-                customerGroup.id, assignedTables.map { it.id }.sorted(), mergeId
+                customerGroup.id,
+                assignedTables.map { it.id }.sorted(),
+                mergeId
             )
         }
 
@@ -383,7 +388,9 @@ class FrontOfHouse(
 
         val recruitedWaiters = recruitWaitersForEventGroup(ActionType.SERVE, group)
         val totalCapacity =
-            recruitedWaiters.sumOf { Constants.ACTION_LIMIT - it.getTickLoad(ActionType.SERVE) } // if order is complete (and not started serving), recruited waiters must be able to serve ALL servable dishes
+            recruitedWaiters.sumOf {
+                Constants.ACTION_LIMIT - it.getTickLoad(ActionType.SERVE)
+            } // if order is complete (and not started serving), recruited waiters must be able to serve ALL servable dishes
         if (!order.hasServingStarted() && complete && totalCapacity < readyDishes.size) {
             order.startServing()
             logNoServing(recruitedWaiters.firstOrNull(), readyDishes.size, tableId)
@@ -406,8 +413,9 @@ class FrontOfHouse(
     /** recruit waiters for an EVENT group, accumulates enough (ordered by asc id) to cover group's servable dishes. */ // TODO: implement recruitWaitersForEventGroup()
     private fun recruitWaitersForEventGroup(actionType: ActionType, eventGroup: EventGroup): List<Waiter> {
         when (actionType) {
-            ActionType.SEAT -> return waiters.filter { it.getTickLoad(ActionType.SEAT) < ACTION_LIMIT }
-                .sortedByDescending { it.currentLoad }
+            ActionType.SEAT ->
+                return waiters.filter { it.getTickLoad(ActionType.SEAT) < ACTION_LIMIT }
+                    .sortedByDescending { it.currentLoad }
 
             ActionType.TAKE_ORDER -> TODO()
             ActionType.SERVE -> return recruitWaiterForServing(eventGroup)
@@ -703,7 +711,8 @@ class FrontOfHouse(
         }
 
         customerToTable.remove(
-            customerToTable.keys.first { it.id == customerId })
+            customerToTable.keys.first { it.id == customerId }
+        )
     }
 
     /**
@@ -729,7 +738,10 @@ class FrontOfHouse(
                         waiter.escort(it)
                         val customersEscorted = customersBefore - it.customersRemainingInRestaurant
                         logFohEscorting(
-                            waiter.id!!, customersEscorted, it.id, getAssignedTableId(it.id).min()
+                            waiter.id!!,
+                            customersEscorted,
+                            it.id,
+                            getAssignedTableId(it.id).min()
                         )
 
                         waitstaffNumber++
@@ -742,7 +754,8 @@ class FrontOfHouse(
             }
         }
         logFohEscortingStatus(
-            waitstaffNumber, customerEscortingNumber
+            waitstaffNumber,
+            customerEscortingNumber
         )
     }
 
@@ -755,7 +768,8 @@ class FrontOfHouse(
      * @return updated positive and negative rating counts
      */
     fun processRatings(
-        positiveRatings: Int, negativeRatings: Int
+        positiveRatings: Int,
+        negativeRatings: Int
     ): Pair<Int, Int> {
         var positive = positiveRatings
         var negative = negativeRatings
@@ -769,8 +783,8 @@ class FrontOfHouse(
             }
         }
         val groupsToRate = (filteredInHouseGroups + filteredDeliveryGroups + turnedAwayGroups).sortedWith(
-                compareBy({ getServingPriority(it) }, { it.id })
-            )
+            compareBy({ getServingPriority(it) }, { it.id })
+        )
         var groupsGivingRatings = 0
         groupsToRate.forEach {
             when (it.determineRating()) {
@@ -779,7 +793,10 @@ class FrontOfHouse(
                     groupsGivingRatings++
 
                     logCustomerRateRestaurant(
-                        it.id, RatingType.POSITIVE, positive, negative
+                        it.id,
+                        RatingType.POSITIVE,
+                        positive,
+                        negative
                     )
                 }
 
@@ -788,16 +805,17 @@ class FrontOfHouse(
                     groupsGivingRatings++
 
                     logCustomerRateRestaurant(
-                        it.id, RatingType.NEGATIVE, positive, negative
+                        it.id,
+                        RatingType.NEGATIVE,
+                        positive,
+                        negative
                     )
                 }
 
                 RatingType.NO_RATING -> {}
             }
-
         }
         logRatingStatus(groupsGivingRatings)
         return Pair(positive, negative)
-    } //RATING END
+    } // RATING END
 }
-

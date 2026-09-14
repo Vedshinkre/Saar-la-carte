@@ -101,9 +101,9 @@ class Simulation(simdata: SimulationConfig) {
 
     private fun ReserveForEventGroupsInAdvance(eventGroups: List<EventGroup>) {
         for (eventGroup in eventGroups) {
-            val eventRestaurantId = browser.getEligibleRestaurants(eventGroup)
+            val eventRestaurantId = browser.getEligibleRestaurants(eventGroup)?: return
             val eventRestaurant = getRestaurantById(eventRestaurantId)
-            eventGroup.currentRestaurantType = eventRestaurant.getRestaurantStats().restaurantType)
+            eventGroup.currentRestaurantType = eventRestaurant.getRestaurantStats().restaurantType
             eventRestaurant.addToCustomerQueue(eventGroup)
 
 
@@ -221,7 +221,7 @@ class Simulation(simdata: SimulationConfig) {
      */
     private fun executeSingleTick(casualsTonight: List<CasualGroup>) {
         val currentTick = Time.getCurrentTick()
-        TickStatusLogger.logCurrentTick(currentTick)
+        TickStatusLogger.logCurrentTick()
 
         val casualsThisTick = getCasualsForThisTick(currentTick, casualsTonight)
 

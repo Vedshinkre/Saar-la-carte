@@ -32,16 +32,18 @@ sealed class CustomerGroup(
     fun placeOrder(waiters: List<Waiter>, menu: List<Recipe>, countertop: Countertop) {
         val listOfDishes = mutableListOf<Dish>()
         for (foodPreference in foodPreferences) {
-            waiters.filter { it.getTickLoad(ActionType.TAKE_ORDER) < 10 }
-            val currentWaiter = waiters.firstOrNull() ?: break
+            val currentWaiters = waiters.filter { it.getTickLoad(ActionType.TAKE_ORDER) < 10 }
+            val currentWaiter = currentWaiters.firstOrNull() ?: break
             val availableDishes = countertop.getAvailableRecipes(menu)
             val customerDish = foodPreference.decideDish(availableDishes, "")
-            registerDish(currentWaiter, customerDish, countertop)
-            listOfDishes.addFirst(customerDish)
+            if (customerDish != null) {
+                registerDish(currentWaiter, customerDish, countertop)
+                listOfDishes.addFirst(customerDish)
+            }
         }
         if (listOfDishes.size < customersRemainingInRestaurant) {
             customersRemainingInRestaurant = listOfDishes.size
-            // Set experience to negative also
+            // TODO Set experience to negative also
         }
     }
 

@@ -84,12 +84,12 @@ class FoodParser {
     // cross validation function
     private fun validateIngredient(ingredient: Ingredient): Boolean {
         //  Packaging volume must be greater than 0
-        if (ingredient.getPackagingVolume() <= 0) {
+        if (ingredient.packagingVolume <= 0) {
             return false
         }
 
         //  Best before must be greater than 0
-        if (ingredient.getBestBefore() <= 0) {
+        if (ingredient.bestBefore <= 0) {
             return false
         }
         // if all checks pass
@@ -102,7 +102,7 @@ class FoodParser {
     // check Uniqueness
     private fun checkUniquenessOfIngredient(name: String, parsedIngredients: List<Ingredient>): Boolean {
         for (existingIng in parsedIngredients) {
-            if (existingIng.getName() == name) {
+            if (existingIng.name == name) {
                 return false
             }
         }
@@ -176,7 +176,7 @@ class FoodParser {
      * Function to cross validate Recipe    .
      */
     private fun validateRecipe(recipe: Recipe): Boolean {
-        val duration = recipe.getDuration()
+        val duration = recipe.duration
 
         //  Duration must be 2 <= duration && duration <= 40
         if (duration < MIN_DURATION || duration > MAX_DURATION) {
@@ -197,14 +197,14 @@ class FoodParser {
     ): Boolean {
         for (existingRec in parsedRecipes) {
             // duplicate ID check
-            if (existingRec.getId() == id) {
+            if (existingRec.id == id) {
                 return false
             }
 
             //  There must exist exactly 1 default recipe per basic dish name
-            val isExistingBasic = existingRec.getBasicDishFor() != null
+            val isExistingBasic = existingRec.basicDishFor != null
             if (isBasicDish && isExistingBasic) {
-                if (existingRec.getName() == name) {
+                if (existingRec.name == name) {
                     return false // two different recipes have the same name and both claim to be basic recipe
                 }
             }
@@ -223,7 +223,7 @@ class FoodParser {
         availableIngredients: List<Ingredient>
     ): Ingredient? {
         for (ing in availableIngredients) {
-            if (ing.getName() == name && ing.getUnit() == unit) {
+            if (ing.name == name && ing.unit == unit) {
                 return ing
             }
         }
@@ -237,7 +237,7 @@ class FoodParser {
         recipeIngredientsArray: JsonArray,
         recipeName: String,
         availableIngredients: List<Ingredient>
-    ): Map<Ingredient, Int> {
+    ): MutableMap<Ingredient, Int> {
         val recipeIngredientsMap = mutableMapOf<Ingredient, Int>()
 
         for (k in 0 until recipeIngredientsArray.size) {

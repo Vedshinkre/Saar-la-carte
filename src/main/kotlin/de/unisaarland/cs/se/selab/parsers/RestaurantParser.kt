@@ -91,7 +91,7 @@ class RestaurantParser {
         val recipeIds = recipeArray.map { it.jsonPrimitive.int }
         require(recipeIds.all { it >= 0 }) { "Restaurant recipe IDs must be non-negative" }
         require(
-            checkRestaurantRecipesExist(recipeIds, recipes.map { it.getId() })
+            checkRestaurantRecipesExist(recipeIds, recipes.map { it.id })
         ) { "Restaurant $id references a recipe that does not exist" }
         require(recipeIds.isNotEmpty()) { "Restaurant $id has no recipes" }
         require(checkUniqueDishNamesInRestaurant(recipeIds, recipes)) {
@@ -113,7 +113,7 @@ class RestaurantParser {
         require(tablesJson.isNotEmpty()) { "Restaurant $id has no tables" }
         val tables = tablesJson.map { element -> parseTable(element.jsonObject) }
 
-        val menu = recipeIds.map { recipeId -> recipes.first { it.getId() == recipeId } }
+        val menu = recipeIds.map { recipeId -> recipes.first { it.id == recipeId } }
         val event = jsonObject.getValue("event").jsonPrimitive.boolean
         val stats = RestaurantStats(
             restaurantId = id,
@@ -189,8 +189,8 @@ class RestaurantParser {
     }
 
     private fun checkUniqueDishNamesInRestaurant(recipeIdsInRestaurant: List<Int>, recipes: List<Recipe>): Boolean {
-        val menu = recipeIdsInRestaurant.map { recipeId -> recipes.first { it.getId() == recipeId } }
-        return menu.map { it.getName() }.distinct().size == menu.size
+        val menu = recipeIdsInRestaurant.map { recipeId -> recipes.first { it.id == recipeId } }
+        return menu.map { it.name }.distinct().size == menu.size
     }
 
     // cross validation
@@ -199,7 +199,7 @@ class RestaurantParser {
         recipes: List<Recipe>
     ): Boolean {
         return restaurantTypes.all { restaurantType ->
-            recipes.any { it.getBasicDishFor() == restaurantType }
+            recipes.any { it.basicDishFor == restaurantType }
         }
     }
 

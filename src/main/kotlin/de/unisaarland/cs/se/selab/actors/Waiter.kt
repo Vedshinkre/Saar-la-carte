@@ -21,9 +21,6 @@ class Waiter {
         Pair(ActionType.ESCORT, 0)
     )
 
-    /** get current load */
-    fun getCurrentLoad(): Int = currentLoad
-
     /** adds to the number of customers being waited on */
     fun addToCurrentLoad(number: Int) {
         currentLoad += number

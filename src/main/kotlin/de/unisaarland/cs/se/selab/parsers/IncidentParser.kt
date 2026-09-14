@@ -38,23 +38,17 @@ class IncidentParser {
         restaurants: List<Restaurant>
     ): List<Incident> {
         return incidentArray.map { element ->
-            val json = element as? JsonObject
-                ?: throw IllegalArgumentException(
-                    "Invalid incident: expected a JSON object, got: $element"
-                )
+            val json = element as? JsonObject ?: throw IllegalArgumentException(
+                "Invalid incident: expected a JSON object, got: $element"
+            )
 
             try {
                 parseIncident(
-                    json = json,
-                    restaurants = restaurants,
-                    ingredients = ingredients,
-                    stock = stock,
-                    recipes = recipes
+                    json = json, restaurants = restaurants, ingredients = ingredients, stock = stock, recipes = recipes
                 )
             } catch (exception: IllegalArgumentException) {
                 throw IllegalArgumentException(
-                    "Invalid incident: $element",
-                    exception
+                    "Invalid incident: $element", exception
                 )
             }
         }
@@ -69,14 +63,9 @@ class IncidentParser {
     ): Incident {
         val id = json.requiredInt(ID)
         val evening = json.requiredInt(EVENING)
-        val type = json.requiredString(TYPE)
-
-        return when (type) {
+        return when (val type = json.requiredString(TYPE)) {
             "STAFF" -> parseStaffIncident(
-                json = json,
-                id = id,
-                evening = evening,
-                restaurants = restaurants
+                json = json, id = id, evening = evening, restaurants = restaurants
             )
 
             "RECIPE" -> parseRecipeChangeIncident(
@@ -112,38 +101,22 @@ class IncidentParser {
     }
 
     private fun parseUnavailabilityIncident(
-        id: Int,
-        evening: Int,
-        ingredientName: String,
-        ingredients: List<Ingredient>,
-        duration: Int,
-        stock: Stock
+        id: Int, evening: Int, ingredientName: String, ingredients: List<Ingredient>, duration: Int, stock: Stock
     ): UnavailabilityIncident {
         val ingredient = ingredients.requiredIngredient(ingredientName)
 
         return UnavailabilityIncident(
-            id = id,
-            evening = evening,
-            ingredient = ingredient,
-            stock = stock,
-            duration = duration
+            id = id, evening = evening, ingredient = ingredient, stock = stock, duration = duration
         )
     }
 
     private fun parsePackagingChangeIncident(
-        id: Int,
-        evening: Int,
-        ingredientName: String,
-        ingredients: List<Ingredient>,
-        packagingVolume: Int
+        id: Int, evening: Int, ingredientName: String, ingredients: List<Ingredient>, packagingVolume: Int
     ): PackagingChangeIncident {
         val ingredient = ingredients.requiredIngredient(ingredientName)
 
         return PackagingChangeIncident(
-            id = id,
-            evening = evening,
-            ingredient = ingredient,
-            packagingVolume = packagingVolume
+            id = id, evening = evening, ingredient = ingredient, packagingVolume = packagingVolume
         )
     }
 
@@ -158,19 +131,12 @@ class IncidentParser {
         val ingredient = ingredients.requiredIngredient(ingredientName)
 
         return RecipeChangeIncident(
-            id = id,
-            evening = evening,
-            ingredient = ingredient,
-            adaptation = adaptation,
-            recipes = recipes
+            id = id, evening = evening, ingredient = ingredient, adaptation = adaptation, recipes = recipes
         )
     }
 
     private fun parseStaffIncident(
-        json: JsonObject,
-        id: Int,
-        evening: Int,
-        restaurants: List<Restaurant>
+        json: JsonObject, id: Int, evening: Int, restaurants: List<Restaurant>
     ): StaffChangeIncident {
         val staffType = json.requiredEnum<StaffType>(STAFF_TYPE)
         val restaurantId = json.requiredInt(RESTAURANT_ID)
@@ -181,17 +147,15 @@ class IncidentParser {
             "Restaurant with ID '$restaurantId' does not exist."
         )
 
-        val cookType: CookType? =
-            if (staffType == StaffType.COOK) {
-                json.requiredEnum<CookType>(COOK_TYPE)
-            } else {
-                null
-            }
+        val cookType: CookType? = if (staffType == StaffType.COOK) {
+            json.requiredEnum<CookType>(COOK_TYPE)
+        } else {
+            null
+        }
 
         return StaffChangeIncident(
             id = id,
             evening = evening,
-            restaurantId = restaurantId,
             number = json.requiredInt(NUMBER),
             staffType = staffType,
             cookType = cookType, /*if not cook this will be null*/
@@ -203,39 +167,28 @@ class IncidentParser {
         ingredientName: String
     ): Ingredient {
         return firstOrNull { ingredient ->
-            ingredient.getName() == ingredientName
+            ingredient.name == ingredientName
         } ?: throw IllegalArgumentException(
             "Ingredient '$ingredientName' does not exist."
         )
     }
 
     private fun JsonObject.requiredString(key: String): String {
-        return this[key]
-            ?.jsonPrimitive
-            ?.content
-            ?: throw IllegalArgumentException(
-                "Missing string property: $key"
-            )
+        return this[key]?.jsonPrimitive?.content ?: throw IllegalArgumentException(
+            "Missing string property: $key"
+        )
     }
 
     private fun JsonObject.requiredInt(key: String): Int {
-        return this[key]
-            ?.jsonPrimitive
-            ?.content
-            ?.toIntOrNull()
-            ?: throw IllegalArgumentException(
-                "Missing or invalid integer property: $key"
-            )
+        return this[key]?.jsonPrimitive?.content?.toIntOrNull() ?: throw IllegalArgumentException(
+            "Missing or invalid integer property: $key"
+        )
     }
 
     private fun JsonObject.requiredDouble(key: String): Double {
-        return this[key]
-            ?.jsonPrimitive
-            ?.content
-            ?.toDoubleOrNull()
-            ?: throw IllegalArgumentException(
-                "Missing or invalid decimal property: $key"
-            )
+        return this[key]?.jsonPrimitive?.content?.toDoubleOrNull() ?: throw IllegalArgumentException(
+            "Missing or invalid decimal property: $key"
+        )
     }
 
     private inline fun <reified T : Enum<T>> JsonObject.requiredEnum(
@@ -247,8 +200,7 @@ class IncidentParser {
             enumValueOf<T>(value)
         } catch (exception: IllegalArgumentException) {
             throw IllegalArgumentException(
-                "Invalid value '$value' for enum property '$key'.",
-                exception
+                "Invalid value '$value' for enum property '$key'.", exception
             )
         }
     }

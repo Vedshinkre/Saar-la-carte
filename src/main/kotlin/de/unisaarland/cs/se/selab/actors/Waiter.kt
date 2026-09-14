@@ -11,10 +11,6 @@ import de.unisaarland.cs.se.selab.food.Dish
 /** waiter */
 class Waiter {
 
-    fun escort(customer: CustomerGroup) {
-        // TODO(skerdi)
-    }
-
     var id: Id? = null
     private var currentLoad: Int = 0
     private val tickLoads = mutableMapOf(
@@ -52,5 +48,29 @@ class Waiter {
         for (action in tickLoads.keys) {
             tickLoads[action] = 0
         }
+    }
+
+    /**
+     * Escorts the customer group out of the restaurant.
+     * Adds to waiter's tick load
+     * @param cg customer group to escort
+     */
+    fun escort(cg: CustomerGroup) {
+        val escortLoad = getTickLoad(ActionType.ESCORT)
+        val remainingCapacity = 10 - escortLoad
+
+        val customersToEscort = minOf(
+            cg.customersRemainingInRestaurant,
+            remainingCapacity
+        )
+
+        if (customersToEscort <= 0) {
+            return
+        }
+
+        cg.customersRemainingInRestaurant -= customersToEscort
+
+        addToTickLoad(ActionType.ESCORT, customersToEscort)
+        addToCurrentLoad(-customersToEscort)
     }
 }

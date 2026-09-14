@@ -17,6 +17,8 @@ import de.unisaarland.cs.se.selab.food.Dish
 import de.unisaarland.cs.se.selab.food.Order
 import de.unisaarland.cs.se.selab.loggers.DeliveryLogger
 import de.unisaarland.cs.se.selab.loggers.FohServiceLogger
+import de.unisaarland.cs.se.selab.loggers.FohServiceLogger.logFohEscorting
+import de.unisaarland.cs.se.selab.loggers.FohServiceLogger.logFohEscortingStatus
 import kotlin.math.ceil
 
 // TODO: move all of these constants to Constants.kt
@@ -69,6 +71,7 @@ class FrontOfHouse(
             .map { it.id }
     }
 
+// TODO(maybe customerID as parameter is more work than just customer)
     private fun dismantleTable(customerId: Id) {
         val tables = customerToTable.entries
             .first { it.key.id == customerId }
@@ -83,21 +86,47 @@ class FrontOfHouse(
         )
     }
 
+/**
+     * Processes escorting for all in-house customer groups.
+     *
+     * Groups whose dishes have all been eaten are escorted
+     * by their assigned waitstaff. After escorting, casual
+     * groups whose customers have all left have their tables
+     * dismantled.
+     */
     fun processEscorting() {
         val inHouseGroups = getInHouseGroups()
+            .sortedWith(compareBy({ getServingPriority(it) }, { it.id }))
+        var waitstaffNumber = 0
+        var customerEscortingNumber = 0
         inHouseGroups.forEach {
             val order = it.currentOrder
             if (order != null) {
                 if (order.areAllDishesEaten()) {
                     val waiter = getAssignedWaiter(it.id)
-                    // val tableId = getAssignedTableId(it.id)
+                    val customersBefore = it.customersRemainingInRestaurant
                     waiter.escort(it)
+                    val customersEscorted =
+                        customersBefore - it.customersRemainingInRestaurant
+                    logFohEscorting(
+                        waiter.id!!,
+                        customersEscorted,
+                        it.id,
+                        getAssignedTableId(it.id).min()
+                    )
+
+                    waitstaffNumber++
+                    customerEscortingNumber += it.size
                 }
             }
-            if (it.getCustomersRemainingInRestaurant() == 0) {
+            if (it.customersRemainingInRestaurant == 0) {
                 if (it is CasualGroup) dismantleTable(it.id)
             }
         }
+        logFohEscortingStatus(
+            waitstaffNumber,
+            customerEscortingNumber
+        )
     }
 
     /** Call only with Regular- or EventGroup.

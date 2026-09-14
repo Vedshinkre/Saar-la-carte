@@ -30,7 +30,7 @@ class Order(private val dishes: List<Dish>) {
      * returns true if all dishes have been served, false if not
      */
     fun areAllDishesServed(): Boolean {
-        return dishes.all { it.getStatus() == DishStatus.SERVED }
+        return dishes.all { it.status == DishStatus.SERVED }
     }
 
     /**
@@ -57,8 +57,8 @@ class Order(private val dishes: List<Dish>) {
 
     /** get dishes in the order that can be served this tick, ordered by basic dishes first then ascending recipe id */
     fun getServableDishes(): List<Dish> {
-        val cookedDishes = dishes.filter { it.getStatus() == DishStatus.COOKED }
-        return cookedDishes.sortedWith(compareBy({ !it.getIsBasic() }, { it.getRecipe().getId() }))
+        val cookedDishes = dishes.filter { it.status == DishStatus.COOKED }
+        return cookedDishes.sortedWith(compareBy({ !it.isBasic }, { it.recipe.id }))
     }
 
     // explicit getters for relevant functions
@@ -83,7 +83,7 @@ class Order(private val dishes: List<Dish>) {
     fun getServedDishes(): List<Dish> {
         val servedDishes = mutableListOf<Dish>()
         for (dish in dishes) {
-            if (dish.getStatus() == DishStatus.SERVED) {
+            if (dish.status == DishStatus.SERVED) {
                 servedDishes.add(dish)
             }
         }
@@ -96,7 +96,7 @@ class Order(private val dishes: List<Dish>) {
     fun getUncookedDishes(): List<Dish> {
         val uncookedDishes = mutableListOf<Dish>()
         for (dish in dishes) {
-            if (dish.getStatus() == DishStatus.UNCOOKED) {
+            if (dish.status == DishStatus.UNCOOKED) {
                 uncookedDishes.add(dish)
             }
         }
@@ -108,7 +108,7 @@ class Order(private val dishes: List<Dish>) {
      */
     fun areAllDishesCooked(): Boolean {
         for (dish in dishes) {
-            if (dish.getStatus() != DishStatus.COOKED) {
+            if (dish.status != DishStatus.COOKED) {
                 return false
             }
         }
@@ -120,7 +120,7 @@ class Order(private val dishes: List<Dish>) {
      */
     fun areAllDishesEaten(): Boolean {
         for (dish in dishes) {
-            if (dish.getStatus() != DishStatus.EATEN) {
+            if (dish.status != DishStatus.EATEN) {
                 return false
             }
         }
@@ -132,7 +132,7 @@ class Order(private val dishes: List<Dish>) {
      */
     fun areAllDishesServedOrAborted(): Boolean {
         for (dish in dishes) {
-            val status = dish.getStatus()
+            val status = dish.status
 
             // If even a single dish is still being processed, the whole order is NOT done
             if (status != DishStatus.SERVED && status != DishStatus.ABORTED) {

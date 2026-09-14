@@ -12,9 +12,11 @@ import java.util.concurrent.atomic.AtomicInteger
  */
 class Order(private val dishes: List<Dish>) {
     private val id: Id = nextId.getAndIncrement()
-    private val orderedAt: Tick = Time.tick
-    var servedAt: Tick? = null
+    var firstDishCookedAt: Tick? = null
+    var lastDishServedAt: Tick? = null
+    val orderedAt: Tick = Time.tick
     var deliveredAt: Tick? = null
+    private var servingStarted: Boolean = false
 
     private companion object {
         val nextId = AtomicInteger(1)
@@ -24,9 +26,34 @@ class Order(private val dishes: List<Dish>) {
         require(id >= 1)
     }
 
-    // TODO: some simple getters: getOrderedAt(), getFirstCookedAt(), areAllDishesServed()
-    // TODO: have a servingStarted bool attribute and these methods: hasServingStarted(), startServing(), markFullyServed()
-    // markServed() will set servedAt to currentTick if servedAt == null && areAllDishesServed()
+    /**
+     * returns true if all dishes have been served, false if not
+     */
+    fun areAllDishesServed(): Boolean {
+        return dishes.all { it.getStatus() == DishStatus.SERVED }
+    }
+
+    /**
+     * returns true if serving has started
+     */
+    fun hasServingStarted(): Boolean {
+        return servingStarted
+    }
+
+    /**
+     * returns true if any dish has been served already
+     */
+    fun startServing() {
+        servingStarted = true
+    }
+
+    /**
+     * resets servingStarted, sets servedAt to the currentTick
+     */
+    fun markFullyServed() {
+        servingStarted = false
+        lastDishServedAt = Time.tick
+    }
 
     /** get dishes in the order that can be served this tick, ordered by basic dishes first then ascending recipe id */
     fun getServableDishes(): List<Dish> {

@@ -27,18 +27,18 @@ class Countertop(
         menu.forEach { recipe ->
             // available flag if there are enough packages for all required ingredients
             var available = true
-            val ingredients = recipe.getIngredients()
+            val ingredients = recipe.ingredients
             ingredients.forEach { (ingredient: Ingredient, amount: Int) ->
                 val ingredientPackages = pantry.getPackagesForIngredient(ingredient)
                 var totalAmount = 0
                 ingredientPackages.forEach {
-                    totalAmount += it.getCurrentAmount()
+                    totalAmount += it.currentAmount
                 }
                 if (totalAmount < amount) {
                     available = false
                 }
             }
-            val cookTypes = recipe.getCookTypes()
+            val cookTypes = recipe.cookType
             val eligibleCooks = cooks.filter { !it.getIsCooking() && cookTypes.contains(it.getCookType()) }
 
             if (available && eligibleCooks.isNotEmpty()) {

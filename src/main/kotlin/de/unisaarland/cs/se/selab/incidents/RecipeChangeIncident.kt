@@ -1,5 +1,6 @@
 package de.unisaarland.cs.se.selab.incidents
 
+import de.unisaarland.cs.se.selab.Constants.HUNDRED
 import de.unisaarland.cs.se.selab.Evening
 import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.food.Ingredient
@@ -23,7 +24,7 @@ class RecipeChangeIncident(
      * in every recipe that uses it by [adaptation] percent)
      */
     override fun apply() {
-        val factor = 1.0 + adaptation / 100.0
+        val factor = 1.0 + adaptation / HUNDRED
         for (recipe in recipes) {
             val currentAmount = recipe.ingredients[ingredient] ?: continue
             val newAmount = maxOf(1, floor(currentAmount * factor).toInt())

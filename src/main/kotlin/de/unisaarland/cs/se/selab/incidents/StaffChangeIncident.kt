@@ -25,7 +25,7 @@ class StaffChangeIncident(
     /**
      * applies the staff change incident (adds/removes staff from a restaurant)
      */
-    fun apply() {
+    override fun apply() {
         when (staffType) {
             StaffType.COOK -> applyCookChange()
             StaffType.WAITSTAFF -> applyWaitstaffChange()

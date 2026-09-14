@@ -61,10 +61,10 @@ class Restaurant(
     }
 
     /**
-     * Simualtes one tick
+     * Simulates one tick
      */
     fun simulateTick() {
-        processArrivalSeatingOrdering(customerQueue.first(), restaurantStats.menu)
+        frontOfHouse.processArrivalSeatingOrdering(customerQueue.first(), restaurantStats.menu)
     }
 
     /** returns whether a driver is available */

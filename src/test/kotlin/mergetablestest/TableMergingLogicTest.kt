@@ -68,6 +68,7 @@ class TableMergingLogicTest {
 
     // --- FOH Table Merging Tests ---
 
+//   verifies that casual groups are strictly prohibited from making advance table reservations
     @Test
     fun `reserveTables-No Table For Casuals-Fails`() {
         val foh = setupFoh(emptyList())
@@ -78,6 +79,20 @@ class TableMergingLogicTest {
         }
     }
 
+    //  ensures that casual cannot reserve regardless of whether perfectly sized tables are available
+    @Test // cannot reserve tables for casuals
+    fun `reserveTables-Casual Group With Available Tables-Fails`() {
+        val table1 = Table(id = 1, size = 4, tableType = TableType.COMMON)
+        val foh = setupFoh(listOf(table1))
+
+        val casualGroup = createDummyCasualGroup(groupSize = 4)
+
+        assertThrows<IllegalArgumentException> {
+            foh.reserveTables(casualGroup)
+        }
+    }
+
+    //  confirms that smaller tables are successfully merged when combined capacity matches the group size
     @Test
     fun `reserveTables-Merge Exact Capacity Match-Succeeds`() {
         val table1 = Table(id = 1, size = 4, tableType = TableType.COMMON)
@@ -92,6 +107,7 @@ class TableMergingLogicTest {
         assertEquals(TableStatus.RESERVED, table2.status)
     }
 
+    //   ensures that the reservation is rejected if the total available capacity cannot fit the group
     @Test
     fun `reserveTables-Insufficient Total Capacity-Returns False`() {
         val table1 = Table(id = 1, size = 2, tableType = TableType.COMMON)
@@ -106,6 +122,7 @@ class TableMergingLogicTest {
         assertEquals(TableStatus.FREE, table2.status)
     }
 
+    // ensures that the merging algorithm correctly drops  smaller tables to find optimal fit.
     @Test
     fun `reserveTables-Select Appropriate Tables-Succeeds`() {
         val table1 = Table(id = 1, size = 2, tableType = TableType.COMMON)
@@ -120,5 +137,33 @@ class TableMergingLogicTest {
         assertEquals(TableStatus.FREE, table1.status)
         assertEquals(TableStatus.RESERVED, table2.status)
         assertEquals(TableStatus.RESERVED, table3.status)
+    }
+
+    // checks that a single table is reserved if the group covers at least three-quarters of its capacity.
+    @Test
+    fun `reserveTables-Single Table Three Quarters Rule-Succeeds`() {
+        val table1 = Table(id = 1, size = 4, tableType = TableType.COMMON)
+        val foh = setupFoh(listOf(table1))
+
+        val eventGroup = createDummyEventGroup(groupSize = 3)
+        val success = foh.reserveTables(eventGroup)
+
+        assertTrue(success)
+        assertEquals(TableStatus.RESERVED, table1.status)
+    }
+
+    // checks that merged tables are reserved for at least three-quarters of the final combined capacity.
+    @Test
+    fun `reserveTables-Merge Tables  Three Quarters Rule-Succeeds`() {
+        val table1 = Table(id = 1, size = 2, tableType = TableType.COMMON)
+        val table2 = Table(id = 2, size = 2, tableType = TableType.COMMON)
+        val foh = setupFoh(listOf(table1, table2))
+
+        val eventGroup = createDummyEventGroup(groupSize = 3)
+        val success = foh.reserveTables(eventGroup)
+
+        assertTrue(success)
+        assertEquals(TableStatus.RESERVED, table1.status)
+        assertEquals(TableStatus.RESERVED, table2.status)
     }
 }

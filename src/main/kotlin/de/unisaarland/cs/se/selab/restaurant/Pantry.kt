@@ -10,30 +10,28 @@ import de.unisaarland.cs.se.selab.loggers.InitialAndPrepLogger
  * Represents the pantry of the restaurant .
  */
 class Pantry(
-    private val inventory: MutableList<IngredientPackage>,
-    private val supplier: Supplier
+    private val inventory: MutableList<IngredientPackage>, private val supplier: Supplier
 ) {
     // explicit constructor with only stock used to create the supplier
     constructor(stock: Stock) : this(
-        inventory = mutableListOf<IngredientPackage>(),
-        supplier = Supplier(stock)
-    )
-    // functions with logic
+        inventory = mutableListOf<IngredientPackage>(), supplier = Supplier(stock)
+    ) // functions with logic
+
     /**
      *   Check if we have ingredient in x amount in the pantry or not .
      */
 
     fun checkInventory(ingredient: Ingredient, amount: Int): Int {
         var totalAvailable = 0
-        for (pkg in inventory) {
-            // Only count packages that haven't expired and match the ingredient name
+        for (pkg in inventory) { // Only count packages that haven't expired and match the ingredient name
+            val incidentStock = supplier.stock
+            incidentStock.applyUnavailableDurations()
             val isExpired = pkg.hasExpired()
             val currentIngredient = pkg.ingredient
             if (currentIngredient.name == ingredient.name && !isExpired) {
                 totalAvailable += pkg.currentAmount
             }
-        }
-        // Return the requested amount if we have enough, else return what's actually left
+        } // Return the requested amount if we have enough, else return what's actually left
         if (totalAvailable >= amount) {
             return amount
         } else {
@@ -65,8 +63,7 @@ class Pantry(
         for (pkg in inventory) {
             if (!pkg.hasExpired()) {
                 activePackages.add(pkg) // Keep the ones that are still good
-            } else {
-                // Track the amount being thrown away
+            } else { // Track the amount being thrown away
                 val ingredient = pkg.ingredient
                 val currentAmount = pkg.currentAmount
                 val existingAmount = removedQuantity[ingredient] ?: 0
@@ -108,8 +105,7 @@ class Pantry(
                 for (pkg in newPackages) {
                     inventory.add(pkg)
                     totalProcuredForIngredient += pkg.currentAmount
-                }
-                //  the exact amount of ingredient delivered by the supplier
+                } //  the exact amount of ingredient delivered by the supplier
                 procuredQuantity[ingredient] = totalProcuredForIngredient
             }
         }
@@ -119,8 +115,7 @@ class Pantry(
         for (ingredient in procuredQuantity.keys) {
             sortedIngredients.add(ingredient)
         }
-        sortedIngredients.sortBy { it.name }
-        // Log procured ingredients in ascending alphabetic order
+        sortedIngredients.sortBy { it.name } // Log procured ingredients in ascending alphabetic order
         for (ingredient in sortedIngredients) {
             val amount = procuredQuantity[ingredient] ?: 0
             InitialAndPrepLogger.logPantryProcured(amount, ingredient.unit, ingredient.name)
@@ -131,8 +126,7 @@ class Pantry(
 
     /**
      * Reserves a Single Ingredient based on its quantity.
-     */
-    // Needed this extra function to reduce complexity error by detekt
+     */ // Needed this extra function to reduce complexity error by detekt
     private fun reserveSingleIngredient(ingredient: Ingredient, requiredAmount: Int) {
         var amountNeeded = requiredAmount
 

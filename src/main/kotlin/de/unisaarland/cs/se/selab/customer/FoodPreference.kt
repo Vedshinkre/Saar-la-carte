@@ -11,11 +11,7 @@ import de.unisaarland.cs.se.selab.food.Recipe
 class FoodPreference(
     val excludedIngredients: List<Ingredient>,
     val preferredIngredients: List<Ingredient>,
-    // INCONSISTENCY: the class diagram spells this field `favouriteDishes` (British
-    // spelling - used consistently in RegularGroup/CasualGroup/EventGroup too).
-    // Kept your existing American spelling for the constructor param/getter here
-    // since it's already what you had; rename both if you want it to match exactly.
-    val favoriteDishes: List<String>
+    val favouriteDishes: List<String>
 ) {
 
     /**
@@ -34,7 +30,7 @@ class FoodPreference(
      *     matches [eventFavourite], it's chosen outright - this takes priority over
      *     the customer's own favorite dishes or preferred ingredients.
      *  3. Otherwise (or if the event favorite wasn't available): walk
-     *     [favoriteDishes] in order and return the first one that matches a
+     *     [favouriteDishes] in order and return the first one that matches a
      *     qualifying recipe.
      *  4. If no favorite matched (including the case of no favorites at all),
      *     narrow to whichever qualifying recipe(s) contain the most distinct
@@ -70,11 +66,11 @@ class FoodPreference(
 
     /**
      * The first recipe in [candidates] whose name matches this customer's
-     * favorite dishes, trying [favoriteDishes] in order (not menu order) so that
+     * favorite dishes, trying [favouriteDishes] in order (not menu order) so that
      * their most-preferred favorite wins if more than one happens to be available.
      */
     private fun firstMatchingFavorite(candidates: List<Recipe>): Recipe? {
-        for (favoriteName in favoriteDishes) {
+        for (favoriteName in favouriteDishes) {
             val match = candidates.firstOrNull { it.name == favoriteName }
             if (match != null) {
                 return match

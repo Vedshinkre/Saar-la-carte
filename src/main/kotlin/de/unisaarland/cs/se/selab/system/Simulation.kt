@@ -1,5 +1,6 @@
 package de.unisaarland.cs.se.selab.system
 
+import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.customer.CasualGroup
 import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.customer.EventGroup
@@ -64,11 +65,11 @@ class Simulation(simdata: SimulationConfig) {
     private fun executeIncidents() {
         val evening = Time.getEvening()
         val incidentsForTonight = incidents
-            .filter { it.getEvening() == evening }
-            .sortedBy { it.getId() }
+            .filter { it.evening == evening }
+            .sortedBy { it.id }
 
         for (incident in incidentsForTonight) {
-            InitialAndPrepLogger.logIncident(incident.getId(), incident.javaClass.simpleName)
+            InitialAndPrepLogger.logIncident(incident.id, incident.javaClass.simpleName)
             incident.apply()
         }
     }
@@ -90,8 +91,8 @@ class Simulation(simdata: SimulationConfig) {
         getEventGroupsForTonight(evening)
         val regularsTonight = getRegularsForTonight(evening)
 
-        for (restaurant in restaurants.sortedBy { it.getRestaurantStats().getRestaurantId() }) {
-            Logger.restaurantID = restaurant.getRestaurantStats().getRestaurantId()
+        for (restaurant in restaurants.sortedBy { it.getRestaurantStats().restaurantId}) {
+            Logger.restaurantID = restaurant.getRestaurantStats().restaurantId
 
 
             restaurant.prepareForEvening(regularsTonight)
@@ -99,11 +100,11 @@ class Simulation(simdata: SimulationConfig) {
     }
 
     private fun ReserveForEventGroupsInAdvance(eventGroups: List<EventGroup>) {
-        for (group in eventGroups) {
-            val eventRestaurantId = browser.getEligibleRestaurants(eventGroup)
+        for (eventGroup in eventGroups) {
+            val eventRestaurantId = browser.getEligibleRestaurants(eventGroup)?: return
             val eventRestaurant = getRestaurantById(eventRestaurantId)
-            group.setCurrentRestaurantType(eventRestaurant.getRestaurantStats().getRestaurantType())
-            eventRestaurant.addToCustomerQueue(group)
+            eventGroup.currentRestaurantType = eventRestaurant.getRestaurantStats().restaurantType
+            eventRestaurant.addToCustomerQueue(eventGroup)
 
 
         }
@@ -121,7 +122,7 @@ class Simulation(simdata: SimulationConfig) {
      * getter is called.
      */
     private fun getEventGroupsForTonight(evening: Int): List<EventGroup> =
-        customers.filterIsInstance<EventGroup>().filter { it.getEventEvening() == evening }
+        customers.filterIsInstance<EventGroup>().filter { it.eventEvening == evening }
 
     /**
      * All [RegularGroup]s that are visiting tonight, regardless of restaurant.
@@ -220,22 +221,22 @@ class Simulation(simdata: SimulationConfig) {
      */
     private fun executeSingleTick(casualsTonight: List<CasualGroup>) {
         val currentTick = Time.getCurrentTick()
-        TickStatusLogger.logCurrentTick(currentTick)
+        TickStatusLogger.logCurrentTick()
 
         val casualsThisTick = getCasualsForThisTick(currentTick, casualsTonight)
 
         for (group in casualsThisTick) {
             val restaurantId = browser.getEligibleRestaurants(group)
             if (restaurantId != null) {
-                TickStatusLogger.logRestaurantDecision(group.getId(), restaurantId)
+                TickStatusLogger.logRestaurantDecision(group.id, restaurantId)
                 getRestaurantById(restaurantId).addToCustomerQueue(group)
             } else {
-                TickStatusLogger.logRestaurantNoDecision(group.getId())
+                TickStatusLogger.logRestaurantNoDecision(group.id)
             }
         }
 
-        for (restaurant in restaurants.sortedBy { it.getRestaurantStats().getRestaurantId() }) {
-            Logger.restaurantID = restaurant.getRestaurantStats().getRestaurantId()
+        for (restaurant in restaurants.sortedBy { it.getRestaurantStats().restaurantId }) {
+            Logger.restaurantID = restaurant.getRestaurantStats().restaurantId
             TickStatusLogger.logRestaurantStart()
             restaurant.simulateTick()
             TickStatusLogger.logRestaurantEnd()
@@ -249,12 +250,12 @@ class Simulation(simdata: SimulationConfig) {
     private fun calculateStatistics() {
         StatisticsLogger.logSimulationStatsCalculated()
 
-        for (restaurant in restaurants.sortedBy { it.getRestaurantStats().getRestaurantId() }) {
+        for (restaurant in restaurants.sortedBy { it.getRestaurantStats().restaurantId }) {
             StatisticsLogger.logSimulationStatsCooked(restaurant.getNumberOfCookedMeals())
             StatisticsLogger.logSimulationStatsServed(restaurant.getNumberOfCustomersServed())
             StatisticsLogger.logSimulationStatsDelivered(restaurant.getNumberOfCustomersDelivered())
             val stats = restaurant.getRestaurantStats()
-            val ratingsGiven = stats.getPositiveRatings() + stats.getNegativeRatings()
+            val ratingsGiven = stats.positiveRatings + stats.negativeRatings
             StatisticsLogger.logSimulationStatsRatingsGiven(ratingsGiven)
         }
     }
@@ -263,7 +264,7 @@ class Simulation(simdata: SimulationConfig) {
      * Looks up a restaurant by its id.
      */
     private fun getRestaurantById(id: Id): Restaurant =
-        restaurants.first { it.getRestaurantStats().getRestaurantId() == id }
+        restaurants.first { it.getRestaurantStats().restaurantId == id }
 
     private companion object {
         const val TICKS_PER_EVENING = 24

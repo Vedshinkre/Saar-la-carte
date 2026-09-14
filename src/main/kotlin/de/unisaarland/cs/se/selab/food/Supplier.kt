@@ -3,7 +3,7 @@ package de.unisaarland.cs.se.selab.food
  * Represents the supplier that has stock .
  */
 class Supplier(
-    private val stock: Stock
+    val stock: Stock
 ) {
     // functions with logic
     /**

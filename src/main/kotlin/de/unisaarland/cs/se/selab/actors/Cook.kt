@@ -13,12 +13,12 @@ private const val MINUTES_PER_TICK = 10.0
  */
 
 class Cook(
-    private var id: Int?,
-    private var orderId: Int?,
-    private val type: CookType,
-    private var currentRecipe: Recipe?,
+    var id: Int?,
+    var orderId: Int?,
+    val type: CookType,
+    var currentRecipe: Recipe?,
     private var remainingTicks: Int,
-    private var isCooking: Boolean
+    var isCooking: Boolean
 ) {
     // Internal attribute to store the list of dishes to be worked on
     private val assignedDishes = mutableListOf<Dish>()
@@ -38,35 +38,6 @@ class Cook(
         require(remainingTicks >= 0) { "Remaining ticks must be >= 0." }
     }
 
-    // explicit getters for relevant functions
-    /**
-     * explicit getter to get the cook type .
-     */
-    fun getCookType(): CookType {
-        return type
-    }
-
-    /**
-     *explicit getter to get if the chef is cooking .
-     */
-    fun getIsCooking(): Boolean {
-        return isCooking
-    }
-
-    /**
-     *explicit getter to get id to the cook .
-     */
-    fun getId(): Int? {
-        return id
-    }
-
-    /**
-     *explicit getter to getcurrent recipe .
-     */
-    fun getCurrentRecipe(): Recipe? {
-        return currentRecipe
-    }
-
     /**
      *explicit setter to set id to the cook .
      */
@@ -77,18 +48,12 @@ class Cook(
     }
 
     /**
-     *explicit getter to get base order id recipe .
-     */
-    fun getOrderId(): Int? {
-        return orderId
-    }
-
-    /**
-     * explicit getter of the dishes hat the cook has to cook .
+     * Read-only exposure of assigned dishes.
      */
     fun getDishes(): List<Dish> {
         return assignedDishes
     }
+
     // functions with logic
     /**
      * function to start cooking with .
@@ -102,7 +67,7 @@ class Cook(
         orderId = baseOrderId
         isCooking = true
         // calculate the exact ticks needed to cook the given recipe
-        val durationDouble = recipe.getDuration().toDouble()
+        val durationDouble = recipe.duration.toDouble()
 
         val calculatedTicks = ceil(durationDouble / MINUTES_PER_TICK).toInt() - 1
         // safety check for the math
@@ -115,7 +80,7 @@ class Cook(
         assignedDishes.addAll(dishes)
 
         for (dish in assignedDishes) {
-            dish.setStatus(DishStatus.COOKING)
+            dish.status = DishStatus.COOKING
         }
     }
 
@@ -140,7 +105,7 @@ class Cook(
 
             //  Set all dishes to COOKED
             for (dish in assignedDishes) {
-                dish.setStatus(DishStatus.COOKED)
+                dish.status = DishStatus.COOKED
             }
             currentRecipe = null
             orderId = null

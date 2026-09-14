@@ -12,6 +12,7 @@ import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
 private const val KEY_NAME = "name"
+private const val KEY_DISH_NAME = "dishName"
 private const val KEY_UNIT = "unit"
 private const val MIN_DURATION = 2
 private const val MAX_DURATION = 40
@@ -64,7 +65,7 @@ class FoodParser {
             require(isUnique) { "Duplicate ingredient name found: $name" }
 
             // Convert to Enum
-            val unitEnum = MeasurementUnit.valueOf(unitStr)
+            val unitEnum = MeasurementUnit.valueOf(unitStr.uppercase())
 
             //  parse the ingredient
             val newIngredient = Ingredient(name, unitEnum, packagingVolume, bestBefore)
@@ -121,8 +122,8 @@ class FoodParser {
             // Extract values
             val id = recipeJson["id"]?.jsonPrimitive?.int
                 ?: throw IllegalArgumentException("Recipe is missing an 'id'")
-            val name = recipeJson[KEY_NAME]?.jsonPrimitive?.content
-                ?: throw IllegalArgumentException("Recipe '$id' is missing a 'name'")
+            val name = recipeJson[KEY_DISH_NAME]?.jsonPrimitive?.content
+                ?: throw IllegalArgumentException("Recipe '$id' is missing a 'dishName'")
             val duration = recipeJson["duration"]?.jsonPrimitive?.int
                 ?: throw IllegalArgumentException("Recipe '$name' is missing 'duration'")
 
@@ -219,11 +220,10 @@ class FoodParser {
      */
     private fun checkIngredientExists(
         name: String,
-        unit: MeasurementUnit,
         availableIngredients: List<Ingredient>
     ): Ingredient? {
         for (ing in availableIngredients) {
-            if (ing.name == name && ing.unit == unit) {
+            if (ing.name == name) {
                 return ing
             }
         }
@@ -245,23 +245,29 @@ class FoodParser {
 
             val recipeIngredientName = recipeIngredientJson[KEY_NAME]?.jsonPrimitive?.content
                 ?: throw IllegalArgumentException("Recipe ingredient missing 'name'")
+            // 'unit' is optional here: the ingredient's unit is already defined where it is declared
+            // in the top-level ingredients list, so it isn't required again per recipe ingredient.
             val recipeIngredientUnitStr = recipeIngredientJson[KEY_UNIT]?.jsonPrimitive?.content
-                ?: throw IllegalArgumentException("Recipe ingredient missing 'unit'")
             val recipeIngredientAmount = recipeIngredientJson["amount"]?.jsonPrimitive?.int
                 ?: throw IllegalArgumentException("Recipe ingredient missing 'amount'")
 
             // --- THE CROSS VALIDATION ---
             require(recipeIngredientAmount > 0) { "Recipe ingredient amount must be greater than 0." }
 
-            // Convert string unit to MeasurementUnit enum
-            val recipeIngredientUnit = MeasurementUnit.valueOf(recipeIngredientUnitStr)
-
             // get the ingredient from the available ingredients, and crash if it does not exist
             val foundIngredient = checkIngredientExists(
                 recipeIngredientName,
-                recipeIngredientUnit,
                 availableIngredients
             ) ?: throw IllegalArgumentException("'$recipeName' requires '$recipeIngredientName' that does not exist.")
+
+            // if a unit was specified, it must match the ingredient's defined unit
+            if (recipeIngredientUnitStr != null) {
+                val recipeIngredientUnit = MeasurementUnit.valueOf(recipeIngredientUnitStr.uppercase())
+                require(recipeIngredientUnit == foundIngredient.unit) {
+                    "'$recipeName' ingredient '$recipeIngredientName' has unit '$recipeIngredientUnitStr' " +
+                        "that does not match its defined unit '${foundIngredient.unit}'."
+                }
+            }
 
             // add valid ingredient and amount to the map
             recipeIngredientsMap[foundIngredient] = recipeIngredientAmount

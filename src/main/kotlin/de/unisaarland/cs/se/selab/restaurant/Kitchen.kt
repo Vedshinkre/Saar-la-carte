@@ -31,7 +31,7 @@ class Kitchen(
     private val orderQueue: MutableList<Order>,
     private val readyDishes: MutableList<Dish>,
     private var finishedNumberOfMeals: Int,
-    private var numberOfCookedMeals: Int,
+    var numberOfCookedMeals: Int, // for statistics
     private var restaurantType: RestaurantType
 ) { // INTERNAL ATTRIBUTE: The ticket dispenser for Cook IDs
     private var nextAvailableCookId: Int = 1
@@ -493,6 +493,8 @@ class Kitchen(
             }
             totalMeals += totalAssigned
             finishedMeals += finished
+            // statistics
+            numberOfCookedMeals += finished
 
             // Replaced with helper
             if (finished > 0) {

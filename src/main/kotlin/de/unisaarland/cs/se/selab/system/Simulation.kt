@@ -251,12 +251,13 @@ class Simulation(simdata: SimulationConfig) {
         StatisticsLogger.logSimulationStatsCalculated()
 
         for (restaurant in restaurants.sortedBy { it.getRestaurantStats().restaurantId }) {
+            val stats = restaurant.getRestaurantStats()
+            Logger.restaurantID = stats.restaurantId
+
             StatisticsLogger.logSimulationStatsCooked(restaurant.getNumberOfCookedMeals())
             StatisticsLogger.logSimulationStatsServed(restaurant.getNumberOfCustomersServed())
             StatisticsLogger.logSimulationStatsDelivered(restaurant.getNumberOfCustomersDelivered())
-            val stats = restaurant.getRestaurantStats()
-            val ratingsGiven = stats.positiveRatings + stats.negativeRatings
-            StatisticsLogger.logSimulationStatsRatingsGiven(ratingsGiven)
+            StatisticsLogger.logSimulationStatsRatingsGiven(stats.positiveRatings + stats.negativeRatings)
         }
     }
 

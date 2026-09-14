@@ -50,6 +50,10 @@ class FrontOfHouse(
     private val deliveryGroups: MutableList<CustomerGroup> = mutableListOf()
     private val turnedAwayGroups: MutableList<CustomerGroup> = mutableListOf()
 
+    // statistics
+    var numberOfCustomersServed: Int = 0
+    var numberOfCustomersDelivered: Int = 0
+
     private fun getInHouseGroups(): List<CustomerGroup> {
         return inHouseGroupsToWaiter.keys.toList()
     }
@@ -291,6 +295,7 @@ class FrontOfHouse(
             }
         }
     }
+
     private fun recruitWaiterForServing(customerGroup: EventGroup): List<Waiter> {
         val required = customerGroup.currentOrder?.getServableDishes()?.size ?: 0
         val eligible = waiters.filter { it.getTickLoad(ActionType.SERVE) < ACTION_LIMIT }
@@ -341,7 +346,8 @@ class FrontOfHouse(
 
     /** picks waiter to serve driver delivery meals: waiter with min id whose SERVING tick load < action limit */
     private fun assignWaiterForDelivery(): Waiter? =
-        waiters.filter { it.getTickLoad(ActionType.SERVE) < Constants.ACTION_LIMIT }.minByOrNull { it.id ?: Int.MAX_VALUE }
+        waiters.filter { it.getTickLoad(ActionType.SERVE) < Constants.ACTION_LIMIT }
+            .minByOrNull { it.id ?: Int.MAX_VALUE }
 
     private fun getOrAssignDriver(group: CustomerGroup, order: Order): Driver? {
         val assigned = drivers.find { it.targetGroup == group && it.currentOrder == order }
@@ -527,8 +533,9 @@ class FrontOfHouse(
         if (!fullyServed) return
 
         order.lastDishServedAt = Time.tick
-        val sinceOrder = Time.tick - order.orderedAt
-        group.experience = if (sinceOrder <= Constants.EXPECTATION_WINDOW_TICKS) {
+        numberOfCustomersServed += group.size // statistics
+
+        group.experience = if (Time.tick - order.orderedAt <= Constants.EXPECTATION_WINDOW_TICKS) {
             ExperienceType.POSITIVE
         } else {
             ExperienceType.NEUTRAL
@@ -555,6 +562,11 @@ class FrontOfHouse(
         for (group in deliveryGroups.sortedBy { it.id }) {
             val order = group.currentOrder ?: continue
             if (order.deliveredAt == null || order.areAllDishesEaten()) continue
+
+            // for statistics, runs exactly once per order (when driver hands over the order)
+            if (order.deliveredAt == Time.tick) {
+                numberOfCustomersDelivered += group.size
+            }
 
             for (dish in order.dishes) {
                 if (dish.status == DishStatus.SERVED) dish.updateEating()

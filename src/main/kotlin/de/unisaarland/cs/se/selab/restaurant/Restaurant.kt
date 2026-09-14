@@ -44,4 +44,9 @@ class Restaurant(
 
     /** returns whether a driver is available */
     fun isDriverAvailable(): Boolean = frontOfHouse.isDriverAvailable()
+
+    // statistics
+    fun getNumberOfCookedMeals(): Int = kitchen.numberOfCookedMeals
+    fun getNumberOfCustomersServed(): Int = frontOfHouse.numberOfCustomersServed
+    fun getNumberOfCustomersDelivered(): Int = frontOfHouse.numberOfCustomersDelivered
 }

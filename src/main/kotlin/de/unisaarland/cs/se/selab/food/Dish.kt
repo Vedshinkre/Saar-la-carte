@@ -5,46 +5,18 @@ import de.unisaarland.cs.se.selab.enums.DishStatus
  * Represents the Dish made of a certain recipe.
  */
 class Dish(
-    private val recipe: Recipe,
-    private val isBasic: Boolean,
-    private var eatingProgress: Int,
-    private var status: DishStatus
+    val recipe: Recipe,
+    val isBasic: Boolean,
+    var eatingProgress: Int,
+    var status: DishStatus
 ) {
     // explicit constructor with only recipe
     constructor(recipe: Recipe) : this(
         recipe = recipe,
-        isBasic = recipe.getBasicDishFor() != null,
+        isBasic = recipe.basicDishFor != null,
         eatingProgress = 2,
         status = DishStatus.UNCOOKED
     )
-    // explicit getters for relevant functions
-    /**
-     * explicit getter to get the Recipe of the Dish.
-     */
-    fun getRecipe(): Recipe {
-        return recipe
-    }
-
-    /**
-     * explicit getter to get if the recipe is basic or not.
-     */
-    fun getIsBasic(): Boolean {
-        return isBasic
-    }
-
-    /**
-     * explicit getter to get the dish status.
-     */
-    fun getStatus(): DishStatus {
-        return status
-    }
-
-    /**
-     * explicit setter to change the status of the dish.
-     */
-    fun setStatus(newStatus: DishStatus) {
-        status = newStatus
-    }
 
     // functions with logic
     /**

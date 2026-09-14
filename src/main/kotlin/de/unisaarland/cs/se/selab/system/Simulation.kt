@@ -1,11 +1,11 @@
 package de.unisaarland.cs.se.selab.system
 
 import de.unisaarland.cs.se.selab.Id
+import de.unisaarland.cs.se.selab.Time
 import de.unisaarland.cs.se.selab.customer.CasualGroup
 import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.customer.EventGroup
 import de.unisaarland.cs.se.selab.customer.RegularGroup
-import de.unisaarland.cs.se.selab.Time
 import de.unisaarland.cs.se.selab.incidents.Incident
 import de.unisaarland.cs.se.selab.loggers.InitialAndPrepLogger
 import de.unisaarland.cs.se.selab.loggers.Logger
@@ -91,25 +91,20 @@ class Simulation(simdata: SimulationConfig) {
         getEventGroupsForTonight(evening)
         val regularsTonight = getRegularsForTonight(evening)
 
-        for (restaurant in restaurants.sortedBy { it.getRestaurantStats().restaurantId}) {
+        for (restaurant in restaurants.sortedBy { it.getRestaurantStats().restaurantId }) {
             Logger.restaurantID = restaurant.getRestaurantStats().restaurantId
-
 
             restaurant.prepareForEvening(regularsTonight)
         }
     }
 
-    private fun ReserveForEventGroupsInAdvance(eventGroups: List<EventGroup>) {
+    private fun reserveForEventGroupsInAdvance(eventGroups: List<EventGroup>) {
         for (eventGroup in eventGroups) {
-            val eventRestaurantId = browser.getEligibleRestaurants(eventGroup)?: return
+            val eventRestaurantId = browser.getEligibleRestaurants(eventGroup) ?: return
             val eventRestaurant = getRestaurantById(eventRestaurantId)
             eventGroup.currentRestaurantType = eventRestaurant.getRestaurantStats().restaurantType
             eventRestaurant.addToCustomerQueue(eventGroup)
-
-
         }
-
-
     }
 
     /**
@@ -139,7 +134,7 @@ class Simulation(simdata: SimulationConfig) {
     /**
      * All [CasualGroup]s that are visiting at some point tonight.
      */
-    private fun getCasualsForTonight(evening: Int): List<CasualGroup> =
+    private fun getCasualsForTonight(): List<CasualGroup> =
         filterCasualGroups(customers).filter { it.isVisitingTonight() }
 
     /**
@@ -153,15 +148,15 @@ class Simulation(simdata: SimulationConfig) {
      * Takes the *current tick* (not the evening) as its first argument, per the
      * sequence diagram.
      */
-    private fun getCasualsForThisTick(currentTick: Int, casuals: List<CasualGroup>): List<CasualGroup> =
-        casuals.filter { it.isVisitingThisTick(currentTick) }
+    private fun getCasualsForThisTick(casuals: List<CasualGroup>): List<CasualGroup> =
+        casuals.filter { it.isVisitingThisTick() }
 
     /**
      * [EventGroup]s whose event is exactly three evenings away, i.e. the ones for
      * which reservations need to be made tonight. Per the sequence diagram this is
      * queried at the *start of the serving phase*, not the preparation phase.
      */
-    private fun getEventGroupsForReservation(evening: Int): List<EventGroup> =
+    private fun getEventGroupsForReservation(): List<EventGroup> =
         customers.filterIsInstance<EventGroup>().filter { it.visitingInThreeEvenings() }
 
     /**
@@ -170,18 +165,17 @@ class Simulation(simdata: SimulationConfig) {
      * recomputed every tick.
      */
     private fun executeServingPhase() {
-        val evening = Time.getEvening()
         TickStatusLogger.logServingStart()
 
         // Result currently unused beyond this call in the observed trace - if your
         // design needs it (e.g. to kick off reservations for a future evening), wire
         // it into whatever restaurant/foh call handles that.
-        val eventGroupsReservation = getEventGroupsForReservation(evening)
+        val eventGroupsReservation = getEventGroupsForReservation()
         if (eventGroupsReservation.isNotEmpty()) {
-            ReserveForEventGroupsInAdvance(eventGroupsReservation)
+            reserveForEventGroupsInAdvance(eventGroupsReservation)
         }
 
-        val casualsTonight = getCasualsForTonight(evening)
+        val casualsTonight = getCasualsForTonight()
         var stoppedEarly = false
 
         while (Time.getCurrentTick() <= TICKS_PER_EVENING) {
@@ -220,10 +214,9 @@ class Simulation(simdata: SimulationConfig) {
      *    the right restaurant id
      */
     private fun executeSingleTick(casualsTonight: List<CasualGroup>) {
-        val currentTick = Time.getCurrentTick()
         TickStatusLogger.logCurrentTick()
 
-        val casualsThisTick = getCasualsForThisTick(currentTick, casualsTonight)
+        val casualsThisTick = getCasualsForThisTick(casualsTonight)
 
         for (group in casualsThisTick) {
             val restaurantId = browser.getEligibleRestaurants(group)

@@ -22,6 +22,4 @@ class RestaurantStats(
     var availableDrivers: Int = 0
     var availableSeats: MutableMap<TableType, Int> = mutableMapOf()
     var availableEventSeats: MutableMap<TableType, Int> = mutableMapOf()
-
-
 }

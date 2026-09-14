@@ -13,13 +13,15 @@ import de.unisaarland.cs.se.selab.food.Order
 import de.unisaarland.cs.se.selab.food.Recipe
 import de.unisaarland.cs.se.selab.restaurant.Countertop
 
+const val TEN = 10
+
 /** Represents an abstract customer group. */
 sealed class CustomerGroup(
     val id: Id,
     val size: Int,
     val tableType: TableType,
     val visitingAt: Tick,
-    private val foodPreferences: List<FoodPreference>, // Could you make this public
+    val foodPreferences: List<FoodPreference>, // Could you make this public
 ) {
     open var isWaitingToBeSeated: Boolean = true
         get() = Time.tick - visitingAt == 0 && field
@@ -35,7 +37,7 @@ sealed class CustomerGroup(
     fun placeOrder(waiters: List<Waiter>, menu: List<Recipe>, countertop: Countertop) {
         val listOfDishes = mutableListOf<Dish>()
         for (foodPreference in foodPreferences) {
-            val currentWaiters = waiters.filter { it.getTickLoad(ActionType.TAKE_ORDER) < 10 }
+            val currentWaiters = waiters.filter { it.getTickLoad(ActionType.TAKE_ORDER) < TEN }
             val currentWaiter = currentWaiters.firstOrNull() ?: break
             val availableDishes = countertop.getAvailableRecipes(menu)
             val customerDish = foodPreference.decideDish(availableDishes, "")

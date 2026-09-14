@@ -19,4 +19,8 @@ class RegularGroup(
 ) : CustomerGroup(id, size, tableType, visitingAt, foodPreferences) {
     private val orderHistory: MutableList<Order> = mutableListOf()
     private var failedReservations: Int = 0
+
+    fun isVisitingTonight(evening: Int): Boolean {
+        return true
+    }
 }

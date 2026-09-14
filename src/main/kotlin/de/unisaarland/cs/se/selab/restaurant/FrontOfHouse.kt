@@ -70,6 +70,13 @@ class FrontOfHouse(
         return customerToTable.entries.first { it.key.id == customerId }.value.map { it.id }
     }
 
+    /**
+     * returns true if a is driver available
+     */
+    fun isDriverAvailable() : Boolean {
+    return true}
+}
+
     /** Call with CustomerGroup and menu.
      *  Returns true if CustomerGroup was processed successfully, false otherwise.
      *  To decide whether to remove the CustomerGroup from the customerQueue use the formula

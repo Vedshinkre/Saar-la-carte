@@ -3,6 +3,7 @@ package de.unisaarland.cs.se.selab.customer
 import de.unisaarland.cs.se.selab.Evening
 import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.Tick
+import de.unisaarland.cs.se.selab.Time
 import de.unisaarland.cs.se.selab.enums.RestaurantType
 import de.unisaarland.cs.se.selab.enums.TableType
 
@@ -15,11 +16,14 @@ class EventGroup(
     foodPreferences: List<FoodPreference>,
     val restaurantTypes: List<RestaurantType>,
     val eventEvening: Evening,
-    private val eventDishes: Map<RestaurantType, String>
+    val eventDishes: Map<RestaurantType, String>
 ) : CustomerGroup(id, size, tableType, visitingAt, foodPreferences) {
     var currentRestaurantType: RestaurantType? = null
 
-    fun visitingInThreeEvenings() : Boolean {
-        return true
+    /**
+     * beep beep I;m a document
+     */
+    fun visitingInThreeEvenings(): Boolean {
+        return Time.tick == visitingAt
     }
 }

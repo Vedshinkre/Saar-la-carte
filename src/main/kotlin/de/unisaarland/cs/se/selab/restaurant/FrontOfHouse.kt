@@ -21,10 +21,7 @@ import de.unisaarland.cs.se.selab.loggers.FohServiceLogger.logCustomerRateRestau
 import de.unisaarland.cs.se.selab.loggers.FohServiceLogger.logFohEscorting
 import de.unisaarland.cs.se.selab.loggers.FohServiceLogger.logFohEscortingStatus
 import de.unisaarland.cs.se.selab.loggers.FohServiceLogger.logRatingStatus
-<<<<<<< Updated upstream
 import de.unisaarland.cs.se.selab.loggers.InitialAndPrepLogger
-=======
->>>>>>> Stashed changes
 import kotlin.math.ceil
 import kotlin.math.min
 
@@ -70,13 +67,6 @@ class FrontOfHouse(
         return customerToTable.entries.first { it.key.id == customerId }.value.map { it.id }
     }
 
-    /**
-     * returns true if a is driver available
-     */
-    fun isDriverAvailable() : Boolean {
-    return true}
-}
-
     /** Call with CustomerGroup and menu.
      *  Returns true if CustomerGroup was processed successfully, false otherwise.
      *  To decide whether to remove the CustomerGroup from the customerQueue use the formula
@@ -86,10 +76,12 @@ class FrontOfHouse(
         if (customerGroup is RegularGroup || (customerGroup is CasualGroup && !customerGroup.wantsDelivery)) {
             val waiter: Waiter = assignWaiter(customerGroup) ?: run {
                 FohReceptionLogger.logFohNoSeatingNoWaitstaff(customerGroup.id)
-                if (!customerGroup.isWaitingToBeSeated) {
-                    // TODO: set experience here
+                if (!customerGroup.isWaitingToBeSeated) { // TODO: set experience here
                     when (customerGroup) {
-                        is RegularGroup -> { customerToTable.remove(customerGroup) }
+                        is RegularGroup -> {
+                            customerToTable.remove(customerGroup)
+                        }
+
                         is CasualGroup -> Unit
                     }
                     turnedAwayGroups.addLast(customerGroup)
@@ -100,8 +92,7 @@ class FrontOfHouse(
             when (customerGroup) {
                 is RegularGroup -> Unit
                 is CasualGroup -> if (!assignTables(customerGroup)) {
-                    FohReceptionLogger.logFohNoSeating(customerGroup.id, waiter.id!!)
-                    // TODO: set experience here
+                    FohReceptionLogger.logFohNoSeating(customerGroup.id, waiter.id!!) // TODO: set experience here
                     turnedAwayGroups.addLast(customerGroup)
                     customerGroup.isWaitingToBeSeated = false
                     return false
@@ -124,8 +115,12 @@ class FrontOfHouse(
 
         var eventGroupSize: Int = eventGroup.size
         for (waiter in recruitedWaiters) {
-            if (eventGroupSize <= 0) { break }
-            if (waiter.id == null) { waiter.id = nextWaiterId }
+            if (eventGroupSize <= 0) {
+                break
+            }
+            if (waiter.id == null) {
+                waiter.id = nextWaiterId
+            }
 
             val remainingSeatingLoad: Int = Constants.ACTION_LIMIT - waiter.tickLoads[ActionType.SEAT]!!
             val seatingLoad: Int = min(remainingSeatingLoad, eventGroupSize)
@@ -167,24 +162,18 @@ class FrontOfHouse(
         val sortedTables: List<Table> = getSortedPreferredFreeTables(regularOrEventCustomerGroup)
 
         // Step 2 and 3: Perfect fit or single table with three quarters rule
-<<<<<<< Updated upstream
-        trySingleTable(regularOrEventCustomerGroup, sortedTables, true)
-            ?.also { return reserveSingleTable(it) }
+        trySingleTable(regularOrEventCustomerGroup, sortedTables, true)?.also { return reserveSingleTable(it) }
 
         // Step 4: Multiple tables with three quarters rule
-        mergeTables(regularOrEventCustomerGroup, sortedTables, true)
-            ?.also { return reserveMultipleTables(it) }
+        mergeTables(regularOrEventCustomerGroup, sortedTables, true)?.also { return reserveMultipleTables(it) }
 
         // Step 5: Single table without three quarters rule
-        trySingleTable(regularOrEventCustomerGroup, sortedTables, false)
-            ?.also { return reserveSingleTable(it) }
+        trySingleTable(regularOrEventCustomerGroup, sortedTables, false)?.also { return reserveSingleTable(it) }
 
         // Step 6: Multiple tables without three quarters rule
-        mergeTables(regularOrEventCustomerGroup, sortedTables, false)
-            ?.also { return reserveMultipleTables(it) }
+        mergeTables(regularOrEventCustomerGroup, sortedTables, false)?.also { return reserveMultipleTables(it) }
 
-        InitialAndPrepLogger.logFohNoReservation(regularOrEventCustomerGroup.id)
-        // TODO: set experience
+        InitialAndPrepLogger.logFohNoReservation(regularOrEventCustomerGroup.id) // TODO: set experience
         turnedAwayGroups.addLast(regularOrEventCustomerGroup)
         return false
     }
@@ -195,28 +184,25 @@ class FrontOfHouse(
         FohReceptionLogger.logSeatingStatus(numberOfWaitersSeated, numberOfCustomersSeated, numberOfTablesSeatedOn)
         numberOfTablesSeatedOn = 0
         numberOfCustomersSeated = 0
-        numberOfWaitersSeated = 0
-        // TODO: add ordering status variables, log and then reset them
+        numberOfWaitersSeated = 0 // TODO: add ordering status variables, log and then reset them
     }
 
     private fun assignWaiter(customerGroup: CustomerGroup): Waiter? {
         val freeWaiters: List<Waiter> =
             waiters.filter { it.tickLoads[ActionType.SEAT]!! + customerGroup.size <= Constants.ACTION_LIMIT }
 
-        if (freeWaiters.isEmpty()) { return null }
+        if (freeWaiters.isEmpty()) {
+            return null
+        }
 
         val currentLoadPool: List<Waiter> = freeWaiters.filter { it.currentLoad < Constants.ACTION_LIMIT }
 
         if (currentLoadPool.isNotEmpty()) {
-            return currentLoadPool
-                .sortedWith(compareByDescending(nullsLast()) { it.id })
-                .sortedBy { it.currentLoad }.last()
-                .also { if (it.id == null) it.id = nextWaiterId }
+            return currentLoadPool.sortedWith(compareByDescending(nullsLast()) { it.id }).sortedBy { it.currentLoad }
+                .last().also { if (it.id == null) it.id = nextWaiterId }
         }
 
-        return freeWaiters
-            .sortedWith(compareBy(nullsLast()) { it.id })
-            .sortedBy { it.currentLoad }.first()
+        return freeWaiters.sortedWith(compareBy(nullsLast()) { it.id }).sortedBy { it.currentLoad }.first()
             .also { if (it.id == null) it.id = nextWaiterId }
     }
 
@@ -234,102 +220,23 @@ class FrontOfHouse(
         }
 
         // Step 1: Filter and sort
-        val sortedTables: List<Table> = tables
-            .filter { it.status == TableStatus.FREE }
-            .filter { it.tableType == casualGroup.tableType }
-            .sortedBy { it.id }.sortedBy { it.size }
+        val sortedTables: List<Table> =
+            tables.filter { it.status == TableStatus.FREE }.filter { it.tableType == casualGroup.tableType }
+                .sortedBy { it.id }.sortedBy { it.size }
 
         // Step 2 and 3: Perfect fit or single table with three quarters rule
-        trySingleTable(casualGroup, sortedTables, true)
-            ?.also { return reserveSingleTable(it) }
+        trySingleTable(casualGroup, sortedTables, true)?.also { return reserveSingleTable(it) }
 
         // Step 4: Multiple tables with three quarters rule
-        mergeTables(casualGroup, sortedTables, true)
-            ?.also { return reserveMultipleTables(it) }
-=======
-        trySingleTable(regularOrEventCustomerGroup, sortedTables, true)?.also {
-            reserveSingleTable(it)
-            return true
-        }
-
-        // Step 4: Multiple tables with three quarters rule
-        mergeTables(regularOrEventCustomerGroup, sortedTables, true)?.also {
-            reserveMultipleTables(it)
-            return true
-        }
-
-        // Step 5: Single table without three quarters rule
-        trySingleTable(regularOrEventCustomerGroup, sortedTables, false)?.also {
-            reserveSingleTable(it)
-            return true
-        }
-
-        // Step 6: Multiple tables without three quarters rule
-        mergeTables(regularOrEventCustomerGroup, sortedTables, false)?.also {
-            reserveMultipleTables(it)
-            return true
-        }
->>>>>>> Stashed changes
+        mergeTables(casualGroup, sortedTables, true)?.also { return reserveMultipleTables(it) }
 
         return false
     }
 
     private fun trySingleTable(customerGroup: CustomerGroup, tables: List<Table>, threeQuarters: Boolean): Table? {
-        val groupFitsPredicate: (Table) -> Boolean =
-            { customerGroup.size <= it.size }
-        val threeQuartersPredicate: (Table) -> Boolean =
-            { it.size.toDouble() * Constants.MIN_TABLE_OCCUPANCY <= customerGroup.size && groupFitsPredicate(it) }
-
-        return tables.find(if (threeQuarters) threeQuartersPredicate else groupFitsPredicate)
-    }
-
-    private fun mergeTables(customerGroup: CustomerGroup, tables: List<Table>, threeQuarters: Boolean): List<Table>? {
-        val acc: MutableList<Table> = mutableListOf()
-        var mergeSize = 0
-
-        for (table in tables) {
-            if (customerGroup.size <= mergeSize) { break }
-            acc.addLast(table)
-            mergeSize += table.size
-        }
-
-        if (mergeSize < customerGroup.size) { return null }
-
-        for (table in acc) {
-            if (customerGroup.size < mergeSize && customerGroup.size <= mergeSize - table.size) {
-                acc.removeFirst()
-                mergeSize -= table.size
-            } else { break }
-        }
-
-        if (threeQuarters && mergeSize.toDouble() * Constants.MIN_TABLE_OCCUPANCY > customerGroup.size) { return null }
-
-        return acc
-    }
-
-    private fun getSortedPreferredFreeTables(customerGroup: CustomerGroup): List<Table> {
-        val freeTables: List<Table> = tables.filter { it.status == TableStatus.FREE }
-        val preferredTables: List<Table> = freeTables.filter { it.tableType == customerGroup.tableType }
-        val sortedTables: List<Table> = preferredTables.sortedBy { it.id }.sortedBy { it.size }
-
-        return sortedTables
-    }
-
-<<<<<<< Updated upstream
-    private fun successfulSeating(customerGroup: CustomerGroup, waiters: List<Waiter>) {
-        val assignedTables: List<Table> = customerToTable[customerGroup]!!
-        val mergeId: Id = assignedTables.minBy { it.id }.id
-        if (assignedTables.size > 1) {
-            FohReceptionLogger.logFohMergingTables(
-                customerGroup.id,
-                assignedTables.map { it.id }.sorted(),
-                mergeId
-            )
-=======
-    private fun trySingleTable(customerGroup: CustomerGroup, tables: List<Table>, threeQuarters: Boolean): Table? {
         val groupFitsPredicate: (Table) -> Boolean = { customerGroup.size <= it.size }
         val threeQuartersPredicate: (Table) -> Boolean =
-            { it.size.toDouble() * THREE_QUARTERS <= customerGroup.size && groupFitsPredicate(it) }
+            { it.size.toDouble() * Constants.MIN_TABLE_OCCUPANCY <= customerGroup.size && groupFitsPredicate(it) }
 
         return tables.find(if (threeQuarters) threeQuartersPredicate else groupFitsPredicate)
     }
@@ -344,7 +251,43 @@ class FrontOfHouse(
             }
             acc.addLast(table)
             mergeSize += table.size
->>>>>>> Stashed changes
+        }
+
+        if (mergeSize < customerGroup.size) {
+            return null
+        }
+
+        for (table in acc) {
+            if (customerGroup.size < mergeSize && customerGroup.size <= mergeSize - table.size) {
+                acc.removeFirst()
+                mergeSize -= table.size
+            } else {
+                break
+            }
+        }
+
+        if (threeQuarters && mergeSize.toDouble() * Constants.MIN_TABLE_OCCUPANCY > customerGroup.size) {
+            return null
+        }
+
+        return acc
+    }
+
+    private fun getSortedPreferredFreeTables(customerGroup: CustomerGroup): List<Table> {
+        val freeTables: List<Table> = tables.filter { it.status == TableStatus.FREE }
+        val preferredTables: List<Table> = freeTables.filter { it.tableType == customerGroup.tableType }
+        val sortedTables: List<Table> = preferredTables.sortedBy { it.id }.sortedBy { it.size }
+
+        return sortedTables
+    }
+
+    private fun successfulSeating(customerGroup: CustomerGroup, waiters: List<Waiter>) {
+        val assignedTables: List<Table> = customerToTable[customerGroup]!!
+        val mergeId: Id = assignedTables.minBy { it.id }.id
+        if (assignedTables.size > 1) {
+            FohReceptionLogger.logFohMergingTables(
+                customerGroup.id, assignedTables.map { it.id }.sorted(), mergeId
+            )
         }
 
         numberOfCustomersSeated += customerGroup.size
@@ -394,7 +337,7 @@ class FrontOfHouse(
         if (servableDishes.isEmpty()) return
 
         val complete = order.areAllDishesCooked()
-        val capacity = ACTION_LIMIT - waiter.getTickLoad(ActionType.SERVE)
+        val capacity = Constants.ACTION_LIMIT - waiter.getTickLoad(ActionType.SERVE)
 
         // proceed only if order is either complete or can be partially served yet
         if (!order.hasServingStarted() && !complete && isWithinTimeWindow(order)) {
@@ -437,7 +380,7 @@ class FrontOfHouse(
 
         val recruitedWaiters = recruitWaitersForEventGroup(ActionType.SERVE, group)
         val totalCapacity =
-            recruitedWaiters.sumOf { ACTION_LIMIT - it.getTickLoad(ActionType.SERVE) } // if order is complete (and not started serving), recruited waiters must be able to serve ALL servable dishes
+            recruitedWaiters.sumOf { Constants.ACTION_LIMIT - it.getTickLoad(ActionType.SERVE) } // if order is complete (and not started serving), recruited waiters must be able to serve ALL servable dishes
         if (!order.hasServingStarted() && complete && totalCapacity < readyDishes.size) {
             order.startServing()
             logNoServing(recruitedWaiters.firstOrNull(), readyDishes.size, tableId)
@@ -518,12 +461,8 @@ class FrontOfHouse(
 
     /** picks waiter to serve driver delivery meals: waiter with min id whose SERVING tick load < action limit */
     private fun assignWaiterForDelivery(): Waiter? =
-<<<<<<< Updated upstream
         waiters.filter { it.getTickLoad(ActionType.SERVE) < Constants.ACTION_LIMIT }
             .minByOrNull { it.id ?: Int.MAX_VALUE }
-=======
-        waiters.filter { it.getTickLoad(ActionType.SERVE) < ACTION_LIMIT }.minByOrNull { it.id ?: Int.MAX_VALUE }
->>>>>>> Stashed changes
 
     private fun getOrAssignDriver(group: CustomerGroup, order: Order): Driver? {
         val assigned = drivers.find { it.targetGroup == group && it.currentOrder == order }
@@ -543,7 +482,7 @@ class FrontOfHouse(
         var remaining = dishes
         while (remaining.isNotEmpty()) {
             val waiter = assignWaiterForDelivery() ?: break
-            val capacity = ACTION_LIMIT - waiter.getTickLoad(ActionType.SERVE)
+            val capacity = Constants.ACTION_LIMIT - waiter.getTickLoad(ActionType.SERVE)
             val batch = remaining.take(capacity)
             waiter.serve(batch)
             waiter.addToTickLoad(ActionType.SERVE, batch.size)
@@ -563,7 +502,7 @@ class FrontOfHouse(
 
     /** serves as many given dishes as waiter's remaining capacity allows. */
     private fun serveBatch(waiter: Waiter, dishes: List<Dish>, tableId: Id, order: Order): List<Dish> {
-        val capacity = ACTION_LIMIT - waiter.getTickLoad(ActionType.SERVE)
+        val capacity = Constants.ACTION_LIMIT - waiter.getTickLoad(ActionType.SERVE)
         if (capacity <= 0) return dishes
         val batch = dishes.take(capacity)
         waiter.serve(batch)
@@ -781,9 +720,6 @@ class FrontOfHouse(
             if (order != null) {
                 if (order.areAllDishesEaten()) {
                     if (it is EventGroup) { // TODO(EVENT GROUP ESCORTING)
-                        val waiters = recruitWaitersForEventGroup(ActionType.ESCORT, it)
-
-
                     } else {
                         val waiter = getAssignedWaiter(it.id)
                         val customersBefore = it.customersRemainingInRestaurant
@@ -830,8 +766,8 @@ class FrontOfHouse(
             }
         }
         val groupsToRate = (filteredInHouseGroups + filteredDeliveryGroups + turnedAwayGroups).sortedWith(
-            compareBy({ getServingPriority(it) }, { it.id })
-        )
+                compareBy({ getServingPriority(it) }, { it.id })
+            )
         var groupsGivingRatings = 0
         groupsToRate.forEach {
             when (it.determineRating()) {
@@ -861,3 +797,4 @@ class FrontOfHouse(
         return Pair(positive, negative)
     } //RATING END
 }
+

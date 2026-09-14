@@ -53,11 +53,6 @@ class Countertop(
      */
     fun reserveIngredients(recipe: Recipe) {
         val ingredients = recipe.ingredients
-        var ingredientToAmount = mutableMapOf<Ingredient, Int>()
-        for (ingredient in ingredients) {
-            var amount = ingredient.value
-            ingredientToAmount[ingredient] = amount
-        }
         pantry.reserveIngredients(ingredients)
     }
 

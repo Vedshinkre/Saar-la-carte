@@ -4,11 +4,7 @@ import de.unisaarland.cs.se.selab.Evening
 import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.Tick
 import de.unisaarland.cs.se.selab.Time
-import de.unisaarland.cs.se.selab.enums.ExperienceType
-import de.unisaarland.cs.se.selab.enums.RatingLikelihood
-import de.unisaarland.cs.se.selab.enums.RatingType
-import de.unisaarland.cs.se.selab.enums.RestaurantType
-import de.unisaarland.cs.se.selab.enums.TableType
+import de.unisaarland.cs.se.selab.enums.*
 
 // move this to a common constants file
 private const val DISTANCE_PER_TICK = 5.0
@@ -52,7 +48,7 @@ class CasualGroup(
     // (if no delivery) else deliveryOrderTick (according to spec calculation)
 
     /** get if the customer wants delivery */
-    fun getWantsDelivery(): Boolean = deliveryDistance > 0
+    val wantsDelivery: Boolean get() = deliveryDistance > 0
 
     override fun determineRating(): RatingType {
         return when (ratingLikelihood) {

@@ -55,6 +55,9 @@ class FrontOfHouse(
     private var nextWaiterId: Id = 1
         get() = field++
 
+    private var nextDriverId: Id = 1
+        get() = field++
+
     private fun getInHouseGroups(): List<CustomerGroup> {
         return inHouseGroupsToWaiter.keys.toList()
     }
@@ -470,7 +473,7 @@ class FrontOfHouse(
 
         val freeDriver = drivers.find { it.state == DriverState.IDLE } ?: return null
         if (freeDriver.id == null) {
-            freeDriver.id = getNextDriverId()
+            freeDriver.id = nextDriverId
         }
         freeDriver.targetGroup = group
         freeDriver.currentOrder = order

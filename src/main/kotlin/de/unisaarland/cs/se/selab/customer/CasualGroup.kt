@@ -24,17 +24,10 @@ class CasualGroup(
     visitingAt: Tick,
     foodPreferences: List<FoodPreference>,
     val restaurantTypes: List<RestaurantType>,
-    private val visitingEvenings: List<Evening>,
+    val visitingEvenings: List<Evening>,
     val deliveryDistance: Int,
     val ratingLikelihood: RatingLikelihood
 ) : CustomerGroup(id, size, tableType, visitingAt, foodPreferences) {
-
-    /**
-     * returns true if they want to visit a restaurant tonight
-     */
-    fun isVisitingTonight(): Boolean {
-        return true
-    }
 
     /**
      * returns true if they are coming to the restaurant this tick
@@ -48,7 +41,12 @@ class CasualGroup(
      * returns the tick at which they will put the order to the restaurant
      */
     private fun deliverOrderTick(): Tick {
-        return Time.tick
+        val yeehaw = DISTANCE_PER_TICK * DELIVERY_COOKING_TICKS
+        if (yeehaw < 2) {
+            return Time.tick
+        } else {
+            return Time.evening
+        }
     }
     // isVisitingThisTick() = check if currentTick equals visitingAt
     // (if no delivery) else deliveryOrderTick (according to spec calculation)

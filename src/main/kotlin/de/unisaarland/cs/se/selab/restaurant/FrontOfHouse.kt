@@ -599,25 +599,28 @@ class FrontOfHouse(
             val order = it.currentOrder
             if (order != null) {
                 if (order.areAllDishesEaten()) {
-                    val waiter = getAssignedWaiter(it.id)
-                    val customersBefore = it.customersRemainingInRestaurant
-                    waiter.escort(it)
-                    // TODO(EVENT GROUP ESCORTING)
-                    val customersEscorted =
-                        customersBefore - it.customersRemainingInRestaurant
-                    logFohEscorting(
-                        waiter.id!!,
-                        customersEscorted,
-                        it.id,
-                        getAssignedTableId(it.id).min()
-                    )
+                    if (it is EventGroup) {
+                        // TODO(EVENT GROUP ESCORTING)
+                    } else {
+                        val waiter = getAssignedWaiter(it.id)
+                        val customersBefore = it.customersRemainingInRestaurant
+                        waiter.escort(it)
+                        val customersEscorted =
+                            customersBefore - it.customersRemainingInRestaurant
+                        logFohEscorting(
+                            waiter.id!!,
+                            customersEscorted,
+                            it.id,
+                            getAssignedTableId(it.id).min()
+                        )
 
-                    waitstaffNumber++
-                    customerEscortingNumber += it.size
+                        waitstaffNumber++
+                        customerEscortingNumber += it.size
+                    }
                 }
-            }
-            if (it.customersRemainingInRestaurant == 0) {
-                if (it is CasualGroup) dismantleTable(it.id)
+                if (it.customersRemainingInRestaurant == 0) {
+                    if (it is CasualGroup) dismantleTable(it.id)
+                }
             }
         }
         logFohEscortingStatus(

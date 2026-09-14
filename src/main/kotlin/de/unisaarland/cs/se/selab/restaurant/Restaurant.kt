@@ -42,6 +42,15 @@ class Restaurant(
         return staff
     }
 
+    /**
+     * reserves tables for regulars and eventGroups. Plans the ingredients needed for them
+     */
+    fun prepareForEvening(customerGroups: List<CustomerGroup>) {
+
+    }
+
+    fun simulateTick() {}
+
     /** returns whether a driver is available */
     fun isDriverAvailable(): Boolean = frontOfHouse.isDriverAvailable()
 

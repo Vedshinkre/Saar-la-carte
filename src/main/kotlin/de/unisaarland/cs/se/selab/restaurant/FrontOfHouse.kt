@@ -10,7 +10,12 @@ import de.unisaarland.cs.se.selab.customer.CasualGroup
 import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.customer.EventGroup
 import de.unisaarland.cs.se.selab.customer.RegularGroup
-import de.unisaarland.cs.se.selab.enums.*
+import de.unisaarland.cs.se.selab.enums.ActionType
+import de.unisaarland.cs.se.selab.enums.DishStatus
+import de.unisaarland.cs.se.selab.enums.DriverState
+import de.unisaarland.cs.se.selab.enums.ExperienceType
+import de.unisaarland.cs.se.selab.enums.RatingType
+import de.unisaarland.cs.se.selab.enums.TableStatus
 import de.unisaarland.cs.se.selab.food.Dish
 import de.unisaarland.cs.se.selab.food.Order
 import de.unisaarland.cs.se.selab.food.Recipe
@@ -25,7 +30,7 @@ import de.unisaarland.cs.se.selab.loggers.InitialAndPrepLogger
 import kotlin.math.ceil
 import kotlin.math.min
 
-// TODO: maybe make an abstract priority in customer group, each customer group will have an attribute for it
+// maybe make an abstract priority in customer group, each customer group will have an attribute for it
 private const val REGULAR_PRIORITY = 0
 private const val EVENT_PRIORITY = 1
 private const val CASUAL_PRIORITY = 2
@@ -37,7 +42,7 @@ class FrontOfHouse(
     private val tables: List<Table>,
     private val waiters: List<Waiter>,
     private val drivers: List<Driver>,
-    private val countertop: Countertop,
+    val countertop: Countertop,
 ) {
     private val customerToTable: MutableMap<CustomerGroup, List<Table>> = mutableMapOf()
     private val inHouseGroupsToWaiter: MutableMap<CustomerGroup, Waiter> = mutableMapOf()

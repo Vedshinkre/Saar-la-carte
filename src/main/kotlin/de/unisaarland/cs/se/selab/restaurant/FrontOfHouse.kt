@@ -21,6 +21,7 @@ import de.unisaarland.cs.se.selab.loggers.DeliveryLogger
 import de.unisaarland.cs.se.selab.loggers.FohServiceLogger
 import de.unisaarland.cs.se.selab.loggers.FohServiceLogger.logFohEscorting
 import de.unisaarland.cs.se.selab.loggers.FohServiceLogger.logFohEscortingStatus
+import kotlin.collections.firstOrNull
 import kotlin.math.ceil
 
 // TODO: move relevant constants to Constants.kt
@@ -303,12 +304,12 @@ class FrontOfHouse(
         if (!order.hasServingStarted() && !complete && isWithinTimeWindow(order)) {
             // log with the FIRST waiter that could've served
             // TODO: action type is also
-            val candidate = recruitWaitersForEventGroup(group).firstOrNull()
+            val candidate = recruitWaitersForEventGroup(ActionType.SERVE, group).firstOrNull()
             logNoServing(candidate, readyDishes.size, tableId)
             return
         }
 
-        val recruitedWaiters = recruitWaitersForEventGroup(group)
+        val recruitedWaiters = recruitWaitersForEventGroup(ActionType.SERVE , group)
         val totalCapacity = recruitedWaiters.sumOf { Constants.ACTION_LIMIT - it.getTickLoad(ActionType.SERVE) }
         // if order is complete (and not started serving), recruited waiters must be able to serve ALL servable dishes
         if (!order.hasServingStarted() && complete && totalCapacity < readyDishes.size) {
@@ -332,20 +333,20 @@ class FrontOfHouse(
 
     /** recruit waiters for an EVENT group, accumulates enough (ordered by asc id) to cover group's servable dishes. */
     // TODO: implement recruitWaitersForEventGroup()
-    private fun recruitWaitersForEventGroup(actionType: ActionType, customerGroup: CustomerGroup) {
+    private fun recruitWaitersForEventGroup(actionType: ActionType, eventGroup: EventGroup):List<Waiter> {
         when (actionType) {
             ActionType.SEAT ->
-                waiters.filter { it.getTickLoad(ActionType.SEAT) < ACTION_LIMIT }
+               return waiters.filter { it.getTickLoad(ActionType.SEAT) < ACTION_LIMIT }
                     .sortedByDescending { it.currentLoad }
 
             ActionType.TAKE_ORDER -> TODO()
-            ActionType.SERVE -> recruitWaiterForServing(customerGroup)
-            ActionType.ESCORT -> waiters.filter {
+            ActionType.SERVE -> return recruitWaiterForServing(eventGroup)
+            ActionType.ESCORT -> return waiters.filter {
                 it.getTickLoad(ActionType.ESCORT) < ACTION_LIMIT
             }
         }
     }
-    private fun recruitWaiterForServing(customerGroup: CustomerGroup): List<Waiter> {
+    private fun recruitWaiterForServing(customerGroup: EventGroup): List<Waiter> {
         val required = customerGroup.currentOrder?.getServableDishes()?.size ?: 0
         val eligible = waiters.filter { it.getTickLoad(ActionType.SERVE) < ACTION_LIMIT }
         val waiterToCookedDishes: MutableMap<Waiter, Int> = mutableMapOf()

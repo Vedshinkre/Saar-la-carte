@@ -18,4 +18,8 @@ class EventGroup(
     private val eventDishes: Map<RestaurantType, String>
 ) : CustomerGroup(id, size, tableType, visitingAt, foodPreferences) {
     var currentRestaurantType: RestaurantType? = null
+
+    fun visitingInThreeEvenings() : Boolean {
+        return true
+    }
 }

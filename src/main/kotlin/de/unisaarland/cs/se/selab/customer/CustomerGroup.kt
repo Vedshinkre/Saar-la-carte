@@ -53,6 +53,13 @@ sealed class CustomerGroup(
     }
 
     /**
+     * returns true if group is visiting a restaurant tonight
+     */
+    fun isVisitingTonight(): Boolean {
+        return Time.tick == visitingAt
+    }
+
+    /**
      * updates the pantry and the tickLoad of the waiter which "registers" that a dish has been ordered
      */
     private fun registerDish(waiter: Waiter, dish: Dish, countertop: Countertop) {

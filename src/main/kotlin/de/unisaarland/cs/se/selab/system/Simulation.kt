@@ -64,9 +64,7 @@ class Simulation(simdata: SimulationConfig) {
      */
     private fun executeIncidents() {
         val evening = Time.getEvening()
-        val incidentsForTonight = incidents
-            .filter { it.evening == evening }
-            .sortedBy { it.id }
+        val incidentsForTonight = incidents.filter { it.evening == evening }.sortedBy { it.id }
 
         for (incident in incidentsForTonight) {
             InitialAndPrepLogger.logIncident(incident.id, incident.javaClass.simpleName)
@@ -123,7 +121,7 @@ class Simulation(simdata: SimulationConfig) {
      * All [RegularGroup]s that are visiting tonight, regardless of restaurant.
      */
     private fun getRegularsForTonight(evening: Int): List<RegularGroup> =
-        filterRegularGroups(customers).filter { it.isVisitingTonight(evening) }
+        filterRegularGroups(customers).filter { it.isVisitingTonight() }
 
     /**
      * Filters a mixed customer list down to just the [RegularGroup]s.
@@ -185,8 +183,7 @@ class Simulation(simdata: SimulationConfig) {
             val reachedMax = ticksElapsed >= Time.getMaxTicks()
             val reachedEndOfEvening = Time.getCurrentTick() == TICKS_PER_EVENING
 
-            if (reachedMax && !reachedEndOfEvening) {
-                // maxTicks is not a multiple of 24: stop right here, no "Serving ends" log.
+            if (reachedMax && !reachedEndOfEvening) { // maxTicks is not a multiple of 24: stop right here, no "Serving ends" log.
                 stoppedEarly = true
                 break
             }
@@ -257,8 +254,7 @@ class Simulation(simdata: SimulationConfig) {
     /**
      * Looks up a restaurant by its id.
      */
-    private fun getRestaurantById(id: Id): Restaurant =
-        restaurants.first { it.getRestaurantStats().restaurantId == id }
+    private fun getRestaurantById(id: Id): Restaurant = restaurants.first { it.getRestaurantStats().restaurantId == id }
 
     private companion object {
         const val TICKS_PER_EVENING = 24

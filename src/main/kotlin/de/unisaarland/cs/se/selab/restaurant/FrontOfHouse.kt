@@ -645,24 +645,17 @@ class FrontOfHouse(
         val filteredDeliveryGroups = deliveryGroups.filter {
             val order = it.currentOrder
 
-            order == null ||
-                order.areAllDishesEaten() ||
-                order.getDishes().any { dish ->
-                    dish.status == DishStatus.ABORTED
-                }
+            (order == null) ||
+                    order.areAllDishesEaten() ||
+                    order.dishes.any { dish ->
+                        dish.status == DishStatus.ABORTED
+                    }
         }
         val groupsToRate = (
             filteredInHouseGroups +
                 filteredDeliveryGroups +
                 turnedAwayGroups
-            ).sortedWith(
-            compareBy<CustomerGroup> {
-                when (it) {
-                    is RegularGroup -> 0
-                    is CasualGroup -> 1
-                    is EventGroup -> 2
-                }
-            }.thenBy { it.id }
+            ).sortedWith(compareBy({ getServingPriority(it) }, { it.id })
         )
         var groupsGivingRatings = 0
         groupsToRate.forEach {
@@ -689,6 +682,8 @@ class FrontOfHouse(
                         negative
                     )
                 }
+
+                RatingType.NO_RATING -> {}
             }
 
         }

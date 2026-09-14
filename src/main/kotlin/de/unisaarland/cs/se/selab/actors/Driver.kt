@@ -10,33 +10,18 @@ import de.unisaarland.cs.se.selab.enums.DriverState
 import de.unisaarland.cs.se.selab.enums.ExperienceType
 import de.unisaarland.cs.se.selab.food.Order
 import de.unisaarland.cs.se.selab.loggers.DeliveryLogger
-
-// TODO: We should have a constants file for these, DPT specifically is used in multiple places
-private const val DISTANCE_PER_TICK = 5
-
-// customers abort delivery after 3 ticks
-private const val DELIVERY_WAIT_TICKS = 3
+import de.unisaarland.cs.se.selab.Constants
 
 /** driver: waits idle, carries an order out to a customer, then returns */
 class Driver {
     var id: Id? = null
     var currentOrder: Order? = null
     var targetGroup: CustomerGroup? = null
+
     var state: DriverState = DriverState.IDLE
-
-    // remainingTicks field in class diagram was redundant, so not written as an attribute here
-    private var totalTripTicks: Tick = 0
-    private var ticksToDest: Tick = 0
-
-    /** sets how many ticks a one-way trip takes, return trip will reuse it */
-    fun setTotalTripTicks(tick: Tick) {
-        totalTripTicks = tick
-    }
-
-    /** sets how many ticks remain until the driver reaches its current destination (customer or restaurant) */
-    fun setTicksToDest(ticks: Tick) {
-        ticksToDest = ticks
-    }
+    var totalTripTicks: Tick = 0
+    var ticksToDest: Tick = 0
+    // remainingTicks field in class diagram was redundant, so not an attribute here
 
     /** advances driver by one tick only if DELIVERING or RETURNING */
     fun processTick() {
@@ -54,7 +39,7 @@ class Driver {
         val driverId = id ?: return
 
         // TODO: make visitingAt public or provide a getter
-        if (Time.tick > group.visitingAt + DELIVERY_WAIT_TICKS) {
+        if (Time.tick > group.visitingAt + Constants.CUSTOMER_DELIVERY_WAIT_TICKS) {
             abortOrder(order)
             group.experience = ExperienceType.NEGATIVE
             DeliveryLogger.logDeliveryGivenUp(group.id, order.getId())
@@ -63,7 +48,7 @@ class Driver {
         }
 
         ticksToDest -= 1
-        DeliveryLogger.logDeliveryDriving(driverId, DISTANCE_PER_TICK, ticksToDest)
+        DeliveryLogger.logDeliveryDriving(driverId, Constants.DRIVER_SPEED, ticksToDest)
 
         if (ticksToDest <= 0) {
             arriveAtCustomer(driverId, group, order)

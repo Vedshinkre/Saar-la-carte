@@ -155,7 +155,7 @@ class Kitchen(
         // check in each order in kitchen
         for (order in orderQueue) {
             // Check every dish within that order
-            for (dish in order.getDishes()) {
+            for (dish in order.dishes) {
                 if (dish.status == DishStatus.COOKED) {
                     servableCount += 1
                 }
@@ -279,7 +279,7 @@ class Kitchen(
             }
         }
 
-        return Pair(order.id, matchingDishes) // TODO WAITING FRO VLAD TO CHANGE order
+        return Pair(order.id, matchingDishes)
     }
 
     /**
@@ -350,7 +350,7 @@ class Kitchen(
 
         // Add history from Regular groups
         for (order in orderHistory) {
-            for (dish in order.getDishes()) {
+            for (dish in order.dishes) {
                 val recipe = dish.recipe
 
                 if (knownOrderHistory.containsKey(recipe)) {
@@ -494,33 +494,9 @@ class Kitchen(
             totalMeals += totalAssigned
             finishedMeals += finished
 
+            // Replaced with helper
             if (finished > 0) {
-                val dishRecipe = cook.currentRecipe
-                val cookId = cook.id ?: -1
-                val dishName = dishRecipe?.name ?: "Unknown Dish"
-                // base order id of the dish that started this cooking
-                val baseOrderId = cook.orderId
-                // get the base order
-                var baseOrder: Order? = null
-                for (order in orderQueue) {
-                    if (order.id == baseOrderId) {
-                        baseOrder = order
-                        break
-                    }
-                }
-
-                // time since the order has been ordered
-                var cookDurationTick = 0
-                if (baseOrder != null) {
-                    cookDurationTick = Time.tick - baseOrder.orderedat // TODO wait for getoprderedat getter
-                }
-
-                KitchenLogger.logKitchenMealCooked(
-                    cookId = cookId,
-                    numberOfMeals = finished,
-                    dishName = dishName,
-                    cookDurationTick = cookDurationTick
-                )
+                logFinishedMeals(cook, finished)
             }
         }
 
@@ -530,6 +506,40 @@ class Kitchen(
             totalNumberOfMeals = totalMeals,
             finishedNumberOfMeals = finishedMeals,
             servableMeals = servableMeals
+        )
+    }
+
+    /**
+     * Helper function to find the base order and log finished meals (to solve detekt issue).
+     */
+    private fun logFinishedMeals(cook: Cook, finished: Int) {
+        val dishRecipe = cook.currentRecipe
+        val cookId = cook.id ?: -1
+        val dishName = dishRecipe?.name ?: "Unknown Dish"
+
+        // base order id of the dish that started this cooking
+        val baseOrderId = cook.orderId
+
+        // get the base order
+        var baseOrder: Order? = null
+        for (order in orderQueue) {
+            if (order.id == baseOrderId) {
+                baseOrder = order
+                break
+            }
+        }
+
+        // time since the order has been ordered
+        var cookDurationTick = 0
+        if (baseOrder != null) {
+            cookDurationTick = Time.tick - baseOrder.orderedAt
+        }
+
+        KitchenLogger.logKitchenMealCooked(
+            cookId = cookId,
+            numberOfMeals = finished,
+            dishName = dishName,
+            cookDurationTick = cookDurationTick
         )
     }
 }

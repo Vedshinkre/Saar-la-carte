@@ -10,7 +10,7 @@ import de.unisaarland.cs.se.selab.food.Stock
  */
 class UnavailabilityIncident(
     override val id: Id,
-    override var evening: Evening,
+    override val evening: Evening,
     private val ingredient: Ingredient,
     private var duration: Int,
     private val stock: Stock

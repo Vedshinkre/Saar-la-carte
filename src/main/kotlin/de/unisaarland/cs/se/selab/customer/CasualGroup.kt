@@ -3,9 +3,7 @@ package de.unisaarland.cs.se.selab.customer
 import de.unisaarland.cs.se.selab.Evening
 import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.Tick
-import de.unisaarland.cs.se.selab.enums.RatingLikelihood
-import de.unisaarland.cs.se.selab.enums.RestaurantType
-import de.unisaarland.cs.se.selab.enums.TableType
+import de.unisaarland.cs.se.selab.enums.*
 
 // TODO: move this to a common constants file
 private const val DISTANCE_PER_TICK = 5.0
@@ -32,4 +30,28 @@ class CasualGroup(
 
     /** get if the customer wants delivery */
     fun getWantsDelivery(): Boolean = deliveryDistance > 0
+
+    override fun determineRating(): RatingType {
+        return when (ratingLikelihood) {
+            RatingLikelihood.NEVER -> {
+                RatingType.NO_RATING
+            }
+
+            RatingLikelihood.SOME -> {
+                when (experience) {
+                    ExperienceType.NEGATIVE -> RatingType.NEGATIVE
+                    ExperienceType.NEUTRAL -> RatingType.NO_RATING
+                    ExperienceType.POSITIVE -> RatingType.POSITIVE
+                }
+            }
+
+            RatingLikelihood.ALWAYS -> {
+                when (experience) {
+                    ExperienceType.NEGATIVE -> RatingType.NEGATIVE
+                    ExperienceType.NEUTRAL -> RatingType.POSITIVE
+                    ExperienceType.POSITIVE -> RatingType.POSITIVE
+                }
+            }
+        }
+    }
 }

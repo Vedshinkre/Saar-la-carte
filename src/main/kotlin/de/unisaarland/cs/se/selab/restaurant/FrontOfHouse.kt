@@ -14,13 +14,16 @@ import de.unisaarland.cs.se.selab.enums.ActionType
 import de.unisaarland.cs.se.selab.enums.DishStatus
 import de.unisaarland.cs.se.selab.enums.DriverState
 import de.unisaarland.cs.se.selab.enums.ExperienceType
+import de.unisaarland.cs.se.selab.enums.RatingType
 import de.unisaarland.cs.se.selab.enums.TableStatus
 import de.unisaarland.cs.se.selab.food.Dish
 import de.unisaarland.cs.se.selab.food.Order
 import de.unisaarland.cs.se.selab.loggers.DeliveryLogger
 import de.unisaarland.cs.se.selab.loggers.FohServiceLogger
+import de.unisaarland.cs.se.selab.loggers.FohServiceLogger.logCustomerRateRestaurant
 import de.unisaarland.cs.se.selab.loggers.FohServiceLogger.logFohEscorting
 import de.unisaarland.cs.se.selab.loggers.FohServiceLogger.logFohEscortingStatus
+import de.unisaarland.cs.se.selab.loggers.FohServiceLogger.logRatingStatus
 import kotlin.collections.firstOrNull
 import kotlin.math.ceil
 
@@ -62,64 +65,6 @@ class FrontOfHouse(
             .first { it.key.id == customerId }
             .value
             .map { it.id }
-    }
-
-// TODO(maybe customerID as parameter is more work than just customer)
-    private fun dismantleTable(customerId: Id) {
-        val tables = customerToTable.entries
-            .first { it.key.id == customerId }
-            .value
-
-        tables.forEach {
-            it.status = TableStatus.FREE
-        }
-
-        customerToTable.remove(
-            customerToTable.keys.first { it.id == customerId }
-        )
-    }
-
-/**
-     * Processes escorting for all in-house customer groups.
-     *
-     * Groups whose dishes have all been eaten are escorted
-     * by their assigned waitstaff. After escorting, casual
-     * groups whose customers have all left have their tables
-     * dismantled.
-     */
-    fun processEscorting() {
-        val inHouseGroups = getInHouseGroups()
-            .sortedWith(compareBy({ getServingPriority(it) }, { it.id }))
-        var waitstaffNumber = 0
-        var customerEscortingNumber = 0
-        inHouseGroups.forEach {
-            val order = it.currentOrder
-            if (order != null) {
-                if (order.areAllDishesEaten()) {
-                    val waiter = getAssignedWaiter(it.id)
-                    val customersBefore = it.customersRemainingInRestaurant
-                    waiter.escort(it)
-                    val customersEscorted =
-                        customersBefore - it.customersRemainingInRestaurant
-                    logFohEscorting(
-                        waiter.id!!,
-                        customersEscorted,
-                        it.id,
-                        getAssignedTableId(it.id).min()
-                    )
-
-                    waitstaffNumber++
-                    customerEscortingNumber += it.size
-                }
-            }
-            if (it.customersRemainingInRestaurant == 0) {
-                if (it is CasualGroup) dismantleTable(it.id)
-            }
-        }
-        logFohEscortingStatus(
-            waitstaffNumber,
-            customerEscortingNumber
-        )
     }
 
     /** Call only with Regular- or EventGroup.
@@ -621,4 +566,135 @@ class FrontOfHouse(
     }
 
     // EATING END
+    // ESCORTING START
+    // TODO(maybe customerID as parameter is more work than just customer)
+    private fun dismantleTable(customerId: Id) {
+        val tables = customerToTable.entries
+            .first { it.key.id == customerId }
+            .value
+
+        tables.forEach {
+            it.status = TableStatus.FREE
+        }
+
+        customerToTable.remove(
+            customerToTable.keys.first { it.id == customerId }
+        )
+    }
+
+    /**
+     * Processes escorting for all in-house customer groups.
+     *
+     * Groups whose dishes have all been eaten are escorted
+     * by their assigned waitstaff. After escorting, casual
+     * groups whose customers have all left have their tables
+     * dismantled.
+     */
+    fun processEscorting() {
+        val inHouseGroups = getInHouseGroups()
+            .sortedWith(compareBy({ getServingPriority(it) }, { it.id }))
+        var waitstaffNumber = 0
+        var customerEscortingNumber = 0
+        inHouseGroups.forEach {
+            val order = it.currentOrder
+            if (order != null) {
+                if (order.areAllDishesEaten()) {
+                    val waiter = getAssignedWaiter(it.id)
+                    val customersBefore = it.customersRemainingInRestaurant
+                    waiter.escort(it)
+                    // TODO(EVENT GROUP ESCORTING)
+                    val customersEscorted =
+                        customersBefore - it.customersRemainingInRestaurant
+                    logFohEscorting(
+                        waiter.id!!,
+                        customersEscorted,
+                        it.id,
+                        getAssignedTableId(it.id).min()
+                    )
+
+                    waitstaffNumber++
+                    customerEscortingNumber += it.size
+                }
+            }
+            if (it.customersRemainingInRestaurant == 0) {
+                if (it is CasualGroup) dismantleTable(it.id)
+            }
+        }
+        logFohEscortingStatus(
+            waitstaffNumber,
+            customerEscortingNumber
+        )
+    }
+
+    // ESCORTING END
+    // RATING START
+    /**
+     * Processes customer ratings and updates the positive and negative rating counts.
+     * @param positiveRatings current number of positive ratings
+     * @param negativeRatings current number of negative ratings
+     * @return updated positive and negative rating counts
+     */
+    fun processRatings(
+        positiveRatings: Int,
+        negativeRatings: Int
+    ): Pair<Int, Int> {
+        var positive = positiveRatings
+        var negative = negativeRatings
+        val filteredInHouseGroups = getInHouseGroups()
+            .filter { it.customersRemainingInRestaurant == 0 }
+
+        val filteredDeliveryGroups = deliveryGroups.filter {
+            val order = it.currentOrder
+
+            order == null ||
+                order.areAllDishesEaten() ||
+                order.getDishes().any { dish ->
+                    dish.status == DishStatus.ABORTED
+                }
+        }
+        val groupsToRate = (
+            filteredInHouseGroups +
+                filteredDeliveryGroups +
+                turnedAwayGroups
+            ).sortedWith(
+            compareBy<CustomerGroup> {
+                when (it) {
+                    is RegularGroup -> 0
+                    is CasualGroup -> 1
+                    is EventGroup -> 2
+                }
+            }.thenBy { it.id }
+        )
+        var groupsGivingRatings = 0
+        groupsToRate.forEach {
+            when (it.determineRating()) {
+                RatingType.POSITIVE -> {
+                    positive++
+                    groupsGivingRatings++
+
+                    logCustomerRateRestaurant(
+                         it.id,
+                         RatingType.POSITIVE,
+                         positive,
+                        negative
+                    )
+                }
+                RatingType.NEGATIVE -> {
+                    negative++
+                    groupsGivingRatings++
+
+                    logCustomerRateRestaurant(
+                        it.id,
+                        RatingType.NEGATIVE,
+                        positive,
+                        negative
+                    )
+                }
+            }
+
+        }
+        logRatingStatus(groupsGivingRatings)
+        return Pair(positive, negative)
+    }
+    //RATING END
 }

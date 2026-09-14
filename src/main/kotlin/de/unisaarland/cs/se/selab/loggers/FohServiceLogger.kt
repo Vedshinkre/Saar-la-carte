@@ -2,6 +2,8 @@ package de.unisaarland.cs.se.selab.loggers
 
 import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.enums.LogLevel
+import de.unisaarland.cs.se.selab.enums.RatingType
+
 /**
  * Handles FOH serving, eating and escorting logs.
  */
@@ -136,7 +138,7 @@ object FohServiceLogger {
      */
     fun logCustomerRateRestaurant(
         groupID: Id,
-        groupRating: Int,
+        groupRating: RatingType,
         positiveRatingQuantity: Int,
         negativeRatingQuantity: Int
     ) {

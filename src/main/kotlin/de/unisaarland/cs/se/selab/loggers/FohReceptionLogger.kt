@@ -28,7 +28,7 @@ object FohReceptionLogger {
         Logger.log(
             LogLevel.IMPORTANT,
             "FOH Seating (R ${Logger.restaurantID}): Group $groupId seated at " +
-                "table $tableId by waitstaff $waitstaffIds."
+                "table $tableId by waitstaff ${Logger.formatIds(waitstaffIds)}."
         )
     }
 
@@ -43,7 +43,7 @@ object FohReceptionLogger {
         Logger.log(
             LogLevel.INFO,
             "FOH Merging Tables (R ${Logger.restaurantID}): For group $groupId " +
-                "the tables $oldTableIds were merged into $mergedTableId."
+                "the tables ${Logger.formatIds(oldTableIds)} were merged into $mergedTableId."
         )
     }
 
@@ -84,7 +84,8 @@ object FohReceptionLogger {
         Logger.log(
             LogLevel.IMPORTANT,
             "FOH Ordering (R ${Logger.restaurantID}): Group $groupId placed " +
-                "order $orderId of $dishNameToAmount with waitstaff $waitstaffId."
+                "order $orderId of ${Logger.formatKeyValueMap(dishNameToAmount)} " +
+                "with waitstaff $waitstaffId."
         )
     }
 

@@ -21,7 +21,7 @@ object KitchenLogger {
             LogLevel.IMPORTANT,
             "Kitchen Dish Assignment (R ${Logger.restaurantID}): Cook $cookId" +
                 " of type $cookType starts cooking $numberOfMeals meals of dish $dishName" +
-                " based on order $baseOrderId for orders $allOrderIds."
+                " based on order $baseOrderId for orders ${Logger.formatIds(allOrderIds)}."
         )
     }
 

@@ -4,6 +4,9 @@ import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.enums.TableStatus
 import de.unisaarland.cs.se.selab.enums.TableType
 
+/**
+ * beep beep I'm a document
+ */
 class Table(val id: Id, val size: Int, val tableType: TableType) {
     var status: TableStatus = TableStatus.FREE
 }

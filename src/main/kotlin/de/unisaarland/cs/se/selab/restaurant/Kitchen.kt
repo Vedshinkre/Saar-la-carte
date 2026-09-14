@@ -496,6 +496,24 @@ class Kitchen(
             // statistics
             numberOfCookedMeals += finished
 
+            // Replaced with helper
+            if (finished > 0) {
+                logFinishedMeals(cook, finished)
+            }
+        }
+
+        val servableMeals = getServableDishesNumber()
+        KitchenLogger.logKitchenStatus(
+            numberOfCooks = activeCooks,
+            totalNumberOfMeals = totalMeals,
+            finishedNumberOfMeals = finishedMeals,
+            servableMeals = servableMeals
+        )
+    }
+
+    /**
+     * Helper function to find the base order and log finished meals (to solve detekt issue).
+     */
 
     private fun logFinishedMeals(cook: Cook, finished: Int) {
         val dishRecipe = cook.currentRecipe
@@ -513,7 +531,6 @@ class Kitchen(
                 break
             }
         }
-    }
         // time since the order has been ordered
         var cookDurationTick = 0
         if (baseOrder != null) {

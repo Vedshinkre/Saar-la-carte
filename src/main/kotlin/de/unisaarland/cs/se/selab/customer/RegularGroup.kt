@@ -17,10 +17,6 @@ class RegularGroup(
     val visitingPeriod: Tick,
     val restaurantId: Id,
 ) : CustomerGroup(id, size, tableType, visitingAt, foodPreferences) {
-    private val orderHistory: MutableList<Order> = mutableListOf()
-    private var failedReservations: Int = 0
-
-    fun isVisitingTonight(evening: Int): Boolean {
-        return true
-    }
+    val orderHistory: MutableList<Order> = mutableListOf()
+    var failedReservations: Int = 0
 }

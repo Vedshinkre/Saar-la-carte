@@ -99,7 +99,7 @@ class Restaurant(
         val iterator = customerQueue.iterator()
         while (iterator.hasNext()) {
             val customerGroup = iterator.next()
-            val keepInQueue = frontOfHouse.processArrivalSeatingOrdering(customerGroup) ||
+            val keepInQueue = frontOfHouse.processArrivalSeatingOrdering(customerGroup, restaurantStats.menu) ||
                 customerGroup.isWaitingToBeSeated
             if (!keepInQueue) {
                 iterator.remove()

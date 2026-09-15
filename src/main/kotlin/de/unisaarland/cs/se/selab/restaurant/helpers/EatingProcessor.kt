@@ -14,7 +14,7 @@ import de.unisaarland.cs.se.selab.loggers.FohServiceLogger
 /**
  * Handles the EATING phase of a tick: progressing in-house and delivery groups' eating,
  * dropping customers who waited too long for unserved dishes, and deciding a group's
- * experience once its order is fully served. Extracted out of [de.unisaarland.cs.se.selab.restaurant.FrontOfHouse] (which still
+ * experience once its order is fully served. Extracted out of  (which still
  * owns the shared seating/statistics state) to keep that class's function count manageable;
  * the collections, lookups and statistics counters it needs are handed in from [de.unisaarland.cs.se.selab.restaurant.FrontOfHouse]
  * so both classes see the same shared state.
@@ -64,8 +64,7 @@ class EatingProcessor(
         val noDishServed = !(order.dishes.any { wasServed(it) })
         val unservedCustomersLeave = if (noDishServed) {
             ticksSinceOrder >= Constants.UNSERVED_WAIT_TICKS
-        } else {
-            // wait another 2 ticks if someone in the group was served
+        } else { // wait another 2 ticks if someone in the group was served
             ticksSinceOrder >= Constants.UNSERVED_WAIT_TICKS + Constants.ADDITIONAL_UNSERVED_WAIT_TICKS
         }
 
@@ -83,8 +82,10 @@ class EatingProcessor(
     }
 
     /** decides the customer's experience first time the order is fully served */
-    private fun handleFullyServedOrder(group: CustomerGroup, order: Order) {
-        // run the function only as soon as the order is first completely served
+    private fun handleFullyServedOrder(
+        group: CustomerGroup,
+        order: Order
+    ) { // run the function only as soon as the order is first completely served
         if (order.lastDishServedAt != null) return
 
         val fullyServed = order.dishes.all { wasServed(it) }

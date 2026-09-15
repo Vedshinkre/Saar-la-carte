@@ -10,12 +10,7 @@ import de.unisaarland.cs.se.selab.customer.CasualGroup
 import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.customer.EventGroup
 import de.unisaarland.cs.se.selab.customer.RegularGroup
-import de.unisaarland.cs.se.selab.enums.ActionType
-import de.unisaarland.cs.se.selab.enums.DishStatus
-import de.unisaarland.cs.se.selab.enums.DriverState
-import de.unisaarland.cs.se.selab.enums.ExperienceType
-import de.unisaarland.cs.se.selab.enums.RatingType
-import de.unisaarland.cs.se.selab.enums.TableStatus
+import de.unisaarland.cs.se.selab.enums.*
 import de.unisaarland.cs.se.selab.food.Dish
 import de.unisaarland.cs.se.selab.food.Order
 import de.unisaarland.cs.se.selab.food.Recipe
@@ -740,7 +735,20 @@ class FrontOfHouse(
         inHouseGroups.forEach {
             val order = it.currentOrder
             if (order != null && order.areAllDishesEaten()) {
+
                 if (it is EventGroup) { // TODO(EVENT GROUP ESCORTING)
+                    val waiters = recruitWaitersForEventGroup(ActionType.ESCORT, it)
+                    val customersBefore = it.customersRemainingInRestaurant
+                    waiters.forEach { waiter ->
+                        waiter.escortEventGroups(it)
+                        val customersEscorted = customersBefore - it.customersRemainingInRestaurant
+                        logFohEscorting(
+                            waiter.id!!, customersEscorted, it.id, getAssignedTableId(it.id).min()
+                        )
+                        waitstaffNumber++
+                        customerEscortingNumber += customersEscorted
+                    }
+
                 } else {
                     val waiter = getAssignedWaiter(it.id)
                     val customersBefore = it.customersRemainingInRestaurant

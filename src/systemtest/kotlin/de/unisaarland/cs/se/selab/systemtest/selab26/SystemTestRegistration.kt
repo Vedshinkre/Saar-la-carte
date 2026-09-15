@@ -1,6 +1,11 @@
 package de.unisaarland.cs.se.selab.systemtest.selab26
 
 import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExampleSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventReservationConflictTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ExactStockoutTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ExhaustiveSimpleScenarioTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.OneCookTwoOrdersTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.WaitstaffExhaustionTest
 
 /**
  * Used for test registration
@@ -14,6 +19,12 @@ object SystemTestRegistration {
      */
     fun registerSystemTestsForReferenceImplementation(testSuite: SELab26TestSuite) {
         testSuite.registerTest(ExampleSystemTest())
+
+        testSuite.registerTest(EventReservationConflictTest())
+        testSuite.registerTest(ExactStockoutTest())
+        testSuite.registerTest(ExhaustiveSimpleScenarioTest())
+        testSuite.registerTest(OneCookTwoOrdersTest())
+        testSuite.registerTest(WaitstaffExhaustionTest())
     }
 
     /**
@@ -32,5 +43,11 @@ object SystemTestRegistration {
      */
     fun registerSystemTestsMutantSimulation(testSuite: SELab26TestSuite) {
         testSuite.registerTest(ExampleSystemTest())
+
+        testSuite.registerTest(EventReservationConflictTest())
+        testSuite.registerTest(ExactStockoutTest())
+        testSuite.registerTest(ExhaustiveSimpleScenarioTest())
+        testSuite.registerTest(OneCookTwoOrdersTest())
+        testSuite.registerTest(WaitstaffExhaustionTest())
     }
 }

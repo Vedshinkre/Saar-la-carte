@@ -1,6 +1,10 @@
 package simulationtests
 
-import de.unisaarland.cs.se.selab.customer.*
+import de.unisaarland.cs.se.selab.customer.CasualGroup
+import de.unisaarland.cs.se.selab.customer.CustomerGroup
+import de.unisaarland.cs.se.selab.customer.EventGroup
+import de.unisaarland.cs.se.selab.customer.FoodPreference
+import de.unisaarland.cs.se.selab.customer.RegularGroup
 import de.unisaarland.cs.se.selab.enums.RatingLikelihood
 import de.unisaarland.cs.se.selab.enums.RestaurantType
 import de.unisaarland.cs.se.selab.enums.TableType

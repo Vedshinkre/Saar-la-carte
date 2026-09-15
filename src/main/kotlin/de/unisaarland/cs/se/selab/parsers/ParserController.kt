@@ -50,7 +50,7 @@ class ParserController {
         val customerJson = scenarioObject["customerGroups"]!!.jsonArray
 
         val foodData = foodParser.parse(ingredientArray, recipeArray)
-        val stock = Stock(foodData!!.first)
+        val stock = Stock(foodData.first)
         val restaurantData = restaurantParser.parseRestaurants(
             restaurantsArray,
             foodData.second,

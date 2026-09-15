@@ -51,7 +51,7 @@ object Logger {
     /**
      * Logs a message at the given level.
      */
-    fun log(level: LogLevel?, message: String) {
+    fun log(level: LogLevel, message: String) {
         if (shouldLog(level)) {
             outputHandle.println("[$level] $message")
             outputHandle.flush()

@@ -8,7 +8,12 @@ import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.customer.EventGroup
 import de.unisaarland.cs.se.selab.customer.RegularGroup
 import de.unisaarland.cs.se.selab.enums.ActionType
-import de.unisaarland.cs.se.selab.restaurant.helpers.*
+import de.unisaarland.cs.se.selab.restaurant.helpers.DeliveryCoordinator
+import de.unisaarland.cs.se.selab.restaurant.helpers.EatingCoordinator
+import de.unisaarland.cs.se.selab.restaurant.helpers.EscortingCoordinator
+import de.unisaarland.cs.se.selab.restaurant.helpers.RatingCoordinator
+import de.unisaarland.cs.se.selab.restaurant.helpers.SeatingCoordinator
+import de.unisaarland.cs.se.selab.restaurant.helpers.ServingCoordinator
 
 // Priorities per customer group type, used when ordering groups for serving/eating/escorting/rating.
 // DOIT: maybe move this to the customer classes
@@ -140,8 +145,8 @@ class FrontOfHouse(
         seating.processArrivalSeatingOrdering(customerGroup)
 
     /** called with Regular or EventGroup; returns true if reservation made side effects on tables, customerToTable */
-    fun reserveTables(regularOrEventCustomerGroup: CustomerGroup): Boolean =
-        seating.reserveTables(regularOrEventCustomerGroup)
+//    fun reserveTables(regularOrEventCustomerGroup: CustomerGroup): Boolean =
+//        seating.reserveTables(regularOrEventCustomerGroup)
 
     /**  Logs status and then performs side effect by resetting counters */
     fun logAndResetSeatingOrderingTickStatus() = seating.logAndResetSeatingOrderingTickStatus()
@@ -168,6 +173,7 @@ class FrontOfHouse(
      * @return updated positive and negative rating counts
      */
     fun processRatings(
-        positiveRatings: Int, negativeRatings: Int
+        positiveRatings: Int,
+        negativeRatings: Int
     ): Pair<Int, Int> = rating.processRatings(positiveRatings, negativeRatings)
 }

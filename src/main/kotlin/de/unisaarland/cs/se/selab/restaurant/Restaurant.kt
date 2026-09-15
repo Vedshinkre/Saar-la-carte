@@ -61,7 +61,29 @@ class Restaurant(
         eventCustomers.filter { it.isVisitingTonight() }
     }
 
+    /**
+     * Simulates one tick
+     */
+    fun simulateTick() {
+        frontOfHouse.clearActionLoads()
+        processArrivalSeatingOrdering()
+        kitchen.processCooking()
 
+        frontOfHouse.processServing()
+        frontOfHouse.processDelivering()
+        frontOfHouse.processEating()
+        frontOfHouse.processEscorting()
+
+        val (positiveRatings, negativeRatings) = frontOfHouse.processRatings(
+            restaurantStats.positiveRatings,
+            restaurantStats.negativeRatings
+        )
+        restaurantStats.positiveRatings = positiveRatings
+        restaurantStats.negativeRatings = negativeRatings
+        if (restaurantStats.openingTickEnd == Time.getCurrentTick()) {
+            endEvening()
+        }
+    }
 
     private fun endEvening() {
         // free tables

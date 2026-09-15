@@ -173,6 +173,11 @@ class FrontOfHouse(
     /** whether any driver is currently free to take on a new delivery */
     fun isDriverAvailable(): Boolean = delivering.isDriverAvailable()
 
+    /** process eating */
+    fun processEating() = eating.processEating()
+
+    /** process escorting */
+    fun processEscorting() = escorting.processEscorting()
 
     /**
      * Processes customer ratings and updates the positive and negative rating counts.

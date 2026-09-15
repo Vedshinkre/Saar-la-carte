@@ -8,6 +8,7 @@ import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.customer.EventGroup
 import de.unisaarland.cs.se.selab.customer.RegularGroup
 import de.unisaarland.cs.se.selab.enums.ActionType
+import de.unisaarland.cs.se.selab.food.Recipe
 import de.unisaarland.cs.se.selab.restaurant.helpers.ArrivalProcessor
 import de.unisaarland.cs.se.selab.restaurant.helpers.DeliveryProcessor
 import de.unisaarland.cs.se.selab.restaurant.helpers.EatingProcessor
@@ -146,8 +147,8 @@ class FrontOfHouse(
      *  To decide whether to remove the CustomerGroup from the customerQueue use the formula
      *  processArrivalSeatingOrdering(customerGroup, menu) || customerGroup.isWaitingToBeSeated.
      *  If true keep in the customerQueue, otherwise remove from the customerQueue. */
-    fun processArrivalSeatingOrdering(customerGroup: CustomerGroup): Boolean =
-        arrival.processArrivalSeatingOrdering(customerGroup)
+    fun processArrival(customerGroup: CustomerGroup, menu: List<Recipe>): Boolean =
+        arrival.processArrival(customerGroup, menu)
 
     /** Call only with Regular- or EventGroup.
      *  Returns true if reservation has been made and performs side effects on tables and customerToTable. */

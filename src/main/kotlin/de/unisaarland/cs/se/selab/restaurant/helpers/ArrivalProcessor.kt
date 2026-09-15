@@ -37,7 +37,7 @@ class ArrivalProcessor(
      *  To decide whether to remove the CustomerGroup from the customerQueue use the formula
      *  processArrivalSeatingOrdering(customerGroup, menu) || customerGroup.isWaitingToBeSeated.
      *  If true keep in the customerQueue, otherwise remove from the customerQueue. */
-    fun processArrivalSeatingOrdering(customerGroup: CustomerGroup, menu: List<Recipe>): Boolean {
+    fun processArrival(customerGroup: CustomerGroup, menu: List<Recipe>): Boolean {
         val isInHouse: Boolean =
             customerGroup is RegularGroup || (customerGroup is CasualGroup && !customerGroup.wantsDelivery)
         if (isInHouse && !seatRegularOrCasualGroup(customerGroup)) {
@@ -53,7 +53,7 @@ class ArrivalProcessor(
      *  To decide whether to remove the EventGroup from the customerQueue use the formula
      *  processArrivalSeatingOrdering(customerGroup, menu) || customerGroup.isWaitingToBeSeated.
      *  If true keep in the customerQueue, otherwise remove from the customerQueue. */
-    fun processArrivalSeatingOrdering(eventGroup: EventGroup, menu: List<Recipe>): Boolean {
+    fun processArrival(eventGroup: EventGroup, menu: List<Recipe>): Boolean {
         val recruitedWaiters: List<Waiter> = recruitWaitersForEventGroup(ActionType.SEAT, eventGroup)
         val consumedWaiters: MutableList<Waiter> = mutableListOf()
         var eventGroupSize: Int = eventGroup.size

@@ -1,5 +1,6 @@
 package de.unisaarland.cs.se.selab.customer
 
+import de.unisaarland.cs.se.selab.Constants
 import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.Tick
 import de.unisaarland.cs.se.selab.Time
@@ -12,8 +13,6 @@ import de.unisaarland.cs.se.selab.food.Dish
 import de.unisaarland.cs.se.selab.food.Order
 import de.unisaarland.cs.se.selab.food.Recipe
 import de.unisaarland.cs.se.selab.restaurant.Countertop
-
-const val TEN = 10
 
 /** Represents an abstract customer group. */
 sealed class CustomerGroup(
@@ -37,7 +36,7 @@ sealed class CustomerGroup(
     fun placeOrder(waiters: List<Waiter>, menu: List<Recipe>, countertop: Countertop) {
         val listOfDishes = mutableListOf<Dish>()
         for (foodPreference in foodPreferences) {
-            val currentWaiter = waiters.firstOrNull { it.getTickLoad(ActionType.TAKE_ORDER) < TEN }
+            val currentWaiter = waiters.firstOrNull { it.getTickLoad(ActionType.TAKE_ORDER) < Constants.ACTION_LIMIT }
             if (currentWaiter == null) {
                 break
             }

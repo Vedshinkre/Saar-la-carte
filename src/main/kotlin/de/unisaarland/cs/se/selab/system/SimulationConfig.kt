@@ -13,10 +13,10 @@ import de.unisaarland.cs.se.selab.restaurant.RestaurantStats
 
 class SimulationConfig {
 
-    var restaurants: MutableList<Restaurant> = mutableListOf<Restaurant>()
-    var customers: MutableList<CustomerGroup> = mutableListOf<CustomerGroup>()
-    var incidents: MutableList<Incident> = mutableListOf<Incident>()
-    var ingredients: MutableList<Ingredient> = mutableListOf<Ingredient>()
-    var recipes: MutableList<Recipe> = mutableListOf<Recipe>()
-    var restaurantStats: MutableList<RestaurantStats> = mutableListOf<RestaurantStats>()
+    var restaurants: List<Restaurant> = listOf()
+    var customers: List<CustomerGroup> = listOf()
+    var incidents: List<Incident> = listOf()
+    var ingredients: List<Ingredient> = listOf()
+    var recipes = listOf<Recipe>()
+    var restaurantStats: List<RestaurantStats> = listOf()
 }

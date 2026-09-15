@@ -5,7 +5,11 @@ import de.unisaarland.cs.se.selab.enums.StaffType
 import de.unisaarland.cs.se.selab.food.Ingredient
 import de.unisaarland.cs.se.selab.food.Recipe
 import de.unisaarland.cs.se.selab.food.Stock
-import de.unisaarland.cs.se.selab.incidents.*
+import de.unisaarland.cs.se.selab.incidents.Incident
+import de.unisaarland.cs.se.selab.incidents.PackagingChangeIncident
+import de.unisaarland.cs.se.selab.incidents.RecipeChangeIncident
+import de.unisaarland.cs.se.selab.incidents.StaffChangeIncident
+import de.unisaarland.cs.se.selab.incidents.UnavailabilityIncident
 import de.unisaarland.cs.se.selab.restaurant.Restaurant
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
@@ -213,12 +217,6 @@ class IncidentParser {
     private fun JsonObject.requiredInt(key: String): Int {
         return this[key]?.jsonPrimitive?.content?.toIntOrNull() ?: throw IllegalArgumentException(
             "Missing or invalid integer property: $key"
-        )
-    }
-
-    private fun JsonObject.requiredDouble(key: String): Double {
-        return this[key]?.jsonPrimitive?.content?.toDoubleOrNull() ?: throw IllegalArgumentException(
-            "Missing or invalid decimal property: $key"
         )
     }
 

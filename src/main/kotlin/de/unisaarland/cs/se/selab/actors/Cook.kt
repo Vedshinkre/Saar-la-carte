@@ -54,6 +54,13 @@ class Cook(
         return assignedDishes
     }
 
+    /**
+     * Read-only exposure of assigned dishes.
+     */
+    fun setRemainingTicks(numm: Int) {
+        remainingTicks = numm
+    }
+
     // functions with logic
     /**
      * function to start cooking with .

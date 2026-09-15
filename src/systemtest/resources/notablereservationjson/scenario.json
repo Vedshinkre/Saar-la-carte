@@ -1,0 +1,27 @@
+{
+  "customers": [
+    {
+      "id": 1,
+      "type": "EVENT",
+      "size": 10,
+      "tableType": "COMMON",
+      "restaurantTypes": ["EUROPEAN"],
+      "visitingTick": 2,
+      "eventEvening": 4,
+      "favoriteDishes": {"EUROPEAN": "Grilled Chicken"},
+      "foodPreferences": []
+    },
+    {
+      "id": 2,
+      "type": "REGULAR",
+      "size": 2,
+      "tableType": "COMMON",
+      "visitingTick": 3,
+      "visitingStart": 4,
+      "visitingPeriod": 1,
+      "restaurant": 1,
+      "foodPreferences": []
+    }
+  ],
+  "incidents": []
+}

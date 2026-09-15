@@ -20,10 +20,10 @@ import de.unisaarland.cs.se.selab.restaurant.Restaurant
  * once maxTicks has been reached.
  */
 class Simulation(simdata: SimulationConfig) {
-    var restaurants: MutableList<Restaurant> = simdata.restaurants
+    var restaurants: List<Restaurant> = simdata.restaurants
     var browser: BrowsingService = BrowsingService(simdata.restaurantStats)
-    var incidents: MutableList<Incident> = simdata.incidents
-    var customers: MutableList<CustomerGroup> = simdata.customers
+    var incidents: List<Incident> = simdata.incidents
+    var customers: List<CustomerGroup> = simdata.customers
 
     // Total ticks elapsed across all evenings so far - Time only tracks the tick
     // *within* the current evening, so we track the grand total ourselves to know
@@ -87,7 +87,7 @@ class Simulation(simdata: SimulationConfig) {
         // getEventGroupsForReservation() below, which is about groups whose *future*
         // evening needs a reservation made now.
         getEventGroupsForTonight(evening)
-        val regularsTonight = getRegularsForTonight(evening)
+        val regularsTonight = getRegularsForTonight()
 
         for (restaurant in restaurants.sortedBy { it.getRestaurantStats().restaurantId }) {
             Logger.restaurantID = restaurant.getRestaurantStats().restaurantId
@@ -120,7 +120,7 @@ class Simulation(simdata: SimulationConfig) {
     /**
      * All [RegularGroup]s that are visiting tonight, regardless of restaurant.
      */
-    private fun getRegularsForTonight(evening: Int): List<RegularGroup> =
+    private fun getRegularsForTonight(): List<RegularGroup> =
         filterRegularGroups(customers).filter { it.isVisitingTonight() }
 
     /**
@@ -183,7 +183,8 @@ class Simulation(simdata: SimulationConfig) {
             val reachedMax = ticksElapsed >= Time.getMaxTicks()
             val reachedEndOfEvening = Time.getCurrentTick() == TICKS_PER_EVENING
 
-            if (reachedMax && !reachedEndOfEvening) { // maxTicks is not a multiple of 24: stop right here, no "Serving ends" log.
+            if (reachedMax && !reachedEndOfEvening) {
+                // maxTicks is not a multiple of 24: stop right here, no "Serving ends" log.
                 stoppedEarly = true
                 break
             }

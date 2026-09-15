@@ -103,11 +103,23 @@ class Kitchen(
     }
 
     /**
-     * Reset everything in the end of the evening with the cooks   .
+     * Reset everything at the end of the evening with the cooks.
      */
     // functions with logic
-    fun resetCooks() {
-        // TODO skerdi reset everything in each cook at the end of the evening
+    fun resetKitchen() {
+        for (order in orderQueue) {
+            for (dish in order.dishes) {
+                dish.status = DishStatus.ABORTED
+            }
+            orderQueue.removeFirst()
+        }
+        for (cook in cooks) {
+            cook.id = null
+            cook.orderId = null
+            cook.currentRecipe = null
+            cook.setRemainingTicks(0)
+            cook.isCooking = false
+        }
     }
 
     /**

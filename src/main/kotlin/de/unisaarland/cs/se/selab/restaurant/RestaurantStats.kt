@@ -20,6 +20,6 @@ class RestaurantStats(
     val menu: List<Recipe>,
 ) {
     var availableDrivers: Int = 0
-    var availableSeats: MutableMap<TableType, Int> = mutableMapOf()
-    var availableEventSeats: MutableMap<TableType, Int> = mutableMapOf()
+    val availableSeats: MutableMap<TableType, Int> = mutableMapOf()
+    val availableEventSeats: MutableMap<TableType, Int> = mutableMapOf()
 }

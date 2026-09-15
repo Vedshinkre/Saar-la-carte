@@ -14,15 +14,20 @@ import de.unisaarland.cs.se.selab.food.Stock
 import de.unisaarland.cs.se.selab.restaurant.Restaurant
 import de.unisaarland.cs.se.selab.restaurant.RestaurantStats
 import de.unisaarland.cs.se.selab.restaurant.Table
-import kotlinx.serialization.json.*
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.boolean
+import kotlinx.serialization.json.int
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 
 private const val MIN_TABLE_SIZE = 2
 private const val MAX_TABLE_SIZE = 30
 private const val MIN_OPENING_TICK = 1
 private const val MAX_OPENING_TICK = 24
 
-// TODO: in parser controller correctly catch and handle IllegalArgumentExceptions from require()
-// TODO: satisfy detekt
+// DOIT: in parser controller correctly catch and handle IllegalArgumentExceptions from require()
 
 /**
  * Parses and validates restaurants
@@ -79,13 +84,13 @@ class RestaurantParser {
 
         tableIds.clear()
 
-        val type = enumValue<RestaurantType>(jsonObject.getValue("type").jsonPrimitive.content, "type")
+        val typeStr = "type"
+        // DOIT: find a better way to satisfy detekt
+        val type = enumValue<RestaurantType>(jsonObject.getValue(typeStr).jsonPrimitive.content, typeStr)
         restaurantTypes.add(type)
         val openingTickStart = jsonObject.getValue("openingTickStart").jsonPrimitive.int
         val openingTickEnd = jsonObject.getValue("openingTickEnd").jsonPrimitive.int
-        require(
-            checkStartEndTicks(openingTickStart, openingTickEnd)
-        ) { "Restaurant opening ticks must satisfy 1 <= start < end <= 24" }
+        require(checkStartEndTicks(openingTickStart, openingTickEnd)) { "Opening ticks not 1 <= s < e <= 24" }
 
         val recipeArray = jsonObject.getValue("recipes").jsonArray
         val recipeIds = recipeArray.map { it.jsonPrimitive.int }
@@ -94,9 +99,7 @@ class RestaurantParser {
             checkRestaurantRecipesExist(recipeIds, recipes.map { it.id })
         ) { "Restaurant $id references a recipe that does not exist" }
         require(recipeIds.isNotEmpty()) { "Restaurant $id has no recipes" }
-        require(checkUniqueDishNamesInRestaurant(recipeIds, recipes)) {
-            "Restaurant $id must not have multiple recipes with the same dish name"
-        }
+        require(checkUniqueDishNamesInRestaurant(recipeIds, recipes)) { "R $id dup dish name" }
 
         val kitchenStaff = parseKitchenStaff(jsonObject.getValue("kitchenStaff").jsonObject)
         val waitstaffCount = jsonObject.getValue("waitstaff").jsonPrimitive.int
@@ -116,19 +119,19 @@ class RestaurantParser {
         val menu = recipeIds.map { recipeId -> recipes.first { it.id == recipeId } }
         val event = jsonObject.getValue("event").jsonPrimitive.boolean
         val stats = RestaurantStats(
-            restaurantId = id,
-            restaurantType = type,
-            openingTickStart = openingTickStart,
-            openingTickEnd = openingTickEnd,
-            event = event,
-            positiveRatings = positiveRatings,
-            negativeRatings = negativeRatings,
-            menu = menu
+            id,
+            type,
+            openingTickStart,
+            openingTickEnd,
+            event,
+            positiveRatings,
+            negativeRatings,
+            menu
         )
         val staff = RestaurantStaff(
-            cooks = kitchenStaff.toMutableList(),
-            waiters = List(waitstaffCount) { Waiter() }.toMutableList(),
-            drivers = List(driverCount) { Driver() }.toMutableList()
+            kitchenStaff.toMutableList(),
+            List(waitstaffCount) { Waiter() }.toMutableList(),
+            List(driverCount) { Driver() }.toMutableList()
         )
         val restaurant = Restaurant(stats, name, staff, tables, stock)
         parsedStats += stats
@@ -142,9 +145,7 @@ class RestaurantParser {
         require(checkUniquenessOfTable(id)) { "Duplicate table ID: $id" }
 
         val size = jsonObject.getValue("size").jsonPrimitive.int
-        require(size in MIN_TABLE_SIZE..MAX_TABLE_SIZE) {
-            "Table $id size must be between $MIN_TABLE_SIZE and $MAX_TABLE_SIZE"
-        }
+        require(size in MIN_TABLE_SIZE..MAX_TABLE_SIZE) { "Table $id size $MIN_TABLE_SIZE and $MAX_TABLE_SIZE" }
 
         val type = enumValue<TableType>(jsonObject.getValue("type").jsonPrimitive.content, "table type")
 
@@ -215,7 +216,7 @@ class RestaurantParser {
     }
 
     // AI generated solution to try to map the parsed string to an enum (given an enum type) based on the enum's name
-    // TODO: either ensure enum names correspond to JSON data, use a big switch case, or find a better way
+    // DOIT: either ensure enum names correspond to JSON data, use a big switch case, or find a better way
     private inline fun <reified T : Enum<T>> enumValue(value: String, field: String): T =
         enumValues<T>().firstOrNull { it.name == value }
             ?: throw IllegalArgumentException("Invalid $field: $value")

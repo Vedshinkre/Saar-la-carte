@@ -3,11 +3,10 @@ package de.unisaarland.cs.se.selab.actors
 import de.unisaarland.cs.se.selab.Constants.ACTION_LIMIT
 import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.customer.CustomerGroup
+import de.unisaarland.cs.se.selab.customer.EventGroup
 import de.unisaarland.cs.se.selab.enums.ActionType
 import de.unisaarland.cs.se.selab.enums.DishStatus
 import de.unisaarland.cs.se.selab.food.Dish
-
-const val TICK_MAX = 10
 
 /** waiter */
 class Waiter {
@@ -70,5 +69,20 @@ class Waiter {
 
         addToTickLoad(ActionType.ESCORT, customersToEscort)
         addToCurrentLoad(-customersToEscort)
+    }
+
+    /**
+     * To Escort Event Groups
+     */
+    fun escortEventGroups(eventGroup: EventGroup) {
+        val customersToEscort = minOf(
+            eventGroup.customersRemainingInRestaurant,
+            ACTION_LIMIT - getTickLoad(ActionType.ESCORT)
+        )
+        if (customersToEscort <= 0) {
+            return
+        }
+        eventGroup.customersRemainingInRestaurant -= customersToEscort
+        addToTickLoad(ActionType.ESCORT, customersToEscort)
     }
 }

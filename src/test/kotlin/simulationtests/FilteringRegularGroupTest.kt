@@ -12,6 +12,7 @@ import de.unisaarland.cs.se.selab.system.Simulation
 import de.unisaarland.cs.se.selab.system.SimulationConfig
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertIs
 import kotlin.test.assertSame
 
 class FilteringRegularGroupTest {

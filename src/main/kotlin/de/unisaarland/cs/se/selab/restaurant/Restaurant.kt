@@ -1,6 +1,7 @@
 package de.unisaarland.cs.se.selab.restaurant
 
 import de.unisaarland.cs.se.selab.Tick
+import de.unisaarland.cs.se.selab.Time
 import de.unisaarland.cs.se.selab.actors.RestaurantStaff
 import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.customer.EventGroup
@@ -19,20 +20,20 @@ class Restaurant(
     private val stock: Stock
 ) {
     private val eventCustomers: List<EventGroup> = listOf()
-    private val customerQueue: ArrayDeque<CustomerGroup> = ArrayDeque<CustomerGroup>()
+    private val customerQueue: ArrayDeque<CustomerGroup> = ArrayDeque()
     private val frontOfHouse: FrontOfHouse
     private val kitchen: Kitchen
 
     init {
-        val pantry: Pantry = Pantry(stock)
-        val orderQueue: ArrayDeque<Order> = ArrayDeque<Order>()
-        val countertop: Countertop = Countertop(pantry, orderQueue, staff.cooks)
+        val pantry = Pantry(stock)
+        val orderQueue: ArrayDeque<Order> = ArrayDeque()
+        val countertop = Countertop(pantry, orderQueue, staff.cooks)
         frontOfHouse = FrontOfHouse(tables, staff.waiters, staff.drivers, countertop)
         kitchen = Kitchen(staff.cooks, pantry, orderQueue, restaurantStats.restaurantType)
     }
 
     /**
-     acceptDeliveryOrder returns if the maximum cook ticks of a dish in the order + current tick <= openingEndTick
+     acceptDeliveryOrder returns if the maximum cook ticks of a dish in the order and current tick <= openingEndTick
      */
     fun acceptDeliveryOrder(order: Order, openingEndTick: Tick): Boolean {
         return order.orderedAt == openingEndTick
@@ -64,8 +65,8 @@ class Restaurant(
      * Simulates one tick
      */
     fun simulateTick() {
+        frontOfHouse.clearActionLoads()
         processArrivalSeatingOrdering()
-
         kitchen.processCooking()
 
         frontOfHouse.processServing()
@@ -79,6 +80,15 @@ class Restaurant(
         )
         restaurantStats.positiveRatings = positiveRatings
         restaurantStats.negativeRatings = negativeRatings
+        if (restaurantStats.openingTickEnd == Time.getCurrentTick()) {
+            endEvening()
+        }
+    }
+
+    private fun endEvening() {
+        // free tables
+        frontOfHouse.endFohEvening()
+        kitchen.resetKitchen()
     }
 
     /**
@@ -90,7 +100,7 @@ class Restaurant(
         val iterator = customerQueue.iterator()
         while (iterator.hasNext()) {
             val customerGroup = iterator.next()
-            val keepInQueue = frontOfHouse.processArrivalSeatingOrdering(customerGroup, restaurantStats.menu) ||
+            val keepInQueue = frontOfHouse.processArrival(customerGroup, restaurantStats.menu) ||
                 customerGroup.isWaitingToBeSeated
             if (!keepInQueue) {
                 iterator.remove()

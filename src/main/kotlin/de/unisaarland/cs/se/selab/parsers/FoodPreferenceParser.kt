@@ -53,7 +53,7 @@ class FoodPreferenceParser {
     ): Pair<FoodPreference, Int> {
         fun JsonArray.toListOfString() = this.parseListOf { it.jsonPrimitive.content }
 
-        val size: Int = jsonObject["size"]!!.jsonPrimitive.int
+        val size: Int = jsonObject.getValue("size").jsonPrimitive.int
         val excludedIngredients: List<String> =
             jsonObject["excludedIngredients"]?.jsonArray?.toListOfString() ?: emptyList()
         val preferredIngredients: List<String> =

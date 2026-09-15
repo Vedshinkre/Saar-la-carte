@@ -148,8 +148,7 @@ class FrontOfHouse(
         turnedAwayGroups = turnedAwayGroups,
         getInHouseGroups = { getInHouseGroups() },
         getServingPriority = { group -> getServingPriority(group) },
-        removeProcessedGroup = { group -> removeProcessedGroup(group) }
-    )
+        removeProcessedGroup = { group -> removeProcessedGroup(group) })
 
     /** Call with the CustomerGroup and menu.
      *  Returns true if CustomerGroup was processed successfully, false otherwise.
@@ -190,8 +189,7 @@ class FrontOfHouse(
      * @return updated positive and negative rating counts
      */
     fun processRatings(
-        positiveRatings: Int,
-        negativeRatings: Int
+        positiveRatings: Int, negativeRatings: Int
     ): Pair<Int, Int> = rating.processRatings(positiveRatings, negativeRatings)
 
     /** Clears the load of waiters */
@@ -210,8 +208,7 @@ class FrontOfHouse(
      * @return updated positive and negative rating counts
      */
     fun endFohEvening(
-        positiveRatings: Int,
-        negativeRatings: Int
+        positiveRatings: Int, negativeRatings: Int
     ): Pair<Int, Int> {
         var positive = positiveRatings
         var negative = negativeRatings
@@ -221,10 +218,7 @@ class FrontOfHouse(
 
         inHouseGroups.forEach { group ->
             val result = rating.rate(
-                group,
-                positive,
-                negative,
-                true
+                group, positive, negative, true
             )
 
             positive = result.first
@@ -241,6 +235,7 @@ class FrontOfHouse(
 
         return Pair(positive, negative)
     }
+
     private fun removeProcessedGroup(group: CustomerGroup) {
         if (getInHouseGroups().contains(group)) {
             removeInHouseGroup(group)

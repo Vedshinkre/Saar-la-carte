@@ -123,7 +123,7 @@ class Kitchen(
     }
 
     /**
-     * Generate ids for the cooks that don't have one already  .
+     * Generate ids for the cooks that don't have one already.
      */
     fun getNextCookId(): Int {
         val allocatedId = nextAvailableCookId

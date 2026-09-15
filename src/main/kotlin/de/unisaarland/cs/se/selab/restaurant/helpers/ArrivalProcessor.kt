@@ -80,6 +80,7 @@ class ArrivalProcessor(
         }
 
         successfulSeating(eventGroup, consumedWaiters)
+        eventGroup.placeOrder(waiters, menu, countertop)
         return turnedAwayGroups.first().visitingAt == eventGroup.visitingAt
     }
 

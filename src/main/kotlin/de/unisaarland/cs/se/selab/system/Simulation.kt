@@ -87,7 +87,7 @@ class Simulation(simdata: SimulationConfig) {
         // getEventGroupsForReservation() below, which is about groups whose *future*
         // evening needs a reservation made now.
         getEventGroupsForTonight(evening)
-        val regularsTonight = getRegularsForTonight(evening)
+        val regularsTonight = getRegularsForTonight()
 
         for (restaurant in restaurants.sortedBy { it.getRestaurantStats().restaurantId }) {
             Logger.restaurantID = restaurant.getRestaurantStats().restaurantId
@@ -120,7 +120,7 @@ class Simulation(simdata: SimulationConfig) {
     /**
      * All [RegularGroup]s that are visiting tonight, regardless of restaurant.
      */
-    private fun getRegularsForTonight(evening: Int): List<RegularGroup> =
+    private fun getRegularsForTonight(): List<RegularGroup> =
         filterRegularGroups(customers).filter { it.isVisitingTonight() }
 
     /**
@@ -183,7 +183,8 @@ class Simulation(simdata: SimulationConfig) {
             val reachedMax = ticksElapsed >= Time.getMaxTicks()
             val reachedEndOfEvening = Time.getCurrentTick() == TICKS_PER_EVENING
 
-            if (reachedMax && !reachedEndOfEvening) { // maxTicks is not a multiple of 24: stop right here, no "Serving ends" log.
+            if (reachedMax && !reachedEndOfEvening) {
+                // maxTicks is not a multiple of 24: stop right here, no "Serving ends" log.
                 stoppedEarly = true
                 break
             }

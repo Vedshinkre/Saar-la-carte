@@ -3,6 +3,7 @@ package de.unisaarland.cs.se.selab.actors
 import de.unisaarland.cs.se.selab.Constants.ACTION_LIMIT
 import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.customer.CustomerGroup
+import de.unisaarland.cs.se.selab.customer.EventGroup
 import de.unisaarland.cs.se.selab.enums.ActionType
 import de.unisaarland.cs.se.selab.enums.DishStatus
 import de.unisaarland.cs.se.selab.food.Dish
@@ -15,10 +16,7 @@ class Waiter {
     var id: Id? = null
     var currentLoad: Int = 0
     val tickLoads = mutableMapOf(
-        Pair(ActionType.SEAT, 0),
-        Pair(ActionType.TAKE_ORDER, 0),
-        Pair(ActionType.SERVE, 0),
-        Pair(ActionType.ESCORT, 0)
+        Pair(ActionType.SEAT, 0), Pair(ActionType.TAKE_ORDER, 0), Pair(ActionType.SERVE, 0), Pair(ActionType.ESCORT, 0)
     )
 
     /** adds to the number of customers being waited on */
@@ -58,8 +56,7 @@ class Waiter {
         val remainingCapacity = ACTION_LIMIT - escortLoad
 
         val customersToEscort = minOf(
-            cg.customersRemainingInRestaurant,
-            remainingCapacity
+            cg.customersRemainingInRestaurant, remainingCapacity
         )
 
         if (customersToEscort <= 0) {
@@ -70,5 +67,19 @@ class Waiter {
 
         addToTickLoad(ActionType.ESCORT, customersToEscort)
         addToCurrentLoad(-customersToEscort)
+    }
+
+    /**
+     * To Escort Event Groups
+     */
+    fun escortEventGroups(eventGroup: EventGroup) {
+        val customersToEscort = minOf(
+            eventGroup.customersRemainingInRestaurant, ACTION_LIMIT - getTickLoad(ActionType.ESCORT)
+        )
+        if (customersToEscort <= 0) {
+            return
+        }
+        eventGroup.customersRemainingInRestaurant -= customersToEscort
+        addToTickLoad(ActionType.ESCORT, customersToEscort)
     }
 }

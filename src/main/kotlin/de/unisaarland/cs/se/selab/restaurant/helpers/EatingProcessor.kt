@@ -34,8 +34,10 @@ class EatingProcessor(
 
         val sortedGroups = getInHouseGroups().sortedWith(compareBy({ getServingPriority(it) }, { it.id }))
         for (group in sortedGroups) {
-            val order = group.currentOrder ?: continue
-            val tableId = getAssignedTableId(group) ?: continue
+            val order = group.currentOrder
+            if (order == null) continue
+            val tableId = getAssignedTableId(group)
+            if (tableId == null) continue
 
             handleLeavingCustomers(group, order, tableId)
             handleFullyServedOrder(group, order) // for experience
@@ -118,7 +120,8 @@ class EatingProcessor(
     // delivery orders only start eating once the order is delivered
     private fun processDeliveryEating() {
         for (group in deliveryGroups.sortedBy { it.id }) {
-            val order = group.currentOrder ?: continue
+            val order = group.currentOrder
+            if (order == null) continue
             if (order.deliveredAt == null || order.areAllDishesEaten()) continue
 
             // for statistics, runs exactly once per order (when driver hands over the order)

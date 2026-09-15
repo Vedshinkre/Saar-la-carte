@@ -26,11 +26,7 @@ class ServingProcessor(
 ) {
     private var nextDriverIdCounter: Id = 1
 
-    private fun nextDriverId(): Id {
-        val id = nextDriverIdCounter
-        nextDriverIdCounter++
-        return id
-    }
+    private fun getNextDriverId() = nextDriverIdCounter++
 
     /** serves cooked meals from kitchen to in-house groups and drivers, logs SERVING actions performed */
     fun processServing() {
@@ -42,7 +38,8 @@ class ServingProcessor(
     private fun serveInHouseGroups() {
         val sortedGroups = getInHouseGroups().sortedWith(compareBy({ getServingPriority(it) }, { it.id }))
         for (group in sortedGroups) {
-            val order = group.currentOrder ?: continue
+            val order = group.currentOrder
+            if (order == null) continue
             if (group is EventGroup) {
                 serveEventTable(group, order)
             } else {
@@ -133,7 +130,8 @@ class ServingProcessor(
             .sortedBy { it.currentOrder?.id ?: Int.MAX_VALUE }
 
         for (group in readyGroups) {
-            val order = group.currentOrder ?: continue
+            val order = group.currentOrder
+            if (order == null) continue
             val readyDishes = order.getServableDishes()
             val driver = if (readyDishes.isEmpty()) null else getOrAssignDriver(group, order)
             if (driver != null) {
@@ -154,7 +152,7 @@ class ServingProcessor(
 
         val freeDriver = drivers.find { it.state == DriverState.IDLE } ?: return null
         if (freeDriver.id == null) {
-            freeDriver.id = nextDriverId()
+            freeDriver.id = getNextDriverId()
         }
         freeDriver.targetGroup = group
         freeDriver.currentOrder = order

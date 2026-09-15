@@ -31,9 +31,7 @@ class ParserController {
      * delagtes JsonObjects to muliple Parsers and Validates File with JsonSkema
      **/
     fun parseFiles(
-        foodFilePath: String,
-        restaurantsFilePath: String,
-        scenarioFilePath: String
+        foodFilePath: String, restaurantsFilePath: String, scenarioFilePath: String
     ): SimulationConfig {
         validateFilesWithSchema(foodFilePath, "classpath:/schema/food.schema")
         validateFilesWithSchema(restaurantsFilePath, "classpath:/schema/restaurants.schema")
@@ -67,12 +65,12 @@ class ParserController {
         )
         crossvalidateIncidents()
 
-        simConfig.restaurants = restaurantData.second.toMutableList()
-        simConfig.ingredients = foodData.first.toMutableList()
-        simConfig.recipes = foodData.second.toMutableList()
-        simConfig.restaurantStats = restaurantData.first.toMutableList()
-        simConfig.incidents = scenarioData.first.toMutableList()
-        simConfig.customers = scenarioData.second.toMutableList()
+        simConfig.restaurants = restaurantData.second
+        simConfig.ingredients = foodData.first
+        simConfig.recipes = foodData.second
+        simConfig.restaurantStats = restaurantData.first
+        simConfig.incidents = scenarioData.first
+        simConfig.customers = scenarioData.second
 
         return simConfig
     }
@@ -84,8 +82,7 @@ class ParserController {
             val config = ValidatorConfig(FormatValidationPolicy.ALWAYS)
             val validator = Validator.create(schema, config)
 
-            val failure = validator.validate(jsonInstance) ?: return
-            // Logger.logInitialization(false, filePath)
+            val failure = validator.validate(jsonInstance) ?: return // Logger.logInitialization(false, filePath)
             System.err.println(failure)
         } catch (e: IOException) {
             System.err.println("Could not read file: ${e.message}")
@@ -93,6 +90,7 @@ class ParserController {
             System.err.println("Invalid JSON: ${e.message}")
         }
     }
+
     private fun crossvalidateIncidents(): Boolean {
         var incidents = simConfig.incidents
         var restaurants = simConfig.restaurants
@@ -103,6 +101,7 @@ class ParserController {
         validateNoOverlappingUnavailability(incidents)
         return true
     }
+
     private fun validateNoOverlappingUnavailability(incidents: List<Incident>) {
         val unavailabilities = incidents.filterIsInstance<UnavailabilityIncident>()
 

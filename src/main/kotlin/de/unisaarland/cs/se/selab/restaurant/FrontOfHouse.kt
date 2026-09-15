@@ -8,7 +8,12 @@ import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.customer.EventGroup
 import de.unisaarland.cs.se.selab.customer.RegularGroup
 import de.unisaarland.cs.se.selab.enums.ActionType
-import de.unisaarland.cs.se.selab.restaurant.helpers.*
+import de.unisaarland.cs.se.selab.restaurant.helpers.DeliveryProcessor
+import de.unisaarland.cs.se.selab.restaurant.helpers.EatingProcessor
+import de.unisaarland.cs.se.selab.restaurant.helpers.EscortingProcessor
+import de.unisaarland.cs.se.selab.restaurant.helpers.RatingProcessor
+import de.unisaarland.cs.se.selab.restaurant.helpers.SeatingCoordinator
+import de.unisaarland.cs.se.selab.restaurant.helpers.ServingProcessor
 
 // Priorities per customer group type, used when ordering groups for serving/eating/escorting/rating.
 // DOIT: maybe move this to the customer classes

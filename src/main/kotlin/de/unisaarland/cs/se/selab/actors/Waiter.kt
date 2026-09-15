@@ -8,8 +8,6 @@ import de.unisaarland.cs.se.selab.enums.ActionType
 import de.unisaarland.cs.se.selab.enums.DishStatus
 import de.unisaarland.cs.se.selab.food.Dish
 
-const val TICK_MAX = 10
-
 /** waiter */
 class Waiter {
 

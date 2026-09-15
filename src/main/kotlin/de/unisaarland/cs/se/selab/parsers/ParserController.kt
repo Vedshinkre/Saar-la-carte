@@ -46,8 +46,8 @@ class ParserController {
         validateFilesWithSchema(scenarioFilePath, "classpath:/schema/scenario.schema")
         val jsonSources = readJsonSources(foodFilePath, restaurantsFilePath, scenarioFilePath)
 
-        val foodData = parseFoodData(foodFilePath, jsonSources.ingredientArray, jsonSources.recipeArray)
-            ?: return simConfig
+        val foodData =
+            parseFoodData(foodFilePath, jsonSources.ingredientArray, jsonSources.recipeArray) ?: return simConfig
         val stock = Stock(foodData.first)
 
         val restaurantData = parseRestaurantData(
@@ -64,15 +64,14 @@ class ParserController {
             stock,
         ) ?: return simConfig
 
-        if (!crossvalidateScenario(scenarioFilePath)) return simConfig
-        InitialAndPrepLogger.logInitialization(true, scenarioFilePath)
-
         simConfig.restaurants = restaurantData.second
         simConfig.ingredients = foodData.first
         simConfig.recipes = foodData.second
         simConfig.restaurantStats = restaurantData.first
         simConfig.incidents = scenarioData.first
         simConfig.customers = scenarioData.second
+        if (!crossvalidateScenario(scenarioFilePath)) return simConfig
+        InitialAndPrepLogger.logInitialization(true, scenarioFilePath)
         return simConfig
     }
 
@@ -210,10 +209,9 @@ class ParserController {
 
     private fun crossvalidateIncidents(): Boolean {
         val incidents = simConfig.incidents
-        val restaurants = simConfig.restaurants
         val seenIds = mutableSetOf<Int>()
         for (incident in incidents) {
-            require(!seenIds.add(incident.id))
+            require(seenIds.add(incident.id)) { "Duplicate incident id: ${incident.id}" }
         }
         validateNoOverlappingUnavailability(incidents)
         return true

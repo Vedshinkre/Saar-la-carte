@@ -2,15 +2,11 @@
   "restaurants": [
     {
       "id": 1,
-      "name": "Lonely",
+      "name": "Fire",
       "type": "EUROPEAN",
       "openingTickStart": 1,
       "openingTickEnd": 24,
-      "deliveryDrivers": 0,
-      "event": true,
-      "positiveRatings": 5,
-      "negativeRatings": 5,
-      "recipes": [1, 2],
+      "recipes": [1, 2, 3],
       "kitchenStaff": {
         "EXEC": 0,
         "SOUS": 0,
@@ -22,13 +18,10 @@
         "PASTRY": 0
       },
       "waitstaff": 1,
-      "tables": [
-        {
-          "id": 1,
-          "type": "COMMON",
-          "size": 2
-        }
-      ]
+      "deliveryDrivers": 3,
+      "tables": [],
+      "positiveRatings": 10,
+      "negativeRatings": 5
     }
   ]
 }

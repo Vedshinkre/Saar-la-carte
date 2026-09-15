@@ -1,5 +1,5 @@
 {
-  "customers": [
+  "customerGroups": [
     {
       "id": 1, "type": "EVENT", "size": 6, "tableType": "COMMON",
       "restaurantTypes": ["EUROPEAN"], "visitingTick": 3, "eventEvening": 4,

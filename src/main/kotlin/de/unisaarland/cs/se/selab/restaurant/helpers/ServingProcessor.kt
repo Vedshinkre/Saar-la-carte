@@ -14,7 +14,7 @@ import de.unisaarland.cs.se.selab.food.Order
 import de.unisaarland.cs.se.selab.loggers.FohServiceLogger
 
 /** serving coordinator */
-class ServingCoordinator(
+class ServingProcessor(
     private val waiters: List<Waiter>,
     private val drivers: List<Driver>,
     private val deliveryGroups: List<CustomerGroup>,
@@ -87,46 +87,7 @@ class ServingCoordinator(
     }
 
     /** serves an EVENT group, recruits as many waiters as needed. */
-    private fun serveEventTable(group: EventGroup, order: Order) {
-        val tableId = getAssignedTableId(group) ?: return // invariant, could be asserted
-
-        val readyDishes = order.getServableDishes()
-        if (readyDishes.isEmpty()) return
-
-        val complete = order.areAllDishesCooked()
-
-        // proceed only if order is either complete or can be partially served.
-        // Logs with the FIRST waiter that could've served, if any.
-        if (!order.hasServingStarted() && !complete && isWithinTimeWindow(order)) {
-            val candidate = recruitWaitersForEventGroup(ActionType.SERVE, group).firstOrNull()
-            logNoServing(candidate, readyDishes.size, tableId)
-            return
-        }
-
-        val recruitedWaiters = recruitWaitersForEventGroup(ActionType.SERVE, group)
-        // if order is complete (and not started serving), recruited waiters must be able to serve ALL servable dishes
-        val totalCapacity =
-            recruitedWaiters.sumOf {
-                Constants.ACTION_LIMIT - it.getTickLoad(ActionType.SERVE)
-            }
-        if (!order.hasServingStarted() && complete && totalCapacity < readyDishes.size) {
-            order.startServing()
-            logNoServing(recruitedWaiters.firstOrNull(), readyDishes.size, tableId)
-            return
-        }
-
-        // can start serving the order, serve as many as possible for each recruited waiter
-        order.startServing()
-        var remaining = readyDishes
-        for (waiter in recruitedWaiters) {
-            if (remaining.isEmpty()) break
-            remaining = serveBatch(waiter, remaining, tableId, order)
-        }
-        if (remaining.isNotEmpty()) {
-            logNoServing(recruitedWaiters.lastOrNull(), remaining.size, tableId)
-        }
-        order.markFullyServed()
-    }
+    // DOIT: serveEventTable
 
     private fun serveDeliveryGroups() {
         val readyGroups = deliveryGroups.filter { it.currentOrder?.areAllDishesCooked() == true }

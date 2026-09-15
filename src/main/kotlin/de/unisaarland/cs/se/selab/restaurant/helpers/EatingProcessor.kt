@@ -19,7 +19,7 @@ import de.unisaarland.cs.se.selab.loggers.FohServiceLogger
  * the collections, lookups and statistics counters it needs are handed in from [de.unisaarland.cs.se.selab.restaurant.FrontOfHouse]
  * so both classes see the same shared state.
  */
-class EatingCoordinator(
+class EatingProcessor(
     private val deliveryGroups: List<CustomerGroup>,
     private val getInHouseGroups: () -> List<CustomerGroup>,
     private val getServingPriority: (CustomerGroup) -> Int,

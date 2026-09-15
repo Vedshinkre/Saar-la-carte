@@ -8,7 +8,7 @@ import de.unisaarland.cs.se.selab.loggers.DeliveryLogger
 import kotlin.math.ceil
 
 /** delivery coordinator */
-class DeliveryCoordinator(
+class DeliveryProcessor(
     private val drivers: List<Driver>,
 ) {
     /** starts driving drivers who just received a full order, and advances already-driving drivers */

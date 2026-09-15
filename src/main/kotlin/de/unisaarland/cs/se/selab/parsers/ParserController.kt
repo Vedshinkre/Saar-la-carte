@@ -31,23 +31,21 @@ class ParserController {
      * delagtes JsonObjects to muliple Parsers and Validates File with JsonSkema
      **/
     fun parseFiles(
-        foodFilePath: String,
-        restaurantsFilePath: String,
-        scenarioFilePath: String
+        foodFilePath: String, restaurantsFilePath: String, scenarioFilePath: String
     ): SimulationConfig {
         validateFilesWithSchema(foodFilePath, "classpath:/schema/food.schema")
         validateFilesWithSchema(restaurantsFilePath, "classpath:/schema/restaurants.schema")
         validateFilesWithSchema(scenarioFilePath, "classpath:/schema/scenario.schema")
         val foodStr = File(foodFilePath).readText()
         val foodObject = Json.parseToJsonElement(foodStr).jsonObject
-        val ingredientArray = foodObject["ingredients"] as JsonArray
-        val recipeArray = foodObject["recipes"] as JsonArray
+        val ingredientArray = (foodObject["ingredients"] ?: error("null assertion message")) as JsonArray
+        val recipeArray = (foodObject["recipes"] ?: error("null assertion message"))
         val restaurantsStr = File(restaurantsFilePath).readText()
-        val restaurantsArray = Json.parseToJsonElement(restaurantsStr).jsonObject["restaurants"]!!.jsonArray
+        val restaurantsArray = Json.parseToJsonElement(restaurantsStr).jsonObject["restaurants"]?.jsonArray
         val scenarioStr = File(scenarioFilePath).readText()
         val scenarioObject = Json.parseToJsonElement(scenarioStr).jsonObject
-        val incidentJson = scenarioObject["incidents"]!!.jsonArray
-        val customerJson = scenarioObject["customerGroups"]!!.jsonArray
+        val incidentJson = scenarioObject["incidents"]?.jsonArray
+        val customerJson = scenarioObject["customerGroups"]?.jsonArray
 
         val foodData = foodParser.parse(ingredientArray, recipeArray)
         val stock = Stock(foodData.first)
@@ -67,12 +65,12 @@ class ParserController {
         )
         crossvalidateIncidents()
 
-        simConfig.restaurants = restaurantData.second.toMutableList()
-        simConfig.ingredients = foodData.first.toMutableList()
-        simConfig.recipes = foodData.second.toMutableList()
-        simConfig.restaurantStats = restaurantData.first.toMutableList()
-        simConfig.incidents = scenarioData.first.toMutableList()
-        simConfig.customers = scenarioData.second.toMutableList()
+        simConfig.restaurants = restaurantData.second
+        simConfig.ingredients = foodData.first
+        simConfig.recipes = foodData.second
+        simConfig.restaurantStats = restaurantData.first
+        simConfig.incidents = scenarioData.first
+        simConfig.customers = scenarioData.second
 
         return simConfig
     }
@@ -84,18 +82,18 @@ class ParserController {
             val config = ValidatorConfig(FormatValidationPolicy.ALWAYS)
             val validator = Validator.create(schema, config)
 
-            val failure = validator.validate(jsonInstance) ?: return
-            // Logger.logInitialization(false, filePath)
+            val failure = validator.validate(jsonInstance) ?: return // Logger.logInitialization(false, filePath)
             System.err.println(failure)
         } catch (e: IOException) {
-            System.err.println("Could not read file: ${e.message}")
+            System.err.println("Could not read file: ${e.message ?: "Unknown error"}")
         } catch (e: JsonParseException) {
             System.err.println("Invalid JSON: ${e.message}")
         }
     }
+
     private fun crossvalidateIncidents(): Boolean {
-        var incidents = simConfig.incidents
-        var restaurants = simConfig.restaurants
+        val incidents = simConfig.incidents
+        val restaurants = simConfig.restaurants
         val seenIds = mutableSetOf<Int>()
         for (incident in incidents) {
             require(!seenIds.add(incident.id))
@@ -103,6 +101,7 @@ class ParserController {
         validateNoOverlappingUnavailability(incidents)
         return true
     }
+
     private fun validateNoOverlappingUnavailability(incidents: List<Incident>) {
         val unavailabilities = incidents.filterIsInstance<UnavailabilityIncident>()
 

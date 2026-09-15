@@ -7,11 +7,6 @@ object Time {
     internal var tick: Tick = 1
     internal var evening: Evening = 1
     internal var maxTicks: Tick = 0
-        set(value) {
-            field = if (maxTicksAlreadySet) field else value
-            maxTicksAlreadySet = true
-        }
-    private var maxTicksAlreadySet: Boolean = false
 
     /**
      * resets the Current tick to 1 (used before next serving phase)

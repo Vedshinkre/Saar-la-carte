@@ -15,12 +15,13 @@ import de.unisaarland.cs.se.selab.restaurant.Restaurant
 import de.unisaarland.cs.se.selab.restaurant.RestaurantStats
 import de.unisaarland.cs.se.selab.restaurant.Table
 import kotlinx.serialization.json.*
+// DETEKT wildcard Imports
 
 private const val MIN_TABLE_SIZE = 2
 private const val MAX_TABLE_SIZE = 30
 private const val MIN_OPENING_TICK = 1
 private const val MAX_OPENING_TICK = 24
-
+// DETEKT remove todos
 // TODO: in parser controller correctly catch and handle IllegalArgumentExceptions from require()
 // TODO: satisfy detekt
 
@@ -80,6 +81,7 @@ class RestaurantParser {
         tableIds.clear()
 
         val type = enumValue<RestaurantType>(jsonObject.getValue("type").jsonPrimitive.content, "type")
+        // DETEKT getValue("type") Multiple occurrences of the same string literal within a single file detected. Prefer extracting the string literal into a property or constant. [StringLiteralDuplication]
         restaurantTypes.add(type)
         val openingTickStart = jsonObject.getValue("openingTickStart").jsonPrimitive.int
         val openingTickEnd = jsonObject.getValue("openingTickEnd").jsonPrimitive.int
@@ -215,6 +217,7 @@ class RestaurantParser {
     }
 
     // AI generated solution to try to map the parsed string to an enum (given an enum type) based on the enum's name
+    // DETEKT remove todos
     // TODO: either ensure enum names correspond to JSON data, use a big switch case, or find a better way
     private inline fun <reified T : Enum<T>> enumValue(value: String, field: String): T =
         enumValues<T>().firstOrNull { it.name == value }

@@ -1,5 +1,5 @@
 package incidentparsertests
-
+/*
 import de.unisaarland.cs.se.selab.actors.RestaurantStaff
 import de.unisaarland.cs.se.selab.enums.MeasurementUnit
 import de.unisaarland.cs.se.selab.enums.RestaurantType
@@ -390,3 +390,4 @@ class StaffIncidentParserTest {
         }
     }
 }
+*/

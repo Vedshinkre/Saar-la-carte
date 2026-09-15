@@ -8,12 +8,7 @@ import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.customer.EventGroup
 import de.unisaarland.cs.se.selab.customer.RegularGroup
 import de.unisaarland.cs.se.selab.enums.ActionType
-import de.unisaarland.cs.se.selab.restaurant.helpers.DeliveryCoordinator
-import de.unisaarland.cs.se.selab.restaurant.helpers.EatingCoordinator
-import de.unisaarland.cs.se.selab.restaurant.helpers.EscortingCoordinator
-import de.unisaarland.cs.se.selab.restaurant.helpers.RatingCoordinator
-import de.unisaarland.cs.se.selab.restaurant.helpers.SeatingCoordinator
-import de.unisaarland.cs.se.selab.restaurant.helpers.ServingCoordinator
+import de.unisaarland.cs.se.selab.restaurant.helpers.*
 
 // Priorities per customer group type, used when ordering groups for serving/eating/escorting/rating.
 // DOIT: maybe move this to the customer classes
@@ -51,7 +46,19 @@ class FrontOfHouse(
 
     // recruit waiters for an EVENT group, accumulates enough (ordered by asc id) to cover group's servable dishes.
     // shared by SEATING (SEAT) and SERVING (SERVE); NOTE: does not yet handle ActionType.TAKE_ORDER.
-    // DOIT: recruitWaitersForEventGroups() atharva
+    private fun recruitWaitersForEventGroup(actionType: ActionType, eventGroup: EventGroup): List<Waiter> {
+        return when (actionType) {
+            ActionType.SEAT -> waiters.filter {
+                it.getTickLoad(ActionType.SEAT) < Constants.ACTION_LIMIT
+            }.sortedByDescending { it.currentLoad }
+
+            ActionType.TAKE_ORDER -> TODO()
+            ActionType.SERVE -> recruitWaiterForServing(eventGroup)
+            ActionType.ESCORT -> waiters.filter {
+                it.getTickLoad(ActionType.ESCORT) < Constants.ACTION_LIMIT
+            }
+        }
+    }
 
     private fun recruitWaiterForServing(customerGroup: EventGroup): List<Waiter> {
         val required = customerGroup.currentOrder?.getServableDishes()?.size ?: 0
@@ -161,7 +168,6 @@ class FrontOfHouse(
      * @return updated positive and negative rating counts
      */
     fun processRatings(
-        positiveRatings: Int,
-        negativeRatings: Int
+        positiveRatings: Int, negativeRatings: Int
     ): Pair<Int, Int> = rating.processRatings(positiveRatings, negativeRatings)
 }

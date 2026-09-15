@@ -167,6 +167,25 @@ class FrontOfHouse(
      * @return updated positive and negative rating counts
      */
     fun processRatings(
-        positiveRatings: Int, negativeRatings: Int
+        positiveRatings: Int,
+        negativeRatings: Int
     ): Pair<Int, Int> = rating.processRatings(positiveRatings, negativeRatings)
+
+    /** Clears the load of waiters */
+    fun clearActionLoads() {
+        waiters.forEach {
+            it.resetActionLoads()
+        }
+    }
+
+    /** escorts customers inside, frees tables, handles deliveries in closing time */
+    // DOIT: FIX PERFORMANCE WISE
+    fun endFohEvening() {
+        escorting.escortAllAtClosing()
+
+        val customerIds = customerToTable.keys.map { it.id }
+        customerIds.forEach {
+            escorting.dismantleTable(it)
+        }
+    }
 }

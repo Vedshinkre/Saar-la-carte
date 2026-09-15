@@ -65,8 +65,8 @@ class Restaurant(
      * Simulates one tick
      */
     fun simulateTick() {
+        frontOfHouse.clearActionLoads()
         processArrivalSeatingOrdering()
-
         kitchen.processCooking()
 
         frontOfHouse.processServing()

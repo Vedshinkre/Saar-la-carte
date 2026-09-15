@@ -69,7 +69,8 @@ class EscortingProcessor(
     }
 
     // TODO(maybe customerID as parameter is more work than just customer)
-    private fun dismantleTable(customerId: Id) {
+    /** dismantles tables, sets status to free, removes it from the list */
+    fun dismantleTable(customerId: Id) {
         val tables = customerToTable.entries.first { it.key.id == customerId }.value
 
         tables.forEach {
@@ -79,5 +80,26 @@ class EscortingProcessor(
         customerToTable.remove(
             customerToTable.keys.first { it.id == customerId }
         )
+    }
+
+    /** escorts customers still inside the FOH after closing time
+     * @return return the groups that need a forced negative rating
+     * */
+    fun escortAllAtClosing(): List<CustomerGroup> {
+        val groups = getInHouseGroups()
+        val unfinishedGroups = mutableListOf<CustomerGroup>()
+
+        groups.forEach { group ->
+            val order = group.currentOrder
+
+            if (order == null || !order.areAllDishesEaten()) {
+                unfinishedGroups.add(group)
+            }
+
+            val waiter = getAssignedWaiter(group.id)
+            waiter.escort(group)
+        }
+
+        return unfinishedGroups
     }
 }

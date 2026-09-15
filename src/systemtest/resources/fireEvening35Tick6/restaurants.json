@@ -1,0 +1,37 @@
+{
+  "restaurants": [
+    {
+      "id": 1,
+      "name": "FIRE",
+      "type": "EUROPEAN",
+      "openingTickStart": 1,
+      "openingTickEnd": 24,
+      "deliveryDrivers": 3,
+      "event": false,
+      "positiveRatings": 11,
+      "negativeRatings": 5,
+      "recipes": [1, 2, 3],
+      "kitchenStaff": {
+        "EXEC": 0,
+        "SOUS": 0,
+        "TOURNANT": 1,
+        "SAUCE": 0,
+        "FISH": 0,
+        "ROAST": 0,
+        "VEGETABLE": 1,
+        "PASTRY": 0
+      },
+      "waitstaff": 2,
+      "tables": [
+        { "id": 2, "type": "COMMON", "size": 7 },
+        { "id": 3, "type": "COMMON", "size": 2 },
+        { "id": 4, "type": "COMMON", "size": 3 },
+        { "id": 5, "type": "COMMON", "size": 3 },
+        { "id": 6, "type": "COMMON", "size": 5 },
+        { "id": 7, "type": "COMMON", "size": 24 },
+        { "id": 8, "type": "COMMON", "size": 24 },
+        { "id": 9, "type": "COMMON", "size": 24 }
+      ]
+    }
+  ]
+}

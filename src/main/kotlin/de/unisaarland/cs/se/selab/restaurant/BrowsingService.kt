@@ -67,7 +67,7 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
         val llist = mutableListOf<RestaurantStats>()
         list.forEach { stats ->
             if (stats.availableSeats[group.tableType]!! >= group.size) {
-                llist.plus(stats)
+                llist.add(stats)
             }
         }
         llist.filter { isDietaryCompatible(it, group) }

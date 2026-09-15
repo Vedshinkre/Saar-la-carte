@@ -139,7 +139,8 @@ class ArrivalProcessor(
         val waiter: Waiter = assignWaiter(customerGroup) ?: return rejectForNoWaiter(customerGroup)
 
         if (customerGroup is CasualGroup && !assignTables(customerGroup)) {
-            FohReceptionLogger.logFohNoSeating(customerGroup.id, waiter.id!!)
+            // DOTO: try to fix the waiter.id
+            FohReceptionLogger.logFohNoSeating(customerGroup.id, waiter.id ?: getNextWaiterId())
             turnedAwayGroups.addLast(customerGroup)
             customerGroup.experience = ExperienceType.NEGATIVE
             customerGroup.isWaitingToBeSeated = false
@@ -166,7 +167,8 @@ class ArrivalProcessor(
     }
 
     private fun successfulSeating(customerGroup: CustomerGroup, waiters: List<Waiter>) {
-        val assignedTables: List<Table> = customerToTable[customerGroup]!!
+        // DOTO: fix empty list
+        val assignedTables: List<Table> = customerToTable[customerGroup] ?: listOf()
         val mergeId: Id = assignedTables.minBy { it.id }.id
         if (assignedTables.size > 1) {
             FohReceptionLogger.logFohMergingTables(

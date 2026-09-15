@@ -20,14 +20,14 @@ class Restaurant(
     private val stock: Stock
 ) {
     private val eventCustomers: List<EventGroup> = listOf()
-    private val customerQueue: ArrayDeque<CustomerGroup> = ArrayDeque<CustomerGroup>()
+    private val customerQueue: ArrayDeque<CustomerGroup> = ArrayDeque()
     private val frontOfHouse: FrontOfHouse
     private val kitchen: Kitchen
 
     init {
-        val pantry: Pantry = Pantry(stock)
-        val orderQueue: ArrayDeque<Order> = ArrayDeque<Order>()
-        val countertop: Countertop = Countertop(pantry, orderQueue, staff.cooks)
+        val pantry = Pantry(stock)
+        val orderQueue: ArrayDeque<Order> = ArrayDeque()
+        val countertop = Countertop(pantry, orderQueue, staff.cooks)
         frontOfHouse = FrontOfHouse(tables, staff.waiters, staff.drivers, countertop)
         kitchen = Kitchen(staff.cooks, pantry, orderQueue, restaurantStats.restaurantType)
     }
@@ -99,7 +99,7 @@ class Restaurant(
         val iterator = customerQueue.iterator()
         while (iterator.hasNext()) {
             val customerGroup = iterator.next()
-            val keepInQueue = frontOfHouse.processArrivalSeatingOrdering(customerGroup) ||
+            val keepInQueue = frontOfHouse.processArrival(customerGroup, restaurantStats.menu) ||
                 customerGroup.isWaitingToBeSeated
             if (!keepInQueue) {
                 iterator.remove()

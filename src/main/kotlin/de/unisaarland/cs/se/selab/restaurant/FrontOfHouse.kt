@@ -8,7 +8,13 @@ import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.customer.EventGroup
 import de.unisaarland.cs.se.selab.customer.RegularGroup
 import de.unisaarland.cs.se.selab.enums.ActionType
-import de.unisaarland.cs.se.selab.restaurant.helpers.*
+import de.unisaarland.cs.se.selab.food.Recipe
+import de.unisaarland.cs.se.selab.restaurant.helpers.ArrivalProcessor
+import de.unisaarland.cs.se.selab.restaurant.helpers.DeliveryProcessor
+import de.unisaarland.cs.se.selab.restaurant.helpers.EatingProcessor
+import de.unisaarland.cs.se.selab.restaurant.helpers.EscortingProcessor
+import de.unisaarland.cs.se.selab.restaurant.helpers.RatingProcessor
+import de.unisaarland.cs.se.selab.restaurant.helpers.ServingProcessor
 
 // Priorities per customer group type, used when ordering groups for serving/eating/escorting/rating.
 // DOIT: maybe move this to the customer classes
@@ -21,6 +27,7 @@ class FrontOfHouse(
     private val tables: List<Table>,
     private val waiters: List<Waiter>,
     private val drivers: List<Driver>,
+    private val countertop: Countertop
 ) {
     private val customerToTable: MutableMap<CustomerGroup, List<Table>> = mutableMapOf()
     private val inHouseGroupsToWaiter: MutableMap<CustomerGroup, Waiter> = mutableMapOf()
@@ -90,13 +97,13 @@ class FrontOfHouse(
         }
         return result
     }
-
-    private val seating = SeatingCoordinator(
-        tables = tables,
-        waiters = waiters,
-        customerToTable = customerToTable,
-        turnedAwayGroups = turnedAwayGroups,
-        recruitWaitersForEventGroup = { actionType, eventGroup -> recruitWaitersForEventGroup(actionType, eventGroup) },
+    private val arrival = ArrivalProcessor(
+        tables,
+        waiters,
+        customerToTable,
+        turnedAwayGroups,
+        ::recruitWaitersForEventGroup,
+        countertop
     )
 
     private val serving = ServingProcessor(
@@ -135,15 +142,22 @@ class FrontOfHouse(
         getServingPriority = { group -> getServingPriority(group) },
     )
 
-    /** process arrival, seating, ordering; overloaded in seating coordinator */
-    fun processArrivalSeatingOrdering(customerGroup: CustomerGroup): Boolean =
-        seating.processArrivalSeatingOrdering(customerGroup)
+    /** Call with CustomerGroup and menu.
+     *  Returns true if CustomerGroup was processed successfully, false otherwise.
+     *  To decide whether to remove the CustomerGroup from the customerQueue use the formula
+     *  processArrivalSeatingOrdering(customerGroup, menu) || customerGroup.isWaitingToBeSeated.
+     *  If true keep in the customerQueue, otherwise remove from the customerQueue. */
+    fun processArrival(customerGroup: CustomerGroup, menu: List<Recipe>): Boolean =
+        arrival.processArrival(customerGroup, menu)
 
-    /** called with Regular or EventGroup; returns true if reservation made side effects on tables, customerToTable */ //    fun reserveTables(regularOrEventCustomerGroup: CustomerGroup): Boolean =
-    //        seating.reserveTables(regularOrEventCustomerGroup)
+    /** Call only with Regular- or EventGroup.
+     *  Returns true if reservation has been made and performs side effects on tables and customerToTable. */
+    fun reserveTables(regularOrEventCustomerGroup: CustomerGroup): Boolean =
+        arrival.reserveTables(regularOrEventCustomerGroup)
 
-    /**  Logs status and then performs side effect by resetting counters */
-    fun logAndResetSeatingOrderingTickStatus() = seating.logAndResetSeatingOrderingTickStatus()
+    /** Call after processArrivalSeatingOrdering has been called with each customerGroup in customerQueue.
+     *  Logs status and then performs side effect by resetting counters. */
+    fun logAndResetSeatingOrderingTickStatus() = arrival.logAndResetSeatingOrderingTickStatus()
 
     /** process serving */
     fun processServing() = serving.processServing()

@@ -1,4 +1,3 @@
-// uses foodRecipiesNoBasicDishOfItsType.json
 {
   "restaurants": [
     {
@@ -20,6 +19,7 @@
       },
       "waitstaff": 1,
       "deliveryDrivers": 3,
+      "event": false,
       "tables": [
         { "id": 2, "type": "COMMON", "size": 9 },
         { "id": 3, "type": "COMMON", "size": 2 },

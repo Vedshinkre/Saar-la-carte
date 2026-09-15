@@ -241,6 +241,7 @@ class FrontOfHouse(
 
         return Pair(positive, negative)
     }
+
     private fun removeProcessedGroup(group: CustomerGroup) {
         if (getInHouseGroups().contains(group)) {
             removeInHouseGroup(group)

@@ -65,6 +65,7 @@ class ParserController {
         ) ?: return simConfig
 
         if (!crossvalidateScenario(scenarioFilePath)) return simConfig
+        InitialAndPrepLogger.logInitialization(true, scenarioFilePath)
 
         simConfig.restaurants = restaurantData.second
         simConfig.ingredients = foodData.first

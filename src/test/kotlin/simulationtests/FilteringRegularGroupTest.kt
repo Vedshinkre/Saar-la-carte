@@ -1,10 +1,6 @@
 package simulationtests
 
-import de.unisaarland.cs.se.selab.customer.CasualGroup
-import de.unisaarland.cs.se.selab.customer.CustomerGroup
-import de.unisaarland.cs.se.selab.customer.EventGroup
-import de.unisaarland.cs.se.selab.customer.FoodPreference
-import de.unisaarland.cs.se.selab.customer.RegularGroup
+import de.unisaarland.cs.se.selab.customer.*
 import de.unisaarland.cs.se.selab.enums.RatingLikelihood
 import de.unisaarland.cs.se.selab.enums.RestaurantType
 import de.unisaarland.cs.se.selab.enums.TableType
@@ -12,6 +8,7 @@ import de.unisaarland.cs.se.selab.system.Simulation
 import de.unisaarland.cs.se.selab.system.SimulationConfig
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertIs
 import kotlin.test.assertSame
 
 class FilteringRegularGroupTest {

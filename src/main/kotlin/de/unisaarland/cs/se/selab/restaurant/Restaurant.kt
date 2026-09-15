@@ -113,19 +113,13 @@ class Restaurant(
     fun isDriverAvailable(): Boolean = frontOfHouse.isDriverAvailable()
 
     // statistics
-    /**
-     * gets a number of cooked meals
-     */
+    /** gets a number of cooked meals */
     fun getNumberOfCookedMeals(): Int = kitchen.numberOfCookedMeals
 
-    /**
-     * gets a number of cooked meals
-     */
+    /** gets a number of cooked meals */
     fun getNumberOfCustomersServed(): Int = frontOfHouse.numberOfCustomersServed
 
-    /**
-     * gets a number of cooked meals
-     */
+    /** gets a number of cooked meals */
     fun getNumberOfCustomersDelivered(): Int = frontOfHouse.numberOfCustomersDelivered
 
     /** Call with CustomerGroup.

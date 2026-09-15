@@ -22,16 +22,18 @@ import java.io.IOException
  */
 class ParserController {
 
-    private var foodParser: FoodParser = FoodParser()
-    private var restaurantParser: RestaurantParser = RestaurantParser()
-    private var scenarioParser: ScenarioParser = ScenarioParser()
+    private val foodParser: FoodParser = FoodParser()
+    private val restaurantParser: RestaurantParser = RestaurantParser()
+    private val scenarioParser: ScenarioParser = ScenarioParser()
     private val simConfig: SimulationConfig = SimulationConfig()
 
     /**
      * delagtes JsonObjects to muliple Parsers and Validates File with JsonSkema
      **/
     fun parseFiles(
-        foodFilePath: String, restaurantsFilePath: String, scenarioFilePath: String
+        foodFilePath: String,
+        restaurantsFilePath: String,
+        scenarioFilePath: String
     ): SimulationConfig {
         validateFilesWithSchema(foodFilePath, "classpath:/schema/food.schema")
         validateFilesWithSchema(restaurantsFilePath, "classpath:/schema/restaurants.schema")
@@ -39,7 +41,7 @@ class ParserController {
         val foodStr = File(foodFilePath).readText()
         val foodObject = Json.parseToJsonElement(foodStr).jsonObject
         val ingredientArray = (foodObject["ingredients"] ?: error("null assertion message")) as JsonArray
-        val recipeArray = (foodObject["recipes"] ?: error("null assertion message"))
+        val recipeArray = (foodObject["recipes"] ?: error("null assertion message")).jsonArray
         val restaurantsStr = File(restaurantsFilePath).readText()
         val restaurantsArray = Json.parseToJsonElement(restaurantsStr).jsonObject["restaurants"]?.jsonArray
         val scenarioStr = File(scenarioFilePath).readText()
@@ -49,12 +51,20 @@ class ParserController {
 
         val foodData = foodParser.parse(ingredientArray, recipeArray)
         val stock = Stock(foodData.first)
+        if (restaurantsArray == null) {
+            return simConfig
+        }
         val restaurantData = restaurantParser.parseRestaurants(
             restaurantsArray,
             foodData.second,
             stock,
         )
-
+        if (incidentJson == null) {
+            return simConfig
+        }
+        if (customerJson == null) {
+            return simConfig
+        }
         val scenarioData = scenarioParser.parseScenario(
             incidentJson,
             customerJson,

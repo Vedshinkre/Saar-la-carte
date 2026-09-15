@@ -1,0 +1,16 @@
+{
+  "ingredients": [
+    {"name": "Chicken", "unit": "G", "packagingVolume": 250, "bestBefore": 5},
+    {"name": "Tomato", "unit": "G", "packagingVolume": 100, "bestBefore": 5}
+  ],
+  "recipes": [
+    {
+      "id": 1, "name": "Grilled Chicken", "duration": 20, "basicDishFor": "EUROPEAN",
+      "cookType": ["TOURNANT"], "ingredients": [{"name": "Chicken", "unit": "G", "amount": 250}]
+    },
+    {
+      "id": 2, "name": "Tomato Soup", "duration": 10,
+      "cookType": ["TOURNANT"], "ingredients": [{"name": "Tomato", "unit": "G", "amount": 100}]
+    }
+  ]
+}

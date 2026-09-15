@@ -1,5 +1,5 @@
 package staffchangeincidenttests
-/*
+
 import de.unisaarland.cs.se.selab.actors.Cook
 import de.unisaarland.cs.se.selab.actors.Driver
 import de.unisaarland.cs.se.selab.actors.RestaurantStaff
@@ -27,11 +27,9 @@ class StaffChangeIncidentTest {
         cookType: CookType?,
         staff: RestaurantStaff
     ): StaffChangeIncident {
-        // Assuming I'd and Evening are typealiases for Int or can be instantiated simply
         return StaffChangeIncident(
             id = 1,
             evening = 1,
-            restaurant = 1,
             number = number,
             staffType = staffType,
             cookType = cookType,
@@ -52,7 +50,8 @@ class StaffChangeIncidentTest {
         // Originally 2, added 2 = 4 total
         assertEquals(4, staff.cooks.size)
         // Verify the newly added cook is of the correct type
-        assertEquals(CookType.TOURNANT, staff.cooks.last().type)
+        val tournantCount = staff.cooks.count { it.type == CookType.TOURNANT }
+        assertEquals(3, tournantCount)
     }
 
     @Test
@@ -65,8 +64,9 @@ class StaffChangeIncidentTest {
 
         // Originally 2, removed 1 = 1 total
         assertEquals(1, staff.cooks.size)
-        // Ensure the remaining cook is the ROAST one (TOURNANT was removed)
-        assertEquals(CookType.ROAST, staff.cooks.first().type)
+        // Verify that no tournant COOK IS LEFT
+        val tournantCount = staff.cooks.count { it.type == CookType.TOURNANT }
+        assertEquals(0, tournantCount)
     }
 
     @Test
@@ -125,5 +125,3 @@ class StaffChangeIncidentTest {
         assertEquals(0, staff.drivers.size)
     }
 }
-
- */

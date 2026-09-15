@@ -191,7 +191,7 @@ class CustomerParser {
             jsonObject.getValue("restaurantTypes").jsonArray
                 .parseListOf { stringToRestaurantType(it.jsonPrimitive.content) }
         val eventEvening: Evening = jsonObject.getValue("eventEvening").jsonPrimitive.int
-        val eventDishes: Map<RestaurantType, String> = Json.decodeFromJsonElement(jsonObject["favoriteDishes"]!!)
+        val eventDishes: Map<RestaurantType, String> = Json.decodeFromJsonElement(jsonObject.getValue("favoriteDishes"))
 
         validateEventGroupFavoriteDishForRestaurantTypeExistence(restaurantTypes, eventDishes)
         validateEventGroupFavoriteDishExistence(recipes, eventDishes)

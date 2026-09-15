@@ -23,14 +23,13 @@ class ArrivalProcessor(
     private val waiters: List<Waiter>,
     private val customerToTable: MutableMap<CustomerGroup, List<Table>>,
     private val turnedAwayGroups: MutableList<CustomerGroup>,
+    private val countertop: Countertop,
     private val recruitWaitersForEventGroup: (ActionType, EventGroup) -> List<Waiter>,
-    private val countertop: Countertop
+    private val getNextWaiterId: () -> Id
 ) {
     private var numberOfTablesSeatedOn: Int = 0
     private var numberOfCustomersSeated: Int = 0
     private var numberOfWaitersSeated: Int = 0
-    private var nextWaiterId: Id = 1
-        get() = field++
 
     /** Call with CustomerGroup and menu.
      *  Returns true if CustomerGroup was processed successfully, false otherwise.
@@ -62,7 +61,7 @@ class ArrivalProcessor(
                 break
             }
             if (waiter.id == null) {
-                waiter.id = nextWaiterId
+                waiter.id = getNextWaiterId()
             }
             val remainingSeatingLoad: Int = Constants.ACTION_LIMIT - waiter.tickLoads[ActionType.SEAT]!!
             val seatingLoad: Int = min(remainingSeatingLoad, eventGroupSize)
@@ -195,11 +194,11 @@ class ArrivalProcessor(
 
         if (currentLoadPool.isNotEmpty()) {
             return currentLoadPool.sortedWith(compareByDescending(nullsLast()) { it.id }).sortedBy { it.currentLoad }
-                .last().also { if (it.id == null) it.id = nextWaiterId }
+                .last().also { if (it.id == null) it.id = getNextWaiterId() }
         }
 
         return freeWaiters.sortedWith(compareBy(nullsLast()) { it.id }).sortedBy { it.currentLoad }.first()
-            .also { if (it.id == null) it.id = nextWaiterId }
+            .also { if (it.id == null) it.id = getNextWaiterId() }
     }
 
     private fun assignTables(casualGroup: CasualGroup): Boolean {

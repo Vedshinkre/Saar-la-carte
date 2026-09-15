@@ -27,8 +27,9 @@ class EscortingProcessor(
      */
     fun processEscorting() {
         val inHouseGroups = getInHouseGroups().sortedWith(compareBy({ getServingPriority(it) }, { it.id }))
-        var waitstaffNumber = 0
         var customerEscortingNumber = 0
+        var waitstaffNumber = 0
+
         inHouseGroups.forEach {
             val order = it.currentOrder
             if (order != null && order.areAllDishesEaten()) {
@@ -82,8 +83,8 @@ class EscortingProcessor(
         )
     }
 
-    /** escorts customers still inside the FOH after closing time
-     * @return return the groups that need a forced negative rating
+    /** Escorts customers still inside the FOH after closing time
+     * @return return the Customer groups that need a forced negative rating
      * */
     fun escortAllAtClosing(): List<CustomerGroup> {
         val groups = getInHouseGroups()

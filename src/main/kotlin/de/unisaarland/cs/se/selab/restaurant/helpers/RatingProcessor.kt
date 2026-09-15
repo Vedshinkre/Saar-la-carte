@@ -17,7 +17,7 @@ class RatingProcessor(
      * Processes customer ratings and updates the positive and negative rating counts.
      * @param positiveRatings current number of positive ratings
      * @param negativeRatings current number of negative ratings
-     * @return updated positive and negative rating counts
+     * @return updated Positive and Negative rating counts.
      */
     fun processRatings(
         positiveRatings: Int,
@@ -34,10 +34,10 @@ class RatingProcessor(
                 dish.status == DishStatus.ABORTED
             }
         }
+        var groupsGivingRatings = 0
         val groupsToRate = (filteredInHouseGroups + filteredDeliveryGroups + turnedAwayGroups).sortedWith(
             compareBy({ getServingPriority(it) }, { it.id })
         )
-        var groupsGivingRatings = 0
         groupsToRate.forEach {
             when (it.determineRating()) {
                 RatingType.POSITIVE -> {

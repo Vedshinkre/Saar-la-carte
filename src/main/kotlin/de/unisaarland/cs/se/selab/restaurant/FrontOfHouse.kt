@@ -10,8 +10,8 @@ import de.unisaarland.cs.se.selab.customer.RegularGroup
 import de.unisaarland.cs.se.selab.enums.ActionType
 import de.unisaarland.cs.se.selab.restaurant.helpers.DeliveryProcessor
 import de.unisaarland.cs.se.selab.restaurant.helpers.EatingProcessor
-import de.unisaarland.cs.se.selab.restaurant.helpers.EscortingCoordinator
-import de.unisaarland.cs.se.selab.restaurant.helpers.RatingCoordinator
+import de.unisaarland.cs.se.selab.restaurant.helpers.EscortingProcessor
+import de.unisaarland.cs.se.selab.restaurant.helpers.RatingProcessor
 import de.unisaarland.cs.se.selab.restaurant.helpers.SeatingCoordinator
 import de.unisaarland.cs.se.selab.restaurant.helpers.ServingProcessor
 
@@ -114,14 +114,14 @@ class FrontOfHouse(
         addCustomersDelivered = { count -> numberOfCustomersDelivered += count },
     )
 
-    private val escorting = EscortingCoordinator(
+    private val escorting = EscortingProcessor(
         customerToTable = customerToTable,
         inHouseGroupsToWaiter = inHouseGroupsToWaiter,
         getInHouseGroups = { getInHouseGroups() },
         getServingPriority = { group -> getServingPriority(group) },
     )
 
-    private val rating = RatingCoordinator(
+    private val rating = RatingProcessor(
         deliveryGroups = deliveryGroups,
         turnedAwayGroups = turnedAwayGroups,
         getInHouseGroups = { getInHouseGroups() },

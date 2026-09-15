@@ -11,7 +11,7 @@ import de.unisaarland.cs.se.selab.loggers.FohServiceLogger.logFohEscortingStatus
 import de.unisaarland.cs.se.selab.restaurant.Table
 
 /** escorting coordinator */
-class EscortingCoordinator(
+class EscortingProcessor(
     private val customerToTable: MutableMap<CustomerGroup, List<Table>>,
     private val inHouseGroupsToWaiter: Map<CustomerGroup, Waiter>,
     private val getInHouseGroups: () -> List<CustomerGroup>,

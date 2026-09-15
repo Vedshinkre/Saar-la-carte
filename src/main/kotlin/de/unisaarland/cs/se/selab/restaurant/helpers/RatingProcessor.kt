@@ -7,7 +7,7 @@ import de.unisaarland.cs.se.selab.loggers.FohServiceLogger.logCustomerRateRestau
 import de.unisaarland.cs.se.selab.loggers.FohServiceLogger.logRatingStatus
 
 /** rating coordinator */
-class RatingCoordinator(
+class RatingProcessor(
     private val deliveryGroups: List<CustomerGroup>,
     private val turnedAwayGroups: List<CustomerGroup>,
     private val getInHouseGroups: () -> List<CustomerGroup>,

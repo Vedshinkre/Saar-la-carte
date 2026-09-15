@@ -17,7 +17,7 @@ import kotlin.test.assertFailsWith
 
 class RestaurantParserTest {
 
-
+// DETEKT Needless blank lines
     private val basePath = "src/test/resources/RestaurantParserTests/"
 
     private lateinit var parser: RestaurantParser

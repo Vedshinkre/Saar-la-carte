@@ -5,7 +5,11 @@ import de.unisaarland.cs.se.selab.enums.StaffType
 import de.unisaarland.cs.se.selab.food.Ingredient
 import de.unisaarland.cs.se.selab.food.Recipe
 import de.unisaarland.cs.se.selab.food.Stock
-import de.unisaarland.cs.se.selab.incidents.*
+import de.unisaarland.cs.se.selab.incidents.Incident
+import de.unisaarland.cs.se.selab.incidents.PackagingChangeIncident
+import de.unisaarland.cs.se.selab.incidents.RecipeChangeIncident
+import de.unisaarland.cs.se.selab.incidents.StaffChangeIncident
+import de.unisaarland.cs.se.selab.incidents.UnavailabilityIncident
 import de.unisaarland.cs.se.selab.restaurant.Restaurant
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
@@ -44,11 +48,16 @@ class IncidentParser {
 
             try {
                 parseIncident(
-                    json = json, restaurants = restaurants, ingredients = ingredients, stock = stock, recipes = recipes
+                    json = json,
+                    restaurants = restaurants,
+                    ingredients = ingredients,
+                    stock = stock,
+                    recipes = recipes
                 )
             } catch (exception: IllegalArgumentException) {
                 throw IllegalArgumentException(
-                    "Invalid incident: $element", exception
+                    "Invalid incident: $element",
+                    exception
                 )
             }
         }
@@ -65,7 +74,10 @@ class IncidentParser {
         val evening = json.requiredInt(EVENING)
         return when (val type = json.requiredString(TYPE)) {
             "STAFF" -> parseStaffIncident(
-                json = json, id = id, evening = evening, restaurants = restaurants
+                json = json,
+                id = id,
+                evening = evening,
+                restaurants = restaurants
             )
 
             "RECIPE" -> parseRecipeChangeIncident(
@@ -101,22 +113,38 @@ class IncidentParser {
     }
 
     private fun parseUnavailabilityIncident(
-        id: Int, evening: Int, ingredientName: String, ingredients: List<Ingredient>, duration: Int, stock: Stock
+        id: Int,
+        evening: Int,
+        ingredientName: String,
+        ingredients: List<Ingredient>,
+        duration: Int,
+        stock: Stock
     ): UnavailabilityIncident {
         val ingredient = ingredients.requiredIngredient(ingredientName)
 
         return UnavailabilityIncident(
-            id = id, evening = evening, ingredient = ingredient, stock = stock, duration = duration
+            id = id,
+            evening = evening,
+            ingredient = ingredient,
+            stock = stock,
+            duration = duration
         )
     }
 
     private fun parsePackagingChangeIncident(
-        id: Int, evening: Int, ingredientName: String, ingredients: List<Ingredient>, packagingVolume: Int
+        id: Int,
+        evening: Int,
+        ingredientName: String,
+        ingredients: List<Ingredient>,
+        packagingVolume: Int
     ): PackagingChangeIncident {
         val ingredient = ingredients.requiredIngredient(ingredientName)
 
         return PackagingChangeIncident(
-            id = id, evening = evening, ingredient = ingredient, packagingVolume = packagingVolume
+            id = id,
+            evening = evening,
+            ingredient = ingredient,
+            packagingVolume = packagingVolume
         )
     }
 
@@ -131,12 +159,19 @@ class IncidentParser {
         val ingredient = ingredients.requiredIngredient(ingredientName)
 
         return RecipeChangeIncident(
-            id = id, evening = evening, ingredient = ingredient, adaptation = adaptation, recipes = recipes
+            id = id,
+            evening = evening,
+            ingredient = ingredient,
+            adaptation = adaptation,
+            recipes = recipes
         )
     }
 
     private fun parseStaffIncident(
-        json: JsonObject, id: Int, evening: Int, restaurants: List<Restaurant>
+        json: JsonObject,
+        id: Int,
+        evening: Int,
+        restaurants: List<Restaurant>
     ): StaffChangeIncident {
         val staffType = json.requiredEnum<StaffType>(STAFF_TYPE)
         val restaurantId = json.requiredInt(RESTAURANT_ID)
@@ -194,7 +229,8 @@ class IncidentParser {
             enumValueOf<T>(value)
         } catch (exception: IllegalArgumentException) {
             throw IllegalArgumentException(
-                "Invalid value '$value' for enum property '$key'.", exception
+                "Invalid value '$value' for enum property '$key'.",
+                exception
             )
         }
     }

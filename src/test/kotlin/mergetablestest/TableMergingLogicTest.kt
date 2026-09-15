@@ -1,5 +1,5 @@
 package mergetablestest
-/*
+
 import de.unisaarland.cs.se.selab.customer.CasualGroup
 import de.unisaarland.cs.se.selab.customer.EventGroup
 import de.unisaarland.cs.se.selab.enums.RatingLikelihood
@@ -167,4 +167,3 @@ class TableMergingLogicTest {
         assertEquals(TableStatus.RESERVED, table2.status)
     }
 }
-*/

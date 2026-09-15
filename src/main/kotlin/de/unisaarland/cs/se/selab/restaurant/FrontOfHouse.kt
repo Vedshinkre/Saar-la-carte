@@ -71,36 +71,6 @@ class FrontOfHouse(
         }
     }
 
-    private fun recruitWaiterForServing(customerGroup: EventGroup): List<Waiter> {
-        val required = customerGroup.currentOrder?.getServableDishes()?.size ?: 0
-        val eligible = waiters.filter { it.getTickLoad(ActionType.SERVE) < Constants.ACTION_LIMIT }
-        val waiterToCookedDishes: MutableMap<Waiter, Int> = mutableMapOf()
-        eligible.forEach { targetWaiter ->
-            var res = 0
-            val customerGroups = inHouseGroupsToWaiter.filterValues {
-                it == targetWaiter
-            }.keys
-            customerGroups.forEach {
-                val num = it.currentOrder!!.getServableDishes().size
-                res += num
-            }
-            waiterToCookedDishes[targetWaiter] = res
-        }
-        val sortedWaiterToCookedDishes: MutableMap<Waiter, Int> =
-            waiterToCookedDishes.entries.sortedBy { it.key.id }.sortedByDescending { it.value }
-                .associate { it.key to it.value }.toMutableMap()
-        val sortedWaiters = sortedWaiterToCookedDishes.keys.toList()
-        val result = mutableListOf<Waiter>()
-        var recruitedCapacity = 0
-        for (waiter in sortedWaiters) {
-            if (recruitedCapacity >= required) {
-                break
-            }
-            result.add(waiter)
-            recruitedCapacity += Constants.ACTION_LIMIT - waiter.getTickLoad(ActionType.SERVE)
-        }
-        return result
-    }
 
     private val arrival = ArrivalProcessor(
         tables,

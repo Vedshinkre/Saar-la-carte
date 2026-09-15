@@ -31,7 +31,9 @@ class ParserController {
      * delagtes JsonObjects to muliple Parsers and Validates File with JsonSkema
      **/
     fun parseFiles(
-        foodFilePath: String, restaurantsFilePath: String, scenarioFilePath: String
+        foodFilePath: String,
+        restaurantsFilePath: String,
+        scenarioFilePath: String
     ): SimulationConfig {
         validateFilesWithSchema(foodFilePath, "classpath:/schema/food.schema")
         validateFilesWithSchema(restaurantsFilePath, "classpath:/schema/restaurants.schema")
@@ -92,8 +94,8 @@ class ParserController {
     }
 
     private fun crossvalidateIncidents(): Boolean {
-        var incidents = simConfig.incidents
-        var restaurants = simConfig.restaurants
+        val incidents = simConfig.incidents
+        val restaurants = simConfig.restaurants
         val seenIds = mutableSetOf<Int>()
         for (incident in incidents) {
             require(!seenIds.add(incident.id))

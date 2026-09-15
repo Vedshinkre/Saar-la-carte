@@ -85,14 +85,14 @@ class ServingProcessor(
 
     /** serves an EVENT group, recruits as many waiters as needed. */
     private fun serveEventTable(group: EventGroup, order: Order) {
-        val tableId = getAssignedTableId(group) ?: return // invariant, could be asserted
+        val tableId = getAssignedTableId(group) ?: return // invariant could be asserted
 
         val readyDishes = order.getServableDishes()
         if (readyDishes.isEmpty()) return
 
         val complete = order.areAllDishesCooked()
 
-        // proceed only if order is either complete or can be partially served.
+        // proceed only if the order is either complete or can be partially served.
         // Logs with the FIRST waiter that could've served, if any.
         if (!order.hasServingStarted() && !complete && isWithinTimeWindow(order)) {
             val candidate = recruitWaitersForEventGroup(ActionType.SERVE, group).firstOrNull()

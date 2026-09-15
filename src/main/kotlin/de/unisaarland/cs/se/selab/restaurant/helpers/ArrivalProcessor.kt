@@ -43,6 +43,8 @@ class ArrivalProcessor(
             return false
         }
 
+        customerGroup.placeOrder(waiters, menu, countertop)
+
         return turnedAwayGroups.first().visitingAt == customerGroup.visitingAt
     }
 

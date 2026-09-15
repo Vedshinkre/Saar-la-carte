@@ -65,7 +65,6 @@ class Restaurant(
      * Simulates one tick
      */
     fun simulateTick() {
-        frontOfHouse.clearActionLoads()
         processArrivalSeatingOrdering()
 
         kitchen.processCooking()
@@ -100,7 +99,7 @@ class Restaurant(
         val iterator = customerQueue.iterator()
         while (iterator.hasNext()) {
             val customerGroup = iterator.next()
-            val keepInQueue = frontOfHouse.processArrivalSeatingOrdering(customerGroup, restaurantStats.menu) ||
+            val keepInQueue = frontOfHouse.processArrivalSeatingOrdering(customerGroup) ||
                 customerGroup.isWaitingToBeSeated
             if (!keepInQueue) {
                 iterator.remove()

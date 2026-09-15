@@ -113,12 +113,12 @@ class Kitchen(
             }
             orderQueue.removeFirst()
         }
-        for (cook in cooks){
+        for (cook in cooks) {
             cook.id = null
-            cook.orderId= null
-            cook.currentRecipe=null
+            cook.orderId = null
+            cook.currentRecipe = null
             cook.setRemainingTicks(0)
-            cook.isCooking=false
+            cook.isCooking = false
         }
     }
 

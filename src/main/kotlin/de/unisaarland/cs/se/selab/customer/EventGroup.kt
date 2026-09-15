@@ -21,13 +21,6 @@ class EventGroup(
     var currentRestaurantType: RestaurantType? = null
 
     /**
-     * sets current  restaurant Type
-     */
-    fun setCurrentRestaurantType(restaurantType: RestaurantType) {
-        this.currentRestaurantType = restaurantType
-    }
-
-    /**
      * beep beep I;m a document
      */
     fun visitingInThreeEvenings(): Boolean {

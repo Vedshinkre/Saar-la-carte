@@ -10,6 +10,7 @@ import de.unisaarland.cs.se.selab.customer.RegularGroup
 import de.unisaarland.cs.se.selab.enums.ActionType
 import de.unisaarland.cs.se.selab.enums.ExperienceType
 import de.unisaarland.cs.se.selab.enums.TableStatus
+import de.unisaarland.cs.se.selab.food.Recipe
 import de.unisaarland.cs.se.selab.loggers.FohReceptionLogger
 import de.unisaarland.cs.se.selab.loggers.InitialAndPrepLogger
 import de.unisaarland.cs.se.selab.restaurant.Countertop
@@ -36,12 +37,13 @@ class ArrivalProcessor(
      *  To decide whether to remove the CustomerGroup from the customerQueue use the formula
      *  processArrivalSeatingOrdering(customerGroup, menu) || customerGroup.isWaitingToBeSeated.
      *  If true keep in the customerQueue, otherwise remove from the customerQueue. */
-    fun processArrivalSeatingOrdering(customerGroup: CustomerGroup/*, menu: List<Recipe>*/): Boolean {
+    fun processArrivalSeatingOrdering(customerGroup: CustomerGroup, menu: List<Recipe>): Boolean {
         val isInHouse: Boolean =
             customerGroup is RegularGroup || (customerGroup is CasualGroup && !customerGroup.wantsDelivery)
         if (isInHouse && !seatRegularOrCasualGroup(customerGroup)) {
             return false
         }
+        customerGroup.placeOrder(waiters, menu, countertop)
 
         return turnedAwayGroups.first().visitingAt == customerGroup.visitingAt
     }
@@ -51,7 +53,7 @@ class ArrivalProcessor(
      *  To decide whether to remove the EventGroup from the customerQueue use the formula
      *  processArrivalSeatingOrdering(customerGroup, menu) || customerGroup.isWaitingToBeSeated.
      *  If true keep in the customerQueue, otherwise remove from the customerQueue. */
-    fun processArrivalSeatingOrdering(eventGroup: EventGroup/*, menu: List<Recipe>*/): Boolean {
+    fun processArrivalSeatingOrdering(eventGroup: EventGroup, menu: List<Recipe>): Boolean {
         val recruitedWaiters: List<Waiter> = recruitWaitersForEventGroup(ActionType.SEAT, eventGroup)
         val consumedWaiters: MutableList<Waiter> = mutableListOf()
         var eventGroupSize: Int = eventGroup.size
@@ -78,6 +80,7 @@ class ArrivalProcessor(
         }
 
         successfulSeating(eventGroup, consumedWaiters)
+        eventGroup.placeOrder(waiters, menu, countertop)
         return turnedAwayGroups.first().visitingAt == eventGroup.visitingAt
     }
 

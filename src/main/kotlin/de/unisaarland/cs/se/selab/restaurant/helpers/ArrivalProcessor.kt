@@ -12,16 +12,18 @@ import de.unisaarland.cs.se.selab.enums.ExperienceType
 import de.unisaarland.cs.se.selab.enums.TableStatus
 import de.unisaarland.cs.se.selab.loggers.FohReceptionLogger
 import de.unisaarland.cs.se.selab.loggers.InitialAndPrepLogger
+import de.unisaarland.cs.se.selab.restaurant.Countertop
 import de.unisaarland.cs.se.selab.restaurant.Table
 import kotlin.math.min
 
 /** Encapsulates seating and ordering functionality. */
-class SeatingCoordinator(
+class ArrivalProcessor(
     private val tables: List<Table>,
     private val waiters: List<Waiter>,
     private val customerToTable: MutableMap<CustomerGroup, List<Table>>,
     private val turnedAwayGroups: MutableList<CustomerGroup>,
-    private val recruitWaitersForEventGroup: (ActionType, EventGroup) -> List<Waiter>
+    private val recruitWaitersForEventGroup: (ActionType, EventGroup) -> List<Waiter>,
+    private val countertop: Countertop
 ) {
     private var numberOfTablesSeatedOn: Int = 0
     private var numberOfCustomersSeated: Int = 0
@@ -34,7 +36,7 @@ class SeatingCoordinator(
      *  To decide whether to remove the CustomerGroup from the customerQueue use the formula
      *  processArrivalSeatingOrdering(customerGroup, menu) || customerGroup.isWaitingToBeSeated.
      *  If true keep in the customerQueue, otherwise remove from the customerQueue. */
-    fun processArrivalSeatingOrdering(customerGroup: CustomerGroup/*, menu: List<Recipe> */): Boolean {
+    fun processArrivalSeatingOrdering(customerGroup: CustomerGroup/*, menu: List<Recipe>*/): Boolean {
         val isInHouse: Boolean =
             customerGroup is RegularGroup || (customerGroup is CasualGroup && !customerGroup.wantsDelivery)
         if (isInHouse && !seatRegularOrCasualGroup(customerGroup)) {

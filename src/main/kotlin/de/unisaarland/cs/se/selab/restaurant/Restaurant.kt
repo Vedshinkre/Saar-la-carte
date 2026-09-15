@@ -1,6 +1,7 @@
 package de.unisaarland.cs.se.selab.restaurant
 
 import de.unisaarland.cs.se.selab.Tick
+import de.unisaarland.cs.se.selab.Time
 import de.unisaarland.cs.se.selab.actors.RestaurantStaff
 import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.customer.EventGroup
@@ -32,7 +33,7 @@ class Restaurant(
     }
 
     /**
-     acceptDeliveryOrder returns if the maximum cook ticks of a dish in the order + current tick <= openingEndTick
+     acceptDeliveryOrder returns if the maximum cook ticks of a dish in the order and current tick <= openingEndTick
      */
     fun acceptDeliveryOrder(order: Order, openingEndTick: Tick): Boolean {
         return order.orderedAt == openingEndTick
@@ -64,6 +65,7 @@ class Restaurant(
      * Simulates one tick
      */
     fun simulateTick() {
+        frontOfHouse.clearActionLoads()
         processArrivalSeatingOrdering()
 
         kitchen.processCooking()
@@ -79,6 +81,14 @@ class Restaurant(
         )
         restaurantStats.positiveRatings = positiveRatings
         restaurantStats.negativeRatings = negativeRatings
+        if (restaurantStats.openingTickEnd == Time.getCurrentTick()) {
+            endEvening()
+        }
+    }
+
+    private fun endEvening() {
+        // free tables
+        frontOfHouse.endFohEvening()
     }
 
     /**

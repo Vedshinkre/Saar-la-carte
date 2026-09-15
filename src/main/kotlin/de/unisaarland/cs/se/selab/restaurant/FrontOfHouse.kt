@@ -75,6 +75,13 @@ class FrontOfHouse(
         return customerToTable.entries.first { it.key.id == customerId }.value.map { it.id }
     }
 
+    /** Clears the load of waiters */
+    fun clearActionLoads() {
+        waiters.forEach {
+            it.resetActionLoads()
+        }
+    }
+
     /** Call with CustomerGroup and menu.
      *  Returns true if CustomerGroup was processed successfully, false otherwise.
      *  To decide whether to remove the CustomerGroup from the customerQueue use the formula
@@ -301,7 +308,9 @@ class FrontOfHouse(
         val mergeId: Id = assignedTables.minBy { it.id }.id
         if (assignedTables.size > 1) {
             FohReceptionLogger.logFohMergingTables(
-                customerGroup.id, assignedTables.map { it.id }.sorted(), mergeId
+                customerGroup.id,
+                assignedTables.map { it.id }.sorted(),
+                mergeId
             )
         }
 
@@ -712,7 +721,8 @@ class FrontOfHouse(
         }
 
         customerToTable.remove(
-            customerToTable.keys.first { it.id == customerId })
+            customerToTable.keys.first { it.id == customerId }
+        )
     }
 
     /**
@@ -737,7 +747,10 @@ class FrontOfHouse(
                     waiter.escort(it)
                     val customersEscorted = customersBefore - it.customersRemainingInRestaurant
                     logFohEscorting(
-                        waiter.id!!, customersEscorted, it.id, getAssignedTableId(it.id).min()
+                        waiter.id!!,
+                        customersEscorted,
+                        it.id,
+                        getAssignedTableId(it.id).min()
                     )
 
                     waitstaffNumber++
@@ -749,7 +762,8 @@ class FrontOfHouse(
             }
         }
         logFohEscortingStatus(
-            waitstaffNumber, customerEscortingNumber
+            waitstaffNumber,
+            customerEscortingNumber
         )
     } // ESCORTING END
 
@@ -761,7 +775,8 @@ class FrontOfHouse(
      * @return updated positive and negative rating counts
      */
     fun processRatings(
-        positiveRatings: Int, negativeRatings: Int
+        positiveRatings: Int,
+        negativeRatings: Int
     ): Pair<Int, Int> {
         var positive = positiveRatings
         var negative = negativeRatings
@@ -785,7 +800,10 @@ class FrontOfHouse(
                     groupsGivingRatings++
 
                     logCustomerRateRestaurant(
-                        it.id, RatingType.POSITIVE, positive, negative
+                        it.id,
+                        RatingType.POSITIVE,
+                        positive,
+                        negative
                     )
                 }
 
@@ -794,7 +812,10 @@ class FrontOfHouse(
                     groupsGivingRatings++
 
                     logCustomerRateRestaurant(
-                        it.id, RatingType.NEGATIVE, positive, negative
+                        it.id,
+                        RatingType.NEGATIVE,
+                        positive,
+                        negative
                     )
                 }
 
@@ -804,4 +825,10 @@ class FrontOfHouse(
         logRatingStatus(groupsGivingRatings)
         return Pair(positive, negative)
     } // RATING END
+
+    // END EVENING START
+    /** escorts customers inside, frees tables, handles deliveries in closing time */
+    fun endFohEvening() {
+        // TODO()
+    }
 }

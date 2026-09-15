@@ -29,7 +29,9 @@ fun main(args: Array<String>) {
 
     val parser = ParserController()
     val simConfig = parser.parseFiles(cli.foodFilePath, cli.restaurantFilePath, cli.scenarioFilePath)
-
+    if (simConfig.wasInvalidFile) {
+        return
+    }
     val sim = Simulation(simConfig)
     sim.runSimulation()
 

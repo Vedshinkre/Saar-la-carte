@@ -1,0 +1,7 @@
+{
+  "customerGroups": [],
+  "incidents": [
+    { "id": 1, "type": "STAFF", "evening": 1, "restaurant": 1, "number": 1, "staffType": "WAITSTAFF" },
+    { "id": 2, "type": "UNAVAILABLE", "evening": 1, "ingredient": "rice", "duration": 2 }
+  ]
+}

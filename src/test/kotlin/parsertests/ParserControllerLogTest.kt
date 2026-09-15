@@ -87,8 +87,8 @@ class ParserControllerLogTest {
     }
 
     @Test
-    fun `BUG duplicate incident ids are not currently caught by crossvalidation`() {
-        val scenario = FIXTURES + "scenarioDuplicateIncidentId.json"
+    fun `distinct non-overlapping incidents pass crossvalidation`() {
+        val scenario = FIXTURES + "scenarioValidIncidents.json"
         val result = parse(FOOD_VALID, RESTAURANTS_VALID, scenario)
 
         assertEquals(
@@ -99,15 +99,27 @@ class ParserControllerLogTest {
     }
 
     @Test
-    fun `BUG overlapping unavailability incidents are not currently caught by crossvalidation`() {
+    fun `duplicate incident ids are rejected by crossvalidation`() {
+        val scenario = FIXTURES + "scenarioDuplicateIncidentId.json"
+        val result = parse(FOOD_VALID, RESTAURANTS_VALID, scenario)
+
+        assertEquals(
+            listOf(successLine(FOOD_VALID), successLine(RESTAURANTS_VALID), failLine(scenario)),
+            loggedLines()
+        )
+        assertTrue(result.wasInvalidFile)
+    }
+
+    @Test
+    fun `overlapping unavailability incidents are rejected by crossvalidation`() {
         val scenario = FIXTURES + "scenarioOverlappingUnavailability.json"
         val result = parse(FOOD_VALID, RESTAURANTS_VALID, scenario)
 
         assertEquals(
-            listOf(successLine(FOOD_VALID), successLine(RESTAURANTS_VALID), successLine(scenario)),
+            listOf(successLine(FOOD_VALID), successLine(RESTAURANTS_VALID), failLine(scenario)),
             loggedLines()
         )
-        assertFalse(result.wasInvalidFile)
+        assertTrue(result.wasInvalidFile)
     }
 
     @Test

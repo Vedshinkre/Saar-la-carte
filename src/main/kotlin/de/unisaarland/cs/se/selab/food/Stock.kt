@@ -79,8 +79,8 @@ class Stock( // 0 means available, > 0 means the number of evenings it remains u
 
     fun applyUnavailableDurations() {
         for (a in ingredients) {
-            var key1 = a.key
-            var value1 = a.value
+            val key1 = a.key
+            val value1 = a.value
             if (value1 > 0) {
                 val newDuration = value1 - 1
                 ingredients[key1] = newDuration

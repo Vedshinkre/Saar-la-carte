@@ -26,14 +26,14 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
             "Group must be either CasualGroup or EventGroup"
         }
         return when (group) {
-            is CasualGroup -> getELigibleRestaurantsForCasuals(group)
+            is CasualGroup -> getEligibleRestaurantsForCasuals(group)
             is EventGroup -> getELigibleRestaurantsForEvent(group)
         }
     }
 
-    private fun getELigibleRestaurantsForCasuals(group: CasualGroup): Int? {
+    private fun getEligibleRestaurantsForCasuals(group: CasualGroup): Int? {
         if (group.deliveryDistance == 0) {
-            return getEligibleRestaurantForDelivery(group)
+            return getEligibleRestaurantForDineIn(group)
         } else {
             val deliveryRests = mutableListOf<RestaurantStats>()
             val decisionTick = group.visitingAt - ceil(group.deliveryDistance.toDouble() / DPT).toInt() - 3
@@ -43,19 +43,19 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
                 }
             }
             deliveryRests.filter { it.availableDrivers > 0 }.filter { isDietaryCompatible(it, group) }
-            val res =
-                deliveryRests.maxWithOrNull(
-                    compareBy<RestaurantStats> {
-                        it.positiveRatings - it.negativeRatings
-                    }.thenByDescending { it.restaurantId }
-                )
+            val res = deliveryRests.maxWithOrNull(
+                compareBy<RestaurantStats> {
+                    it.positiveRatings - it.negativeRatings
+                }.thenByDescending { it.restaurantId }
+            )
             if (res != null) {
                 res.availableDrivers = res.availableDrivers - 1
             }
             return res?.restaurantId
         }
     }
-    private fun getEligibleRestaurantForDelivery(group: CasualGroup): Int? {
+
+    private fun getEligibleRestaurantForDineIn(group: CasualGroup): Int? {
         val list = mutableListOf<RestaurantStats>()
         val visitingTick = group.visitingAt
 
@@ -71,13 +71,11 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
             }
         }
         llist.filter { isDietaryCompatible(it, group) }
-        val res =
-            llist.maxWithOrNull(
-                compareBy<RestaurantStats> {
-                    it.positiveRatings - it.negativeRatings
-                }
-                    .thenByDescending { it.restaurantId }
-            )
+        val res = llist.maxWithOrNull(
+            compareBy<RestaurantStats> {
+                it.positiveRatings - it.negativeRatings
+            }.thenByDescending { it.restaurantId }
+        )
         if (res != null) {
             res.availableSeats[group.tableType] = res.availableSeats[group.tableType]!! - group.size
         }
@@ -98,13 +96,11 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
             }
         }
         result.filter { isDietaryCompatible(it, group) }
-        val res =
-            result.maxWithOrNull(
-                compareBy<RestaurantStats> {
-                    it.positiveRatings - it.negativeRatings
-                }
-                    .thenByDescending { it.restaurantId }
-            )
+        val res = result.maxWithOrNull(
+            compareBy<RestaurantStats> {
+                it.positiveRatings - it.negativeRatings
+            }.thenByDescending { it.restaurantId }
+        )
         if (res != null) {
             res.availableEventSeats[group.tableType] = res.availableEventSeats[group.tableType]!! - group.size
         }
@@ -116,9 +112,7 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
 
         val excludedNames: Set<Ingredient> = fp.excludedIngredients.toSet()
 
-        if (excludedNames.isEmpty()) return true
-
-        return menu.any { recipe ->
+        return excludedNames.isEmpty() || menu.any { recipe ->
             recipe.ingredients.keys.none { ingredient ->
                 ingredient in excludedNames
             }

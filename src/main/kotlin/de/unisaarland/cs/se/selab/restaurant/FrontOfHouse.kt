@@ -8,12 +8,7 @@ import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.customer.EventGroup
 import de.unisaarland.cs.se.selab.customer.RegularGroup
 import de.unisaarland.cs.se.selab.enums.ActionType
-import de.unisaarland.cs.se.selab.restaurant.helpers.DeliveryProcessor
-import de.unisaarland.cs.se.selab.restaurant.helpers.EatingProcessor
-import de.unisaarland.cs.se.selab.restaurant.helpers.EscortingProcessor
-import de.unisaarland.cs.se.selab.restaurant.helpers.RatingProcessor
-import de.unisaarland.cs.se.selab.restaurant.helpers.SeatingCoordinator
-import de.unisaarland.cs.se.selab.restaurant.helpers.ServingProcessor
+import de.unisaarland.cs.se.selab.restaurant.helpers.*
 
 // Priorities per customer group type, used when ordering groups for serving/eating/escorting/rating.
 // DOIT: maybe move this to the customer classes
@@ -51,7 +46,19 @@ class FrontOfHouse(
 
     // recruit waiters for an EVENT group, accumulates enough (ordered by asc id) to cover group's servable dishes.
     // shared by SEATING (SEAT) and SERVING (SERVE); NOTE: does not yet handle ActionType.TAKE_ORDER.
-    // DOIT: recruitWaitersForEventGroup()
+    private fun recruitWaitersForEventGroup(actionType: ActionType, eventGroup: EventGroup): List<Waiter> {
+        return when (actionType) {
+            ActionType.SEAT -> waiters.filter {
+                it.getTickLoad(ActionType.SEAT) < Constants.ACTION_LIMIT
+            }.sortedByDescending { it.currentLoad }
+
+            ActionType.TAKE_ORDER -> TODO()
+            ActionType.SERVE -> recruitWaiterForServing(eventGroup)
+            ActionType.ESCORT -> waiters.filter {
+                it.getTickLoad(ActionType.ESCORT) < Constants.ACTION_LIMIT
+            }
+        }
+    }
 
     private fun recruitWaiterForServing(customerGroup: EventGroup): List<Waiter> {
         val required = customerGroup.currentOrder?.getServableDishes()?.size ?: 0
@@ -132,9 +139,8 @@ class FrontOfHouse(
     fun processArrivalSeatingOrdering(customerGroup: CustomerGroup): Boolean =
         seating.processArrivalSeatingOrdering(customerGroup)
 
-    /** called with Regular or EventGroup; returns true if reservation made side effects on tables, customerToTable */
-//    fun reserveTables(regularOrEventCustomerGroup: CustomerGroup): Boolean =
-//        seating.reserveTables(regularOrEventCustomerGroup)
+    /** called with Regular or EventGroup; returns true if reservation made side effects on tables, customerToTable */ //    fun reserveTables(regularOrEventCustomerGroup: CustomerGroup): Boolean =
+    //        seating.reserveTables(regularOrEventCustomerGroup)
 
     /**  Logs status and then performs side effect by resetting counters */
     fun logAndResetSeatingOrderingTickStatus() = seating.logAndResetSeatingOrderingTickStatus()
@@ -161,7 +167,6 @@ class FrontOfHouse(
      * @return updated positive and negative rating counts
      */
     fun processRatings(
-        positiveRatings: Int,
-        negativeRatings: Int
+        positiveRatings: Int, negativeRatings: Int
     ): Pair<Int, Int> = rating.processRatings(positiveRatings, negativeRatings)
 }

@@ -16,7 +16,10 @@ class Waiter {
     var id: Id? = null
     var currentLoad: Int = 0
     val tickLoads = mutableMapOf(
-        Pair(ActionType.SEAT, 0), Pair(ActionType.TAKE_ORDER, 0), Pair(ActionType.SERVE, 0), Pair(ActionType.ESCORT, 0)
+        Pair(ActionType.SEAT, 0),
+        Pair(ActionType.TAKE_ORDER, 0),
+        Pair(ActionType.SERVE, 0),
+        Pair(ActionType.ESCORT, 0)
     )
 
     /** adds to the number of customers being waited on */
@@ -56,7 +59,8 @@ class Waiter {
         val remainingCapacity = ACTION_LIMIT - escortLoad
 
         val customersToEscort = minOf(
-            cg.customersRemainingInRestaurant, remainingCapacity
+            cg.customersRemainingInRestaurant,
+            remainingCapacity
         )
 
         if (customersToEscort <= 0) {
@@ -74,7 +78,8 @@ class Waiter {
      */
     fun escortEventGroups(eventGroup: EventGroup) {
         val customersToEscort = minOf(
-            eventGroup.customersRemainingInRestaurant, ACTION_LIMIT - getTickLoad(ActionType.ESCORT)
+            eventGroup.customersRemainingInRestaurant,
+            ACTION_LIMIT - getTickLoad(ActionType.ESCORT)
         )
         if (customersToEscort <= 0) {
             return

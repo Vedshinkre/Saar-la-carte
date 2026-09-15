@@ -2,22 +2,26 @@ package de.unisaarland.cs.se.selab.restaurant.helpers
 
 import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.enums.DishStatus
+import de.unisaarland.cs.se.selab.enums.ExperienceType
 import de.unisaarland.cs.se.selab.enums.RatingType
 import de.unisaarland.cs.se.selab.loggers.FohServiceLogger.logCustomerRateRestaurant
 import de.unisaarland.cs.se.selab.loggers.FohServiceLogger.logRatingStatus
 
 /** rating coordinator */
 class RatingProcessor(
-    private val deliveryGroups: List<CustomerGroup>,
+    private val deliveryGroups: MutableList<CustomerGroup>,
     private val turnedAwayGroups: List<CustomerGroup>,
     private val getInHouseGroups: () -> List<CustomerGroup>,
     private val getServingPriority: (CustomerGroup) -> Int,
+    private val removeProcessedGroup: (CustomerGroup) -> Unit,
 ) {
     /**
-     * Processes customer ratings and updates the positive and negative rating counts.
+     * Processes all customer groups eligible to give a rating in the current tick,
+     * ordered by serving priority and ID.
+     *
      * @param positiveRatings current number of positive ratings
      * @param negativeRatings current number of negative ratings
-     * @return updated Positive and Negative rating counts.
+     * @return updated positive and negative rating counts
      */
     fun processRatings(
         positiveRatings: Int,
@@ -38,36 +42,78 @@ class RatingProcessor(
         val groupsToRate = (filteredInHouseGroups + filteredDeliveryGroups + turnedAwayGroups).sortedWith(
             compareBy({ getServingPriority(it) }, { it.id })
         )
-        groupsToRate.forEach {
-            when (it.determineRating()) {
-                RatingType.POSITIVE -> {
-                    positive++
-                    groupsGivingRatings++
+        groupsToRate.forEach { group ->
+            val oldPositive = positive
+            val oldNegative = negative
 
-                    logCustomerRateRestaurant(
-                        it.id,
-                        RatingType.POSITIVE,
-                        positive,
-                        negative
-                    )
-                }
+            val result = rate(
+                group,
+                positive,
+                negative
+            )
 
-                RatingType.NEGATIVE -> {
-                    negative++
-                    groupsGivingRatings++
-
-                    logCustomerRateRestaurant(
-                        it.id,
-                        RatingType.NEGATIVE,
-                        positive,
-                        negative
-                    )
-                }
-
-                RatingType.NO_RATING -> {}
+            positive = result.first
+            negative = result.second
+            removeProcessedGroup(group)
+            if (positive != oldPositive || negative != oldNegative) {
+                groupsGivingRatings++
             }
         }
         logRatingStatus(groupsGivingRatings)
+        return Pair(positive, negative)
+    }
+
+    /**
+     * Rates a customer group and updates the rating counters.
+     * When closing is true, unfinished groups receive a negative experience.
+     *
+     * @param group customer group to rate
+     * @param positiveRatings current number of positive ratings
+     * @param negativeRatings current number of negative ratings
+     * @param closing whether the rating is processed at closing
+     * @return updated positive and negative rating counts
+     */
+    fun rate(
+        group: CustomerGroup,
+        positiveRatings: Int,
+        negativeRatings: Int,
+        closing: Boolean = false
+    ): Pair<Int, Int> {
+        var positive = positiveRatings
+        var negative = negativeRatings
+        if (closing) {
+            val order = group.currentOrder
+
+            if (order == null || !order.areAllDishesEaten()) {
+                group.experience = ExperienceType.NEGATIVE
+            }
+        }
+        when (group.determineRating()) {
+            RatingType.POSITIVE -> {
+                positive++
+
+                logCustomerRateRestaurant(
+                    group.id,
+                    RatingType.POSITIVE,
+                    positive,
+                    negative
+                )
+            }
+
+            RatingType.NEGATIVE -> {
+                negative++
+
+                logCustomerRateRestaurant(
+                    group.id,
+                    RatingType.NEGATIVE,
+                    positive,
+                    negative
+                )
+            }
+
+            RatingType.NO_RATING -> {}
+        }
+
         return Pair(positive, negative)
     }
 }

@@ -145,18 +145,19 @@ class FrontOfHouse(
         turnedAwayGroups = turnedAwayGroups,
         getInHouseGroups = { getInHouseGroups() },
         getServingPriority = { group -> getServingPriority(group) },
+        removeProcessedGroup = { group -> removeProcessedGroup(group) }
     )
 
-    /** Call with CustomerGroup and menu.
+    /** Call with the CustomerGroup and menu.
      *  Returns true if CustomerGroup was processed successfully, false otherwise.
-     *  To decide whether to remove the CustomerGroup from the customerQueue use the formula
+     *  To decide whether to remove the CustomerGroup from the customerQueue, use the formula
      *  processArrivalSeatingOrdering(customerGroup, menu) || customerGroup.isWaitingToBeSeated.
-     *  If true keep in the customerQueue, otherwise remove from the customerQueue. */
+     *  If true, keep in the customerQueue, otherwise remove from the customerQueue. */
     fun processArrival(customerGroup: CustomerGroup, menu: List<Recipe>): Boolean =
         arrival.processArrival(customerGroup, menu)
 
     /** Call only with Regular- or EventGroup.
-     *  Returns true if reservation has been made and performs side effects on tables and customerToTable. */
+     *  Returns true if a reservation has been made and performs side effects on tables and customerToTable. */
     fun reserveTables(regularOrEventCustomerGroup: CustomerGroup): Boolean =
         arrival.reserveTables(regularOrEventCustomerGroup)
 
@@ -197,14 +198,57 @@ class FrontOfHouse(
         }
     }
 
-    /** escorts customers inside, frees tables, handles deliveries in closing time */
-    // DOIT: FIX PERFORMANCE WISE
-    fun endFohEvening() {
-        escorting.escortAllAtClosing()
+    /**
+     * Ends the evening by removing remaining customers, processing their
+     * closing ratings, freeing all tables, and clearing waiter assignments.
+     *
+     * @param positiveRatings current number of positive ratings
+     * @param negativeRatings current number of negative ratings
+     * @return updated positive and negative rating counts
+     */
+    fun endFohEvening(
+        positiveRatings: Int,
+        negativeRatings: Int
+    ): Pair<Int, Int> {
+        var positive = positiveRatings
+        var negative = negativeRatings
+        val inHouseGroups = getInHouseGroups()
+
+        escorting.escortAllAtClosing(inHouseGroups)
+
+        inHouseGroups.forEach { group ->
+            val result = rating.rate(
+                group,
+                positive,
+                negative,
+                true
+            )
+
+            positive = result.first
+            negative = result.second
+        }
 
         val customerIds = customerToTable.keys.map { it.id }
+
         customerIds.forEach {
             escorting.dismantleTable(it)
         }
+
+        inHouseGroupsToWaiter.clear()
+
+        return Pair(positive, negative)
+    }
+    private fun removeProcessedGroup(group: CustomerGroup) {
+        if (getInHouseGroups().contains(group)) {
+            removeInHouseGroup(group)
+        } else if (deliveryGroups.contains(group)) {
+            deliveryGroups.remove(group)
+        } else if (turnedAwayGroups.contains(group)) {
+            turnedAwayGroups.remove(group)
+        }
+    }
+
+    private fun removeInHouseGroup(group: CustomerGroup) {
+        inHouseGroupsToWaiter.remove(group)
     }
 }

@@ -31,6 +31,7 @@ class FrontOfHouse(
 ) {
     private val customerToTable: MutableMap<CustomerGroup, List<Table>> = mutableMapOf()
     private val inHouseGroupsToWaiter: MutableMap<CustomerGroup, Waiter> = mutableMapOf()
+    private val eventGroups: MutableList<EventGroup> = mutableListOf()
     private val deliveryGroups: MutableList<CustomerGroup> = mutableListOf()
     private val turnedAwayGroups: MutableList<CustomerGroup> = mutableListOf()
 
@@ -105,7 +106,9 @@ class FrontOfHouse(
         tables,
         waiters,
         customerToTable,
+        inHouseGroupsToWaiter,
         turnedAwayGroups,
+        eventGroups,
         countertop,
         ::recruitWaitersForEventGroup,
         ::getNextWaiterId

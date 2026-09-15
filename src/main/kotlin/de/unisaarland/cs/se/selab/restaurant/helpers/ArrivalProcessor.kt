@@ -22,7 +22,9 @@ class ArrivalProcessor(
     private val tables: List<Table>,
     private val waiters: List<Waiter>,
     private val customerToTable: MutableMap<CustomerGroup, List<Table>>,
+    private val inHouseGroupsToWaiter: MutableMap<CustomerGroup, Waiter>,
     private val turnedAwayGroups: MutableList<CustomerGroup>,
+    private val eventGroups: MutableList<EventGroup>,
     private val countertop: Countertop,
     private val recruitWaitersForEventGroup: (ActionType, EventGroup) -> List<Waiter>,
     private val getNextWaiterId: () -> Id
@@ -39,13 +41,11 @@ class ArrivalProcessor(
     fun processArrival(customerGroup: CustomerGroup, menu: List<Recipe>): Boolean {
         val isInHouse: Boolean =
             customerGroup is RegularGroup || (customerGroup is CasualGroup && !customerGroup.wantsDelivery)
-        if (isInHouse && !seatRegularOrCasualGroup(customerGroup)) {
+        if (isInHouse && !seatRegularOrCasualGroup(customerGroup, menu)) {
             return false
         }
 
-        customerGroup.placeOrder(waiters, menu, countertop)
-
-        return turnedAwayGroups.first().visitingAt == customerGroup.visitingAt
+        return true
     }
 
     /** Call with CustomerGroup and menu. (Method overloading redirects EventGroups to this implementation)
@@ -80,8 +80,9 @@ class ArrivalProcessor(
         }
 
         successfulSeating(eventGroup, consumedWaiters)
-        eventGroup.placeOrder(waiters, menu, countertop)
-        return turnedAwayGroups.first().visitingAt == eventGroup.visitingAt
+        eventGroup.placeOrder(consumedWaiters, menu, countertop)
+        eventGroups.add(eventGroup)
+        return true
     }
 
     /** Call only with Regular- or EventGroup.
@@ -136,7 +137,7 @@ class ArrivalProcessor(
         numberOfWaitersSeated = 0 // NOTE: add ordering status variables, log and then reset them
     }
 
-    private fun seatRegularOrCasualGroup(customerGroup: CustomerGroup): Boolean {
+    private fun seatRegularOrCasualGroup(customerGroup: CustomerGroup, menu: List<Recipe>): Boolean {
         val waiter: Waiter = assignWaiter(customerGroup) ?: return rejectForNoWaiter(customerGroup)
 
         if (customerGroup is CasualGroup && !assignTables(customerGroup)) {
@@ -149,8 +150,11 @@ class ArrivalProcessor(
         }
 
         successfulSeating(customerGroup, listOf(waiter))
+        inHouseGroupsToWaiter[customerGroup] = waiter
         waiter.tickLoads[ActionType.SEAT] = waiter.tickLoads[ActionType.SEAT]!! + customerGroup.size
         waiter.currentLoad += customerGroup.size
+
+        customerGroup.placeOrder(listOf(waiter), menu, countertop)
 
         return true
     }

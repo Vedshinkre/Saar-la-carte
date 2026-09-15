@@ -109,24 +109,6 @@ class Restaurant(
         frontOfHouse.logAndResetSeatingOrderingTickStatus()
     }
 
-    /** returns whether a driver is available */
-    fun isDriverAvailable(): Boolean = frontOfHouse.isDriverAvailable()
-
-    // statistics
-    /**
-     * gets a number of cooked meals
-     */
-    fun getNumberOfCookedMeals(): Int = kitchen.numberOfCookedMeals
-
-    /**
-     * gets a number of cooked meals
-     */
-    fun getNumberOfCustomersServed(): Int = frontOfHouse.numberOfCustomersServed
-
-    /**
-     * gets a number of cooked meals
-     */
-    fun getNumberOfCustomersDelivered(): Int = frontOfHouse.numberOfCustomersDelivered
 
     /** Call with CustomerGroup.
      *  Adds customerGroup to customerQueue. */

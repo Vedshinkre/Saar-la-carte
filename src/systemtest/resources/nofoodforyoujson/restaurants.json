@@ -4,10 +4,10 @@
       "id": 1, "name": "Lonely", "type": "EUROPEAN",
       "openingTickStart": 1, "openingTickEnd": 24, "recipes": [1, 2],
       "kitchenStaff": {"TOURNANT": 1}, "waitstaff": 1, "deliveryDrivers": 0,
-      "positiveRatings": 5, "negativeRatings": 5,
       "tables": [
         {"id": 1, "type": "COMMON", "size": 2}
-      ]
+      ],
+      "positiveRatings": 5, "negativeRatings": 5
     }
   ]
 }

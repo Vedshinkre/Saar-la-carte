@@ -1,0 +1,13 @@
+{
+  "customers": [
+    {
+      "id": 1, "type": "CASUAL", "size": 2, "tableType": "COMMON",
+      "restaurantTypes": ["EUROPEAN"], "visitingTick": 1, "visitingEvenings": [1],
+      "ratingLikelihood": "NEVER", "deliveryDistance": 0,
+      "foodPreferences": [
+        {"size": 2, "excludedIngredients": ["Tomato"]}
+      ]
+    }
+  ],
+  "incidents": []
+}

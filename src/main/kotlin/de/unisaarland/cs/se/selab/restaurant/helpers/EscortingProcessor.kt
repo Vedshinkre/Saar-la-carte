@@ -18,12 +18,9 @@ class EscortingProcessor(
     private val getServingPriority: (CustomerGroup) -> Int,
 ) {
     /**
-     * Processes escorting for all in-house customer groups.
-     *
-     * Groups whose dishes have all been eaten are escorted
-     * by their assigned waitstaff. After escorting, casual
-     * groups whose customers have all left have their tables
-     * dismantled.
+     * Escorts eligible in-house groups whose dishes have been eaten.
+     * Dismantles tables of casual groups after all customers have left
+     * and logs the escorting results.
      */
     fun processEscorting() {
         val inHouseGroups = getInHouseGroups().sortedWith(compareBy({ getServingPriority(it) }, { it.id }))
@@ -83,24 +80,16 @@ class EscortingProcessor(
         )
     }
 
-    /** Escorts customers still inside the FOH after closing time
-     * @return return the Customer groups that need a forced negative rating
-     * */
-    fun escortAllAtClosing(): List<CustomerGroup> {
-        val groups = getInHouseGroups()
-        val unfinishedGroups = mutableListOf<CustomerGroup>()
-
+    /**
+     * Removes all remaining in-house customers at closing.
+     * Returns groups that did not finish eating and therefore require
+     * a negative rating.
+     *
+     * @return unfinished customer groups
+     */
+    fun escortAllAtClosing(groups: List<CustomerGroup>) {
         groups.forEach { group ->
-            val order = group.currentOrder
-
-            if (order == null || !order.areAllDishesEaten()) {
-                unfinishedGroups.add(group)
-            }
-
-            val waiter = getAssignedWaiter(group.id)
-            waiter.escort(group)
+            group.customersRemainingInRestaurant = 0
         }
-
-        return unfinishedGroups
     }
 }

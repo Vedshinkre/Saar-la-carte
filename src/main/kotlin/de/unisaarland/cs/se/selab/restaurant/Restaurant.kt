@@ -85,9 +85,8 @@ class Restaurant(
         }
     }
 
-    private fun endEvening() {
-        // free tables
-        frontOfHouse.endFohEvening()
+    private fun endEvening() { // free tables
+        // frontOfHouse.endFohEvening()
         kitchen.resetKitchen()
     }
 
@@ -100,8 +99,8 @@ class Restaurant(
         val iterator = customerQueue.iterator()
         while (iterator.hasNext()) {
             val customerGroup = iterator.next()
-            val keepInQueue = frontOfHouse.processArrival(customerGroup, restaurantStats.menu) ||
-                customerGroup.isWaitingToBeSeated
+            val keepInQueue =
+                frontOfHouse.processArrival(customerGroup, restaurantStats.menu) || customerGroup.isWaitingToBeSeated
             if (!keepInQueue) {
                 iterator.remove()
             }

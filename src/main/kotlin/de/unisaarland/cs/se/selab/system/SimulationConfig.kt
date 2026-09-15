@@ -19,4 +19,5 @@ class SimulationConfig {
     var ingredients: List<Ingredient> = listOf()
     var recipes = listOf<Recipe>()
     var restaurantStats: List<RestaurantStats> = listOf()
+    var wasInvalidFile = false
 }

@@ -34,7 +34,7 @@ class ArrivalProcessor(
     /** Call with CustomerGroup and menu.
      *  Returns true if CustomerGroup was processed successfully, false otherwise.
      *  To decide whether to remove the CustomerGroup from the customerQueue use the formula
-     *  processArrivalSeatingOrdering(customerGroup, menu) || customerGroup.isWaitingToBeSeated.
+     *  processArrival(customerGroup, menu) || customerGroup.isWaitingToBeSeated.
      *  If true keep in the customerQueue, otherwise remove from the customerQueue. */
     fun processArrival(customerGroup: CustomerGroup, menu: List<Recipe>): Boolean {
         val isInHouse: Boolean =
@@ -42,6 +42,7 @@ class ArrivalProcessor(
         if (isInHouse && !seatRegularOrCasualGroup(customerGroup)) {
             return false
         }
+
         customerGroup.placeOrder(waiters, menu, countertop)
 
         return turnedAwayGroups.first().visitingAt == customerGroup.visitingAt
@@ -50,7 +51,7 @@ class ArrivalProcessor(
     /** Call with CustomerGroup and menu. (Method overloading redirects EventGroups to this implementation)
      *  Returns true if EventGroup was processed successfully, false otherwise.
      *  To decide whether to remove the EventGroup from the customerQueue use the formula
-     *  processArrivalSeatingOrdering(customerGroup, menu) || customerGroup.isWaitingToBeSeated.
+     *  processArrival(customerGroup, menu) || customerGroup.isWaitingToBeSeated.
      *  If true keep in the customerQueue, otherwise remove from the customerQueue. */
     fun processArrival(eventGroup: EventGroup, menu: List<Recipe>): Boolean {
         val recruitedWaiters: List<Waiter> = recruitWaitersForEventGroup(ActionType.SEAT, eventGroup)

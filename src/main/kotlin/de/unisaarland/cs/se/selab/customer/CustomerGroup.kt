@@ -51,6 +51,10 @@ sealed class CustomerGroup(
             customersRemainingInRestaurant = listOfDishes.size
             experience = ExperienceType.NEGATIVE
         }
+
+        val customerOrder = Order(listOfDishes)
+        currentOrder = customerOrder
+        countertop.addOrder(customerOrder)
     }
 
     /**

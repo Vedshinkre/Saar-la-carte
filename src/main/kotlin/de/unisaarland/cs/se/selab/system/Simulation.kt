@@ -20,10 +20,10 @@ import de.unisaarland.cs.se.selab.restaurant.Restaurant
  * once maxTicks has been reached.
  */
 class Simulation(simdata: SimulationConfig) {
-    var restaurants: MutableList<Restaurant> = simdata.restaurants
+    var restaurants: List<Restaurant> = simdata.restaurants
     var browser: BrowsingService = BrowsingService(simdata.restaurantStats)
-    var incidents: MutableList<Incident> = simdata.incidents
-    var customers: MutableList<CustomerGroup> = simdata.customers
+    var incidents: List<Incident> = simdata.incidents
+    var customers: List<CustomerGroup> = simdata.customers
 
     // Total ticks elapsed across all evenings so far - Time only tracks the tick
     // *within* the current evening, so we track the grand total ourselves to know

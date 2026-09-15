@@ -71,6 +71,36 @@ class FrontOfHouse(
         }
     }
 
+    private fun recruitWaiterForServing(customerGroup: EventGroup): List<Waiter> {
+        val required = customerGroup.currentOrder?.getServableDishes()?.size ?: 0
+        val eligible = waiters.filter { it.getTickLoad(ActionType.SERVE) < Constants.ACTION_LIMIT }
+        val waiterToCookedDishes: MutableMap<Waiter, Int> = mutableMapOf()
+        eligible.forEach { targetWaiter ->
+            var res = 0
+            val customerGroups = inHouseGroupsToWaiter.filterValues {
+                it == targetWaiter
+            }.keys
+            customerGroups.forEach {
+                val num = it.currentOrder!!.getServableDishes().size
+                res += num
+            }
+            waiterToCookedDishes[targetWaiter] = res
+        }
+        val sortedWaiterToCookedDishes: MutableMap<Waiter, Int> =
+            waiterToCookedDishes.entries.sortedBy { it.key.id }.sortedByDescending { it.value }
+                .associate { it.key to it.value }.toMutableMap()
+        val sortedWaiters = sortedWaiterToCookedDishes.keys.toList()
+        val result = mutableListOf<Waiter>()
+        var recruitedCapacity = 0
+        for (waiter in sortedWaiters) {
+            if (recruitedCapacity >= required) {
+                break
+            }
+            result.add(waiter)
+            recruitedCapacity += Constants.ACTION_LIMIT - waiter.getTickLoad(ActionType.SERVE)
+        }
+        return result
+    }
 
     private val arrival = ArrivalProcessor(
         tables,
@@ -118,7 +148,8 @@ class FrontOfHouse(
         turnedAwayGroups = turnedAwayGroups,
         getInHouseGroups = { getInHouseGroups() },
         getServingPriority = { group -> getServingPriority(group) },
-        removeProcessedGroup = { group -> removeProcessedGroup(group) })
+        removeProcessedGroup = { group -> removeProcessedGroup(group) }
+    )
 
     /** Call with the CustomerGroup and menu.
      *  Returns true if CustomerGroup was processed successfully, false otherwise.
@@ -159,7 +190,8 @@ class FrontOfHouse(
      * @return updated positive and negative rating counts
      */
     fun processRatings(
-        positiveRatings: Int, negativeRatings: Int
+        positiveRatings: Int,
+        negativeRatings: Int
     ): Pair<Int, Int> = rating.processRatings(positiveRatings, negativeRatings)
 
     /** Clears the load of waiters */
@@ -178,7 +210,8 @@ class FrontOfHouse(
      * @return updated positive and negative rating counts
      */
     fun endFohEvening(
-        positiveRatings: Int, negativeRatings: Int
+        positiveRatings: Int,
+        negativeRatings: Int
     ): Pair<Int, Int> {
         var positive = positiveRatings
         var negative = negativeRatings
@@ -188,7 +221,10 @@ class FrontOfHouse(
 
         inHouseGroups.forEach { group ->
             val result = rating.rate(
-                group, positive, negative, true
+                group,
+                positive,
+                negative,
+                true
             )
 
             positive = result.first

@@ -88,6 +88,7 @@ class Restaurant(
     private fun endEvening() {
         // free tables
         frontOfHouse.endFohEvening()
+        kitchen.resetKitchen()
     }
 
     /**

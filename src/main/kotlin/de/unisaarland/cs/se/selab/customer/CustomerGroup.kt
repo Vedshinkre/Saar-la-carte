@@ -37,13 +37,15 @@ sealed class CustomerGroup(
     fun placeOrder(waiters: List<Waiter>, menu: List<Recipe>, countertop: Countertop) {
         val listOfDishes = mutableListOf<Dish>()
         for (foodPreference in foodPreferences) {
-            val currentWaiters = waiters.filter { it.getTickLoad(ActionType.TAKE_ORDER) < TEN }
-            val currentWaiter = currentWaiters.firstOrNull() ?: break
+            val currentWaiter = waiters.firstOrNull { it.getTickLoad(ActionType.TAKE_ORDER) < TEN }
+            if (currentWaiter == null) {
+                break
+            }
             val availableDishes = countertop.getAvailableRecipes(menu)
             val customerDish = foodPreference.decideDish(availableDishes, "")
             if (customerDish != null) {
                 registerDish(currentWaiter, customerDish, countertop)
-                listOfDishes.addFirst(customerDish)
+                listOfDishes.add(customerDish)
             }
         }
         if (listOfDishes.size < customersRemainingInRestaurant) {

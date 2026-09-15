@@ -38,6 +38,9 @@ class FrontOfHouse(
     var numberOfCustomersServed: Int = 0
     var numberOfCustomersDelivered: Int = 0
 
+    private var waiterIdCounter: Id = 1
+    private fun getNextWaiterId(): Id = waiterIdCounter++
+
     private fun getInHouseGroups(): List<CustomerGroup> {
         return inHouseGroupsToWaiter.keys.toList()
     }
@@ -97,13 +100,15 @@ class FrontOfHouse(
         }
         return result
     }
+
     private val arrival = ArrivalProcessor(
         tables,
         waiters,
         customerToTable,
         turnedAwayGroups,
+        countertop,
         ::recruitWaitersForEventGroup,
-        countertop
+        ::getNextWaiterId
     )
 
     private val serving = ServingProcessor(

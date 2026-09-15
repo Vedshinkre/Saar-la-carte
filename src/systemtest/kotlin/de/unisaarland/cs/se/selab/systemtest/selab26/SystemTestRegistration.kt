@@ -5,6 +5,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventReservati
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ExactStockoutTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ExhaustiveSimpleScenarioTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.OneCookTwoOrdersTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SequenceTwoSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.WaitstaffExhaustionTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.AllFilesValidSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.CustomerGroupUnknownRestaurantSystemTest
@@ -71,6 +72,7 @@ object SystemTestRegistration {
         testSuite.registerTest(ExhaustiveSimpleScenarioTest())
         testSuite.registerTest(OneCookTwoOrdersTest())
         testSuite.registerTest(WaitstaffExhaustionTest())
+        testSuite.registerTest(SequenceTwoSystemTest())
         testSuite.registerTest(RestaurantsDifferentNameSameIdTest())
         testSuite.registerTest(RestaurantsNoBasicDishOfItsTypeTest())
         testSuite.registerTest(RestaurantsNoCookExistsTest())

@@ -33,7 +33,9 @@ sealed class CustomerGroup(
     /**
      * returns true if the customerGroup is visiting this tick
      */
-    abstract fun isVisitingThisTick(): Boolean
+    open fun isVisitingThisTick(): Boolean {
+        return Time.tick == visitingAt
+    }
 
     /**
      * takes the order of a customer group

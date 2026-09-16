@@ -13,7 +13,7 @@
           "enum": ["g", "X", "mL"]
         },
         "packagingVolume": {
-          "type": "number",
+          "type": "integer",
           "exclusiveMinimum": 0
         },
         "bestBefore": {

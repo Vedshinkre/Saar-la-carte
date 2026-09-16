@@ -7,14 +7,16 @@
       "items": {
         "$ref": "ingredient.schema#/$defs/ingredient"
       },
-      "uniqueItems": true
+      "uniqueItems": true,
+      "minItems": 1
     },
     "recipes": {
       "type": "array",
       "items": {
         "$ref": "recipe.schema#/$defs/recipe"
       },
-      "uniqueItems": true
+      "uniqueItems": true,
+      "minItems": 1
     }
   },
   "required": ["ingredients", "recipes"]

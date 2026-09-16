@@ -31,6 +31,11 @@ sealed class CustomerGroup(
     var customersRemainingInRestaurant = size
 
     /**
+     * returns true if the customerGroup is visiting this tick
+     */
+    abstract fun isVisitingThisTick(): Boolean
+
+    /**
      * takes the order of a customer group
      */
     fun placeOrder(waiters: List<Waiter>, menu: List<Recipe>, countertop: Countertop): Boolean {

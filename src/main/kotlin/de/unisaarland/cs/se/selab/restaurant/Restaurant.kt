@@ -8,8 +8,10 @@ import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.customer.EventGroup
 import de.unisaarland.cs.se.selab.customer.RegularGroup
 import de.unisaarland.cs.se.selab.food.Order
+import de.unisaarland.cs.se.selab.food.Recipe
 import de.unisaarland.cs.se.selab.food.Stock
 import de.unisaarland.cs.se.selab.loggers.FohReceptionLogger
+import de.unisaarland.cs.se.selab.loggers.InitialAndPrepLogger
 
 /**
  * Class that coordinates the simulation of one tick for a restaurant
@@ -59,8 +61,54 @@ class Restaurant(
      * reserves tables for regulars and eventGroups. Plans the ingredients needed for them
      */
     fun prepareForEvening(regularGroups: List<RegularGroup>) {
-        regularGroups.size
-        eventCustomers.filter { it.isVisitingTonight() }
+        val eventGroupsForTonight = eventCustomers.filter { it.isVisitingTonight() }.sortedBy { it.id }
+        val comingRegulars = mutableListOf<RegularGroup>()
+        val comingEventGroups = mutableListOf<EventGroup>()
+        for (regularGroup in regularGroups) {
+            if (!frontOfHouse.reserveTables(regularGroup)) {
+                InitialAndPrepLogger.logFohNoReservation(regularGroup.id)
+            } else {
+                customerQueue.addLast(regularGroup)
+                comingRegulars.add(regularGroup)
+            }
+        }
+        for (eventGroup in eventGroupsForTonight) {
+            if (!frontOfHouse.reserveTables(eventGroup)) {
+                InitialAndPrepLogger.logFohNoReservation(eventGroup.id)
+            } else {
+                customerQueue.addLast(eventGroup)
+                comingEventGroups.add(eventGroup)
+            }
+            eventCustomers.remove(eventGroup)
+        }
+        val collectiveOrderHistory = mutableListOf<Order>()
+        for (regularGroup in comingRegulars) {
+            val orderHistory = regularGroup.orderHistory
+            collectiveOrderHistory.addAll(orderHistory)
+        }
+        val freeSeats = frontOfHouse.getFreeSeats().values.sum()
+        val eventDishes = mutableListOf<Pair<Recipe, Int>>()
+        /*
+
+             */
+        for (eventGroup in comingEventGroups) {
+            val eventDishName = eventGroup.getCurrentEventDish()
+            val eventDish = restaurantStats.menu.filter { it.name == eventDishName }.first()
+            eventDishes.add(Pair(eventDish, eventGroup.size))
+        }
+        kitchen.planForIngredients(
+            collectiveOrderHistory,
+            freeSeats,
+            restaurantStats.menu,
+            eventDishes
+        )
+        InitialAndPrepLogger.logPantryRestocked()
+        // getEventFreeSeats()
+        // setAvailableEventSeats
+        // getFreeSeats
+        // setAvailableSeats
+        // getAvailableDrivers
+        // setAvailableDrivers
     }
 
     /**
@@ -76,12 +124,16 @@ class Restaurant(
         frontOfHouse.processEating()
         frontOfHouse.processEscorting()
 
+        val previousPositiveRatings = restaurantStats.positiveRatings
+        val previousNegativeRatings = restaurantStats.negativeRatings
         val (positiveRatings, negativeRatings) = frontOfHouse.processRatings(
-            restaurantStats.positiveRatings,
-            restaurantStats.negativeRatings
+            previousPositiveRatings,
+            previousNegativeRatings
         )
         restaurantStats.positiveRatings = positiveRatings
         restaurantStats.negativeRatings = negativeRatings
+        restaurantStats.simulationPositiveRatings += positiveRatings - previousPositiveRatings
+        restaurantStats.simulationNegativeRatings += negativeRatings - previousNegativeRatings
         if (restaurantStats.openingTickEnd == Time.getCurrentTick()) {
             endOfOpeningTime()
         }

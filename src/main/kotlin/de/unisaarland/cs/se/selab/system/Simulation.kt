@@ -83,11 +83,7 @@ class Simulation(simdata: SimulationConfig) {
         val evening = Time.getEvening()
         InitialAndPrepLogger.logPreparationStart()
 
-        // Event groups actually visiting tonight (to be seated/served), as opposed to
-        // getEventGroupsForReservation() below, which is about groups whose *future*
-        // evening needs a reservation made now.
-        getEventGroupsForTonight(evening)
-        val regularsTonight = getRegularsForTonight()
+        val regularsTonight = getRegularsForTonight().sortedBy { it.id }
 
         for (restaurant in restaurants.sortedBy { it.getRestaurantStats().restaurantId }) {
             Logger.restaurantID = restaurant.getRestaurantStats().restaurantId
@@ -98,24 +94,17 @@ class Simulation(simdata: SimulationConfig) {
 
     private fun reserveForEventGroupsInAdvance(eventGroups: List<EventGroup>) {
         for (eventGroup in eventGroups) {
-            val eventRestaurantId = browser.getEligibleRestaurants(eventGroup) ?: return
-            val eventRestaurant = getRestaurantById(eventRestaurantId)
-            eventGroup.currentRestaurantType = eventRestaurant.getRestaurantStats().restaurantType
-            eventRestaurant.eventCustomers.addFirst(eventGroup)
+            val eventRestaurantId = browser.getEligibleRestaurants(eventGroup)
+            if (eventRestaurantId != null) {
+                TickStatusLogger.logRestaurantDecision(eventGroup.id, eventRestaurantId)
+                val eventRestaurant = getRestaurantById(eventRestaurantId)
+                eventGroup.currentRestaurantType = eventRestaurant.getRestaurantStats().restaurantType
+                eventRestaurant.eventCustomers.addFirst(eventGroup)
+            } else {
+                TickStatusLogger.logRestaurantNoDecision(eventGroup.id)
+            }
         }
     }
-
-    /**
-     * [EventGroup]s that are actually visiting tonight (to be seated/served this
-     * evening), as opposed to [getEventGroupsForReservation], which looks three
-     * evenings ahead for reservation purposes.
-     *
-     * NOTE: EventGroup doesn't expose a public accessor for its event evening in the
-     * class-diagram excerpt I have - swap `getEventEvening()` for whatever the real
-     * getter is called.
-     */
-    private fun getEventGroupsForTonight(evening: Int): List<EventGroup> =
-        customers.filterIsInstance<EventGroup>().filter { it.eventEvening == evening }
 
     /**
      * All [RegularGroup]s that are visiting tonight, regardless of restaurant.

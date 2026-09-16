@@ -20,9 +20,9 @@ class MyParserTest : ExampleSystemTestExtension() {
     }
 
     private suspend fun assertInitAndPrep() {
-        assertNextLine(InitialAndPrepTestLogs.initSuccess("food"))
-        assertNextLine(InitialAndPrepTestLogs.initSuccess("restaurants"))
-        assertNextLine(InitialAndPrepTestLogs.initSuccess("scenario"))
+        assertNextLine(InitialAndPrepTestLogs.initSuccess("food.json"))
+        assertNextLine(InitialAndPrepTestLogs.initSuccess("restaurants.json"))
+        assertNextLine(InitialAndPrepTestLogs.initSuccess("scenario.json"))
         assertNextLine(InitialAndPrepTestLogs.SIM_START)
     }
 }

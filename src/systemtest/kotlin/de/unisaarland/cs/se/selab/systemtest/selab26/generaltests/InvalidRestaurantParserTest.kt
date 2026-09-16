@@ -21,9 +21,9 @@ class InvalidRestaurantParserTest : ExampleSystemTestExtension() {
 
     private suspend fun assertInitAndPres() {
         // Food parses and validates successfully first
-        assertNextLine(InitialAndPrepTestLogs.initSuccess("food"))
+        assertNextLine(InitialAndPrepTestLogs.initSuccess("food.json"))
 
         // Restaurants fails validation, so the simulation aborts here
-        assertNextLine(InitialAndPrepTestLogs.initFail("restaurants"))
+        assertNextLine(InitialAndPrepTestLogs.initFail("restaurants.json"))
     }
 }

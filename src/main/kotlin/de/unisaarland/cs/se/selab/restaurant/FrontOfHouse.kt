@@ -4,6 +4,7 @@ import de.unisaarland.cs.se.selab.Constants
 import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.actors.Driver
 import de.unisaarland.cs.se.selab.actors.Waiter
+import de.unisaarland.cs.se.selab.customer.CasualGroup
 import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.customer.EventGroup
 import de.unisaarland.cs.se.selab.customer.RegularGroup
@@ -159,10 +160,14 @@ class FrontOfHouse(
     /** Call with the CustomerGroup and menu.
      *  Returns true if CustomerGroup was processed successfully, false otherwise.
      *  To decide whether to remove the CustomerGroup from the customerQueue, use the formula
-     *  processArrivalSeatingOrdering(customerGroup, menu) || customerGroup.isWaitingToBeSeated.
+     *  processArrival(customerGroup, menu) || customerGroup.isWaitingToBeSeated.
      *  If true, keep in the customerQueue, otherwise remove from the customerQueue. */
-    fun processArrival(customerGroup: CustomerGroup, menu: List<Recipe>): Boolean =
-        arrival.processArrival(customerGroup, menu)
+    fun processArrival(customerGroup: CustomerGroup, menu: List<Recipe>): Boolean {
+        return when (customerGroup) {
+            is CasualGroup, is RegularGroup -> arrival.processArrival(customerGroup, menu)
+            is EventGroup -> arrival.processArrival(customerGroup, menu)
+        }
+    }
 
     /** Call only with Regular- or EventGroup.
      *  Returns true if a reservation has been made and performs side effects on tables and customerToTable. */

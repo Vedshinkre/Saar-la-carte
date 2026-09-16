@@ -1,6 +1,5 @@
 package de.unisaarland.cs.se.selab.customer
 
-import de.unisaarland.cs.se.selab.Constants
 import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.Tick
 import de.unisaarland.cs.se.selab.Time
@@ -43,15 +42,16 @@ sealed class CustomerGroup(
      */
     fun placeOrder(waiters: List<Waiter>, menu: List<Recipe>, countertop: Countertop): Boolean {
         val listOfDishes = mutableListOf<Dish>()
+        val currentWaiter = waiters.firstOrNull()
         for (foodPreference in foodPreferences) {
-            val currentWaiter = waiters.firstOrNull { it.getTickLoad(ActionType.TAKE_ORDER) < Constants.ACTION_LIMIT }
-            if (currentWaiter == null) {
-                break
-            }
             val availableDishes = countertop.getAvailableRecipes(menu)
             val customerDish = foodPreference.decideDish(availableDishes, "")
             if (customerDish != null) {
-                registerDish(currentWaiter, customerDish, countertop)
+                if (currentWaiter != null) {
+                    registerDish(currentWaiter, customerDish, countertop)
+                } else {
+                    registerDish(customerDish, countertop = countertop)
+                }
                 listOfDishes.add(customerDish)
             }
         }
@@ -87,6 +87,14 @@ sealed class CustomerGroup(
         val recipe = dish.recipe
         countertop.reserveIngredients(recipe)
         waiter.addToTickLoad(ActionType.TAKE_ORDER, 1)
+    }
+
+    /**
+     * updates the pantry which "registers" that a dish has been ordered
+     */
+    private fun registerDish(dish: Dish, countertop: Countertop) {
+        val recipe = dish.recipe
+        countertop.reserveIngredients(recipe)
     }
 
     /** determines rating, computes with likelihood, overridden for casual groups */

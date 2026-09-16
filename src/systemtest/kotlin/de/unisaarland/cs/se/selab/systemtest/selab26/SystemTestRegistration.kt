@@ -107,6 +107,9 @@ object SystemTestRegistration {
     fun registerSystemTestsMutantValidation(testSuite: SELab26TestSuite) {
         testSuite.registerTest(ExampleSystemTest())
         registerParserControllerLogTests(testSuite)
+        testSuite.registerTest(InvalidRestaurantParserTest())
+        testSuite.registerTest(MyParserTest())
+        testSuite.registerTest(OneCookTwoOrdersTest())
     }
 
     /**
@@ -121,6 +124,8 @@ object SystemTestRegistration {
         //  testSuite.registerTest(ExhaustiveSimpleScenarioTest())
         testSuite.registerTest(OneCookTwoOrdersTest())
         //   testSuite.registerTest(WaitstaffExhaustionTest())
+        testSuite.registerTest(InvalidRestaurantParserTest())
+        testSuite.registerTest(MyParserTest())
     }
 
     /**

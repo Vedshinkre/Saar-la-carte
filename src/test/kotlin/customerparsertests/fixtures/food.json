@@ -48,6 +48,18 @@
           "amount": 1
         }
       ]
+    },
+    {
+      "id": 3,
+      "dishName": "Onion Salad",
+      "duration": 5,
+      "cookType": ["EXEC"],
+      "ingredients": [
+        {
+          "name": "onion",
+          "amount": 2
+        }
+      ]
     }
   ]
 }

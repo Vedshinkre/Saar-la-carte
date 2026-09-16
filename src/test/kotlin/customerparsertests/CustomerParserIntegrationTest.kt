@@ -63,9 +63,12 @@ class CustomerParserIntegrationTest {
 
     private fun preference(size: Int, properties: String) = """{"size": $size$properties}"""
 
-    private fun writeScenario(vararg groups: String): String {
+    private fun writeScenario(vararg groups: String): String =
+        writeRawScenario("""{"customerGroups": [${groups.joinToString(",")}], "incidents": []}""")
+
+    private fun writeRawScenario(content: String): String {
         val file = tempDir.resolve("scenario.json").toFile()
-        file.writeText("""{"customerGroups": [${groups.joinToString(",")}], "incidents": []}""")
+        file.writeText(content)
         return file.path
     }
 
@@ -86,8 +89,9 @@ class CustomerParserIntegrationTest {
         return config
     }
 
-    private fun assertScenarioInvalid(vararg groups: String) {
-        val scenario = writeScenario(*groups)
+    private fun assertScenarioInvalid(vararg groups: String) = assertScenarioFileInvalid(writeScenario(*groups))
+
+    private fun assertScenarioFileInvalid(scenario: String) {
         val config = ParserController().parseFiles(FOOD, RESTAURANTS, scenario)
 
         assertEquals(listOf(successLine(FOOD), successLine(RESTAURANTS), failLine(scenario)), loggedLines())
@@ -144,19 +148,16 @@ class CustomerParserIntegrationTest {
         assertScenarioValid(casual(1, size = 2, preferences = FULL_PREFERENCE))
     }
 
-    // @Disabled("Known bug: FoodPreferenceParser requires all three preference properties")
     @Test
     fun `preference with only excludedIngredients is valid`() {
         assertScenarioValid(casual(1, preferences = preference(1, """, "excludedIngredients": ["onion"]""")))
     }
 
-    // @Disabled("Known bug: FoodPreferenceParser requires all three preference properties")
     @Test
     fun `preference with only preferredIngredients is valid`() {
         assertScenarioValid(casual(1, preferences = preference(1, """, "preferredIngredients": ["rice"]""")))
     }
 
-    // @Disabled("Known bug: FoodPreferenceParser requires all three preference properties")
     @Test
     fun `preference with only favoriteDishes is valid`() {
         assertScenarioValid(casual(1, preferences = preference(1, """, "favoriteDishes": ["Garlic Soup"]""")))
@@ -251,7 +252,7 @@ class CustomerParserIntegrationTest {
     @Test
     fun `favoring every dish is invalid`() {
         val properties = """, "excludedIngredients": ["onion"], "preferredIngredients": ["rice"],
-            "favoriteDishes": ["Rice Bowl", "Garlic Soup"]"""
+            "favoriteDishes": ["Rice Bowl", "Garlic Soup", "Onion Salad"]"""
         assertScenarioInvalid(casual(1, preferences = preference(1, properties)))
     }
 
@@ -260,5 +261,141 @@ class CustomerParserIntegrationTest {
         val properties = """, "excludedIngredients": ["onion", "onion"], "preferredIngredients": ["rice"],
             "favoriteDishes": ["Rice Bowl"]"""
         assertScenarioInvalid(casual(1, preferences = preference(1, properties)))
+    }
+
+    @Test
+    fun `excluding every ingredient is invalid`() {
+        val properties = """, "excludedIngredients": ["rice", "garlic", "onion"], "favoriteDishes": ["Rice Bowl"]"""
+        assertScenarioInvalid(casual(1, preferences = preference(1, properties)))
+    }
+
+    @Test
+    fun `preferring every ingredient is invalid`() {
+        val properties = """, "preferredIngredients": ["onion", "rice", "garlic"], "favoriteDishes": ["Rice Bowl"]"""
+        assertScenarioInvalid(casual(1, preferences = preference(1, properties)))
+    }
+
+    @Test
+    fun `ingredient name with different capitalisation is invalid`() {
+        assertScenarioInvalid(casual(1, preferences = preference(1, """, "excludedIngredients": ["Onion"]""")))
+    }
+
+    @Test
+    fun `explicitly empty preference list is invalid`() {
+        val properties = """, "excludedIngredients": [], "preferredIngredients": ["rice"]"""
+        assertScenarioInvalid(casual(1, preferences = preference(1, properties)))
+    }
+
+    @Test
+    fun `unknown property in a preference is invalid`() {
+        val properties = """, "preferredIngredients": ["rice"], "dislikedDishes": ["Garlic Soup"]"""
+        assertScenarioInvalid(casual(1, preferences = preference(1, properties)))
+    }
+
+    @Test
+    fun `preference without size is invalid`() {
+        assertScenarioInvalid(casual(1, preferences = """{"preferredIngredients": ["rice"]}"""))
+    }
+
+    @Test
+    fun `negative preference size is invalid`() {
+        assertScenarioInvalid(casual(1, preferences = preference(-1, """, "preferredIngredients": ["rice"]""")))
+    }
+
+    @Test
+    fun `invalid preference in a later group is invalid`() {
+        val badPreference = preference(1, """, "favoriteDishes": ["Pizza"]""")
+        assertScenarioInvalid(casual(1, preferences = FULL_PREFERENCE), casual(2, preferences = badPreference))
+    }
+
+    // ---- More invalid shared fields ----
+
+    @Test
+    fun `lowercase table type is invalid`() {
+        assertScenarioInvalid(casual(1, extra = """, "tableType": "bar""""))
+    }
+
+    @Test
+    fun `group id given as a string is invalid`() {
+        assertScenarioInvalid(
+            """{"id": "1", "type": "CASUAL", "size": 4, "visitingTick": 5, "restaurantTypes": ["ASIAN"],
+                "visitingEvenings": [1], "ratingLikelihood": "SOME", "foodPreferences": []}"""
+        )
+    }
+
+    @Test
+    fun `non-integer visitingTick is invalid`() {
+        assertScenarioInvalid(
+            """{"id": 1, "type": "CASUAL", "size": 4, "visitingTick": 5.5, "restaurantTypes": ["ASIAN"],
+                "visitingEvenings": [1], "ratingLikelihood": "SOME", "foodPreferences": []}"""
+        )
+    }
+
+    @Test
+    fun `missing size is invalid`() {
+        assertScenarioInvalid(
+            """{"id": 1, "type": "CASUAL", "visitingTick": 5, "restaurantTypes": ["ASIAN"],
+                "visitingEvenings": [1], "ratingLikelihood": "SOME", "foodPreferences": []}"""
+        )
+    }
+
+    @Test
+    fun `missing type is invalid`() {
+        assertScenarioInvalid("""{"id": 1, "size": 4, "visitingTick": 5, "foodPreferences": []}""")
+    }
+
+    @Test
+    fun `scenario without customerGroups is invalid`() {
+        assertScenarioFileInvalid(writeRawScenario("""{"incidents": []}"""))
+    }
+
+    // ---- More valid scenarios ----
+
+    @Test
+    fun `favorite dish that is not on any restaurant menu is valid`() {
+        // "Onion Salad" exists in the food file but no restaurant lists it.
+        val onlyOnionSalad = preference(1, """, "favoriteDishes": ["Onion Salad"]""")
+        val config = assertScenarioValid(casual(1, preferences = onlyOnionSalad))
+
+        assertEquals(listOf("Onion Salad"), config.customers.single().foodPreferences.first().favouriteDishes)
+    }
+
+    @Test
+    fun `favoring every dish on the menu is valid when other recipes exist`() {
+        val properties = """, "favoriteDishes": ["Rice Bowl", "Garlic Soup"]"""
+        assertScenarioValid(casual(1, preferences = preference(1, properties)))
+    }
+
+    @Test
+    fun `preferences on REGULAR and EVENT groups are parsed`() {
+        val regularWithPreference =
+            """{"id": 1, "type": "REGULAR", "size": 3, "visitingTick": 4, "foodPreferences": [$FULL_PREFERENCE],
+                "visitingStart": 1, "visitingPeriod": 2, "restaurant": 1}"""
+        val eventWithPreference =
+            """{"id": 2, "type": "EVENT", "size": 6, "visitingTick": 3, "foodPreferences": [$FULL_PREFERENCE],
+                "restaurantTypes": ["ASIAN"], "eventEvening": 4, "favoriteDishes": {"ASIAN": "Rice Bowl"}}"""
+        val config = assertScenarioValid(regularWithPreference, eventWithPreference)
+
+        assertEquals(listOf(3, 6), config.customers.map { it.foodPreferences.size })
+        for (group in config.customers) {
+            assertTrue(group.foodPreferences.take(2).all { it.favouriteDishes.isNotEmpty() })
+        }
+    }
+
+    @Test
+    fun `group of size 1 with a preference of size 1 is valid`() {
+        val onlyGarlic = preference(1, """, "preferredIngredients": ["garlic"]""")
+        assertScenarioValid(casual(1, size = 1, preferences = onlyGarlic))
+    }
+
+    @Test
+    fun `multiple preferences in one group are valid`() {
+        val second = preference(1, """, "excludedIngredients": ["garlic"]""")
+        val config = assertScenarioValid(casual(1, size = 4, preferences = "$FULL_PREFERENCE, $second"))
+
+        assertEquals(
+            listOf(listOf("onion"), listOf("onion"), listOf("garlic"), emptyList()),
+            config.customers.single().foodPreferences.map { pref -> pref.excludedIngredients.map { it.name } }
+        )
     }
 }

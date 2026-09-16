@@ -5,6 +5,7 @@ import de.unisaarland.cs.se.selab.actors.Waiter
 import de.unisaarland.cs.se.selab.customer.CasualGroup
 import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.customer.EventGroup
+import de.unisaarland.cs.se.selab.enums.ActionType
 import de.unisaarland.cs.se.selab.enums.TableStatus
 import de.unisaarland.cs.se.selab.loggers.FohServiceLogger.logFohEscorting
 import de.unisaarland.cs.se.selab.loggers.FohServiceLogger.logFohEscortingStatus
@@ -17,6 +18,7 @@ class EscortingProcessor(
     private val inHouseGroupsToWaiter: Map<CustomerGroup, Waiter>,
     private val getInHouseGroups: () -> List<CustomerGroup>,
     private val getServingPriority: (CustomerGroup) -> Int,
+    private val recruitWaitersForEventGroup: (ActionType, EventGroup) -> List<Waiter>
 ) {
     /**
      * Escorts eligible in-house groups whose dishes have been eaten.
@@ -24,26 +26,35 @@ class EscortingProcessor(
      * and logs the escorting results.
      */
     fun processEscorting() {
-        val groupsToBeEscorted = getInHouseGroups() + eventGroups
-            .sortedWith(compareBy({ getServingPriority(it) }, { it.id }))
+        val groupsToBeEscorted =
+            getInHouseGroups() + eventGroups.sortedWith(compareBy({ getServingPriority(it) }, { it.id }))
         var customerEscortingNumber = 0
         var waitstaffNumber = 0
 
         groupsToBeEscorted.forEach {
             val order = it.currentOrder
             if (order != null && order.areAllDishesEaten()) {
-                if (it is EventGroup) { // TODO(EVENT GROUP ESCORTING)
+                if (it is EventGroup) {
+                    val waiters = recruitWaitersForEventGroup(ActionType.ESCORT, it)
+                    val customersBefore = it.customersRemainingInRestaurant
+                    waiters.forEach { waiter ->
+                        waiter.escortEventGroups(it)
+                        val customersEscorted = customersBefore - it.customersRemainingInRestaurant
+                        logFohEscorting(
+                            waiter.id!!, customersEscorted, it.id, getAssignedTableId(it.id).min()
+                        )
+                        waitstaffNumber++
+                        customerEscortingNumber += customersEscorted
+                    }
+
                 } else {
                     val waiter = getAssignedWaiter(it.id)
                     val customersBefore = it.customersRemainingInRestaurant
                     waiter.escort(it)
-                    val customersEscorted = customersBefore - it.customersRemainingInRestaurant
-                    // waiter was assigned during seating, so it already has an id.
+                    val customersEscorted =
+                        customersBefore - it.customersRemainingInRestaurant // waiter was assigned during seating, so it already has an id.
                     logFohEscorting(
-                        requireNotNull(waiter.id),
-                        customersEscorted,
-                        it.id,
-                        getAssignedTableIds(it.id).min()
+                        requireNotNull(waiter.id), customersEscorted, it.id, getAssignedTableIds(it.id).min()
                     )
 
                     waitstaffNumber++
@@ -55,10 +66,10 @@ class EscortingProcessor(
             }
         }
         logFohEscortingStatus(
-            waitstaffNumber,
-            customerEscortingNumber
+            waitstaffNumber, customerEscortingNumber
         )
     }
+
 
     private fun getAssignedWaiter(customerId: Id): Waiter {
         return inHouseGroupsToWaiter.entries.first { it.key.id == customerId }.value
@@ -78,8 +89,7 @@ class EscortingProcessor(
         }
 
         customerToTable.remove(
-            customerToTable.keys.first { it.id == customerId }
-        )
+            customerToTable.keys.first { it.id == customerId })
     }
 
     /**

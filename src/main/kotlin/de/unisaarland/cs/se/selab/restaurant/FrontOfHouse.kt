@@ -144,6 +144,7 @@ class FrontOfHouse(
         inHouseGroupsToWaiter = inHouseGroupsToWaiter,
         getInHouseGroups = { getInHouseGroups() },
         getServingPriority = { group -> getServingPriority(group) },
+        ::recruitWaitersForEventGroup
     )
 
     private val rating = RatingProcessor(
@@ -152,8 +153,7 @@ class FrontOfHouse(
         eventGroups = eventGroups,
         getInHouseGroups = { getInHouseGroups() },
         getServingPriority = { group -> getServingPriority(group) },
-        removeProcessedGroup = { group -> removeProcessedGroup(group) }
-    )
+        removeProcessedGroup = { group -> removeProcessedGroup(group) })
 
     /** Call with the CustomerGroup and menu.
      *  Returns true if CustomerGroup was processed successfully, false otherwise.
@@ -194,8 +194,7 @@ class FrontOfHouse(
      * @return updated positive and negative rating counts
      */
     fun processRatings(
-        positiveRatings: Int,
-        negativeRatings: Int
+        positiveRatings: Int, negativeRatings: Int
     ): Pair<Int, Int> = rating.processRatings(positiveRatings, negativeRatings)
 
     /** Clears the load of waiters */
@@ -214,8 +213,7 @@ class FrontOfHouse(
      * @return updated positive and negative rating counts
      */
     fun endFohOpeningTime(
-        positiveRatings: Int,
-        negativeRatings: Int
+        positiveRatings: Int, negativeRatings: Int
     ): Pair<Int, Int> {
         var positive = positiveRatings
         var negative = negativeRatings
@@ -225,10 +223,7 @@ class FrontOfHouse(
 
         allGroups.forEach { group ->
             val result = rating.rate(
-                group,
-                positive,
-                negative,
-                true
+                group, positive, negative, true
             )
 
             positive = result.first
@@ -245,6 +240,7 @@ class FrontOfHouse(
         resetWaiters()
         return Pair(positive, negative)
     }
+
     private fun resetWaiters() {
         clearActionLoads()
         waiters.forEach {
@@ -265,6 +261,7 @@ class FrontOfHouse(
             }
         }
     }
+
     private fun removeProcessedGroup(group: CustomerGroup) {
         if (getInHouseGroups().contains(group)) {
             removeInHouseGroup(group)

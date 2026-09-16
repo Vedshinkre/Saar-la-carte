@@ -29,6 +29,9 @@ class CasualGroup(
     val ratingLikelihood: RatingLikelihood
 ) : CustomerGroup(id, size, tableType, visitingAt, foodPreferences) {
 
+    /** get if the customer wants delivery */
+    val wantsDelivery: Boolean get() = deliveryDistance > 0
+
     /**
      * returns true if they are coming to the restaurant this tick
      */
@@ -54,9 +57,6 @@ class CasualGroup(
     }
 
     private fun ceilDiv(a: Int, b: Int) = (a + b - 1) / b
-
-    /** get if the customer wants delivery */
-    val wantsDelivery: Boolean get() = deliveryDistance > 0
 
     override fun determineRating(): RatingType {
         return when (ratingLikelihood) {

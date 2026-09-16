@@ -61,11 +61,14 @@ class Restaurant(
      */
     fun prepareForEvening(regularGroups: List<RegularGroup>) {
         val eventGroupsForTonight = eventCustomers.filter { it.isVisitingTonight() }.sortedBy { it.id }
+        val comingRegulars = mutableListOf<RegularGroup>()
+        val comingEventGroups = mutableListOf<EventGroup>()
         for (regularGroup in regularGroups) {
             if (!frontOfHouse.reserveTables(regularGroup)) {
                 InitialAndPrepLogger.logFohNoReservation(regularGroup.id)
             } else {
                 customerQueue.addLast(regularGroup)
+                comingRegulars.add(regularGroup)
             }
         }
         for (eventGroup in eventGroupsForTonight) {
@@ -73,11 +76,18 @@ class Restaurant(
                 InitialAndPrepLogger.logFohNoReservation(eventGroup.id)
             } else {
                 customerQueue.addLast(eventGroup)
+                comingEventGroups.add(eventGroup)
             }
             eventCustomers.remove(eventGroup)
         }
-        // getOrderHistory()
-        // getFreeSeats
+        val collectiveOrderHistory = mutableListOf<Order>()
+        for (regularGroup in comingRegulars) {
+            val orderHistory = regularGroup.orderHistory
+            collectiveOrderHistory.addAll(orderHistory)
+        }
+        // val freeSeats = frontOfHouse.getFreeSeats().values.sum()
+        // val eventDishes = comingEventGroups.
+        // kitchen.planForIngredients(collectiveOrderHistory, freeSeats, restaurantStats.menu, )
         // kitchen.planForIngredients()
         // logPantryRestocked
         // getEventFreeSeats()

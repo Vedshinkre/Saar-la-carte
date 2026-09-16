@@ -53,23 +53,8 @@ class ArrivalProcessor(
         if (assignedWaiter != null) {
             somebodyOrdered = customerGroup.placeOrder(listOf(assignedWaiter), menu, countertop)
             assignedWaiter.currentLoad -= customerGroup.size - customerGroup.customersRemainingInRestaurant
-            val currentOrder = customerGroup.currentOrder ?: return false
-            val assignedWaiterId = assignedWaiter.id ?: getNextWaiterId()
-            FohReceptionLogger.logFohOrdering(
-                customerGroup.id,
-                currentOrder.id,
-                currentOrder.dishNameToAmount(),
-                listOf(assignedWaiterId)
-            )
         } else {
             somebodyOrdered = customerGroup.placeOrder(listOf(), menu, countertop)
-            val currentOrder = customerGroup.currentOrder ?: return false
-            FohReceptionLogger.logFohOrdering(
-                customerGroup.id,
-                currentOrder.id,
-                currentOrder.dishNameToAmount(),
-                null
-            )
         }
 
         if (!somebodyOrdered) {
@@ -81,6 +66,24 @@ class ArrivalProcessor(
             FohReceptionLogger.logFohNoOrdering(
                 customerGroup.id,
                 customerGroup.size - customerGroup.customersRemainingInRestaurant
+            )
+        }
+
+        val currentOrder = customerGroup.currentOrder ?: return true
+        if (assignedWaiter != null) {
+            val assignedWaiterId = assignedWaiter.id ?: getNextWaiterId()
+            FohReceptionLogger.logFohOrdering(
+                customerGroup.id,
+                currentOrder.id,
+                currentOrder.dishNameToAmount(),
+                listOf(assignedWaiterId)
+            )
+        } else {
+            FohReceptionLogger.logFohOrdering(
+                customerGroup.id,
+                currentOrder.id,
+                currentOrder.dishNameToAmount(),
+                null
             )
         }
         return true

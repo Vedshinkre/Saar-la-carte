@@ -68,7 +68,7 @@ class FoodParser {
             val unitEnum = MeasurementUnit.valueOf(unitStr.uppercase())
 
             //  parse the ingredient
-            val newIngredient = Ingredient(name, unitEnum, packagingVolume, bestBefore)
+            val newIngredient = Ingredient(name, unitEnum, bestBefore, packagingVolume)
             val ingredientGood = validateIngredient(newIngredient)
             // validateIngredient
             require(ingredientGood) { "Ingredient $name failed logical validation." }

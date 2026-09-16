@@ -116,7 +116,8 @@ class RestaurantParser {
         require(tablesJson.isNotEmpty()) { "Restaurant $id has no tables" }
         val tables = tablesJson.map { element -> parseTable(element.jsonObject) }
 
-        val menu = recipeIds.map { recipeId -> recipes.first { it.id == recipeId } }
+        val menu = buildMenu(recipeIds, recipes, type)
+//        val menu = recipeIds.map { recipeId -> recipes.first { it.id == recipeId } }
         val event = jsonObject.getValue("event").jsonPrimitive.boolean
         val stats = RestaurantStats(
             id,
@@ -192,6 +193,15 @@ class RestaurantParser {
     private fun checkUniqueDishNamesInRestaurant(recipeIdsInRestaurant: List<Int>, recipes: List<Recipe>): Boolean {
         val menu = recipeIdsInRestaurant.map { recipeId -> recipes.first { it.id == recipeId } }
         return menu.map { it.name }.distinct().size == menu.size
+    }
+
+    // DOTO: ensure this is the correct interpretation of the spec
+    /** add basic dishes for restaurant type unless overridden by another recipe with same dish name */
+    private fun buildMenu(recipeIdsInRestaurant: List<Int>, recipes: List<Recipe>, type: RestaurantType): List<Recipe> {
+        val existingRecipes = recipeIdsInRestaurant.map { recipeId -> recipes.first { it.id == recipeId } }
+        val existingDishNames = existingRecipes.map { it.name }.toSet()
+        val defaultBasicDishes = recipes.filter { it.basicDishFor == type && it.name !in existingDishNames }
+        return (existingRecipes + defaultBasicDishes).sortedBy { it.id }
     }
 
     // cross validation

@@ -41,7 +41,7 @@ class ArrivalProcessor(
     fun processArrival(customerGroup: CustomerGroup, menu: List<Recipe>): Boolean {
         val isInHouse: Boolean =
             customerGroup is RegularGroup || (customerGroup is CasualGroup && !customerGroup.wantsDelivery)
-        if (isInHouse && !seatRegularOrCasualGroup(customerGroup, menu)) {
+        if (isInHouse && !seatRegularOrCasualGroup(customerGroup)) {
             return false
         }
         val assignedWaiter = inHouseGroupsToWaiter[customerGroup] ?: return false
@@ -165,7 +165,7 @@ class ArrivalProcessor(
         numberOfWaitersSeated = 0 // NOTE: add ordering status variables, log and then reset them
     }
 
-    private fun seatRegularOrCasualGroup(customerGroup: CustomerGroup, menu: List<Recipe>): Boolean {
+    private fun seatRegularOrCasualGroup(customerGroup: CustomerGroup): Boolean {
         val waiter: Waiter = assignWaiter(customerGroup) ?: return rejectForNoWaiter(customerGroup)
 
         if (customerGroup is CasualGroup && !assignTables(customerGroup)) {

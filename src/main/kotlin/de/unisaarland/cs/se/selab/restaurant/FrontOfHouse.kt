@@ -11,6 +11,8 @@ import de.unisaarland.cs.se.selab.customer.RegularGroup
 import de.unisaarland.cs.se.selab.enums.ActionType
 import de.unisaarland.cs.se.selab.enums.DishStatus
 import de.unisaarland.cs.se.selab.enums.DriverState
+import de.unisaarland.cs.se.selab.enums.TableStatus
+import de.unisaarland.cs.se.selab.enums.TableType
 import de.unisaarland.cs.se.selab.food.Recipe
 import de.unisaarland.cs.se.selab.restaurant.helpers.ArrivalProcessor
 import de.unisaarland.cs.se.selab.restaurant.helpers.DeliveryProcessor
@@ -192,6 +194,21 @@ class FrontOfHouse(
 
     /** process escorting */
     fun processEscorting() = escorting.processEscorting()
+
+    /**
+     * returns the number of free seats per table type
+     */
+    fun getFreeSeats(): MutableMap<TableType, Int> {
+        val freeTables = tables.filter { it.status == TableStatus.FREE }
+        val map = mutableMapOf<TableType, Int>()
+        for (type in TableType.entries) {
+            map[type] = 0
+        }
+        freeTables.forEach { freeTable ->
+            map[freeTable.tableType] = map.getValue(freeTable.tableType) + freeTable.size
+        }
+        return map
+    }
 
     /**
      * Processes customer ratings and updates the positive and negative rating counts.

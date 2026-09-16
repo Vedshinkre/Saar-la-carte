@@ -1,7 +1,5 @@
 package de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests
 
-
-
 import de.unisaarland.cs.se.selab.systemtest.selab26.utils.ExampleSystemTestExtension
 import de.unisaarland.cs.se.selab.systemtest.selab26.utils.InitialAndPrepTestLogs
 

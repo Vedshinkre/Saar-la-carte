@@ -253,6 +253,7 @@ class FrontOfHouse(
             it.id = null
             it.currentLoad = 0
         }
+        waiterIdCounter = 1
     }
 
     /** lets drivers that are RETURNING continue, otherwise abort their order and make them IDLE */

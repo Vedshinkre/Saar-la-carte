@@ -76,12 +76,16 @@ class Restaurant(
         frontOfHouse.processEating()
         frontOfHouse.processEscorting()
 
+        val previousPositiveRatings = restaurantStats.positiveRatings
+        val previousNegativeRatings = restaurantStats.negativeRatings
         val (positiveRatings, negativeRatings) = frontOfHouse.processRatings(
-            restaurantStats.positiveRatings,
-            restaurantStats.negativeRatings
+            previousPositiveRatings,
+            previousNegativeRatings
         )
         restaurantStats.positiveRatings = positiveRatings
         restaurantStats.negativeRatings = negativeRatings
+        restaurantStats.simulationPositiveRatings += positiveRatings - previousPositiveRatings
+        restaurantStats.simulationNegativeRatings += negativeRatings - previousNegativeRatings
         if (restaurantStats.openingTickEnd == Time.getCurrentTick()) {
             endOfOpeningTime()
         }

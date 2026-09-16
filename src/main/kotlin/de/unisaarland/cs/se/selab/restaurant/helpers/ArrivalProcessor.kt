@@ -44,11 +44,11 @@ class ArrivalProcessor(
         if (isInHouse && !seatRegularOrCasualGroup(customerGroup, menu)) {
             return false
         }
-        val assignedWaiter = inHouseGroupsToWaiter.get(customerGroup) ?: return false
+        val assignedWaiter = inHouseGroupsToWaiter[customerGroup] ?: return false
 
-        customerGroup.placeOrder(listOf(assignedWaiter), menu, countertop)
+        val somebodyOrdered = customerGroup.placeOrder(listOf(assignedWaiter), menu, countertop)
 
-        return true
+        return somebodyOrdered
     }
 
     /** Call with CustomerGroup and menu. (Method overloading redirects EventGroups to this implementation)

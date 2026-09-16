@@ -3,11 +3,13 @@ package de.unisaarland.cs.se.selab.restaurant
 import de.unisaarland.cs.se.selab.Tick
 import de.unisaarland.cs.se.selab.Time
 import de.unisaarland.cs.se.selab.actors.RestaurantStaff
+import de.unisaarland.cs.se.selab.customer.CasualGroup
 import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.customer.EventGroup
 import de.unisaarland.cs.se.selab.customer.RegularGroup
 import de.unisaarland.cs.se.selab.food.Order
 import de.unisaarland.cs.se.selab.food.Stock
+import de.unisaarland.cs.se.selab.loggers.FohReceptionLogger
 
 /**
  * Class that coordinates the simulation of one tick for a restaurant
@@ -109,6 +111,13 @@ class Restaurant(
         val iterator = customerQueue.iterator()
         while (iterator.hasNext()) {
             val customerGroup = iterator.next()
+
+            if (customerGroup.visitingAt == Time.tick &&
+                (customerGroup !is CasualGroup || !customerGroup.wantsDelivery)
+            ) {
+                FohReceptionLogger.logRestaurantArrival(customerGroup.id)
+            }
+
             val keepInQueue =
                 frontOfHouse.processArrival(customerGroup, restaurantStats.menu) || customerGroup.isWaitingToBeSeated
             if (!keepInQueue) {

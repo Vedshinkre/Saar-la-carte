@@ -85,6 +85,9 @@ class Restaurant(
         if (restaurantStats.openingTickEnd == Time.getCurrentTick()) {
             endOfOpeningTime()
         }
+        restaurantStats.availableDrivers = frontOfHouse.getAvailableDrivers()
+        restaurantStats.availableSeats.putAll(frontOfHouse.getAvailableSeats())
+        restaurantStats.availableEventSeats.putAll(frontOfHouse.getAvailableSeats())
         if (Time.maxTicks == Time.getCurrentTick()) {
             endEvening()
         }
@@ -112,8 +115,10 @@ class Restaurant(
         while (iterator.hasNext()) {
             val customerGroup = iterator.next()
 
-            if (customerGroup.visitingAt == Time.tick &&
-                (customerGroup !is CasualGroup || !customerGroup.wantsDelivery)
+            if (customerGroup.visitingAt == Time.tick && (
+                    customerGroup !is CasualGroup ||
+                        !customerGroup.wantsDelivery
+                    )
             ) {
                 FohReceptionLogger.logRestaurantArrival(customerGroup.id)
             }

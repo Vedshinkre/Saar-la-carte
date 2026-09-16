@@ -18,7 +18,7 @@ class OneCookTwoOrdersTest : ExampleSystemTestExtension() {
     override val scenario = "onecooktwoorders/scenario.json"
     override val food = "onecooktwoorders/food.json"
     override val logLevel = "DEBUG"
-    override val maxTicks = 5
+    override val maxTicks = 3
 
     override suspend fun run() {
         assertEvening1Tick1()

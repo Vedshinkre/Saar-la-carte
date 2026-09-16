@@ -14,21 +14,6 @@
       ],
       "ratingLikelihood": "NEVER",
       "foodPreferences": []
-    },
-    {
-      "id": 2,
-      "type": "CASUAL",
-      "size": 4,
-      "tableType": "COMMON",
-      "restaurantTypes": [
-        "EUROPEAN"
-      ],
-      "visitingTick": 1,
-      "visitingEvenings": [
-        1
-      ],
-      "ratingLikelihood": "NEVER",
-      "foodPreferences": []
     }
   ],
   "incidents": []

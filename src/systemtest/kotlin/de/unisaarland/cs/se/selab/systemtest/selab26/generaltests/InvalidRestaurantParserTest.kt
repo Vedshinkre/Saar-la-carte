@@ -9,9 +9,9 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.utils.InitialAndPrepTestLog
 class InvalidRestaurantParserTest : ExampleSystemTestExtension() {
     override val name = "InvalidRestaurantParserTest"
     override val description = "Tests that an invalid restaurants configuration file is correctly rejected"
-    override val restaurants = "invalidrestaurants/restaurants.json"
-    override val scenario = "invalidrestaurants/scenario.json"
-    override val food = "invalidrestaurants/food.json"
+    override val restaurants = "recipeparserscenario2/restaurants.json"
+    override val scenario = "recipeparserscenario2/scenario.json"
+    override val food = "recipeparserscenario2/food.json"
     override val logLevel = "INFO"
     override val maxTicks = 0
 

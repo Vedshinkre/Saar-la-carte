@@ -258,13 +258,21 @@ class FrontOfHouse(
     /** lets drivers that are RETURNING continue, otherwise abort their order and make them IDLE */
     fun resetDrivers() {
         for (driver in drivers) {
-            if (driver.state == DriverState.RETURNING) {
-                continue
-            } else if (driver.state != DriverState.IDLE) {
+            if (driver.state != DriverState.IDLE) {
                 val currentOrder = requireNotNull(driver.currentOrder)
-                currentOrder.dishes.forEach { it.status = DishStatus.ABORTED }
-                driver.state = DriverState.IDLE
+                currentOrder.dishes.forEach {
+                    it.status = DishStatus.ABORTED
+                    driver.state = DriverState.IDLE
+                    driver.currentOrder = null
+                    driver.targetGroup = null
+                    driver.totalTripTicks = 0
+                    driver.ticksToDest = 0
+                }
             }
+            driver.currentOrder = null
+            driver.targetGroup = null
+            driver.totalTripTicks = 0
+            driver.ticksToDest = 0
         }
     }
 

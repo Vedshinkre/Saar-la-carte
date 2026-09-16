@@ -14,9 +14,9 @@ private const val GRILLED_CHICKEN = "Grilled Chicken"
 class OneCookTwoOrdersTest : ExampleSystemTestExtension() {
     override val name = "OneCookTwoOrdersTest"
     override val description = "Tests that the kitchen correctly scales multiple orders simultaneously"
-    override val restaurants = "simplejson/restaurants.json"
-    override val scenario = "simplejson/scenario.json"
-    override val food = "simplejson/food.json"
+    override val restaurants = "onecooktwoorders/restaurants.json"
+    override val scenario = "onecooktwoorders/scenario.json"
+    override val food = "onecooktwoorders/food.json"
     override val logLevel = "DEBUG"
     override val maxTicks = 5
 

@@ -145,6 +145,9 @@ class FoodParser {
             val cookTypesArray = recipeJson["cookType"]?.jsonArray
                 ?: throw IllegalArgumentException("Recipe '$name' is missing 'cookType'")
 
+            // NEW
+            require(cookTypesArray.isNotEmpty()) { "Recipe '$name' must allow at least one cook type." }
+
             val allowedCooks = mutableListOf<CookType>()
             for (j in 0 until cookTypesArray.size) {
                 val cookTypeStr = cookTypesArray[j].jsonPrimitive.content
@@ -154,6 +157,9 @@ class FoodParser {
             // Ingredients Array
             val recipeIngredientsArray = recipeJson["ingredients"]?.jsonArray
                 ?: throw IllegalArgumentException("Recipe '$name' is missing 'ingredients'")
+
+            // NEW
+            require(recipeIngredientsArray.isNotEmpty()) { "Recipe '$name' must require at least one ingredient." }
 
             // helper function to parse ingredients(needed due to detekt tests)
             val recipeIngredientsMap = parseRecipeIngredientsMap(

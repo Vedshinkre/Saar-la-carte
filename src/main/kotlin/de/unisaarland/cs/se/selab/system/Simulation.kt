@@ -248,7 +248,9 @@ class Simulation(simdata: SimulationConfig) {
             StatisticsLogger.logSimulationStatsCooked(restaurant.getNumberOfCookedMeals())
             StatisticsLogger.logSimulationStatsServed(restaurant.getNumberOfCustomersServed())
             StatisticsLogger.logSimulationStatsDelivered(restaurant.getNumberOfCustomersDelivered())
-            StatisticsLogger.logSimulationStatsRatingsGiven(stats.positiveRatings + stats.negativeRatings)
+            StatisticsLogger.logSimulationStatsRatingsGiven(
+                stats.simulationPositiveRatings + stats.simulationNegativeRatings
+            )
         }
     }
 

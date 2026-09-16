@@ -14,7 +14,6 @@ import java.io.File
 
 /** delegates objects to other parsers */
 class ParserController {
-
     private val foodParser = FoodParser()
     private val restaurantParser = RestaurantParser()
     private val scenarioParser = ScenarioParser()
@@ -84,7 +83,8 @@ class ParserController {
             simConfig.wasInvalidFile = true
             null
         }
-        // NOTE: NoSuchElementException isn't cached, it means we should fix the getValue, not that the file is invalid
+        // NoSuchElementException isn't caught, it means we should fix the getValue, not that the file is invalid
+        // only IllegalArgumentException is thrown intentionally, catching other errors will hide problems in parsers
     }
 
     private fun isSchemaValid(filePath: String, schemaPath: String): Boolean {

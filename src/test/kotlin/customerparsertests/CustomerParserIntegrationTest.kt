@@ -9,7 +9,6 @@ import de.unisaarland.cs.se.selab.loggers.Logger
 import de.unisaarland.cs.se.selab.parsers.ParserController
 import de.unisaarland.cs.se.selab.system.SimulationConfig
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.PrintWriter
@@ -145,19 +144,19 @@ class CustomerParserIntegrationTest {
         assertScenarioValid(casual(1, size = 2, preferences = FULL_PREFERENCE))
     }
 
-    @Disabled("Known bug: FoodPreferenceParser requires all three preference properties")
+    // @Disabled("Known bug: FoodPreferenceParser requires all three preference properties")
     @Test
     fun `preference with only excludedIngredients is valid`() {
         assertScenarioValid(casual(1, preferences = preference(1, """, "excludedIngredients": ["onion"]""")))
     }
 
-    @Disabled("Known bug: FoodPreferenceParser requires all three preference properties")
+    // @Disabled("Known bug: FoodPreferenceParser requires all three preference properties")
     @Test
     fun `preference with only preferredIngredients is valid`() {
         assertScenarioValid(casual(1, preferences = preference(1, """, "preferredIngredients": ["rice"]""")))
     }
 
-    @Disabled("Known bug: FoodPreferenceParser requires all three preference properties")
+    // @Disabled("Known bug: FoodPreferenceParser requires all three preference properties")
     @Test
     fun `preference with only favoriteDishes is valid`() {
         assertScenarioValid(casual(1, preferences = preference(1, """, "favoriteDishes": ["Garlic Soup"]""")))

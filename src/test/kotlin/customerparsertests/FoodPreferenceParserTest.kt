@@ -12,7 +12,6 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
@@ -148,7 +147,7 @@ class FoodPreferenceParserTest {
 
     // ---- Only some of the three properties (spec: each preference uses 1-3 of them) ----
 
-    @Disabled("Known bug: FoodPreferenceParser requires all three preference properties")
+    // @Disabled("Known bug: FoodPreferenceParser requires all three preference properties")
     @Test
     fun `preference with only excludedIngredients is accepted`() {
         val result = parse(1, preference(preferred = null, favorites = null)).single()
@@ -158,7 +157,7 @@ class FoodPreferenceParserTest {
         assertTrue(result.favouriteDishes.isEmpty())
     }
 
-    @Disabled("Known bug: FoodPreferenceParser requires all three preference properties")
+    // @Disabled("Known bug: FoodPreferenceParser requires all three preference properties")
     @Test
     fun `preference with only preferredIngredients is accepted`() {
         val result = parse(1, preference(excluded = null, favorites = null)).single()
@@ -166,7 +165,7 @@ class FoodPreferenceParserTest {
         assertSame(rice, result.preferredIngredients.single())
     }
 
-    @Disabled("Known bug: FoodPreferenceParser requires all three preference properties")
+    // @Disabled("Known bug: FoodPreferenceParser requires all three preference properties")
     @Test
     fun `preference with only favoriteDishes is accepted`() {
         val result = parse(1, preference(excluded = null, preferred = null)).single()
@@ -174,7 +173,7 @@ class FoodPreferenceParserTest {
         assertEquals(listOf(RICE_BOWL), result.favouriteDishes)
     }
 
-    @Disabled("Known bug: FoodPreferenceParser requires all three preference properties")
+    // @Disabled("Known bug: FoodPreferenceParser requires all three preference properties")
     @Test
     fun `preference with two of the three properties is accepted`() {
         val result = parse(1, preference(favorites = null))

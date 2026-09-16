@@ -8,6 +8,7 @@ import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.customer.EventGroup
 import de.unisaarland.cs.se.selab.customer.RegularGroup
 import de.unisaarland.cs.se.selab.food.Order
+import de.unisaarland.cs.se.selab.food.Recipe
 import de.unisaarland.cs.se.selab.food.Stock
 import de.unisaarland.cs.se.selab.loggers.FohReceptionLogger
 import de.unisaarland.cs.se.selab.loggers.InitialAndPrepLogger
@@ -85,11 +86,23 @@ class Restaurant(
             val orderHistory = regularGroup.orderHistory
             collectiveOrderHistory.addAll(orderHistory)
         }
-        // val freeSeats = frontOfHouse.getFreeSeats().values.sum()
-        // val eventDishes = comingEventGroups.
-        // kitchen.planForIngredients(collectiveOrderHistory, freeSeats, restaurantStats.menu, )
-        // kitchen.planForIngredients()
-        // logPantryRestocked
+        val freeSeats = frontOfHouse.getFreeSeats().values.sum()
+        val eventDishes = mutableListOf<Pair<Recipe, Int>>()
+        /*
+
+             */
+        for (eventGroup in comingEventGroups) {
+            val eventDishName = eventGroup.getCurrentEventDish()
+            val eventDish = restaurantStats.menu.filter { it.name == eventDishName }.first()
+            eventDishes.add(Pair(eventDish, eventGroup.size))
+        }
+        kitchen.planForIngredients(
+            collectiveOrderHistory,
+            freeSeats,
+            restaurantStats.menu,
+            eventDishes
+        )
+        InitialAndPrepLogger.logPantryRestocked()
         // getEventFreeSeats()
         // setAvailableEventSeats
         // getFreeSeats

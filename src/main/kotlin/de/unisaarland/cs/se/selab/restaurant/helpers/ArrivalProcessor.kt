@@ -45,8 +45,16 @@ class ArrivalProcessor(
             return false
         }
         val assignedWaiter = inHouseGroupsToWaiter[customerGroup] ?: return false
-
         val somebodyOrdered = customerGroup.placeOrder(listOf(assignedWaiter), menu, countertop)
+        assignedWaiter.currentLoad -= customerGroup.size - customerGroup.customersRemainingInRestaurant
+
+        if (!somebodyOrdered) {
+            if (customerGroup is RegularGroup) {
+                customerGroup.failedAttempts++
+            }
+            inHouseGroupsToWaiter.remove(customerGroup)
+            turnedAwayGroups.addLast(customerGroup)
+        }
 
         return somebodyOrdered
     }
@@ -83,7 +91,11 @@ class ArrivalProcessor(
         }
 
         successfulSeating(eventGroup, consumedWaiters)
-        eventGroup.placeOrder(consumedWaiters, menu, countertop)
+        if (!eventGroup.placeOrder(consumedWaiters, menu, countertop)) {
+            turnedAwayGroups.addLast(eventGroup)
+            return false
+        }
+
         eventGroups.add(eventGroup)
         return true
     }
@@ -98,11 +110,19 @@ class ArrivalProcessor(
         val reserveSingleTable: (Table) -> Boolean = { table ->
             table.status = TableStatus.RESERVED
             customerToTable[regularOrEventCustomerGroup] = listOf(table)
+            if (regularOrEventCustomerGroup is RegularGroup) {
+                regularOrEventCustomerGroup.hasReservationTonight = true
+                regularOrEventCustomerGroup.failedAttempts = 0
+            }
             true
         }
         val reserveMultipleTables: (List<Table>) -> Boolean = { tables ->
             tables.forEach { table -> table.status = TableStatus.RESERVED }
             customerToTable[regularOrEventCustomerGroup] = tables
+            if (regularOrEventCustomerGroup is RegularGroup) {
+                regularOrEventCustomerGroup.hasReservationTonight = true
+                regularOrEventCustomerGroup.failedAttempts = 0
+            }
             true
         } // Step 1: Filter and sort
         val sortedTables: List<Table> = getSortedPreferredFreeTables(
@@ -128,6 +148,11 @@ class ArrivalProcessor(
         InitialAndPrepLogger.logFohNoReservation(regularOrEventCustomerGroup.id)
         regularOrEventCustomerGroup.experience = ExperienceType.NEGATIVE
         turnedAwayGroups.addLast(regularOrEventCustomerGroup)
+        if (regularOrEventCustomerGroup is RegularGroup) {
+            regularOrEventCustomerGroup.hasReservationTonight = false
+            regularOrEventCustomerGroup.failedAttempts++
+        }
+
         return false
     }
 
@@ -157,8 +182,6 @@ class ArrivalProcessor(
         waiter.tickLoads[ActionType.SEAT] = waiter.tickLoads[ActionType.SEAT]!! + customerGroup.size
         waiter.currentLoad += customerGroup.size
 
-        customerGroup.placeOrder(listOf(waiter), menu, countertop)
-
         return true
     }
 
@@ -167,6 +190,7 @@ class ArrivalProcessor(
         if (!customerGroup.isWaitingToBeSeated) {
             if (customerGroup is RegularGroup) {
                 customerToTable.remove(customerGroup)
+                customerGroup.failedAttempts++
             }
             turnedAwayGroups.addLast(customerGroup)
             customerGroup.experience = ExperienceType.NEGATIVE

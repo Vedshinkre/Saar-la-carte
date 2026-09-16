@@ -19,7 +19,7 @@ class RestaurantParserTest {
 
     // DETEKT Needless blank lines
     private val basePath =
-        "src/systemtest/kotlin/de/unisaarland/cs/se/selab/systemtest/selab26/restaurantparsertests/"
+        "src/systemtest/resources/RestaurantParserTests/"
 
     private lateinit var parser: RestaurantParser
 

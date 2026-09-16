@@ -16,7 +16,7 @@ import kotlin.test.assertFailsWith
 
 class RestaurantParserTestDiffrentFoodConfigs {
     private val basePath =
-        "src/systemtest/kotlin/de/unisaarland/cs/se/selab/systemtest/selab26/restaurantparsertests/"
+        "src/systemtest/resources/RestaurantParserTests/"
     val parser = RestaurantParser()
     val chicken = Ingredient(
         name = "chicken",

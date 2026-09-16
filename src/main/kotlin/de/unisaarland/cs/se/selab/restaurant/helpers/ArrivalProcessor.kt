@@ -44,6 +44,9 @@ class ArrivalProcessor(
         if (isInHouse && !seatRegularOrCasualGroup(customerGroup, menu)) {
             return false
         }
+        val assignedWaiter = inHouseGroupsToWaiter.get(customerGroup) ?: return false
+
+        customerGroup.placeOrder(listOf(assignedWaiter), menu, countertop)
 
         return true
     }

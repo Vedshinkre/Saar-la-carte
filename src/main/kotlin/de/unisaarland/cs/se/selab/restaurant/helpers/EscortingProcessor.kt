@@ -13,6 +13,7 @@ import de.unisaarland.cs.se.selab.restaurant.Table
 /** escorting coordinator */
 class EscortingProcessor(
     private val customerToTable: MutableMap<CustomerGroup, List<Table>>,
+    private val eventGroups: MutableList<EventGroup>,
     private val inHouseGroupsToWaiter: Map<CustomerGroup, Waiter>,
     private val getInHouseGroups: () -> List<CustomerGroup>,
     private val getServingPriority: (CustomerGroup) -> Int,
@@ -23,11 +24,12 @@ class EscortingProcessor(
      * and logs the escorting results.
      */
     fun processEscorting() {
-        val inHouseGroups = getInHouseGroups().sortedWith(compareBy({ getServingPriority(it) }, { it.id }))
+        val groupsToBeEscorted = getInHouseGroups() + eventGroups
+            .sortedWith(compareBy({ getServingPriority(it) }, { it.id }))
         var customerEscortingNumber = 0
         var waitstaffNumber = 0
 
-        inHouseGroups.forEach {
+        groupsToBeEscorted.forEach {
             val order = it.currentOrder
             if (order != null && order.areAllDishesEaten()) {
                 if (it is EventGroup) { // TODO(EVENT GROUP ESCORTING)

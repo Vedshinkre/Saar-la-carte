@@ -81,12 +81,22 @@ class Restaurant(
         restaurantStats.positiveRatings = positiveRatings
         restaurantStats.negativeRatings = negativeRatings
         if (restaurantStats.openingTickEnd == Time.getCurrentTick()) {
+            endOfOpeningTime()
+        }
+        if (Time.maxTicks == Time.getCurrentTick()) {
             endEvening()
         }
     }
 
-    private fun endEvening() { // free tables
-        // frontOfHouse.endFohEvening()
+    private fun endEvening() {
+        frontOfHouse.resetDrivers()
+    }
+
+    private fun endOfOpeningTime() { // free tables
+        frontOfHouse.endFohOpeningTime(
+            positiveRatings = restaurantStats.positiveRatings,
+            negativeRatings = restaurantStats.negativeRatings
+        )
         kitchen.resetKitchen()
     }
 

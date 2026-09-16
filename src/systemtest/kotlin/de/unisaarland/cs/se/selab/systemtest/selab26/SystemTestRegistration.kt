@@ -1,6 +1,8 @@
 package de.unisaarland.cs.se.selab.systemtest.selab26
 
 import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExampleSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.InvalidRestaurantParserTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.MyParserTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SequenceTwoSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.AllFilesValidSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.CustomerGroupUnknownRestaurantSystemTest
@@ -87,6 +89,10 @@ object SystemTestRegistration {
         testSuite.registerTest(RestaurantsTickNotIn1to24Test())
 
         registerParserControllerLogTests(testSuite)
+
+        // new
+        testSuite.registerTest(InvalidRestaurantParserTest())
+        testSuite.registerTest(MyParserTest())
     }
 
     /**

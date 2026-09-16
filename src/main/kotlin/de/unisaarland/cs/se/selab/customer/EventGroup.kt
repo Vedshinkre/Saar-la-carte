@@ -34,10 +34,11 @@ class EventGroup(
     override fun isVisitingTonight(): Boolean {
         return eventEvening == Time.evening
     }
+
     /**
      * sake of detect
      */
-    overide fun  isVisitingThisTick(): Boolean{
-        return  visitingAt == Time.tick
+    override fun isVisitingThisTick(): Boolean {
+        return visitingAt == Time.tick
     }
 }

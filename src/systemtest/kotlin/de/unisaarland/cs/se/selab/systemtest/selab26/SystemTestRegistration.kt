@@ -5,6 +5,12 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.InvalidRestaur
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.MyParserTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.OneCookTwoOrdersTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SequenceTwoSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentCookTypeExecForbiddenRejectedSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentDriverWithCookTypeRejectedSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentNegativeEveningRejectedSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentStaffWithIngredientRejectedSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentWaitstaffWithCookTypeRejectedSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentZeroStaffNumberRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.AllFilesValidSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.CustomerGroupUnknownRestaurantSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.DuplicateIncidentIdRejectedSystemTest
@@ -107,9 +113,6 @@ object SystemTestRegistration {
     fun registerSystemTestsMutantValidation(testSuite: SELab26TestSuite) {
         testSuite.registerTest(ExampleSystemTest())
         registerParserControllerLogTests(testSuite)
-        testSuite.registerTest(InvalidRestaurantParserTest())
-        testSuite.registerTest(MyParserTest())
-        testSuite.registerTest(OneCookTwoOrdersTest())
     }
 
     /**
@@ -124,8 +127,6 @@ object SystemTestRegistration {
         //  testSuite.registerTest(ExhaustiveSimpleScenarioTest())
         testSuite.registerTest(OneCookTwoOrdersTest())
         //   testSuite.registerTest(WaitstaffExhaustionTest())
-        testSuite.registerTest(InvalidRestaurantParserTest())
-        testSuite.registerTest(MyParserTest())
     }
 
     /**
@@ -165,5 +166,11 @@ object SystemTestRegistration {
         testSuite.registerTest(FoodDuplicateRecipeIdRejectedSystemTest())
         testSuite.registerTest(InvalidRestaurantParserTest())
         testSuite.registerTest(MyParserTest())
+        testSuite.registerTest(IncidentWaitstaffWithCookTypeRejectedSystemTest())
+        testSuite.registerTest(IncidentDriverWithCookTypeRejectedSystemTest())
+        testSuite.registerTest(IncidentNegativeEveningRejectedSystemTest())
+        testSuite.registerTest(IncidentStaffWithIngredientRejectedSystemTest())
+        testSuite.registerTest(IncidentZeroStaffNumberRejectedSystemTest())
+        testSuite.registerTest(IncidentCookTypeExecForbiddenRejectedSystemTest())
     }
 }

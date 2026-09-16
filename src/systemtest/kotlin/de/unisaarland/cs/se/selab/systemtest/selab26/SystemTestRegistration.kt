@@ -94,6 +94,8 @@ object SystemTestRegistration {
         // new
         testSuite.registerTest(InvalidRestaurantParserTest())
         testSuite.registerTest(MyParserTest())
+        // testSuite.registerTest(IncidentZeroStaffNumberRejectedSystemTest())
+        //  testSuite.registerTest(IncidentCookTypeExecForbiddenRejectedSystemTest())
     }
 
     /**
@@ -156,5 +158,7 @@ object SystemTestRegistration {
         testSuite.registerTest(FoodRecipeDurationTooShortRejectedSystemTest())
         testSuite.registerTest(FoodRecipeMissingIngredientRefRejectedSystemTest())
         testSuite.registerTest(FoodDuplicateRecipeIdRejectedSystemTest())
+        testSuite.registerTest(InvalidRestaurantParserTest())
+        testSuite.registerTest(MyParserTest())
     }
 }

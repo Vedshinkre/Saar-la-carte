@@ -6,12 +6,6 @@ import de.unisaarland.cs.se.selab.customer.EventGroup
 import de.unisaarland.cs.se.selab.customer.FoodPreference
 import de.unisaarland.cs.se.selab.food.Ingredient
 import de.unisaarland.cs.se.selab.food.Recipe
-import kotlin.math.ceil
-
-/**
- * Distance per Tick
- */
-private const val DPT = 5.0
 
 /**
  * manages browsingService
@@ -36,18 +30,16 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
             return getEligibleRestaurantForDineIn(group)
         } else {
             val deliveryRests = mutableListOf<RestaurantStats>()
-            val decisionTick = group.visitingAt - ceil(group.deliveryDistance.toDouble() / DPT).toInt() - 3
+
             restaurantStats.filter { it.restaurantType in group.restaurantTypes }.forEach { stats ->
-                if (stats.openingTickStart <= decisionTick && decisionTick <= stats.openingTickEnd - 3) {
+                if (stats.isOpen()) {
                     deliveryRests.add(stats)
                 }
             }
             deliveryRests.filter { it.availableDrivers > 0 }.filter { isDietaryCompatible(it, group) }
-            val res = deliveryRests.maxWithOrNull(
-                compareBy<RestaurantStats> {
-                    it.positiveRatings - it.negativeRatings
-                }.thenByDescending { it.restaurantId }
-            )
+            val res = deliveryRests.maxWithOrNull(compareBy<RestaurantStats> {
+                it.positiveRatings - it.negativeRatings
+            }.thenByDescending { it.restaurantId })
             if (res != null) {
                 res.availableDrivers = res.availableDrivers - 1
                 return res.restaurantId
@@ -58,10 +50,9 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
 
     private fun getEligibleRestaurantForDineIn(group: CasualGroup): Int? {
         val list = mutableListOf<RestaurantStats>()
-        val visitingTick = group.visitingAt
 
         restaurantStats.filter { it.restaurantType in group.restaurantTypes }.forEach { stats ->
-            if (stats.openingTickStart <= visitingTick && visitingTick <= stats.openingTickEnd - 3) {
+            if (stats.isOpen()) {
                 list.add(stats)
             }
         }
@@ -72,11 +63,9 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
             }
         }
         llist.filter { isDietaryCompatible(it, group) }
-        val res = llist.maxWithOrNull(
-            compareBy<RestaurantStats> {
-                it.positiveRatings - it.negativeRatings
-            }.thenByDescending { it.restaurantId }
-        )
+        val res = llist.maxWithOrNull(compareBy<RestaurantStats> {
+            it.positiveRatings - it.negativeRatings
+        }.thenByDescending { it.restaurantId })
         if (res != null) {
             res.availableSeats[group.tableType] = res.availableSeats[group.tableType]!! - group.size
             return res.restaurantId
@@ -89,7 +78,7 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
         val eventRests = mutableListOf<RestaurantStats>()
         val result = mutableListOf<RestaurantStats>()
         restaurantStats.filter { it.restaurantType in group.restaurantTypes }.filter { it.event }.forEach { stats ->
-            if (stats.openingTickStart <= group.visitingAt && group.visitingAt <= stats.openingTickEnd - 3) {
+            if (stats.isOpen()) {
                 eventRests.add(stats)
             }
         }
@@ -99,14 +88,12 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
             }
         }
         result.filter { isDietaryCompatible(it, group) }
-        val res = result.maxWithOrNull(
-            compareBy<RestaurantStats> {
-                it.positiveRatings - it.negativeRatings
-            }.thenByDescending { it.restaurantId }
-        )
+        val res = result.maxWithOrNull(compareBy<RestaurantStats> {
+            it.positiveRatings - it.negativeRatings
+        }.thenByDescending { it.restaurantId })
         if (res != null) {
             res.availableEventSeats[group.tableType] = res.availableEventSeats[group.tableType]!! - group.size
-            res.restaurantId
+            return res.restaurantId
         }
 
         return null

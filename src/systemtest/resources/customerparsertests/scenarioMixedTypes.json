@@ -1,0 +1,83 @@
+{
+  "customerGroups": [
+    {
+      "id": 1,
+      "type": "REGULAR",
+      "size": 3,
+      "visitingTick": 4,
+      "foodPreferences": [
+        {
+          "size": 2,
+          "excludedIngredients": [
+            "onion"
+          ],
+          "preferredIngredients": [
+            "rice"
+          ],
+          "favoriteDishes": [
+            "Rice Bowl"
+          ]
+        }
+      ],
+      "visitingStart": 1,
+      "visitingPeriod": 2,
+      "restaurant": 1
+    },
+    {
+      "id": 2,
+      "type": "CASUAL",
+      "size": 4,
+      "visitingTick": 5,
+      "foodPreferences": [
+        {
+          "size": 2,
+          "excludedIngredients": [
+            "onion"
+          ],
+          "preferredIngredients": [
+            "rice"
+          ],
+          "favoriteDishes": [
+            "Rice Bowl"
+          ]
+        }
+      ],
+      "restaurantTypes": [
+        "ASIAN"
+      ],
+      "visitingEvenings": [
+        1
+      ],
+      "ratingLikelihood": "SOME",
+      "tableType": "BAR"
+    },
+    {
+      "id": 3,
+      "type": "EVENT",
+      "size": 6,
+      "visitingTick": 3,
+      "foodPreferences": [
+        {
+          "size": 2,
+          "excludedIngredients": [
+            "onion"
+          ],
+          "preferredIngredients": [
+            "rice"
+          ],
+          "favoriteDishes": [
+            "Rice Bowl"
+          ]
+        }
+      ],
+      "restaurantTypes": [
+        "ASIAN"
+      ],
+      "eventEvening": 4,
+      "favoriteDishes": {
+        "ASIAN": "Rice Bowl"
+      }
+    }
+  ],
+  "incidents": []
+}

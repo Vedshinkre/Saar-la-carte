@@ -1,0 +1,12 @@
+{
+  "customerGroups": [
+    {
+      "id": 1,
+      "type": "VIP",
+      "size": 2,
+      "visitingTick": 5,
+      "foodPreferences": []
+    }
+  ],
+  "incidents": []
+}

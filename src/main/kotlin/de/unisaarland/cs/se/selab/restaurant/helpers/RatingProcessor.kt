@@ -1,6 +1,7 @@
 package de.unisaarland.cs.se.selab.restaurant.helpers
 
 import de.unisaarland.cs.se.selab.customer.CustomerGroup
+import de.unisaarland.cs.se.selab.customer.EventGroup
 import de.unisaarland.cs.se.selab.enums.DishStatus
 import de.unisaarland.cs.se.selab.enums.ExperienceType
 import de.unisaarland.cs.se.selab.enums.RatingType
@@ -11,6 +12,7 @@ import de.unisaarland.cs.se.selab.loggers.FohServiceLogger.logRatingStatus
 class RatingProcessor(
     private val deliveryGroups: MutableList<CustomerGroup>,
     private val turnedAwayGroups: List<CustomerGroup>,
+    private val eventGroups: MutableList<EventGroup>,
     private val getInHouseGroups: () -> List<CustomerGroup>,
     private val getServingPriority: (CustomerGroup) -> Int,
     private val removeProcessedGroup: (CustomerGroup) -> Unit,
@@ -30,7 +32,7 @@ class RatingProcessor(
         var positive = positiveRatings
         var negative = negativeRatings
         val filteredInHouseGroups = getInHouseGroups().filter { it.customersRemainingInRestaurant == 0 }
-
+        val filteredEventGroups = eventGroups.filter { it.customersRemainingInRestaurant == 0 }
         val filteredDeliveryGroups = deliveryGroups.filter {
             val order = it.currentOrder
 
@@ -39,7 +41,12 @@ class RatingProcessor(
             }
         }
         var groupsGivingRatings = 0
-        val groupsToRate = (filteredInHouseGroups + filteredDeliveryGroups + turnedAwayGroups).sortedWith(
+        val groupsToRate = (
+            filteredInHouseGroups +
+                filteredDeliveryGroups +
+                turnedAwayGroups +
+                filteredEventGroups
+            ).sortedWith(
             compareBy({ getServingPriority(it) }, { it.id })
         )
         groupsToRate.forEach { group ->

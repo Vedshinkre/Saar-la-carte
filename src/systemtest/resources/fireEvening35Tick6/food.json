@@ -1,0 +1,53 @@
+{
+  "ingredients": [
+    { "name": "chicken", "unit": "g", "packagingVolume": 1000, "bestBefore": 5 },
+    { "name": "rice", "unit": "g", "packagingVolume": 1000, "bestBefore": 5 },
+    { "name": "beef", "unit": "g", "packagingVolume": 1000, "bestBefore": 5 },
+    { "name": "pasta", "unit": "g", "packagingVolume": 1000, "bestBefore": 5 },
+    { "name": "potato", "unit": "g", "packagingVolume": 1000, "bestBefore": 5 },
+    { "name": "onion", "unit": "X", "packagingVolume": 50, "bestBefore": 5 },
+    { "name": "garlic", "unit": "g", "packagingVolume": 500, "bestBefore": 5 },
+    { "name": "oil", "unit": "mL", "packagingVolume": 500, "bestBefore": 5 }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "chicken rice",
+      "duration": 30,
+      "cookType": ["TOURNANT"],
+      "ingredients": [
+        { "name": "chicken", "amount": 100 },
+        { "name": "rice", "amount": 200 },
+        { "name": "onion", "amount": 1 },
+        { "name": "garlic", "amount": 10 },
+        { "name": "oil", "amount": 20 }
+      ]
+    },
+    {
+      "id": 2,
+      "dishName": "beef pasta",
+      "duration": 25,
+      "cookType": ["TOURNANT"],
+      "ingredients": [
+        { "name": "beef", "amount": 150 },
+        { "name": "pasta", "amount": 200 },
+        { "name": "onion", "amount": 1 },
+        { "name": "garlic", "amount": 10 },
+        { "name": "oil", "amount": 20 }
+      ]
+    },
+    {
+      "id": 3,
+      "dishName": "potato soup",
+      "duration": 20,
+      "cookType": ["VEGETABLE"],
+      "basicDishFor": "EUROPEAN",
+      "ingredients": [
+        { "name": "potato", "amount": 300 },
+        { "name": "onion", "amount": 1 },
+        { "name": "garlic", "amount": 10 },
+        { "name": "oil", "amount": 20 }
+      ]
+    }
+  ]
+}

@@ -13,20 +13,7 @@
         1
       ],
       "ratingLikelihood": "NEVER",
-      "foodPreferences": [
-        {
-          "size": 2,
-          "excludedIngredients": [
-            "Tomato"
-          ],
-          "preferredIngredients": [
-            "Chicken"
-          ],
-          "favoriteDishes": [
-            "Grilled Chicken"
-          ]
-        }
-      ]
+      "foodPreferences": []
     }
   ],
   "incidents": []

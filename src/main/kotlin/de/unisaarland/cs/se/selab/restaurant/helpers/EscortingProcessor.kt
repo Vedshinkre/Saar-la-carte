@@ -5,6 +5,7 @@ import de.unisaarland.cs.se.selab.actors.Waiter
 import de.unisaarland.cs.se.selab.customer.CasualGroup
 import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.customer.EventGroup
+import de.unisaarland.cs.se.selab.enums.ActionType
 import de.unisaarland.cs.se.selab.enums.TableStatus
 import de.unisaarland.cs.se.selab.loggers.FohServiceLogger.logFohEscorting
 import de.unisaarland.cs.se.selab.loggers.FohServiceLogger.logFohEscortingStatus
@@ -13,30 +14,37 @@ import de.unisaarland.cs.se.selab.restaurant.Table
 /** escorting coordinator */
 class EscortingProcessor(
     private val customerToTable: MutableMap<CustomerGroup, List<Table>>,
+    private val eventGroups: MutableList<EventGroup>,
     private val inHouseGroupsToWaiter: Map<CustomerGroup, Waiter>,
     private val getInHouseGroups: () -> List<CustomerGroup>,
     private val getServingPriority: (CustomerGroup) -> Int,
+    private val recruitWaitersForEventGroup: (ActionType, EventGroup) -> List<Waiter>
 ) {
+    var customerEscortingNumber = 0
+    var waitstaffNumber = 0
+
     /**
      * Escorts eligible in-house groups whose dishes have been eaten.
      * Dismantles tables of casual groups after all customers have left
      * and logs the escorting results.
      */
-    fun processEscorting() {
-        val inHouseGroups = getInHouseGroups().sortedWith(compareBy({ getServingPriority(it) }, { it.id }))
-        var customerEscortingNumber = 0
-        var waitstaffNumber = 0
 
-        inHouseGroups.forEach {
+    fun processEscorting() {
+        val groupsToBeEscorted =
+            getInHouseGroups() + eventGroups.sortedWith(compareBy({ getServingPriority(it) }, { it.id }))
+
+        groupsToBeEscorted.forEach {
             val order = it.currentOrder
             if (order != null && order.areAllDishesEaten()) {
-                if (it is EventGroup) { // TODO(EVENT GROUP ESCORTING)
+                if (it is EventGroup) {
+                    val waiters = recruitWaitersForEventGroup(ActionType.ESCORT, it)
+                    val customersBefore = it.customersRemainingInRestaurant
+                    escortEventGroup(waiters, customersBefore, it)
                 } else {
                     val waiter = getAssignedWaiter(it.id)
                     val customersBefore = it.customersRemainingInRestaurant
                     waiter.escort(it)
                     val customersEscorted = customersBefore - it.customersRemainingInRestaurant
-                    // waiter was assigned during seating, so it already has an id.
                     logFohEscorting(
                         requireNotNull(waiter.id),
                         customersEscorted,
@@ -56,6 +64,21 @@ class EscortingProcessor(
             waitstaffNumber,
             customerEscortingNumber
         )
+    }
+
+    private fun escortEventGroup(waiters: List<Waiter>, customersBefore: Int, group: EventGroup) {
+        waiters.forEach { waiter ->
+            waiter.escortEventGroups(group)
+            val customersEscorted = customersBefore - group.customersRemainingInRestaurant
+            logFohEscorting(
+                requireNotNull(waiter.id),
+                customersEscorted,
+                group.id,
+                getAssignedTableIds(group.id).min()
+            )
+            waitstaffNumber++
+            customerEscortingNumber += customersEscorted
+        }
     }
 
     private fun getAssignedWaiter(customerId: Id): Waiter {

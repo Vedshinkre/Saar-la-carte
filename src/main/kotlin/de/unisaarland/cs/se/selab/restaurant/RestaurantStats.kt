@@ -2,6 +2,7 @@ package de.unisaarland.cs.se.selab.restaurant
 
 import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.Tick
+import de.unisaarland.cs.se.selab.Time
 import de.unisaarland.cs.se.selab.enums.RestaurantType
 import de.unisaarland.cs.se.selab.enums.TableType
 import de.unisaarland.cs.se.selab.food.Recipe
@@ -22,4 +23,11 @@ class RestaurantStats(
     var availableDrivers: Int = 0
     val availableSeats: MutableMap<TableType, Int> = mutableMapOf()
     val availableEventSeats: MutableMap<TableType, Int> = mutableMapOf()
+
+    /**
+     * sake of detect
+     */
+    fun isOpen(): Boolean {
+        return Time.tick in openingTickStart..openingTickEnd - 3
+    }
 }

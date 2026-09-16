@@ -1,16 +1,34 @@
 {
   "customerGroups": [
     {
-      "id": 1, "type": "CASUAL", "size": 2, "tableType": "COMMON",
-      "restaurantTypes": ["EUROPEAN"], "visitingTick": 1, "visitingEvenings": [1],
-      "ratingLikelihood": "NEVER", "deliveryDistance": 0,
-      "foodPreferences": [{"size": 2, "favoriteDishes": ["Grilled Chicken"]}]
+      "id": 1,
+      "type": "CASUAL",
+      "size": 2,
+      "tableType": "COMMON",
+      "restaurantTypes": [
+        "EUROPEAN"
+      ],
+      "visitingTick": 1,
+      "visitingEvenings": [
+        1
+      ],
+      "ratingLikelihood": "NEVER",
+      "foodPreferences": []
     },
     {
-      "id": 2, "type": "CASUAL", "size": 4, "tableType": "COMMON",
-      "restaurantTypes": ["EUROPEAN"], "visitingTick": 1, "visitingEvenings": [1],
-      "ratingLikelihood": "NEVER", "deliveryDistance": 0,
-      "foodPreferences": [{"size": 4, "favoriteDishes": ["Grilled Chicken"]}]
+      "id": 2,
+      "type": "CASUAL",
+      "size": 4,
+      "tableType": "COMMON",
+      "restaurantTypes": [
+        "EUROPEAN"
+      ],
+      "visitingTick": 1,
+      "visitingEvenings": [
+        1
+      ],
+      "ratingLikelihood": "NEVER",
+      "foodPreferences": []
     }
   ],
   "incidents": []

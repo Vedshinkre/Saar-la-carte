@@ -8,6 +8,8 @@ import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.customer.EventGroup
 import de.unisaarland.cs.se.selab.customer.RegularGroup
 import de.unisaarland.cs.se.selab.enums.ActionType
+import de.unisaarland.cs.se.selab.enums.DishStatus
+import de.unisaarland.cs.se.selab.enums.DriverState
 import de.unisaarland.cs.se.selab.food.Recipe
 import de.unisaarland.cs.se.selab.restaurant.helpers.ArrivalProcessor
 import de.unisaarland.cs.se.selab.restaurant.helpers.DeliveryProcessor
@@ -138,14 +140,17 @@ class FrontOfHouse(
 
     private val escorting = EscortingProcessor(
         customerToTable = customerToTable,
+        eventGroups = eventGroups,
         inHouseGroupsToWaiter = inHouseGroupsToWaiter,
         getInHouseGroups = { getInHouseGroups() },
         getServingPriority = { group -> getServingPriority(group) },
+        ::recruitWaitersForEventGroup
     )
 
     private val rating = RatingProcessor(
         deliveryGroups = deliveryGroups,
         turnedAwayGroups = turnedAwayGroups,
+        eventGroups = eventGroups,
         getInHouseGroups = { getInHouseGroups() },
         getServingPriority = { group -> getServingPriority(group) },
         removeProcessedGroup = { group -> removeProcessedGroup(group) }
@@ -209,17 +214,17 @@ class FrontOfHouse(
      * @param negativeRatings current number of negative ratings
      * @return updated positive and negative rating counts
      */
-    fun endFohEvening(
+    fun endFohOpeningTime(
         positiveRatings: Int,
         negativeRatings: Int
     ): Pair<Int, Int> {
         var positive = positiveRatings
         var negative = negativeRatings
         val inHouseGroups = getInHouseGroups()
+        val allGroups = inHouseGroups + eventGroups
+        escorting.escortAllAtClosing(allGroups)
 
-        escorting.escortAllAtClosing(inHouseGroups)
-
-        inHouseGroups.forEach { group ->
+        allGroups.forEach { group ->
             val result = rating.rate(
                 group,
                 positive,
@@ -238,8 +243,29 @@ class FrontOfHouse(
         }
 
         inHouseGroupsToWaiter.clear()
-
+        resetWaiters()
         return Pair(positive, negative)
+    }
+
+    private fun resetWaiters() {
+        clearActionLoads()
+        waiters.forEach {
+            it.id = null
+            it.currentLoad = 0
+        }
+    }
+
+    /** lets drivers that are RETURNING continue, otherwise abort their order and make them IDLE */
+    fun resetDrivers() {
+        for (driver in drivers) {
+            if (driver.state == DriverState.RETURNING) {
+                continue
+            } else if (driver.state != DriverState.IDLE) {
+                val currentOrder = requireNotNull(driver.currentOrder)
+                currentOrder.dishes.forEach { it.status = DishStatus.ABORTED }
+                driver.state = DriverState.IDLE
+            }
+        }
     }
 
     private fun removeProcessedGroup(group: CustomerGroup) {

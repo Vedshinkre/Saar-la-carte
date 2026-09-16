@@ -41,10 +41,38 @@ class ArrivalProcessor(
     fun processArrival(customerGroup: CustomerGroup, menu: List<Recipe>): Boolean {
         val isInHouse: Boolean =
             customerGroup is RegularGroup || (customerGroup is CasualGroup && !customerGroup.wantsDelivery)
-        if (isInHouse && !seatRegularOrCasualGroup(customerGroup, menu)) {
+        if (isInHouse && !seatRegularOrCasualGroup(customerGroup)) {
             return false
         }
+        val assignedWaiter = inHouseGroupsToWaiter[customerGroup]
+        var somebodyOrdered = false
+        if (assignedWaiter != null) {
+            somebodyOrdered = customerGroup.placeOrder(listOf(assignedWaiter), menu, countertop)
+            assignedWaiter.currentLoad -= customerGroup.size - customerGroup.customersRemainingInRestaurant
+            val currentOrder = customerGroup.currentOrder ?: return false
+            val assignedWaiterId = assignedWaiter.id ?: return false
+            FohReceptionLogger.logFohOrdering(
+                customerGroup.id,
+                currentOrder.id,
+                currentOrder.dishNameToAmount(),
+                listOf(assignedWaiterId)
+            )
+        } else {
+            somebodyOrdered = customerGroup.placeOrder(listOf(), menu, countertop)
+        }
 
+        if (!somebodyOrdered) {
+            if (customerGroup is RegularGroup) {
+                customerGroup.failedAttempts++
+            }
+            inHouseGroupsToWaiter.remove(customerGroup)
+            turnedAwayGroups.addLast(customerGroup)
+            FohReceptionLogger.logFohNoOrdering(
+                customerGroup.id,
+                customerGroup.size - customerGroup.customersRemainingInRestaurant
+            )
+            return false
+        }
         return true
     }
 
@@ -80,7 +108,11 @@ class ArrivalProcessor(
         }
 
         successfulSeating(eventGroup, consumedWaiters)
-        eventGroup.placeOrder(consumedWaiters, menu, countertop)
+        if (!eventGroup.placeOrder(consumedWaiters, menu, countertop)) {
+            turnedAwayGroups.addLast(eventGroup)
+            return false
+        }
+
         eventGroups.add(eventGroup)
         return true
     }
@@ -95,11 +127,19 @@ class ArrivalProcessor(
         val reserveSingleTable: (Table) -> Boolean = { table ->
             table.status = TableStatus.RESERVED
             customerToTable[regularOrEventCustomerGroup] = listOf(table)
+            if (regularOrEventCustomerGroup is RegularGroup) {
+                regularOrEventCustomerGroup.hasReservationTonight = true
+                regularOrEventCustomerGroup.failedAttempts = 0
+            }
             true
         }
         val reserveMultipleTables: (List<Table>) -> Boolean = { tables ->
             tables.forEach { table -> table.status = TableStatus.RESERVED }
             customerToTable[regularOrEventCustomerGroup] = tables
+            if (regularOrEventCustomerGroup is RegularGroup) {
+                regularOrEventCustomerGroup.hasReservationTonight = true
+                regularOrEventCustomerGroup.failedAttempts = 0
+            }
             true
         } // Step 1: Filter and sort
         val sortedTables: List<Table> = getSortedPreferredFreeTables(
@@ -125,6 +165,11 @@ class ArrivalProcessor(
         InitialAndPrepLogger.logFohNoReservation(regularOrEventCustomerGroup.id)
         regularOrEventCustomerGroup.experience = ExperienceType.NEGATIVE
         turnedAwayGroups.addLast(regularOrEventCustomerGroup)
+        if (regularOrEventCustomerGroup is RegularGroup) {
+            regularOrEventCustomerGroup.hasReservationTonight = false
+            regularOrEventCustomerGroup.failedAttempts++
+        }
+
         return false
     }
 
@@ -137,7 +182,7 @@ class ArrivalProcessor(
         numberOfWaitersSeated = 0 // NOTE: add ordering status variables, log and then reset them
     }
 
-    private fun seatRegularOrCasualGroup(customerGroup: CustomerGroup, menu: List<Recipe>): Boolean {
+    private fun seatRegularOrCasualGroup(customerGroup: CustomerGroup): Boolean {
         val waiter: Waiter = assignWaiter(customerGroup) ?: return rejectForNoWaiter(customerGroup)
 
         if (customerGroup is CasualGroup && !assignTables(customerGroup)) {
@@ -154,8 +199,6 @@ class ArrivalProcessor(
         waiter.tickLoads[ActionType.SEAT] = waiter.tickLoads[ActionType.SEAT]!! + customerGroup.size
         waiter.currentLoad += customerGroup.size
 
-        customerGroup.placeOrder(listOf(waiter), menu, countertop)
-
         return true
     }
 
@@ -164,6 +207,7 @@ class ArrivalProcessor(
         if (!customerGroup.isWaitingToBeSeated) {
             if (customerGroup is RegularGroup) {
                 customerToTable.remove(customerGroup)
+                customerGroup.failedAttempts++
             }
             turnedAwayGroups.addLast(customerGroup)
             customerGroup.experience = ExperienceType.NEGATIVE

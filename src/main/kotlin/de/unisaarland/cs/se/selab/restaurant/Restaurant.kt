@@ -3,11 +3,13 @@ package de.unisaarland.cs.se.selab.restaurant
 import de.unisaarland.cs.se.selab.Tick
 import de.unisaarland.cs.se.selab.Time
 import de.unisaarland.cs.se.selab.actors.RestaurantStaff
+import de.unisaarland.cs.se.selab.customer.CasualGroup
 import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.customer.EventGroup
 import de.unisaarland.cs.se.selab.customer.RegularGroup
 import de.unisaarland.cs.se.selab.food.Order
 import de.unisaarland.cs.se.selab.food.Stock
+import de.unisaarland.cs.se.selab.loggers.FohReceptionLogger
 
 /**
  * Class that coordinates the simulation of one tick for a restaurant
@@ -19,7 +21,7 @@ class Restaurant(
     private val tables: List<Table>,
     private val stock: Stock
 ) {
-    private val eventCustomers: List<EventGroup> = listOf()
+    val eventCustomers: MutableList<EventGroup> = mutableListOf()
     private val customerQueue: ArrayDeque<CustomerGroup> = ArrayDeque()
     private val frontOfHouse: FrontOfHouse
     private val kitchen: Kitchen
@@ -81,12 +83,22 @@ class Restaurant(
         restaurantStats.positiveRatings = positiveRatings
         restaurantStats.negativeRatings = negativeRatings
         if (restaurantStats.openingTickEnd == Time.getCurrentTick()) {
+            endOfOpeningTime()
+        }
+        if (Time.maxTicks == Time.getCurrentTick()) {
             endEvening()
         }
     }
 
-    private fun endEvening() { // free tables
-        // frontOfHouse.endFohEvening()
+    private fun endEvening() {
+        frontOfHouse.resetDrivers()
+    }
+
+    private fun endOfOpeningTime() { // free tables
+        frontOfHouse.endFohOpeningTime(
+            positiveRatings = restaurantStats.positiveRatings,
+            negativeRatings = restaurantStats.negativeRatings
+        )
         kitchen.resetKitchen()
     }
 
@@ -99,6 +111,13 @@ class Restaurant(
         val iterator = customerQueue.iterator()
         while (iterator.hasNext()) {
             val customerGroup = iterator.next()
+
+            if (customerGroup.visitingAt == Time.tick &&
+                (customerGroup !is CasualGroup || !customerGroup.wantsDelivery)
+            ) {
+                FohReceptionLogger.logRestaurantArrival(customerGroup.id)
+            }
+
             val keepInQueue =
                 frontOfHouse.processArrival(customerGroup, restaurantStats.menu) || customerGroup.isWaitingToBeSeated
             if (!keepInQueue) {

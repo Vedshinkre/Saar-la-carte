@@ -24,6 +24,21 @@ class EventGroup(
      * beep beep I;m a document
      */
     fun visitingInThreeEvenings(): Boolean {
-        return Time.tick == visitingAt
+        return Time.evening + 3 == eventEvening
+    }
+
+    /**
+     * sake of detect
+     */
+
+    override fun isVisitingTonight(): Boolean {
+        return eventEvening == Time.evening
+    }
+
+    /**
+     * sake of detect
+     */
+    override fun isVisitingThisTick(): Boolean {
+        return visitingAt == Time.tick
     }
 }

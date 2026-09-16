@@ -11,7 +11,7 @@ import de.unisaarland.cs.se.selab.enums.RestaurantType
 import de.unisaarland.cs.se.selab.enums.TableType
 
 // move this to a common constants file
-private const val DISTANCE_PER_TICK = 5.0
+private const val DISTANCE_PER_TICK = 5
 
 /** extra ticks a delivery order factors in for cooking, in addition to travel time */
 private const val DELIVERY_COOKING_TICKS = 3
@@ -29,30 +29,34 @@ class CasualGroup(
     val ratingLikelihood: RatingLikelihood
 ) : CustomerGroup(id, size, tableType, visitingAt, foodPreferences) {
 
+    /** get if the customer wants delivery */
+    val wantsDelivery: Boolean get() = deliveryDistance > 0
+
     /**
      * returns true if they are coming to the restaurant this tick
      */
-    fun isVisitingThisTick(): Boolean {
-        deliverOrderTick()
-        return true
+    override fun isVisitingThisTick(): Boolean {
+        if (wantsDelivery) {
+            val orderingTick = getDeliveryOrderTick()
+            return orderingTick == Time.tick
+        }
+
+        return Time.tick == visitingAt
+    }
+
+    override fun isVisitingTonight(): Boolean {
+        return visitingEvenings.contains(Time.evening)
     }
 
     /**
      * returns the tick at which they will put the order to the restaurant
      */
-    private fun deliverOrderTick(): Tick {
-        val yeehaw = DISTANCE_PER_TICK * DELIVERY_COOKING_TICKS
-        if (yeehaw < size) {
-            return Time.tick
-        } else {
-            return Time.evening
-        }
+    private fun getDeliveryOrderTick(): Tick {
+        val orderTick = visitingAt - DELIVERY_COOKING_TICKS - ceilDiv(deliveryDistance, DISTANCE_PER_TICK)
+        return orderTick
     }
-    // isVisitingThisTick() = check if currentTick equals visitingAt
-    // (if no delivery) else deliveryOrderTick (according to spec calculation)
 
-    /** get if the customer wants delivery */
-    val wantsDelivery: Boolean get() = deliveryDistance > 0
+    private fun ceilDiv(a: Int, b: Int) = (a + b - 1) / b
 
     override fun determineRating(): RatingType {
         return when (ratingLikelihood) {

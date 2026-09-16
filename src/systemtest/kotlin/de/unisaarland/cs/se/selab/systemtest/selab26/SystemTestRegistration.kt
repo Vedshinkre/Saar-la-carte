@@ -7,6 +7,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.OneCookTwoOrde
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SequenceTwoSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SimulationLifecycleSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SupplierProcurementSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.WaitstaffExhaustionTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentCookTypeExecForbiddenRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentDriverWithCookTypeRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentNegativeEveningRejectedSystemTest
@@ -80,7 +81,7 @@ object SystemTestRegistration {
         //  testSuite.registerTest(ExactStockoutTest())
         //  testSuite.registerTest(ExhaustiveSimpleScenarioTest())
         testSuite.registerTest(OneCookTwoOrdersTest())
-        //   testSuite.registerTest(WaitstaffExhaustionTest())
+        testSuite.registerTest(WaitstaffExhaustionTest())
         testSuite.registerTest(SequenceTwoSystemTest())
         testSuite.registerTest(SimulationLifecycleSystemTest())
         testSuite.registerTest(SupplierProcurementSystemTest())
@@ -133,7 +134,7 @@ object SystemTestRegistration {
         //   testSuite.registerTest(ExactStockoutTest())
         //  testSuite.registerTest(ExhaustiveSimpleScenarioTest())
         testSuite.registerTest(OneCookTwoOrdersTest())
-        //   testSuite.registerTest(WaitstaffExhaustionTest())
+        testSuite.registerTest(WaitstaffExhaustionTest())
     }
 
     /**

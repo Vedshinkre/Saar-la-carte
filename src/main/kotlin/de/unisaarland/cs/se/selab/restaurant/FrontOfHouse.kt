@@ -312,4 +312,28 @@ class FrontOfHouse(
     private fun removeInHouseGroup(group: CustomerGroup) {
         inHouseGroupsToWaiter.remove(group)
     }
+
+    /**
+     * Needed to set drivers in restaurant Stats
+     */
+    fun getAvailableDrivers(): Int {
+        return drivers.size
+    }
+
+    /**
+     * Sums the seat capacity of all free tables, grouped by table type.
+     * Needed to set available seats in restaurant Stats.
+     */
+    fun getAvailableSeats(): Map<TableType, Int> {
+        val result = mutableMapOf<TableType, Int>()
+        for (type in TableType.values()) {
+            result[type] = 0
+        }
+        for (table in tables) {
+            if (table.status == TableStatus.FREE) {
+                result[table.tableType] = result[table.tableType]!! + table.size
+            }
+        }
+        return result
+    }
 }

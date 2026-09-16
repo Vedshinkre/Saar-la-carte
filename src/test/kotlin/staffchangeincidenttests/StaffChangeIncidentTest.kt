@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test
 
 class StaffChangeIncidentTest {
 
-    // --- Helpers ---
+    //  Helpers
     private fun createDummyStaff(): RestaurantStaff {
         // Start with 2 Cooks (1 TOURNANT, 1 ROAST), 2 Waiters, 1 Driver
         val cooks = mutableListOf(Cook(CookType.TOURNANT), Cook(CookType.ROAST))
@@ -36,8 +36,6 @@ class StaffChangeIncidentTest {
             restaurantStaff = staff
         )
     }
-
-    // --- Tests ---
 
     @Test
     fun `apply - Add Cooks - Increases Cook List`() {

@@ -87,8 +87,7 @@ class Restaurant(
             collectiveOrderHistory.addAll(orderHistory)
         }
         val freeSeats = frontOfHouse.getFreeSeats().values.sum()
-        val eventDishes = mutableListOf<Pair<Recipe, Int>>()
-        /*
+        val eventDishes = mutableListOf<Pair<Recipe, Int>>()/*
 
              */
         for (eventGroup in comingEventGroups) {
@@ -102,13 +101,17 @@ class Restaurant(
             restaurantStats.menu,
             eventDishes
         )
-        InitialAndPrepLogger.logPantryRestocked()
-        // getEventFreeSeats()
-        // setAvailableEventSeats
-        // getFreeSeats
-        // setAvailableSeats
-        // getAvailableDrivers
-        // setAvailableDrivers
+        InitialAndPrepLogger.logPantryRestocked() // getEventFreeSeats()
+        // setAvailableEventSeats -> I want to know if seats for EventSeats and normal are same
+        // getFreeSeats -> Done
+        // setAvailableSeats -> Done
+        // getAvailableDrivers -> Done
+        // setAvailableDrivers -> Done
+        restaurantStats.availableDrivers = frontOfHouse.getAvailableDrivers()
+        restaurantStats.availableSeats.putAll(frontOfHouse.getAvailableSeats())
+        if (restaurantStats.event) {
+            restaurantStats.availableEventSeats.putAll(frontOfHouse.getAvailableSeats())
+        }
     }
 
     /**
@@ -164,8 +167,10 @@ class Restaurant(
         while (iterator.hasNext()) {
             val customerGroup = iterator.next()
 
-            if (customerGroup.visitingAt == Time.tick &&
-                (customerGroup !is CasualGroup || !customerGroup.wantsDelivery)
+            if (customerGroup.visitingAt == Time.tick && (
+                    customerGroup !is CasualGroup ||
+                        !customerGroup.wantsDelivery
+                    )
             ) {
                 FohReceptionLogger.logRestaurantArrival(customerGroup.id)
             }

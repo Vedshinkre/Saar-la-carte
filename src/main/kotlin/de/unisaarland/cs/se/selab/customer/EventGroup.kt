@@ -24,6 +24,13 @@ class EventGroup(
      * beep beep I;m a document
      */
     fun visitingInThreeEvenings(): Boolean {
-        return Time.tick == visitingAt
+        return Time.evening + 3 == visitingAt
+    }
+
+    /**
+     * sake of detect
+     */
+    fun isVisitingEvening(): Boolean {
+        return eventEvening == Time.evening
     }
 }

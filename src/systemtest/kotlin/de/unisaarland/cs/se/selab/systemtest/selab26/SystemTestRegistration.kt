@@ -117,7 +117,7 @@ object SystemTestRegistration {
         //  testSuite.registerTest(EventReservationConflictTest())
         //   testSuite.registerTest(ExactStockoutTest())
         //  testSuite.registerTest(ExhaustiveSimpleScenarioTest())
-        //   testSuite.registerTest(OneCookTwoOrdersTest())
+        testSuite.registerTest(OneCookTwoOrdersTest())
         //   testSuite.registerTest(WaitstaffExhaustionTest())
     }
 

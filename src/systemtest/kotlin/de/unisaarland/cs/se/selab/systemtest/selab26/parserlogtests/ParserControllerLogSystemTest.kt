@@ -117,9 +117,7 @@ class OverlappingUnavailabilityRejectedSystemTest : ParserControllerLogSystemTes
  * then the restaurants file fails, and scenario is never attempted.
  */
 open class RestaurantFixtureRejectedSystemTest(
-    private val fixtureFileName: String,
-    override val name: String,
-    override val description: String
+    private val fixtureFileName: String, override val name: String, override val description: String
 ) : ParserControllerLogSystemTest() {
     override val restaurants: String = "$RESOURCE_DIR/$fixtureFileName"
 
@@ -287,9 +285,7 @@ class RestaurantsNoBasicDishOfItsTypeRejectedSystemTest : RestaurantFixtureRejec
  * before restaurants or scenario are ever attempted.
  */
 open class FoodFixtureRejectedSystemTest(
-    private val fixtureFileName: String,
-    override val name: String,
-    override val description: String
+    private val fixtureFileName: String, override val name: String, override val description: String
 ) : ParserControllerLogSystemTest() {
     override val food: String = "$RESOURCE_DIR/$fixtureFileName"
 
@@ -347,6 +343,15 @@ class FoodRecipeMissingIngredientRefRejectedSystemTest : FoodFixtureRejectedSyst
  * A duplicate recipe id is rejected.
  */
 class FoodDuplicateRecipeIdRejectedSystemTest : FoodFixtureRejectedSystemTest(
+    "foodDuplicateRecipeId.json",
+    name = "foodDuplicateRecipeId Is Rejected System Test",
+    description = "A duplicate recipe id is rejected."
+)
+
+/**
+ * dish name reused by a non-basic recipe after being claimed as a basic dish is rejected
+ */
+class FoodDuplicateNameRejectedSystemTest : FoodFixtureRejectedSystemTest(
     "foodDuplicateRecipeId.json",
     name = "foodDuplicateRecipeId Is Rejected System Test",
     description = "A duplicate recipe id is rejected."

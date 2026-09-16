@@ -50,8 +50,7 @@ class ParserControllerLogTest {
         val result = parse(FOOD_VALID, RESTAURANTS_VALID, SCENARIO_VALID)
 
         assertEquals(
-            listOf(successLine(FOOD_VALID), successLine(RESTAURANTS_VALID), successLine(SCENARIO_VALID)),
-            loggedLines()
+            listOf(successLine(FOOD_VALID), successLine(RESTAURANTS_VALID), successLine(SCENARIO_VALID)), loggedLines()
         )
         assertFalse(result.wasInvalidFile)
     }
@@ -80,8 +79,7 @@ class ParserControllerLogTest {
         val result = parse(FOOD_VALID, RESTAURANTS_VALID, badScenario)
 
         assertEquals(
-            listOf(successLine(FOOD_VALID), successLine(RESTAURANTS_VALID), failLine(badScenario)),
-            loggedLines()
+            listOf(successLine(FOOD_VALID), successLine(RESTAURANTS_VALID), failLine(badScenario)), loggedLines()
         )
         assertTrue(result.wasInvalidFile)
     }
@@ -92,8 +90,7 @@ class ParserControllerLogTest {
         val result = parse(FOOD_VALID, RESTAURANTS_VALID, scenario)
 
         assertEquals(
-            listOf(successLine(FOOD_VALID), successLine(RESTAURANTS_VALID), successLine(scenario)),
-            loggedLines()
+            listOf(successLine(FOOD_VALID), successLine(RESTAURANTS_VALID), successLine(scenario)), loggedLines()
         )
         assertFalse(result.wasInvalidFile)
     }
@@ -104,8 +101,7 @@ class ParserControllerLogTest {
         val result = parse(FOOD_VALID, RESTAURANTS_VALID, scenario)
 
         assertEquals(
-            listOf(successLine(FOOD_VALID), successLine(RESTAURANTS_VALID), failLine(scenario)),
-            loggedLines()
+            listOf(successLine(FOOD_VALID), successLine(RESTAURANTS_VALID), failLine(scenario)), loggedLines()
         )
         assertTrue(result.wasInvalidFile)
     }
@@ -116,8 +112,7 @@ class ParserControllerLogTest {
         val result = parse(FOOD_VALID, RESTAURANTS_VALID, scenario)
 
         assertEquals(
-            listOf(successLine(FOOD_VALID), successLine(RESTAURANTS_VALID), failLine(scenario)),
-            loggedLines()
+            listOf(successLine(FOOD_VALID), successLine(RESTAURANTS_VALID), failLine(scenario)), loggedLines()
         )
         assertTrue(result.wasInvalidFile)
     }
@@ -265,6 +260,11 @@ class ParserControllerLogTest {
     }
 
     @Test
+    fun `dish name reused by a non-basic recipe after being claimed as a basic dish is rejected`() {
+        assertFoodFixtureFails(FIXTURES, "foodDuplicateDishNameMixedBasic.json")
+    }
+
+    @Test
     fun `legacy foodNoDuplicateDishName fixture is rejected`() {
         assertFoodFixtureFails(LEGACY_FOOD_FIXTURES, "foodNoDuplicateDishName.json")
     }
@@ -276,7 +276,7 @@ class ParserControllerLogTest {
 
     @Test
     fun `legacy foodRecipiesNotExist fixture is rejected`() {
-        assertFoodFixtureFails(LEGACY_FOOD_FIXTURES, "foodRecipiesNotExist.json")
+        assertFoodFixtureFails(LEGACY_FOOD_FIXTURES, "foodDuplicateDishNameMixedBasic.json")
     }
 
     @Test
@@ -285,8 +285,7 @@ class ParserControllerLogTest {
         val result = parse(FOOD_VALID, RESTAURANTS_VALID, badScenario)
 
         assertEquals(
-            listOf(successLine(FOOD_VALID), successLine(RESTAURANTS_VALID), failLine(badScenario)),
-            loggedLines()
+            listOf(successLine(FOOD_VALID), successLine(RESTAURANTS_VALID), failLine(badScenario)), loggedLines()
         )
         assertTrue(result.wasInvalidFile)
     }
@@ -297,8 +296,7 @@ class ParserControllerLogTest {
         val result = parse(FOOD_VALID, RESTAURANTS_VALID, badScenario)
 
         assertEquals(
-            listOf(successLine(FOOD_VALID), successLine(RESTAURANTS_VALID), failLine(badScenario)),
-            loggedLines()
+            listOf(successLine(FOOD_VALID), successLine(RESTAURANTS_VALID), failLine(badScenario)), loggedLines()
         )
         assertTrue(result.wasInvalidFile)
     }

@@ -32,9 +32,13 @@ class CasualGroup(
     /**
      * returns true if they are coming to the restaurant this tick
      */
-    fun isVisitingThisTick(): Boolean {
-        deliverOrderTick()
-        return true
+    override fun isVisitingThisTick(): Boolean {
+        if (wantsDelivery) {
+            val orderingTick = deliverOrderTick()
+            return orderingTick == Time.tick
+        }
+
+        return Time.tick == visitingAt
     }
 
     override fun isVisitingTonight(): Boolean {

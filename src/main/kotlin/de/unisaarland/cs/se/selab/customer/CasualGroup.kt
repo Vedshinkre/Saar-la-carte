@@ -37,6 +37,10 @@ class CasualGroup(
         return true
     }
 
+    override fun isVisitingTonight(): Boolean {
+        return visitingEvenings.contains(Time.evening)
+    }
+
     /**
      * returns the tick at which they will put the order to the restaurant
      */

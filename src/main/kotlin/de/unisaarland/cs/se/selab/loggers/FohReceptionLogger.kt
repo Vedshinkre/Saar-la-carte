@@ -79,13 +79,15 @@ object FohReceptionLogger {
         groupId: Id,
         orderId: Id,
         dishNameToAmount: Map<String, Int>,
-        waitstaffId: Id
+        waitstaffId: List<Id>?
     ) {
         Logger.log(
             LogLevel.IMPORTANT,
             "FOH Ordering (R ${Logger.restaurantID}): Group $groupId placed " +
-                "order $orderId of ${Logger.formatKeyValueMap(dishNameToAmount)} " +
-                "with waitstaff $waitstaffId."
+                "order $orderId of ${Logger.formatKeyValueMap(dishNameToAmount)}" +
+                if (waitstaffId == null) { "." } else {
+                    " with waitstaff ${Logger.formatIds(waitstaffId)}."
+                }
         )
     }
 

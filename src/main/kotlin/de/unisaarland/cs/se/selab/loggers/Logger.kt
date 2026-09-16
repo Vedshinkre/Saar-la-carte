@@ -37,7 +37,7 @@ object Logger {
     /**
      * Sets the current log level.
      */
-    fun setup(level: LogLevel?) {
+    fun setup(level: LogLevel) {
         currentLevel = level
     }
 

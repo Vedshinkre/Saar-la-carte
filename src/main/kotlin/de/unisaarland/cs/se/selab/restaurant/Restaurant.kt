@@ -19,7 +19,7 @@ class Restaurant(
     private val tables: List<Table>,
     private val stock: Stock
 ) {
-    private val eventCustomers: List<EventGroup> = listOf()
+    val eventCustomers: MutableList<EventGroup> = mutableListOf()
     private val customerQueue: ArrayDeque<CustomerGroup> = ArrayDeque()
     private val frontOfHouse: FrontOfHouse
     private val kitchen: Kitchen

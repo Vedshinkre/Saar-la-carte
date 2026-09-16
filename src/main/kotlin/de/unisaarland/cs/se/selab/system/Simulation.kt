@@ -101,7 +101,7 @@ class Simulation(simdata: SimulationConfig) {
             val eventRestaurantId = browser.getEligibleRestaurants(eventGroup) ?: return
             val eventRestaurant = getRestaurantById(eventRestaurantId)
             eventGroup.currentRestaurantType = eventRestaurant.getRestaurantStats().restaurantType
-            eventRestaurant.addToCustomerQueue(eventGroup)
+            eventRestaurant.eventCustomers.addFirst(eventGroup)
         }
     }
 

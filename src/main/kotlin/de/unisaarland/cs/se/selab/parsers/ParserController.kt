@@ -1,6 +1,7 @@
 package de.unisaarland.cs.se.selab.parsers
 
 import com.github.erosb.jsonsKema.FormatValidationPolicy
+
 import com.github.erosb.jsonsKema.JsonParseException
 import com.github.erosb.jsonsKema.JsonParser
 import com.github.erosb.jsonsKema.SchemaLoader
@@ -41,9 +42,21 @@ class ParserController {
         restaurantsFilePath: String,
         scenarioFilePath: String,
     ): SimulationConfig {
-        validateFilesWithSchema(foodFilePath, "classpath:/schema/food.schema")
-        validateFilesWithSchema(restaurantsFilePath, "classpath:/schema/restaurants.schema")
-        validateFilesWithSchema(scenarioFilePath, "classpath:/schema/scenario.schema")
+        if (!validateFilesWithSchema(foodFilePath, "classpath:/schema/food.schema")) {
+            InitialAndPrepLogger.logInitialization(false, foodFilePath)
+            simConfig.wasInvalidFile = true
+            return simConfig
+        }
+        if (!validateFilesWithSchema(restaurantsFilePath, "classpath:/schema/restaurants.schema")) {
+            InitialAndPrepLogger.logInitialization(false, restaurantsFilePath)
+            simConfig.wasInvalidFile = true
+            return simConfig
+        }
+        if (!validateFilesWithSchema(scenarioFilePath, "classpath:/schema/scenario.schema")) {
+            InitialAndPrepLogger.logInitialization(false, scenarioFilePath)
+            simConfig.wasInvalidFile = true
+            return simConfig
+        }
         val jsonSources = readJsonSources(foodFilePath, restaurantsFilePath, scenarioFilePath)
 
         val foodData =
@@ -191,20 +204,13 @@ class ParserController {
         }
     }
 
-    private fun validateFilesWithSchema(filePath: String, schemaPath: String) {
-        try {
-            val jsonInstance = JsonParser(File(filePath).readText()).parse()
-            val schema = SchemaLoader.forURL(schemaPath).load()
-            val config = ValidatorConfig(FormatValidationPolicy.ALWAYS)
-            val validator = Validator.create(schema, config)
+    private fun validateFilesWithSchema(filePath: String, schemaPath: String): Boolean {
+        val jsonInstance = JsonParser(File(filePath).readText()).parse()
+        val schema = SchemaLoader.forURL(schemaPath).load()
+        val validator = Validator.forSchema(schema)
 
-            val failure = validator.validate(jsonInstance) ?: return // Logger.logInitialization(false, filePath)
-            System.err.println(failure)
-        } catch (e: IOException) {
-            System.err.println("Could not read file: ${e.message ?: "Unknown error"}")
-        } catch (e: JsonParseException) {
-            System.err.println("Invalid JSON: ${e.message}")
-        }
+        validator.validate(jsonInstance) ?: return false
+        return true
     }
 
     private fun crossvalidateIncidents(): Boolean {

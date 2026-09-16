@@ -81,10 +81,8 @@ class ParserController {
         } catch (_: IllegalArgumentException) {
             invalidate(filePath)
             null
-        } catch (_: NoSuchElementException) {
-            invalidate(filePath)
-            null
         }
+        // NOTE: NoSuchElementException isn't cached, it means we should fix the getValue, not that the file is invalid
     }
 
     private fun isSchemaValid(filePath: String, schemaPath: String): Boolean {

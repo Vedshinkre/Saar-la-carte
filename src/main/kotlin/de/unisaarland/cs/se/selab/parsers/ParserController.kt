@@ -3,239 +3,104 @@ package de.unisaarland.cs.se.selab.parsers
 import com.github.erosb.jsonsKema.JsonParser
 import com.github.erosb.jsonsKema.SchemaLoader
 import com.github.erosb.jsonsKema.Validator
-import de.unisaarland.cs.se.selab.customer.CustomerGroup
-import de.unisaarland.cs.se.selab.food.Ingredient
-import de.unisaarland.cs.se.selab.food.Recipe
 import de.unisaarland.cs.se.selab.food.Stock
-import de.unisaarland.cs.se.selab.incidents.Incident
-import de.unisaarland.cs.se.selab.incidents.UnavailabilityIncident
 import de.unisaarland.cs.se.selab.loggers.InitialAndPrepLogger
-import de.unisaarland.cs.se.selab.restaurant.Restaurant
-import de.unisaarland.cs.se.selab.restaurant.RestaurantStats
 import de.unisaarland.cs.se.selab.system.SimulationConfig
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import java.io.File
 
-/**
- * delegates objects to other parsers
- */
+/** delegates objects to other parsers */
 class ParserController {
 
-    private val foodParser: FoodParser = FoodParser()
-    private val restaurantParser: RestaurantParser = RestaurantParser()
-    private val scenarioParser: ScenarioParser = ScenarioParser()
-    private val simConfig: SimulationConfig = SimulationConfig()
+    private val foodParser = FoodParser()
+    private val restaurantParser = RestaurantParser()
+    private val scenarioParser = ScenarioParser()
+    private val simConfig = SimulationConfig()
 
-    /**
-     * delagtes JsonObjects to muliple Parsers and Validates File with JsonSkema
-     **/
+    /** delegates JsonObjects to multiple Parsers and Validates File with JsonSkema **/
     fun parseFiles(
         foodFilePath: String,
         restaurantsFilePath: String,
         scenarioFilePath: String,
     ): SimulationConfig {
-        if (!validateAllSchemas(foodFilePath, restaurantsFilePath, scenarioFilePath)) {
-            simConfig.wasInvalidFile = true
-            return simConfig
-        }
-        val jsonSources = readJsonSources(foodFilePath, restaurantsFilePath, scenarioFilePath)
-
-        val foodData =
-            parseFoodData(foodFilePath, jsonSources.ingredientArray, jsonSources.recipeArray) ?: return simConfig
-        val stock = Stock(foodData.first)
-
-        val restaurantData = parseRestaurantData(
-            restaurantsFilePath, jsonSources.restaurantsArray, foodData.second, stock
-        ) ?: return simConfig
-
-        val scenarioData = parseScenarioData(
-            scenarioFilePath,
-            jsonSources.incidentJson,
-            jsonSources.customerJson,
-            restaurantData.second,
-            foodData.second,
-            foodData.first,
-            stock,
-        ) ?: return simConfig
-
-        simConfig.restaurants = restaurantData.second
-        simConfig.ingredients = foodData.first
-        simConfig.recipes = foodData.second
-        simConfig.restaurantStats = restaurantData.first
-        simConfig.incidents = scenarioData.first
-        simConfig.customers = scenarioData.second
-        if (!crossvalidateScenario(scenarioFilePath)) {
-            InitialAndPrepLogger.logInitialization(true, scenarioFilePath)
-        }
-        return simConfig
-    }
-
-    private fun validateAllSchemas(
-        foodFilePath: String,
-        restaurantsFilePath: String,
-        scenarioFilePath: String,
-    ): Boolean {
-        val schemas = listOf(
-            foodFilePath to "classpath:/schema/food.schema",
-            restaurantsFilePath to "classpath:/schema/restaurants.schema",
-            scenarioFilePath to "classpath:/schema/scenario.schema",
-        )
-        for ((filePath, schemaPath) in schemas) {
-            if (!validateFilesWithSchema(filePath, schemaPath)) {
-                InitialAndPrepLogger.logInitialization(false, filePath)
-                return false
-            }
-        }
-        return true
-    }
-
-    private data class JsonSources(
-        val ingredientArray: JsonArray,
-        val recipeArray: JsonArray,
-        val restaurantsArray: JsonArray?,
-        val incidentJson: JsonArray?,
-        val customerJson: JsonArray?,
-    )
-
-    private fun readJsonSources(
-        foodFilePath: String,
-        restaurantsFilePath: String,
-        scenarioFilePath: String,
-    ): JsonSources {
-        val foodStr = File(foodFilePath).readText()
-        val foodObject = Json.parseToJsonElement(foodStr).jsonObject
-        val ingredientArray = (foodObject["ingredients"] ?: error("null assertion message")) as JsonArray
-        val recipeArray = (foodObject["recipes"] ?: error("null assertion message")).jsonArray
-        val restaurantsStr = File(restaurantsFilePath).readText()
-        val restaurantsArray = Json.parseToJsonElement(restaurantsStr).jsonObject["restaurants"]?.jsonArray
-        val scenarioStr = File(scenarioFilePath).readText()
-        val scenarioObject = Json.parseToJsonElement(scenarioStr).jsonObject
-        val incidentJson = scenarioObject["incidents"]?.jsonArray
-        val customerJson = scenarioObject["customerGroups"]?.jsonArray
-        return JsonSources(ingredientArray, recipeArray, restaurantsArray, incidentJson, customerJson)
-    }
-
-    private fun parseFoodData(
-        foodFilePath: String,
-        ingredientArray: JsonArray,
-        recipeArray: JsonArray,
-    ): Pair<List<Ingredient>, List<Recipe>>? {
-        val foodData = try {
-            foodParser.parse(ingredientArray, recipeArray)
-        } catch (e: IllegalArgumentException) {
-            InitialAndPrepLogger.logInitialization(false, foodFilePath)
-            System.err.println("Invalid food data in '$foodFilePath': ${e.message ?: "Unknown error"}")
-            simConfig.wasInvalidFile = true
-            return null
-        }
-        InitialAndPrepLogger.logInitialization(true, foodFilePath)
-        return foodData
-    }
-
-    private fun parseRestaurantData(
-        restaurantsFilePath: String,
-        restaurantsArray: JsonArray?,
-        recipes: List<Recipe>,
-        stock: Stock,
-    ): Pair<List<RestaurantStats>, List<Restaurant>>? {
-        requireNotNull(restaurantsArray) { "Restaurant JSON is invalid" }
-        val restaurantData = try {
-            restaurantParser.parseRestaurants(
-                restaurantsArray,
-                recipes,
-                stock,
+        val (ingredients, recipes) = processFile(
+            foodFilePath,
+            "classpath:/schema/food.schema"
+        ) { json ->
+            foodParser.parse(
+                json.getValue("ingredients").jsonArray,
+                json.getValue("recipes").jsonArray
             )
-        } catch (e: IllegalArgumentException) {
-            InitialAndPrepLogger.logInitialization(false, restaurantsFilePath)
-            System.err.println("Invalid Restaurant data in '$restaurantsFilePath: ${e.message ?: "Unknown error"}")
-            simConfig.wasInvalidFile = true
-            return null
-        } catch (e: NoSuchElementException) {
-            InitialAndPrepLogger.logInitialization(false, restaurantsFilePath)
-            System.err.println("Invalid Restaurant data in '$restaurantsFilePath': ${e.message ?: "Unknown error"}")
-            simConfig.wasInvalidFile = true
-            return null
-        }
-        InitialAndPrepLogger.logInitialization(true, restaurantsFilePath)
-        return restaurantData
-    }
+        } ?: return simConfig
 
-    private fun parseScenarioData(
-        scenarioFilePath: String,
-        incidentJson: JsonArray?,
-        customerJson: JsonArray?,
-        restaurants: List<Restaurant>,
-        recipes: List<Recipe>,
-        ingredients: List<Ingredient>,
-        stock: Stock,
-    ): Pair<List<Incident>, List<CustomerGroup>>? {
-        requireNotNull(incidentJson)
-        requireNotNull(customerJson)
-        return try {
+        val stock = Stock(ingredients)
+
+        val (restaurantStats, restaurants) = processFile(
+            restaurantsFilePath, "classpath:/schema/restaurants.schema"
+        ) { json ->
+            restaurantParser.parseRestaurants(
+                json.getValue("restaurants").jsonArray,
+                recipes,
+                stock
+            )
+        } ?: return simConfig
+
+        val (incidents, customers) = processFile(
+            scenarioFilePath, "classpath:/schema/scenario.schema"
+        ) { json ->
             scenarioParser.parseScenario(
-                incidentJson,
-                customerJson,
+                json.getValue("incidents").jsonArray,
+                json.getValue("customerGroups").jsonArray,
                 restaurants,
                 recipes,
                 ingredients,
                 stock,
             )
-        } catch (e: NoSuchElementException) {
-            InitialAndPrepLogger.logInitialization(false, scenarioFilePath)
-            System.err.println("Invalid Scenario data in '$scenarioFilePath': ${e.message ?: "Unknown error"}")
-            simConfig.wasInvalidFile = true
-            null
-        } catch (e: IllegalArgumentException) {
-            InitialAndPrepLogger.logInitialization(false, scenarioFilePath)
-            System.err.println("Invalid Scenario data in '$scenarioFilePath': ${e.message ?: "Unknown error"}")
-            simConfig.wasInvalidFile = true
-            null
-        }
+        } ?: return simConfig
+
+        simConfig.ingredients = ingredients
+        simConfig.recipes = recipes
+        simConfig.restaurants = restaurants
+        simConfig.restaurantStats = restaurantStats
+        simConfig.incidents = incidents
+        simConfig.customers = customers
+
+        return simConfig
     }
 
-    private fun crossvalidateScenario(scenarioFilePath: String): Boolean {
+    /** Schema-validates [filePath], runs [block] over JSON object, logging and recording file errors */
+    private inline fun <T> processFile(filePath: String, schemaPath: String, block: (JsonObject) -> T): T? {
+        if (!isSchemaValid(filePath, schemaPath)) return null
+
+        val json = Json.parseToJsonElement(File(filePath).readText()).jsonObject
         return try {
-            crossvalidateIncidents()
-            true
-        } catch (e: IllegalArgumentException) {
-            InitialAndPrepLogger.logInitialization(false, scenarioFilePath)
-            System.err.println("Invalid Scenario data in '$scenarioFilePath:${e.message ?: "Unknown error"}'")
-            simConfig.wasInvalidFile = true
-            false
+            block(json).also { InitialAndPrepLogger.logInitialization(true, filePath) }
+        } catch (_: IllegalArgumentException) {
+            invalidate(filePath)
+            null
+        } catch (_: NoSuchElementException) {
+            invalidate(filePath)
+            null
         }
     }
 
-    private fun validateFilesWithSchema(filePath: String, schemaPath: String): Boolean {
+    private fun isSchemaValid(filePath: String, schemaPath: String): Boolean {
         val jsonInstance = JsonParser(File(filePath).readText()).parse()
         val schema = SchemaLoader.forURL(schemaPath).load()
-        val validator = Validator.forSchema(schema)
-
-        validator.validate(jsonInstance) ?: return false
-        return true
+        val isValid = Validator.forSchema(schema).validate(jsonInstance) == null
+        if (!isValid) {
+            InitialAndPrepLogger.logInitialization(false, filePath)
+            simConfig.wasInvalidFile = true
+        }
+        return isValid
     }
 
-    private fun crossvalidateIncidents(): Boolean {
-        val incidents = simConfig.incidents
-        val seenIds = mutableSetOf<Int>()
-        for (incident in incidents) {
-            require(seenIds.add(incident.id)) { "Duplicate incident id: ${incident.id}" }
-        }
-        validateNoOverlappingUnavailability(incidents)
-        return true
-    }
-
-    private fun validateNoOverlappingUnavailability(incidents: List<Incident>) {
-        val unavailabilities = incidents.filterIsInstance<UnavailabilityIncident>()
-
-        for (i in unavailabilities.indices) {
-            for (j in i + 1 until unavailabilities.size) {
-                require(!unavailabilities[i].overlapsWith(unavailabilities[j])) {
-                    unavailabilities[i].conflictMessage(unavailabilities[j])
-                }
-            }
-        }
+    private fun invalidate(filePath: String /**e: Exception*/) {
+        InitialAndPrepLogger.logInitialization(false, filePath)
+        // System.err.println("Invalid data in '$filePath': ${e.message ?: "Unknown error"}")
+        simConfig.wasInvalidFile = true
     }
 }

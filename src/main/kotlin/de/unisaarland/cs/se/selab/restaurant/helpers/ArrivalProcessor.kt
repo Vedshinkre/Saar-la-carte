@@ -8,6 +8,7 @@ import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.customer.EventGroup
 import de.unisaarland.cs.se.selab.customer.RegularGroup
 import de.unisaarland.cs.se.selab.enums.ActionType
+import de.unisaarland.cs.se.selab.enums.CustomerStatus
 import de.unisaarland.cs.se.selab.enums.ExperienceType
 import de.unisaarland.cs.se.selab.enums.TableStatus
 import de.unisaarland.cs.se.selab.food.Recipe
@@ -34,23 +35,26 @@ class ArrivalProcessor(
     private var numberOfWaitersSeated: Int = 0
 
     /** Call with CustomerGroup and menu.
-     *  Returns true if CustomerGroup was processed successfully, false otherwise.
-     *  To decide whether to remove the CustomerGroup from the customerQueue use the formula
-     *  processArrival(customerGroup, menu) || customerGroup.isWaitingToBeSeated.
-     *  If true keep in the customerQueue, otherwise remove from the customerQueue. */
+     *  Returns true if CustomerGroup should be removed from the customerQueue, false otherwise. */
     fun processArrival(customerGroup: CustomerGroup, menu: List<Recipe>): Boolean {
+        if (customerGroup is RegularGroup) { customerGroup.hasReservationTonight = false }
         val isInHouse: Boolean =
             customerGroup is RegularGroup || (customerGroup is CasualGroup && !customerGroup.wantsDelivery)
-        if (isInHouse && !seatRegularOrCasualGroup(customerGroup)) {
-            return false
+        if (isInHouse) {
+            when (seatRegularOrCasualGroup(customerGroup)) {
+                CustomerStatus.NO_WAITER -> return false
+                CustomerStatus.TO_LEAVE -> return true
+                CustomerStatus.SEATED -> Unit
+            }
         }
+
         val assignedWaiter = inHouseGroupsToWaiter[customerGroup]
-        var somebodyOrdered = false
+        var somebodyOrdered: Boolean
         if (assignedWaiter != null) {
             somebodyOrdered = customerGroup.placeOrder(listOf(assignedWaiter), menu, countertop)
             assignedWaiter.currentLoad -= customerGroup.size - customerGroup.customersRemainingInRestaurant
             val currentOrder = customerGroup.currentOrder ?: return false
-            val assignedWaiterId = assignedWaiter.id ?: return false
+            val assignedWaiterId = assignedWaiter.id ?: getNextWaiterId()
             FohReceptionLogger.logFohOrdering(
                 customerGroup.id,
                 currentOrder.id,
@@ -59,6 +63,13 @@ class ArrivalProcessor(
             )
         } else {
             somebodyOrdered = customerGroup.placeOrder(listOf(), menu, countertop)
+            val currentOrder = customerGroup.currentOrder ?: return false
+            FohReceptionLogger.logFohOrdering(
+                customerGroup.id,
+                currentOrder.id,
+                currentOrder.dishNameToAmount(),
+                null
+            )
         }
 
         if (!somebodyOrdered) {
@@ -71,16 +82,12 @@ class ArrivalProcessor(
                 customerGroup.id,
                 customerGroup.size - customerGroup.customersRemainingInRestaurant
             )
-            return false
         }
         return true
     }
 
-    /** Call with CustomerGroup and menu. (Method overloading redirects EventGroups to this implementation)
-     *  Returns true if EventGroup was processed successfully, false otherwise.
-     *  To decide whether to remove the EventGroup from the customerQueue use the formula
-     *  processArrival(customerGroup, menu) || customerGroup.isWaitingToBeSeated.
-     *  If true keep in the customerQueue, otherwise remove from the customerQueue. */
+    /** Call with CustomerGroup and menu.
+     *  Returns true if CustomerGroup should be removed from the customerQueue, false otherwise. */
     fun processArrival(eventGroup: EventGroup, menu: List<Recipe>): Boolean {
         val recruitedWaiters: List<Waiter> = recruitWaitersForEventGroup(ActionType.SEAT, eventGroup)
         val consumedWaiters: MutableList<Waiter> = mutableListOf()
@@ -104,16 +111,16 @@ class ArrivalProcessor(
             customerToTable.remove(eventGroup)
             turnedAwayGroups.addLast(eventGroup)
             eventGroup.experience = ExperienceType.NEGATIVE
-            return false
+        } else {
+            successfulSeating(eventGroup, consumedWaiters)
+            if (eventGroup.placeOrder(consumedWaiters, menu, countertop)) {
+                eventGroups.add(eventGroup)
+            } else {
+                turnedAwayGroups.addLast(eventGroup)
+                eventGroup.experience = ExperienceType.NEGATIVE
+            }
         }
 
-        successfulSeating(eventGroup, consumedWaiters)
-        if (!eventGroup.placeOrder(consumedWaiters, menu, countertop)) {
-            turnedAwayGroups.addLast(eventGroup)
-            return false
-        }
-
-        eventGroups.add(eventGroup)
         return true
     }
 
@@ -182,7 +189,7 @@ class ArrivalProcessor(
         numberOfWaitersSeated = 0 // NOTE: add ordering status variables, log and then reset them
     }
 
-    private fun seatRegularOrCasualGroup(customerGroup: CustomerGroup): Boolean {
+    private fun seatRegularOrCasualGroup(customerGroup: CustomerGroup): CustomerStatus {
         val waiter: Waiter = assignWaiter(customerGroup) ?: return rejectForNoWaiter(customerGroup)
 
         if (customerGroup is CasualGroup && !assignTables(customerGroup)) {
@@ -190,8 +197,7 @@ class ArrivalProcessor(
             FohReceptionLogger.logFohNoSeating(customerGroup.id, waiter.id ?: getNextWaiterId())
             turnedAwayGroups.addLast(customerGroup)
             customerGroup.experience = ExperienceType.NEGATIVE
-            customerGroup.isWaitingToBeSeated = false
-            return false
+            return CustomerStatus.TO_LEAVE
         }
 
         successfulSeating(customerGroup, listOf(waiter))
@@ -199,20 +205,21 @@ class ArrivalProcessor(
         waiter.tickLoads[ActionType.SEAT] = waiter.tickLoads[ActionType.SEAT]!! + customerGroup.size
         waiter.currentLoad += customerGroup.size
 
-        return true
+        return CustomerStatus.SEATED
     }
 
-    private fun rejectForNoWaiter(customerGroup: CustomerGroup): Boolean {
+    private fun rejectForNoWaiter(customerGroup: CustomerGroup): CustomerStatus {
         FohReceptionLogger.logFohNoSeatingNoWaitstaff(customerGroup.id)
-        if (!customerGroup.isWaitingToBeSeated) {
+        if (!customerGroup.isVisitingThisTick()) {
             if (customerGroup is RegularGroup) {
                 customerToTable.remove(customerGroup)
                 customerGroup.failedAttempts++
             }
             turnedAwayGroups.addLast(customerGroup)
             customerGroup.experience = ExperienceType.NEGATIVE
+            return CustomerStatus.TO_LEAVE
         }
-        return false
+        return CustomerStatus.NO_WAITER
     }
 
     private fun successfulSeating(customerGroup: CustomerGroup, waiters: List<Waiter>) {

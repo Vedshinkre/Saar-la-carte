@@ -175,9 +175,7 @@ class Restaurant(
                 FohReceptionLogger.logRestaurantArrival(customerGroup.id)
             }
 
-            val keepInQueue =
-                frontOfHouse.processArrival(customerGroup, restaurantStats.menu) || customerGroup.isWaitingToBeSeated
-            if (!keepInQueue) {
+            if (frontOfHouse.processArrival(customerGroup, restaurantStats.menu)) {
                 iterator.remove()
             }
         }

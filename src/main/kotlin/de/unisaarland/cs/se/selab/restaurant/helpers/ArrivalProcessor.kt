@@ -54,7 +54,7 @@ class ArrivalProcessor(
             somebodyOrdered = customerGroup.placeOrder(listOf(assignedWaiter), menu, countertop)
             assignedWaiter.currentLoad -= customerGroup.size - customerGroup.customersRemainingInRestaurant
             val currentOrder = customerGroup.currentOrder ?: return false
-            val assignedWaiterId = assignedWaiter.id ?: return false
+            val assignedWaiterId = assignedWaiter.id ?: getNextWaiterId()
             FohReceptionLogger.logFohOrdering(
                 customerGroup.id,
                 currentOrder.id,
@@ -63,6 +63,13 @@ class ArrivalProcessor(
             )
         } else {
             somebodyOrdered = customerGroup.placeOrder(listOf(), menu, countertop)
+            val currentOrder = customerGroup.currentOrder ?: return false
+            FohReceptionLogger.logFohOrdering(
+                customerGroup.id,
+                currentOrder.id,
+                currentOrder.dishNameToAmount(),
+                null
+            )
         }
 
         if (!somebodyOrdered) {

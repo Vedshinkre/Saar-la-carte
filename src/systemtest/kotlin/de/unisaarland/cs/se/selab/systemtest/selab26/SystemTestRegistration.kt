@@ -6,6 +6,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.MyParserTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.OneCookTwoOrdersTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SequenceTwoSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SimulationLifecycleSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.StatisticsOrderingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SupplierProcurementSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.WaitstaffExhaustionTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentCookTypeExecForbiddenRejectedSystemTest
@@ -84,6 +85,7 @@ object SystemTestRegistration {
         testSuite.registerTest(WaitstaffExhaustionTest())
         testSuite.registerTest(SequenceTwoSystemTest())
         testSuite.registerTest(SimulationLifecycleSystemTest())
+        testSuite.registerTest(StatisticsOrderingSystemTest())
         testSuite.registerTest(SupplierProcurementSystemTest())
         testSuite.registerTest(RestaurantsDifferentNameSameIdTest())
         testSuite.registerTest(RestaurantsNoBasicDishOfItsTypeTest())

@@ -3,6 +3,7 @@ package de.unisaarland.cs.se.selab.customer
 import de.unisaarland.cs.se.selab.Evening
 import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.Tick
+import de.unisaarland.cs.se.selab.Time
 import de.unisaarland.cs.se.selab.enums.TableType
 import de.unisaarland.cs.se.selab.food.Order
 
@@ -18,5 +19,13 @@ class RegularGroup(
     val restaurantId: Id,
 ) : CustomerGroup(id, size, tableType, visitingAt, foodPreferences) {
     val orderHistory: MutableList<Order> = mutableListOf()
-    var failedReservations: Int = 0
+    var failedAttempts: Int = 0
+    var hasReservationTonight: Boolean? = null
+
+    override fun isVisitingTonight(): Boolean {
+        require(hasReservationTonight != null)
+        val isPeriodicVisitEvening: Boolean = (Time.evening - visitingStart) % visitingPeriod == 0
+
+        return hasReservationTonight == true && failedAttempts < 2 && isPeriodicVisitEvening
+    }
 }

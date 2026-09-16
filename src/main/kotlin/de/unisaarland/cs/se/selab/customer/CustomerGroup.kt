@@ -31,9 +31,16 @@ sealed class CustomerGroup(
     var customersRemainingInRestaurant = size
 
     /**
+     * returns true if the customerGroup is visiting this tick
+     */
+    open fun isVisitingThisTick(): Boolean {
+        return Time.tick == visitingAt
+    }
+
+    /**
      * takes the order of a customer group
      */
-    fun placeOrder(waiters: List<Waiter>, menu: List<Recipe>, countertop: Countertop) {
+    fun placeOrder(waiters: List<Waiter>, menu: List<Recipe>, countertop: Countertop): Boolean {
         val listOfDishes = mutableListOf<Dish>()
         for (foodPreference in foodPreferences) {
             val currentWaiter = waiters.firstOrNull { it.getTickLoad(ActionType.TAKE_ORDER) < Constants.ACTION_LIMIT }
@@ -52,17 +59,21 @@ sealed class CustomerGroup(
             experience = ExperienceType.NEGATIVE
         }
 
+        if (customersRemainingInRestaurant == 0) {
+            return false
+        }
+
         val customerOrder = Order(listOfDishes)
         currentOrder = customerOrder
         countertop.addOrder(customerOrder)
+
+        return true
     }
 
     /**
      * returns true if group is visiting a restaurant tonight
      */
-    fun isVisitingTonight(): Boolean {
-        return Time.tick == visitingAt
-    }
+    abstract fun isVisitingTonight(): Boolean
 
     /**
      * updates the pantry and the tickLoad of the waiter which "registers" that a dish has been ordered

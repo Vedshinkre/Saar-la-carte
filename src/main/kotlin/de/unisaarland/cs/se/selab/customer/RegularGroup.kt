@@ -20,12 +20,10 @@ class RegularGroup(
 ) : CustomerGroup(id, size, tableType, visitingAt, foodPreferences) {
     val orderHistory: MutableList<Order> = mutableListOf()
     var failedAttempts: Int = 0
-    var hasReservationTonight: Boolean? = null
+    var hasReservationTonight: Boolean = false
 
     override fun isVisitingTonight(): Boolean {
-        require(hasReservationTonight != null)
         val isPeriodicVisitEvening: Boolean = (Time.evening - visitingStart) % visitingPeriod == 0
-
-        return hasReservationTonight == true && failedAttempts < 2 && isPeriodicVisitEvening
+        return hasReservationTonight && failedAttempts < 2 && isPeriodicVisitEvening
     }
 }

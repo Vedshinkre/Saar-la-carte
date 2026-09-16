@@ -22,8 +22,6 @@ sealed class CustomerGroup(
     val visitingAt: Tick,
     val foodPreferences: List<FoodPreference>, // Could you make this public
 ) {
-    open var isWaitingToBeSeated: Boolean = true
-        get() = Time.tick - visitingAt == 0 && field
     var experience = ExperienceType.NEUTRAL
 
     // relevant to F27

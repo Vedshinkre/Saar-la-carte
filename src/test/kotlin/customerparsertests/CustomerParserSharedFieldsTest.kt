@@ -25,6 +25,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
 import kotlin.test.assertIs
+import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 /**
@@ -85,7 +86,7 @@ class CustomerParserSharedFieldsTest {
             overrides()
         }
 
-    private fun regularGroup(id: Int): JsonObject = buildJsonObject {
+    private fun regularGroup(id: Int, overrides: JsonObjectBuilder.() -> Unit = {}): JsonObject = buildJsonObject {
         put("id", id)
         put("type", "REGULAR")
         put("size", 3)
@@ -94,9 +95,10 @@ class CustomerParserSharedFieldsTest {
         put("visitingStart", 1)
         put("visitingPeriod", 2)
         put("restaurant", 1)
+        overrides()
     }
 
-    private fun eventGroup(id: Int): JsonObject = buildJsonObject {
+    private fun eventGroup(id: Int, overrides: JsonObjectBuilder.() -> Unit = {}): JsonObject = buildJsonObject {
         put("id", id)
         put("type", "EVENT")
         put("size", 6)
@@ -105,6 +107,7 @@ class CustomerParserSharedFieldsTest {
         putJsonArray("restaurantTypes") { add("ASIAN") }
         put("eventEvening", 4)
         putJsonObject("favoriteDishes") { put("ASIAN", "Rice Bowl") }
+        overrides()
     }
 
     // Uses all three preference properties on purpose, so tests only fail for the rule they target.
@@ -222,6 +225,65 @@ class CustomerParserSharedFieldsTest {
         assertEquals(3, group.foodPreferences.size)
     }
 
+    @Test
+    fun `shared fields reach a REGULAR group`() {
+        val group = parse(
+            regularGroup(id = 11) {
+                put("size", 7)
+                put("visitingTick", 9)
+                put("tableType", "SEPARATED")
+                preferencesOfSize(2)
+            }
+        ).single()
+
+        assertIs<RegularGroup>(group)
+        assertEquals(11, group.id)
+        assertEquals(7, group.size)
+        assertEquals(9, group.visitingAt)
+        assertEquals(TableType.SEPARATED, group.tableType)
+        assertEquals(7, group.foodPreferences.size)
+    }
+
+    @Test
+    fun `shared fields reach an EVENT group`() {
+        val group = parse(
+            eventGroup(id = 12) {
+                put("size", 40)
+                put("visitingTick", 21)
+                put("tableType", "BAR")
+                preferencesOfSize(40)
+            }
+        ).single()
+
+        assertIs<EventGroup>(group)
+        assertEquals(12, group.id)
+        assertEquals(40, group.size)
+        assertEquals(21, group.visitingAt)
+        assertEquals(TableType.BAR, group.tableType)
+        assertEquals(40, group.foodPreferences.size)
+    }
+
+    @Test
+    fun `parsed preferences point to the ingredient objects passed to the parser`() {
+        val group = parse(casualGroup(id = 1, size = 2) { preferencesOfSize(1) }).single()
+
+        val preference = group.foodPreferences.first()
+        assertSame(garlic, preference.excludedIngredients.single())
+        assertSame(rice, preference.preferredIngredients.single())
+        assertEquals(listOf("Rice Bowl"), preference.favouriteDishes)
+    }
+
+    @Test
+    fun `groups are parsed independently of each other`() {
+        val groups = parse(
+            casualGroup(id = 1, size = 1) { preferencesOfSize(1) },
+            casualGroup(id = 2, size = 5)
+        )
+
+        assertEquals(listOf(1, 5), groups.map { it.foodPreferences.size })
+        assertTrue(groups[1].foodPreferences.all { it.excludedIngredients.isEmpty() })
+    }
+
     // ---- Invalid input ----
 
     @Test
@@ -242,6 +304,23 @@ class CustomerParserSharedFieldsTest {
     fun `duplicate id that is not adjacent in the file is rejected`() {
         assertThrows<IllegalArgumentException> {
             parse(casualGroup(id = 1), casualGroup(id = 2), casualGroup(id = 3), casualGroup(id = 1))
+        }
+    }
+
+    @Test
+    fun `too large preference sizes in a later group are rejected`() {
+        assertThrows<IllegalArgumentException> {
+            parse(
+                casualGroup(id = 1, size = 3) { preferencesOfSize(3) },
+                regularGroup(id = 2) { preferencesOfSize(4) }
+            )
+        }
+    }
+
+    @Test
+    fun `too large preference sizes in an EVENT group are rejected`() {
+        assertThrows<IllegalArgumentException> {
+            parse(eventGroup(id = 1) { preferencesOfSize(7) })
         }
     }
 

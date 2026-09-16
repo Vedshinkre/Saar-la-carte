@@ -44,9 +44,22 @@ class ArrivalProcessor(
         if (isInHouse && !seatRegularOrCasualGroup(customerGroup)) {
             return false
         }
-        val assignedWaiter = inHouseGroupsToWaiter[customerGroup] ?: return false
-        val somebodyOrdered = customerGroup.placeOrder(listOf(assignedWaiter), menu, countertop)
-        assignedWaiter.currentLoad -= customerGroup.size - customerGroup.customersRemainingInRestaurant
+        val assignedWaiter = inHouseGroupsToWaiter[customerGroup]
+        var somebodyOrdered = false
+        if (assignedWaiter != null) {
+            somebodyOrdered = customerGroup.placeOrder(listOf(assignedWaiter), menu, countertop)
+            assignedWaiter.currentLoad -= customerGroup.size - customerGroup.customersRemainingInRestaurant
+            val currentOrder = customerGroup.currentOrder ?: return false
+            val assignedWaiterId = assignedWaiter.id ?: return false
+            FohReceptionLogger.logFohOrdering(
+                customerGroup.id,
+                currentOrder.id,
+                currentOrder.dishNameToAmount(),
+                listOf(assignedWaiterId)
+            )
+        } else {
+            somebodyOrdered = customerGroup.placeOrder(listOf(), menu, countertop)
+        }
 
         if (!somebodyOrdered) {
             if (customerGroup is RegularGroup) {
@@ -54,9 +67,13 @@ class ArrivalProcessor(
             }
             inHouseGroupsToWaiter.remove(customerGroup)
             turnedAwayGroups.addLast(customerGroup)
+            FohReceptionLogger.logFohNoOrdering(
+                customerGroup.id,
+                customerGroup.size - customerGroup.customersRemainingInRestaurant
+            )
+            return false
         }
-
-        return somebodyOrdered
+        return true
     }
 
     /** Call with CustomerGroup and menu. (Method overloading redirects EventGroups to this implementation)

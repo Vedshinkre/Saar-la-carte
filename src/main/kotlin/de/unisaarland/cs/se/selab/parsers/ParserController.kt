@@ -1,12 +1,8 @@
 package de.unisaarland.cs.se.selab.parsers
 
-import com.github.erosb.jsonsKema.FormatValidationPolicy
-
-import com.github.erosb.jsonsKema.JsonParseException
 import com.github.erosb.jsonsKema.JsonParser
 import com.github.erosb.jsonsKema.SchemaLoader
 import com.github.erosb.jsonsKema.Validator
-import com.github.erosb.jsonsKema.ValidatorConfig
 import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.food.Ingredient
 import de.unisaarland.cs.se.selab.food.Recipe
@@ -22,7 +18,6 @@ import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import java.io.File
-import java.io.IOException
 
 /**
  * delegates objects to other parsers
@@ -42,18 +37,7 @@ class ParserController {
         restaurantsFilePath: String,
         scenarioFilePath: String,
     ): SimulationConfig {
-        if (!validateFilesWithSchema(foodFilePath, "classpath:/schema/food.schema")) {
-            InitialAndPrepLogger.logInitialization(false, foodFilePath)
-            simConfig.wasInvalidFile = true
-            return simConfig
-        }
-        if (!validateFilesWithSchema(restaurantsFilePath, "classpath:/schema/restaurants.schema")) {
-            InitialAndPrepLogger.logInitialization(false, restaurantsFilePath)
-            simConfig.wasInvalidFile = true
-            return simConfig
-        }
-        if (!validateFilesWithSchema(scenarioFilePath, "classpath:/schema/scenario.schema")) {
-            InitialAndPrepLogger.logInitialization(false, scenarioFilePath)
+        if (!validateAllSchemas(foodFilePath, restaurantsFilePath, scenarioFilePath)) {
             simConfig.wasInvalidFile = true
             return simConfig
         }
@@ -83,9 +67,29 @@ class ParserController {
         simConfig.restaurantStats = restaurantData.first
         simConfig.incidents = scenarioData.first
         simConfig.customers = scenarioData.second
-        if (!crossvalidateScenario(scenarioFilePath)) return simConfig
-        InitialAndPrepLogger.logInitialization(true, scenarioFilePath)
+        if (!crossvalidateScenario(scenarioFilePath)) {
+            InitialAndPrepLogger.logInitialization(true, scenarioFilePath)
+        }
         return simConfig
+    }
+
+    private fun validateAllSchemas(
+        foodFilePath: String,
+        restaurantsFilePath: String,
+        scenarioFilePath: String,
+    ): Boolean {
+        val schemas = listOf(
+            foodFilePath to "classpath:/schema/food.schema",
+            restaurantsFilePath to "classpath:/schema/restaurants.schema",
+            scenarioFilePath to "classpath:/schema/scenario.schema",
+        )
+        for ((filePath, schemaPath) in schemas) {
+            if (!validateFilesWithSchema(filePath, schemaPath)) {
+                InitialAndPrepLogger.logInitialization(false, filePath)
+                return false
+            }
+        }
+        return true
     }
 
     private data class JsonSources(

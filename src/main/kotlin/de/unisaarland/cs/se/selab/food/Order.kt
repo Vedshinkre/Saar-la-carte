@@ -135,4 +135,23 @@ class Order(val dishes: List<Dish>) {
         val currentTime = Time.tick
         return currentTime - orderedAt >= 2
     }
+
+    /**
+     * returns map of dish names to the amount that was ordered
+     */
+    fun dishNameToAmount(): Map<String, Int> {
+        val map = mutableMapOf<String, Int>()
+        for (dish in dishes) {
+            if (map.containsKey(dish.recipe.name)) {
+                val currentAmount = map[dish.recipe.name]
+                if (currentAmount != null) {
+                    map[dish.recipe.name] = currentAmount + 1
+                }
+            } else {
+                map[dish.recipe.name] = 1
+            }
+        }
+
+        return map
+    }
 }

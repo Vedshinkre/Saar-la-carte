@@ -1,0 +1,14 @@
+{
+  "customerGroups": [],
+  "incidents": [
+    {
+      "id": 14,
+      "evening": 1,
+      "type": "STAFF",
+      "restaurant": 10,
+      "staffType": "COOK",
+      "cookType": "EXEC",
+      "number": 1
+    }
+  ]
+}

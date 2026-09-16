@@ -41,7 +41,7 @@ class IncidentParser {
         recipes: List<Recipe>,
         restaurants: List<Restaurant>
     ): List<Incident> {
-        return incidentArray.map { element ->
+        val incidents = incidentArray.map { element ->
             val json = element as? JsonObject ?: throw IllegalArgumentException(
                 "Invalid incident: expected a JSON object, got: $element"
             )
@@ -59,6 +59,35 @@ class IncidentParser {
                     "Invalid incident: $element",
                     exception
                 )
+            }
+        }
+
+        validateUniqueIds(incidents)
+        validateNoOverlappingUnavailability(incidents)
+        return incidents
+    }
+
+    /**
+     * cross validation: incident ids must be unique
+     */
+    private fun validateUniqueIds(incidents: List<Incident>) {
+        val seenIds = mutableSetOf<Int>()
+        for (incident in incidents) {
+            require(seenIds.add(incident.id)) { "Duplicate incident id: ${incident.id}" }
+        }
+    }
+
+    /**
+     * cross validation: unavailability incidents for the same ingredient must not overlap
+     */
+    private fun validateNoOverlappingUnavailability(incidents: List<Incident>) {
+        val unavailabilities = incidents.filterIsInstance<UnavailabilityIncident>()
+
+        for (i in unavailabilities.indices) {
+            for (j in i + 1 until unavailabilities.size) {
+                require(!unavailabilities[i].overlapsWith(unavailabilities[j])) {
+                    unavailabilities[i].conflictMessage(unavailabilities[j])
+                }
             }
         }
     }

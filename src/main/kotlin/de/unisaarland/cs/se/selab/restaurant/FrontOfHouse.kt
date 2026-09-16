@@ -4,12 +4,15 @@ import de.unisaarland.cs.se.selab.Constants
 import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.actors.Driver
 import de.unisaarland.cs.se.selab.actors.Waiter
+import de.unisaarland.cs.se.selab.customer.CasualGroup
 import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.customer.EventGroup
 import de.unisaarland.cs.se.selab.customer.RegularGroup
 import de.unisaarland.cs.se.selab.enums.ActionType
 import de.unisaarland.cs.se.selab.enums.DishStatus
 import de.unisaarland.cs.se.selab.enums.DriverState
+import de.unisaarland.cs.se.selab.enums.TableStatus
+import de.unisaarland.cs.se.selab.enums.TableType
 import de.unisaarland.cs.se.selab.food.Recipe
 import de.unisaarland.cs.se.selab.restaurant.helpers.ArrivalProcessor
 import de.unisaarland.cs.se.selab.restaurant.helpers.DeliveryProcessor
@@ -159,10 +162,14 @@ class FrontOfHouse(
     /** Call with the CustomerGroup and menu.
      *  Returns true if CustomerGroup was processed successfully, false otherwise.
      *  To decide whether to remove the CustomerGroup from the customerQueue, use the formula
-     *  processArrivalSeatingOrdering(customerGroup, menu) || customerGroup.isWaitingToBeSeated.
+     *  processArrival(customerGroup, menu) || customerGroup.isWaitingToBeSeated.
      *  If true, keep in the customerQueue, otherwise remove from the customerQueue. */
-    fun processArrival(customerGroup: CustomerGroup, menu: List<Recipe>): Boolean =
-        arrival.processArrival(customerGroup, menu)
+    fun processArrival(customerGroup: CustomerGroup, menu: List<Recipe>): Boolean {
+        return when (customerGroup) {
+            is CasualGroup, is RegularGroup -> arrival.processArrival(customerGroup, menu)
+            is EventGroup -> arrival.processArrival(customerGroup, menu)
+        }
+    }
 
     /** Call only with Regular- or EventGroup.
      *  Returns true if a reservation has been made and performs side effects on tables and customerToTable. */
@@ -187,6 +194,21 @@ class FrontOfHouse(
 
     /** process escorting */
     fun processEscorting() = escorting.processEscorting()
+
+    /**
+     * returns the number of free seats per table type
+     */
+    fun getFreeSeats(): MutableMap<TableType, Int> {
+        val freeTables = tables.filter { it.status == TableStatus.FREE }
+        val map = mutableMapOf<TableType, Int>()
+        for (type in TableType.entries) {
+            map[type] = 0
+        }
+        freeTables.forEach { freeTable ->
+            map[freeTable.tableType] = map.getValue(freeTable.tableType) + freeTable.size
+        }
+        return map
+    }
 
     /**
      * Processes customer ratings and updates the positive and negative rating counts.

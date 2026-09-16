@@ -1,0 +1,13 @@
+{
+  "customerGroups": [],
+  "incidents": [
+    {
+      "id": 17,
+      "evening": -1,
+      "type": "STAFF",
+      "restaurant": 10,
+      "staffType": "DRIVER",
+      "number": 1
+    }
+  ]
+}

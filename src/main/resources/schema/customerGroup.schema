@@ -72,13 +72,13 @@
           "type": "array",
           "items": {
             "type": "integer",
-            "minimum": 0
+            "minimum": 1
           },
           "minItems": 1,
           "uniqueItems": true
         },
         "deliveryDistance": {
-          "type": "number",
+          "type": "integer",
           "minimum": 0
         },
         "ratingLikelihood": {

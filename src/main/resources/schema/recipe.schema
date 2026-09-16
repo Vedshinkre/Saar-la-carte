@@ -45,7 +45,7 @@
                 "minLength": 1
               },
               "amount": {
-                "type": "number",
+                "type": "integer",
                 "minimum": 1
               }
             },

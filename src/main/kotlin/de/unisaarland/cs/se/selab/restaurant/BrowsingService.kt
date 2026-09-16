@@ -43,9 +43,11 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
                 }
             }
             deliveryRests.filter { it.availableDrivers > 0 }.filter { isDietaryCompatible(it, group) }
-            val res = deliveryRests.maxWithOrNull(compareBy<RestaurantStats> {
-                it.positiveRatings - it.negativeRatings
-            }.thenByDescending { it.restaurantId })
+            val res = deliveryRests.maxWithOrNull(
+                compareBy<RestaurantStats> {
+                    it.positiveRatings - it.negativeRatings
+                }.thenByDescending { it.restaurantId }
+            )
             if (res != null) {
                 res.availableDrivers = res.availableDrivers - 1
                 return res.restaurantId
@@ -70,9 +72,11 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
             }
         }
         llist.filter { isDietaryCompatible(it, group) }
-        val res = llist.maxWithOrNull(compareBy<RestaurantStats> {
-            it.positiveRatings - it.negativeRatings
-        }.thenByDescending { it.restaurantId })
+        val res = llist.maxWithOrNull(
+            compareBy<RestaurantStats> {
+                it.positiveRatings - it.negativeRatings
+            }.thenByDescending { it.restaurantId }
+        )
         if (res != null) {
             res.availableSeats[group.tableType] = res.availableSeats[group.tableType]!! - group.size
             return res.restaurantId
@@ -95,9 +99,11 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
             }
         }
         result.filter { isDietaryCompatible(it, group) }
-        val res = result.maxWithOrNull(compareBy<RestaurantStats> {
-            it.positiveRatings - it.negativeRatings
-        }.thenByDescending { it.restaurantId })
+        val res = result.maxWithOrNull(
+            compareBy<RestaurantStats> {
+                it.positiveRatings - it.negativeRatings
+            }.thenByDescending { it.restaurantId }
+        )
         if (res != null) {
             res.availableEventSeats[group.tableType] = res.availableEventSeats[group.tableType]!! - group.size
             res.restaurantId

@@ -20,16 +20,18 @@ class EscortingProcessor(
     private val getServingPriority: (CustomerGroup) -> Int,
     private val recruitWaitersForEventGroup: (ActionType, EventGroup) -> List<Waiter>
 ) {
+    var customerEscortingNumber = 0
+    var waitstaffNumber = 0
+
     /**
      * Escorts eligible in-house groups whose dishes have been eaten.
      * Dismantles tables of casual groups after all customers have left
      * and logs the escorting results.
      */
+
     fun processEscorting() {
         val groupsToBeEscorted =
             getInHouseGroups() + eventGroups.sortedWith(compareBy({ getServingPriority(it) }, { it.id }))
-        var customerEscortingNumber = 0
-        var waitstaffNumber = 0
 
         groupsToBeEscorted.forEach {
             val order = it.currentOrder
@@ -37,24 +39,17 @@ class EscortingProcessor(
                 if (it is EventGroup) {
                     val waiters = recruitWaitersForEventGroup(ActionType.ESCORT, it)
                     val customersBefore = it.customersRemainingInRestaurant
-                    waiters.forEach { waiter ->
-                        waiter.escortEventGroups(it)
-                        val customersEscorted = customersBefore - it.customersRemainingInRestaurant
-                        logFohEscorting(
-                            waiter.id!!, customersEscorted, it.id, getAssignedTableId(it.id).min()
-                        )
-                        waitstaffNumber++
-                        customerEscortingNumber += customersEscorted
-                    }
-
+                    escortEventGroup(waiters, customersBefore, it)
                 } else {
                     val waiter = getAssignedWaiter(it.id)
                     val customersBefore = it.customersRemainingInRestaurant
                     waiter.escort(it)
-                    val customersEscorted =
-                        customersBefore - it.customersRemainingInRestaurant // waiter was assigned during seating, so it already has an id.
+                    val customersEscorted = customersBefore - it.customersRemainingInRestaurant
                     logFohEscorting(
-                        requireNotNull(waiter.id), customersEscorted, it.id, getAssignedTableIds(it.id).min()
+                        requireNotNull(waiter.id),
+                        customersEscorted,
+                        it.id,
+                        getAssignedTableIds(it.id).min()
                     )
 
                     waitstaffNumber++
@@ -66,10 +61,25 @@ class EscortingProcessor(
             }
         }
         logFohEscortingStatus(
-            waitstaffNumber, customerEscortingNumber
+            waitstaffNumber,
+            customerEscortingNumber
         )
     }
 
+    private fun escortEventGroup(waiters: List<Waiter>, customersBefore: Int, group: EventGroup) {
+        waiters.forEach { waiter ->
+            waiter.escortEventGroups(group)
+            val customersEscorted = customersBefore - group.customersRemainingInRestaurant
+            logFohEscorting(
+                requireNotNull(waiter.id),
+                customersEscorted,
+                group.id,
+                getAssignedTableIds(group.id).min()
+            )
+            waitstaffNumber++
+            customerEscortingNumber += customersEscorted
+        }
+    }
 
     private fun getAssignedWaiter(customerId: Id): Waiter {
         return inHouseGroupsToWaiter.entries.first { it.key.id == customerId }.value
@@ -89,7 +99,8 @@ class EscortingProcessor(
         }
 
         customerToTable.remove(
-            customerToTable.keys.first { it.id == customerId })
+            customerToTable.keys.first { it.id == customerId }
+        )
     }
 
     /**

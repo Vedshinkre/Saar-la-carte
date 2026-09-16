@@ -1,0 +1,25 @@
+{
+  "ingredients": [
+    {
+      "name": "Potato",
+      "unit": "g",
+      "packagingVolume": 1000,
+      "bestBefore": 3
+    }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "Potato Soup",
+      "duration": 10,
+      "basicDishFor": "EUROPEAN",
+      "cookType": ["TOURNANT"],
+      "ingredients": [
+        {
+          "name": "Potato",
+          "amount": 300
+        }
+      ]
+    }
+  ]
+}

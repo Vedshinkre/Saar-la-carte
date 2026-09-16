@@ -5,8 +5,6 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.InvalidRestaur
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.MyParserTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.OneCookTwoOrdersTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SequenceTwoSystemTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SimulationLifecycleSystemTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SupplierProcurementSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.AllFilesValidSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.CustomerGroupUnknownRestaurantSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.DuplicateIncidentIdRejectedSystemTest
@@ -164,11 +162,14 @@ object SystemTestRegistration {
         testSuite.registerTest(FoodDuplicateRecipeIdRejectedSystemTest())
         testSuite.registerTest(InvalidRestaurantParserTest())
         testSuite.registerTest(MyParserTest())
-//        testSuite.registerTest(IncidentWaitstaffWithCookTypeRejectedSystemTest())
-//        testSuite.registerTest(IncidentDriverWithCookTypeRejectedSystemTest())
-//        testSuite.registerTest(IncidentNegativeEveningRejectedSystemTest())
-//        testSuite.registerTest(IncidentStaffWithIngredientRejectedSystemTest())
-//        testSuite.registerTest(IncidentZeroStaffNumberRejectedSystemTest())
-//        testSuite.registerTest(IncidentCookTypeExecForbiddenRejectedSystemTest())
+        testSuite.registerTest(IncidentWaitstaffWithCookTypeRejectedSystemTest())
+        testSuite.registerTest(IncidentDriverWithCookTypeRejectedSystemTest())
+        testSuite.registerTest(IncidentNegativeEveningRejectedSystemTest())
+        testSuite.registerTest(IncidentStaffWithIngredientRejectedSystemTest())
+        testSuite.registerTest(IncidentZeroStaffNumberRejectedSystemTest())
+        testSuite.registerTest(IncidentCookTypeExecForbiddenRejectedSystemTest())
+        testSuite.registerTest(IncidentUnavailabilityZeroDurationRejectedSystemTest())
+        testSuite.registerTest(IncidentUnavailabilityNegativeDurationRejectedSystemTest())
+        testSuite.registerTest(IncidentUnavailabilityProhibitedPropertyRejectedSystemTest())
     }
 }

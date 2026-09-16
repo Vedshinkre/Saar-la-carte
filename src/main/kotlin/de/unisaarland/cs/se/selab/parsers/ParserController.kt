@@ -79,12 +79,12 @@ class ParserController {
         return try {
             block(json).also { InitialAndPrepLogger.logInitialization(true, filePath) }
         } catch (_: IllegalArgumentException) {
-            invalidate(filePath)
-            null
-        } catch (_: NoSuchElementException) {
-            invalidate(filePath)
+            InitialAndPrepLogger.logInitialization(false, filePath)
+            // System.err.println("Invalid data in '$filePath': ${e.message ?: "Unknown error"}")
+            simConfig.wasInvalidFile = true
             null
         }
+        // NOTE: NoSuchElementException isn't cached, it means we should fix the getValue, not that the file is invalid
     }
 
     private fun isSchemaValid(filePath: String, schemaPath: String): Boolean {
@@ -96,11 +96,5 @@ class ParserController {
             simConfig.wasInvalidFile = true
         }
         return isValid
-    }
-
-    private fun invalidate(filePath: String /**e: Exception*/) {
-        InitialAndPrepLogger.logInitialization(false, filePath)
-        // System.err.println("Invalid data in '$filePath': ${e.message ?: "Unknown error"}")
-        simConfig.wasInvalidFile = true
     }
 }

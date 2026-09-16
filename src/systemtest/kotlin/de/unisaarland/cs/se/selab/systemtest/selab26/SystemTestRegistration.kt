@@ -1,10 +1,25 @@
 package de.unisaarland.cs.se.selab.systemtest.selab26
 
 import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExampleSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ExactStockoutTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.InvalidRestaurantParserTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.MyParserTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.OneCookTwoOrdersTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SequenceTwoSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SimulationLifecycleSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.StatisticsOrderingSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SupplierProcurementSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.UnavailableIncidentSupplierProcurementSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.WaitstaffExhaustionTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentCookTypeExecForbiddenRejectedSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentDriverWithCookTypeRejectedSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentNegativeEveningRejectedSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentStaffWithIngredientRejectedSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentUnavailabilityNegativeDurationRejectedSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentUnavailabilityProhibitedPropertyRejectedSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentUnavailabilityZeroDurationRejectedSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentWaitstaffWithCookTypeRejectedSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentZeroStaffNumberRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.AllFilesValidSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.CustomerGroupUnknownRestaurantSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.DuplicateIncidentIdRejectedSystemTest
@@ -66,11 +81,15 @@ object SystemTestRegistration {
         testSuite.registerTest(ExampleSystemTest())
 
         // testSuite.registerTest(EventReservationConflictTest())
-        //  testSuite.registerTest(ExactStockoutTest())
+        testSuite.registerTest(ExactStockoutTest())
         //  testSuite.registerTest(ExhaustiveSimpleScenarioTest())
         testSuite.registerTest(OneCookTwoOrdersTest())
-        //   testSuite.registerTest(WaitstaffExhaustionTest())
+        testSuite.registerTest(WaitstaffExhaustionTest())
         testSuite.registerTest(SequenceTwoSystemTest())
+        testSuite.registerTest(SimulationLifecycleSystemTest())
+        testSuite.registerTest(StatisticsOrderingSystemTest())
+        testSuite.registerTest(SupplierProcurementSystemTest())
+        testSuite.registerTest(UnavailableIncidentSupplierProcurementSystemTest())
         testSuite.registerTest(RestaurantsDifferentNameSameIdTest())
         testSuite.registerTest(RestaurantsNoBasicDishOfItsTypeTest())
         testSuite.registerTest(RestaurantsNoCookExistsTest())
@@ -94,6 +113,8 @@ object SystemTestRegistration {
         // new
         testSuite.registerTest(InvalidRestaurantParserTest())
         testSuite.registerTest(MyParserTest())
+        // testSuite.registerTest(IncidentZeroStaffNumberRejectedSystemTest())
+        //  testSuite.registerTest(IncidentCookTypeExecForbiddenRejectedSystemTest())
     }
 
     /**
@@ -115,10 +136,10 @@ object SystemTestRegistration {
         testSuite.registerTest(ExampleSystemTest())
 
         //  testSuite.registerTest(EventReservationConflictTest())
-        //   testSuite.registerTest(ExactStockoutTest())
+        testSuite.registerTest(ExactStockoutTest())
         //  testSuite.registerTest(ExhaustiveSimpleScenarioTest())
-        //   testSuite.registerTest(OneCookTwoOrdersTest())
-        //   testSuite.registerTest(WaitstaffExhaustionTest())
+        testSuite.registerTest(OneCookTwoOrdersTest())
+        testSuite.registerTest(WaitstaffExhaustionTest())
     }
 
     /**
@@ -156,5 +177,16 @@ object SystemTestRegistration {
         testSuite.registerTest(FoodRecipeDurationTooShortRejectedSystemTest())
         testSuite.registerTest(FoodRecipeMissingIngredientRefRejectedSystemTest())
         testSuite.registerTest(FoodDuplicateRecipeIdRejectedSystemTest())
+        testSuite.registerTest(InvalidRestaurantParserTest())
+        testSuite.registerTest(MyParserTest())
+        testSuite.registerTest(IncidentWaitstaffWithCookTypeRejectedSystemTest())
+        testSuite.registerTest(IncidentDriverWithCookTypeRejectedSystemTest())
+        testSuite.registerTest(IncidentNegativeEveningRejectedSystemTest())
+        testSuite.registerTest(IncidentStaffWithIngredientRejectedSystemTest())
+        testSuite.registerTest(IncidentZeroStaffNumberRejectedSystemTest())
+        testSuite.registerTest(IncidentCookTypeExecForbiddenRejectedSystemTest())
+        testSuite.registerTest(IncidentUnavailabilityZeroDurationRejectedSystemTest())
+        testSuite.registerTest(IncidentUnavailabilityNegativeDurationRejectedSystemTest())
+        testSuite.registerTest(IncidentUnavailabilityProhibitedPropertyRejectedSystemTest())
     }
 }

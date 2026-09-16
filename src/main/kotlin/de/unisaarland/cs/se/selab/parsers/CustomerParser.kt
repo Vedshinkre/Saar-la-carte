@@ -209,6 +209,8 @@ class CustomerParser {
         recipes: List<Recipe>,
         eventDishes: Map<RestaurantType, String>
     ) {
-        require(recipes.map { it.name }.containsAll(eventDishes.values))
+        for ((restaurantType, favoriteDish) in eventDishes) {
+            require(recipes.filter { it.basicDishFor == restaurantType }.map { it.name }.contains(favoriteDish))
+        }
     }
 }

@@ -4,6 +4,7 @@ import de.unisaarland.cs.se.selab.Constants
 import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.actors.Driver
 import de.unisaarland.cs.se.selab.actors.Waiter
+import de.unisaarland.cs.se.selab.customer.CasualGroup
 import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.customer.EventGroup
 import de.unisaarland.cs.se.selab.customer.RegularGroup
@@ -161,10 +162,14 @@ class FrontOfHouse(
     /** Call with the CustomerGroup and menu.
      *  Returns true if CustomerGroup was processed successfully, false otherwise.
      *  To decide whether to remove the CustomerGroup from the customerQueue, use the formula
-     *  processArrivalSeatingOrdering(customerGroup, menu) || customerGroup.isWaitingToBeSeated.
+     *  processArrival(customerGroup, menu) || customerGroup.isWaitingToBeSeated.
      *  If true, keep in the customerQueue, otherwise remove from the customerQueue. */
-    fun processArrival(customerGroup: CustomerGroup, menu: List<Recipe>): Boolean =
-        arrival.processArrival(customerGroup, menu)
+    fun processArrival(customerGroup: CustomerGroup, menu: List<Recipe>): Boolean {
+        return when (customerGroup) {
+            is CasualGroup, is RegularGroup -> arrival.processArrival(customerGroup, menu)
+            is EventGroup -> arrival.processArrival(customerGroup, menu)
+        }
+    }
 
     /** Call only with Regular- or EventGroup.
      *  Returns true if a reservation has been made and performs side effects on tables and customerToTable. */
@@ -189,6 +194,21 @@ class FrontOfHouse(
 
     /** process escorting */
     fun processEscorting() = escorting.processEscorting()
+
+    /**
+     * returns the number of free seats per table type
+     */
+    fun getFreeSeats(): MutableMap<TableType, Int> {
+        val freeTables = tables.filter { it.status == TableStatus.FREE }
+        val map = mutableMapOf<TableType, Int>()
+        for (type in TableType.entries) {
+            map[type] = 0
+        }
+        freeTables.forEach { freeTable ->
+            map[freeTable.tableType] = map.getValue(freeTable.tableType) + freeTable.size
+        }
+        return map
+    }
 
     /**
      * Processes customer ratings and updates the positive and negative rating counts.
@@ -255,18 +275,27 @@ class FrontOfHouse(
             it.id = null
             it.currentLoad = 0
         }
+        waiterIdCounter = 1
     }
 
     /** lets drivers that are RETURNING continue, otherwise abort their order and make them IDLE */
     fun resetDrivers() {
         for (driver in drivers) {
-            if (driver.state == DriverState.RETURNING) {
-                continue
-            } else if (driver.state != DriverState.IDLE) {
+            if (driver.state != DriverState.IDLE) {
                 val currentOrder = requireNotNull(driver.currentOrder)
-                currentOrder.dishes.forEach { it.status = DishStatus.ABORTED }
-                driver.state = DriverState.IDLE
+                currentOrder.dishes.forEach {
+                    it.status = DishStatus.ABORTED
+                    driver.state = DriverState.IDLE
+                    driver.currentOrder = null
+                    driver.targetGroup = null
+                    driver.totalTripTicks = 0
+                    driver.ticksToDest = 0
+                }
             }
+            driver.currentOrder = null
+            driver.targetGroup = null
+            driver.totalTripTicks = 0
+            driver.ticksToDest = 0
         }
     }
 

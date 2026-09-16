@@ -27,11 +27,7 @@ private const val MAX_TABLE_SIZE = 30
 private const val MIN_OPENING_TICK = 1
 private const val MAX_OPENING_TICK = 24
 
-// DOIT: in parser controller correctly catch and handle IllegalArgumentExceptions from require()
-
-/**
- * Parses and validates restaurants
- */
+/** Parses and validates restaurants */
 class RestaurantParser {
     private var recipes: List<Recipe> = emptyList()
     private val restaurantIds = mutableSetOf<Id>()
@@ -40,9 +36,7 @@ class RestaurantParser {
     private val parsedStats = mutableListOf<RestaurantStats>()
     private val restaurantTypes = mutableSetOf<RestaurantType>()
 
-    /**
-     * Parses and validates restaurants from a JSONArray
-     */
+    /** Parses and validates restaurants from a JSONArray */
     fun parseRestaurants(
         restaurantArray: JsonArray,
         recipes: List<Recipe>,
@@ -117,7 +111,7 @@ class RestaurantParser {
         val tables = tablesJson.map { element -> parseTable(element.jsonObject) }
 
         val menu = buildMenu(recipeIds, recipes, type)
-//        val menu = recipeIds.map { recipeId -> recipes.first { it.id == recipeId } }
+        // val menu = recipeIds.map { recipeId -> recipes.first { it.id == recipeId } }
         val event = jsonObject.getValue("event").jsonPrimitive.boolean
         val stats = RestaurantStats(
             id,

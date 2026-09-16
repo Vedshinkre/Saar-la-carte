@@ -1,5 +1,5 @@
 package incidentparsertests
-/*
+
 import de.unisaarland.cs.se.selab.actors.RestaurantStaff
 import de.unisaarland.cs.se.selab.enums.MeasurementUnit
 import de.unisaarland.cs.se.selab.enums.RestaurantType
@@ -268,94 +268,6 @@ class StaffIncidentParserTest {
     }
 
     @Test
-    fun `staff Incident-Zero Staff Number-Fails`() {
-        val jsonArray = buildJsonArray {
-            addJsonObject {
-                put("id", 13)
-                put("evening", 1)
-                put("type", "STAFF")
-                put("restaurant", 10)
-                put("staffType", "WAITSTAFF")
-                put("number", 0)
-            }
-        }
-        assertThrows<IllegalArgumentException> {
-            parser.parseIncidentFile(jsonArray, ingredientsList, testStock, recipes, restaurantsList)
-        }
-    }
-
-    @Test
-    fun `staff Incident-Cook Type Exec Forbidden-Fails`() {
-        val jsonArray = buildJsonArray {
-            addJsonObject {
-                put("id", 14)
-                put("evening", 1)
-                put("type", "STAFF")
-                put("restaurant", 10)
-                put("staffType", "COOK")
-                put("cookType", "EXEC")
-                put("number", 1)
-            }
-        }
-        assertThrows<IllegalArgumentException> {
-            parser.parseIncidentFile(jsonArray, ingredientsList, testStock, recipes, restaurantsList)
-        }
-    }
-
-    @Test
-    fun `staff Incident-Waitstaff With CookType Defined-Fails`() {
-        val jsonArray = buildJsonArray {
-            addJsonObject {
-                put("id", 15)
-                put("evening", 1)
-                put("type", "STAFF")
-                put("restaurant", 10)
-                put("staffType", "WAITSTAFF")
-                put("cookType", "SOUS")
-                put("number", 1)
-            }
-        }
-        assertThrows<IllegalArgumentException> {
-            parser.parseIncidentFile(jsonArray, ingredientsList, testStock, recipes, restaurantsList)
-        }
-    }
-
-    @Test
-    fun `staff Incident-Driver With CookType Defined-Fails`() {
-        val jsonArray = buildJsonArray {
-            addJsonObject {
-                put("id", 16)
-                put("evening", 1)
-                put("type", "STAFF")
-                put("restaurant", 10)
-                put("staffType", "DRIVER")
-                put("cookType", "SOUS")
-                put("number", 1)
-            }
-        }
-        assertThrows<IllegalArgumentException> {
-            parser.parseIncidentFile(jsonArray, ingredientsList, testStock, recipes, restaurantsList)
-        }
-    }
-
-    @Test
-    fun `staff Incident-Negative Evening-Fails`() {
-        val jsonArray = buildJsonArray {
-            addJsonObject {
-                put("id", 17)
-                put("evening", -1)
-                put("type", "STAFF")
-                put("restaurant", 10)
-                put("staffType", "DRIVER")
-                put("number", 1)
-            }
-        }
-        assertThrows<IllegalArgumentException> {
-            parser.parseIncidentFile(jsonArray, ingredientsList, testStock, recipes, restaurantsList)
-        }
-    }
-
-    @Test
     fun `staff Incident-Unknown Incident Type Enum-Fails`() {
         val jsonArray = buildJsonArray {
             addJsonObject {
@@ -371,23 +283,4 @@ class StaffIncidentParserTest {
             parser.parseIncidentFile(jsonArray, ingredientsList, testStock, recipes, restaurantsList)
         }
     }
-
-    @Test
-    fun `staff Incident- Ingredient Property Defined-Fails`() {
-        val jsonArray = buildJsonArray {
-            addJsonObject {
-                put("id", 19)
-                put("evening", 1)
-                put("type", "STAFF")
-                put("restaurant", 10)
-                put("staffType", "WAITSTAFF")
-                put("number", 1)
-                put("ingredient", "garlic")
-            }
-        }
-        assertThrows<IllegalArgumentException> {
-            parser.parseIncidentFile(jsonArray, ingredientsList, testStock, recipes, restaurantsList)
-        }
-    }
 }
-*/

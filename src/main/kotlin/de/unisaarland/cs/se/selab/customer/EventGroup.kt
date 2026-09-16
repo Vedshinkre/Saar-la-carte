@@ -41,4 +41,14 @@ class EventGroup(
     override fun isVisitingThisTick(): Boolean {
         return visitingAt == Time.tick
     }
+
+    /**
+     * sake of detect
+     */
+    fun getCurrentEventDish(): String? {
+        if (currentRestaurantType != null) {
+            return eventDishes[currentRestaurantType]
+        }
+        return null
+    }
 }

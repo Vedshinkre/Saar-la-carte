@@ -1,6 +1,17 @@
 package de.unisaarland.cs.se.selab.systemtest.selab26.restaurantparsertests
 
+import de.unisaarland.cs.se.selab.food.Stock
+import de.unisaarland.cs.se.selab.parsers.FoodParser
+import de.unisaarland.cs.se.selab.parsers.RestaurantParser
+import de.unisaarland.cs.se.selab.systemtest.api.SystemTestAssertionError
 import de.unisaarland.cs.se.selab.systemtest.selab26.utils.ExampleSystemTestExtension
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import java.io.File
+
+private const val RESOURCE_DIR = "src/systemtest/resources/RestaurantParserTests/"
+private const val FOOD_FILE = "Food.json"
 
 /**
  * Base class for restaurant parser system tests, asserting that an invalid
@@ -22,16 +33,55 @@ abstract class RestaurantParserSystemTest : ExampleSystemTestExtension() {
 
     override val description: String = "Base class for restaurant parser system tests."
 
+    private val foodParser = FoodParser()
+
+    private val restaurantParser = RestaurantParser()
+
     protected suspend fun assertInvalidRestaurantLog(
         restaurantFileName: String
     ) {
         assertNextLine(
-            "[INFO] Initialization Info: " + "validFood.json successfully parsed and validated."
+            "[INFO] Initialization Info: " + "$FOOD_FILE successfully parsed and validated."
         )
 
         assertNextLine(
             "[IMPORTANT] Initialization Info: " + "$restaurantFileName is invalid."
         )
+
+        assertRestaurantParsingRejected(restaurantFileName)
+    }
+
+    /**
+     * Drives [foodParser] and [restaurantParser] directly over the same fixtures the
+     * subprocess just parsed, so the rejection is also verified in-process rather than
+     * only through the log line above.
+     */
+    private fun assertRestaurantParsingRejected(restaurantFileName: String) {
+        val foodJson = Json.parseToJsonElement(File(RESOURCE_DIR + FOOD_FILE).readText()).jsonObject
+        val (ingredients, recipes) = foodParser.parse(
+            foodJson.getValue("ingredients").jsonArray,
+            foodJson.getValue("recipes").jsonArray
+        )
+        val stock = Stock(ingredients)
+
+        val restaurantsJson = Json.parseToJsonElement(File(RESOURCE_DIR + restaurantFileName).readText()).jsonObject
+
+        val wasRejected = try {
+            restaurantParser.parseRestaurants(
+                restaurantsJson.getValue("restaurants").jsonArray,
+                recipes,
+                stock
+            )
+            false
+        } catch (_: IllegalArgumentException) {
+            true
+        }
+
+        if (!wasRejected) {
+            throw SystemTestAssertionError(
+                "Expected RestaurantParser to reject $restaurantFileName directly, but it did not."
+            )
+        }
     }
 }
 

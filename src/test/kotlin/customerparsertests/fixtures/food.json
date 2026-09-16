@@ -1,0 +1,53 @@
+{
+  "ingredients": [
+    {
+      "name": "garlic",
+      "unit": "g",
+      "packagingVolume": 50,
+      "bestBefore": 1
+    },
+    {
+      "name": "onion",
+      "unit": "X",
+      "packagingVolume": 10,
+      "bestBefore": 1
+    },
+    {
+      "name": "rice",
+      "unit": "g",
+      "packagingVolume": 1000,
+      "bestBefore": 3
+    }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "Rice Bowl",
+      "duration": 10,
+      "cookType": ["EXEC"],
+      "ingredients": [
+        {
+          "name": "rice",
+          "amount": 100
+        }
+      ],
+      "basicDishFor": "ASIAN"
+    },
+    {
+      "id": 2,
+      "dishName": "Garlic Soup",
+      "duration": 20,
+      "cookType": ["EXEC"],
+      "ingredients": [
+        {
+          "name": "garlic",
+          "amount": 10
+        },
+        {
+          "name": "onion",
+          "amount": 1
+        }
+      ]
+    }
+  ]
+}

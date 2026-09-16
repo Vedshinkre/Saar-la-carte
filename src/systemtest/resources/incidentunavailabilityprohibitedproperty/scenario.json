@@ -1,0 +1,13 @@
+{
+  "customerGroups": [],
+  "incidents": [
+    {
+      "id": 6,
+      "evening": 1,
+      "type": "UNAVAILABLE",
+      "ingredient": "Potato",
+      "duration": 2,
+      "number": 5
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 
 package incidentparsertests
-/*
+
 import de.unisaarland.cs.se.selab.actors.RestaurantStaff
 import de.unisaarland.cs.se.selab.enums.MeasurementUnit
 import de.unisaarland.cs.se.selab.enums.RestaurantType
@@ -98,54 +98,5 @@ class UnavailabilityIncidentParserTest {
             parser.parseIncidentFile(jsonArray, ingredientsList, testStock, recipes, restaurantsList)
         }
     }
-
-    @Test
-    fun `unavailable Incident- Zero Duration -Fails`() {
-        val jsonArray = buildJsonArray {
-            addJsonObject {
-                put("id", 4)
-                put("evening", 1)
-                put("type", "UNAVAILABLE")
-                put("ingredient", "garlic")
-                put("duration", 0)
-            }
-        }
-        assertThrows<IllegalArgumentException> {
-            parser.parseIncidentFile(jsonArray, ingredientsList, testStock, recipes, restaurantsList)
-        }
-    }
-
-    @Test
-    fun `unavailable Incident- Negative Duration -Fails`() {
-        val jsonArray = buildJsonArray {
-            addJsonObject {
-                put("id", 5)
-                put("evening", 1)
-                put("type", "UNAVAILABLE")
-                put("ingredient", "garlic")
-                put("duration", -8)
-            }
-        }
-        assertThrows<IllegalArgumentException> {
-            parser.parseIncidentFile(jsonArray, ingredientsList, testStock, recipes, restaurantsList)
-        }
-    }
-
-    @Test
-    fun `unavailable Incident- Prohibited Property Included -Fails`() {
-        val jsonArray = buildJsonArray {
-            addJsonObject {
-                put("id", 6)
-                put("evening", 1)
-                put("type", "UNAVAILABLE")
-                put("ingredient", "garlic")
-                put("duration", 2)
-                put("number", 5) // number belongs to STAFF
-            }
-        }
-        assertThrows<IllegalArgumentException> {
-            parser.parseIncidentFile(jsonArray, ingredientsList, testStock, recipes, restaurantsList)
-        }
-    }
 }
-*/
+

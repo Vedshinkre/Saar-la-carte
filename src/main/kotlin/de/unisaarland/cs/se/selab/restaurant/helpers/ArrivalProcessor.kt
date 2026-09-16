@@ -110,6 +110,7 @@ class ArrivalProcessor(
                 eventGroups.add(eventGroup)
             } else {
                 turnedAwayGroups.addLast(eventGroup)
+                eventGroup.experience = ExperienceType.NEGATIVE
             }
         }
 

@@ -60,17 +60,32 @@ class Restaurant(
      * reserves tables for regulars and eventGroups. Plans the ingredients needed for them
      */
     fun prepareForEvening(regularGroups: List<RegularGroup>) {
-        val eventGroupsForTonight = eventCustomers.filter { it.isVisitingTonight() }
+        val eventGroupsForTonight = eventCustomers.filter { it.isVisitingTonight() }.sortedBy { it.id }
         for (regularGroup in regularGroups) {
             if (!frontOfHouse.reserveTables(regularGroup)) {
                 InitialAndPrepLogger.logFohNoReservation(regularGroup.id)
+            } else {
+                customerQueue.addLast(regularGroup)
             }
         }
         for (eventGroup in eventGroupsForTonight) {
             if (!frontOfHouse.reserveTables(eventGroup)) {
                 InitialAndPrepLogger.logFohNoReservation(eventGroup.id)
+            } else {
+                customerQueue.addLast(eventGroup)
             }
+            eventCustomers.remove(eventGroup)
         }
+        // getOrderHistory()
+        // getFreeSeats
+        // kitchen.planForIngredients()
+        // logPantryRestocked
+        // getEventFreeSeats()
+        // setAvailableEventSeats
+        // getFreeSeats
+        // setAvailableSeats
+        // getAvailableDrivers
+        // setAvailableDrivers
     }
 
     /**

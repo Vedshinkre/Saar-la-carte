@@ -54,48 +54,22 @@ class ArrivalProcessor(
         val assignedWaiter = inHouseGroupsToWaiter[customerGroup]
         var somebodyOrdered: Boolean
         if (assignedWaiter != null) {
-            somebodyOrdered = customerGroup.placeOrder(listOf(assignedWaiter), menu, countertop)
+            somebodyOrdered = customerGroup.placeOrder(mutableListOf(assignedWaiter), menu, countertop)
             assignedWaiter.currentLoad -= customerGroup.size - customerGroup.customersRemainingInRestaurant
         } else {
-            somebodyOrdered = customerGroup.placeOrder(listOf(), menu, countertop)
+            somebodyOrdered = customerGroup.placeOrder(mutableListOf(), menu, countertop)
         }
 
         if (!somebodyOrdered) {
             if (customerGroup is RegularGroup) {
                 customerGroup.failedAttempts++
+            } else {
+                customerToTable[customerGroup]?.forEach { it.status = TableStatus.FREE }
             }
             inHouseGroupsToWaiter.remove(customerGroup)
             turnedAwayGroups.addLast(customerGroup)
-        } else if (customerGroup is RegularGroup) {
-            customerGroup.failedAttempts = 0
         }
-
-        val currentOrder = customerGroup.currentOrder ?: return true
-        if (assignedWaiter != null) {
-            val assignedWaiterId = assignedWaiter.id ?: getNextWaiterId()
-            FohReceptionLogger.logFohOrdering(
-                customerGroup.id,
-                currentOrder.id,
-                currentOrder.dishNameToAmount(),
-                listOf(assignedWaiterId)
-            )
-            waitersOrdered.add(assignedWaiter)
-        } else {
-            FohReceptionLogger.logFohOrdering(
-                customerGroup.id,
-                currentOrder.id,
-                currentOrder.dishNameToAmount(),
-                null
-            )
-            customersOrdered.add(customerGroup)
-        }
-        val customersWhoLeftAfterOrdering = customerGroup.getCustomersWhoLeft()
-        if (customersWhoLeftAfterOrdering > 0) {
-            FohReceptionLogger.logFohNoOrdering(
-                customerGroup.id,
-                customersWhoLeftAfterOrdering
-            )
-        }
+        orderSuccess(customerGroup)
 
         return true
     }
@@ -129,12 +103,13 @@ class ArrivalProcessor(
             successfulSeating(eventGroup, consumedWaiters)
             if (eventGroup.placeOrder(consumedWaiters, menu, countertop)) {
                 val currentOrder = eventGroup.currentOrder
+                val waitStaffId = consumedWaiters.mapNotNull { it.id }
                 if (currentOrder != null) {
                     FohReceptionLogger.logFohOrdering(
                         eventGroup.id,
                         currentOrder.id,
                         currentOrder.dishNameToAmount(),
-                        null
+                        waitStaffId
                     )
                 }
 
@@ -201,6 +176,39 @@ class ArrivalProcessor(
         }
 
         return false
+    }
+    private fun orderSuccess(customerGroup: CustomerGroup) {
+        val assignedWaiter = inHouseGroupsToWaiter[customerGroup]
+        val currentOrder = customerGroup.currentOrder ?: return
+        if (customerGroup is RegularGroup) {
+            customerGroup.failedAttempts = 0
+            customerGroup.addOrderToHistory(currentOrder)
+        }
+        if (assignedWaiter != null) {
+            val assignedWaiterId = assignedWaiter.id ?: getNextWaiterId()
+            FohReceptionLogger.logFohOrdering(
+                customerGroup.id,
+                currentOrder.id,
+                currentOrder.dishNameToAmount(),
+                listOf(assignedWaiterId)
+            )
+            waitersOrdered.add(assignedWaiter)
+        } else {
+            FohReceptionLogger.logFohOrdering(
+                customerGroup.id,
+                currentOrder.id,
+                currentOrder.dishNameToAmount(),
+                null
+            )
+            customersOrdered.add(customerGroup)
+        }
+        val customersWhoLeftAfterOrdering = customerGroup.getCustomersWhoLeft()
+        if (customersWhoLeftAfterOrdering > 0) {
+            FohReceptionLogger.logFohNoOrdering(
+                customerGroup.id,
+                customersWhoLeftAfterOrdering
+            )
+        }
     }
 
     /** Call after processArrivalSeatingOrdering has been called with each customerGroup in customerQueue.
@@ -340,9 +348,11 @@ class ArrivalProcessor(
             return null
         }
 
-        for (table in acc) {
+        val tableIterator: MutableIterator<Table> = acc.iterator()
+        while (tableIterator.hasNext()) {
+            val table: Table = tableIterator.next()
             if (customerGroup.size < mergeSize && customerGroup.size <= mergeSize - table.size) {
-                acc.removeFirst()
+                tableIterator.remove()
                 mergeSize -= table.size
             } else {
                 break

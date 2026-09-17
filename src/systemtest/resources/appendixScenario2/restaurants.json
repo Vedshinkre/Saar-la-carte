@@ -2,14 +2,14 @@
   "restaurants": [
     {
       "id": 1,
-      "name": "Get Cooked",
+      "name": "Fire",
       "type": "EUROPEAN",
       "openingTickStart": 1,
       "openingTickEnd": 24,
       "deliveryDrivers": 3,
       "event": false,
-      "positiveRatings": 0,
-      "negativeRatings": 0,
+      "positiveRatings": 10,
+      "negativeRatings": 5,
       "recipes": [1, 2, 3],
       "kitchenStaff": {
         "EXEC": 0,

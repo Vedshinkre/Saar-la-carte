@@ -34,6 +34,7 @@
       "id": 2,
       "dishName": "Grilled Chicken",
       "duration": 20,
+      "basicDishFor": "EUROPEAN",
       "cookType": [
         "ROAST",
         "EXEC"

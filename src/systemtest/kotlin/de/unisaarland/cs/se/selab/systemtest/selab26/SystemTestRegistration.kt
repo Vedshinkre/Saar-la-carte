@@ -1,15 +1,17 @@
 package de.unisaarland.cs.se.selab.systemtest.selab26
 
+import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExampleEmptyTickOneCycleTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExamplePreparationAndServingStartTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExampleSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.customerparsertests.customerParserSystemTests
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.AppendixScenarioTwoSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventReservationConflictTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ExactStockoutTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ExhaustiveSimpleScenarioTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.InvalidRestaurantParserTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.MyParserTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.OneCookTwoOrdersTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.PantryExpirySystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ProcurementLogicTestB
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SequenceTwoSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SimulationLifecycleSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.StatisticsOrderingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SupplierProcurementSystemTest
@@ -88,17 +90,21 @@ object SystemTestRegistration {
     fun registerSystemTestsForReferenceImplementation(testSuite: SELab26TestSuite) {
         testSuite.registerTest(ExampleSystemTest())
         testSuite.registerTest(ExamplePreparationAndServingStartTest())
+        testSuite.registerTest(ExampleEmptyTickOneCycleTest())
 
-        // testSuite.registerTest(EventReservationConflictTest())
+        testSuite.registerTest(EventReservationConflictTest())
         testSuite.registerTest(ExactStockoutTest())
-        testSuite.registerTest(ExhaustiveSimpleScenarioTest())
+        // testSuite.registerTest(ExhaustiveSimpleScenarioTest())
         testSuite.registerTest(OneCookTwoOrdersTest())
         testSuite.registerTest(WaitstaffExhaustionTest())
-        testSuite.registerTest(SequenceTwoSystemTest())
+        testSuite.registerTest(AppendixScenarioTwoSystemTest())
         testSuite.registerTest(SimulationLifecycleSystemTest())
         testSuite.registerTest(StatisticsOrderingSystemTest())
         testSuite.registerTest(SupplierProcurementSystemTest())
         testSuite.registerTest(UnavailableIncidentSupplierProcurementSystemTest())
+        testSuite.registerTest(
+            PantryExpirySystemTest()
+        ) // testSuite.registerTest(UnavailabilityDurationExpirySystemTest())
         testSuite.registerTest(RestaurantsDifferentNameSameIdTest())
         testSuite.registerTest(RestaurantsMultipleExecCooksTest())
         testSuite.registerTest(RestaurantsNoBasicDishOfItsTypeTest())
@@ -148,11 +154,12 @@ object SystemTestRegistration {
     fun registerSystemTestsMutantSimulation(testSuite: SELab26TestSuite) {
         testSuite.registerTest(ExampleSystemTest())
 
-        //  testSuite.registerTest(EventReservationConflictTest())
-        testSuite.registerTest(ExactStockoutTest()) // testSuite.registerTest(ExhaustiveSimpleScenarioTest())
+//        testSuite.registerTest(EventReservationConflictTest())
+        testSuite.registerTest(ExactStockoutTest())
         testSuite.registerTest(OneCookTwoOrdersTest())
         testSuite.registerTest(WaitstaffExhaustionTest())
         testSuite.registerTest(ProcurementLogicTestB())
+        testSuite.registerTest(PantryExpirySystemTest())
     }
 
     /**

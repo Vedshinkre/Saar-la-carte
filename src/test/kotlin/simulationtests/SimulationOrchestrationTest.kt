@@ -103,12 +103,18 @@ class SimulationOrchestrationTest {
         val browser = mock<BrowsingService> {
             on { getEligibleRestaurants(eventGroup) } doReturn 1
         }
-        val simulation = Simulation(SimulationConfig()).apply {
+        val simulation = Simulation(
+            SimulationConfig().apply {
+                customers = listOf(eventGroup)
+            }
+        ).apply {
             this.browser = browser
             restaurants = listOf(restaurant)
         }
 
-        invokePrivate(simulation, "reserveForEventGroupsInAdvance", listOf(eventGroup))
+        // reserveForEventGroupsInAdvance is private; runSimulation() is the only public entry
+        // point, and it calls that method on tick 1 for every event group visiting in 3 evenings.
+        simulation.runSimulation()
 
         assertEquals(listOf(eventGroup), reservedGroups)
         assertSame(RestaurantType.ASIAN, eventGroup.currentRestaurantType)
@@ -127,18 +133,35 @@ class SimulationOrchestrationTest {
             eventDishes = emptyMap()
         )
         val reservedGroups = mutableListOf<EventGroup>()
+        val stats = RestaurantStats(
+            restaurantId = 1,
+            restaurantType = RestaurantType.ASIAN,
+            openingTickStart = 1,
+            openingTickEnd = 24,
+            event = true,
+            positiveRatings = 0,
+            negativeRatings = 0,
+            menu = emptyList()
+        )
         val restaurant = mock<Restaurant> {
+            // stubbed even though this test's branch never consults it: Simulation's per-tick
+            // loop reads every restaurant's stats regardless of the event-group outcome.
+            on { getRestaurantStats() } doReturn stats
             on { eventCustomers } doReturn reservedGroups
         }
         val browser = mock<BrowsingService> {
             on { getEligibleRestaurants(eventGroup) } doReturn null
         }
-        val simulation = Simulation(SimulationConfig()).apply {
+        val simulation = Simulation(
+            SimulationConfig().apply {
+                customers = listOf(eventGroup)
+            }
+        ).apply {
             this.browser = browser
             restaurants = listOf(restaurant)
         }
 
-        invokePrivate(simulation, "reserveForEventGroupsInAdvance", listOf(eventGroup))
+        simulation.runSimulation()
 
         assertEquals(emptyList(), reservedGroups)
         assertContains(
@@ -151,11 +174,5 @@ class SimulationOrchestrationTest {
         on { this.id } doReturn id
         on { this.evening } doReturn evening
         on { this.type } doReturn "STAFF"
-    }
-
-    private fun invokePrivate(simulation: Simulation, methodName: String, argument: Any) {
-        val method = Simulation::class.java.getDeclaredMethod(methodName, List::class.java)
-        method.isAccessible = true
-        method.invoke(simulation, argument)
     }
 }

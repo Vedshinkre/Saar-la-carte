@@ -63,11 +63,11 @@ class ArrivalProcessor(
         if (!somebodyOrdered) {
             if (customerGroup is RegularGroup) {
                 customerGroup.failedAttempts++
+            } else {
+                customerToTable[customerGroup]?.forEach { it.status = TableStatus.FREE }
             }
             inHouseGroupsToWaiter.remove(customerGroup)
             turnedAwayGroups.addLast(customerGroup)
-        } else if (customerGroup is RegularGroup) {
-            customerGroup.failedAttempts = 0
         }
         orderSuccess(customerGroup)
 
@@ -180,6 +180,10 @@ class ArrivalProcessor(
     private fun orderSuccess(customerGroup: CustomerGroup) {
         val assignedWaiter = inHouseGroupsToWaiter[customerGroup]
         val currentOrder = customerGroup.currentOrder ?: return
+        if (customerGroup is RegularGroup) {
+            customerGroup.failedAttempts = 0
+            customerGroup.addOrderToHistory(currentOrder)
+        }
         if (assignedWaiter != null) {
             val assignedWaiterId = assignedWaiter.id ?: getNextWaiterId()
             FohReceptionLogger.logFohOrdering(
@@ -344,9 +348,11 @@ class ArrivalProcessor(
             return null
         }
 
-        for (table in acc) {
+        val tableIterator: MutableIterator<Table> = acc.iterator()
+        while (tableIterator.hasNext()) {
+            val table: Table = tableIterator.next()
             if (customerGroup.size < mergeSize && customerGroup.size <= mergeSize - table.size) {
-                acc.removeFirst()
+                tableIterator.remove()
                 mergeSize -= table.size
             } else {
                 break

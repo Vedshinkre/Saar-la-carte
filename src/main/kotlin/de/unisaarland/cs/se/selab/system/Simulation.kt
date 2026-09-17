@@ -25,9 +25,8 @@ class Simulation(simdata: SimulationConfig) {
     var incidents: List<Incident> = simdata.incidents
     var customers: List<CustomerGroup> = simdata.customers
 
-    // Total ticks elapsed across all evenings so far - Time only tracks the tick
-    // *within* the current evening, so we track the grand total ourselves to know
-    // exactly when to stop, including mid-evening if maxTicks isn't a multiple of 24.
+    // Total ticks elapsed across all evenings so far. Time only tracks the tick
+    // within the current evening.
     private var ticksElapsed: Int = 0
 
     /**
@@ -111,9 +110,7 @@ class Simulation(simdata: SimulationConfig) {
      */
     private fun getRegularsForTonight(): List<RegularGroup> =
         filterRegularGroups(customers).filter {
-            it.failedAttempts < 2 &&
-                Time.evening >= it.visitingStart &&
-                (Time.evening - it.visitingStart) % it.visitingPeriod == 0
+            it.isVisitingTonight()
         }
 
     /**

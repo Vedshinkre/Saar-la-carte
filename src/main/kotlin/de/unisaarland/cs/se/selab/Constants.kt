@@ -11,4 +11,5 @@ object Constants {
     const val UNSERVED_WAIT_TICKS = 5 // max number of ticks a customer waits to be served
     const val ADDITIONAL_UNSERVED_WAIT_TICKS = 2 // max wait ticks after at least another dish in the order is served
     const val EXPECTATION_WINDOW_TICKS = 4 // ticks within ordering that food must arrive for a positive experience
+    const val REGULAR_VISITING_TICK_BUFFER = 3
 }

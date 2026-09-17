@@ -1,5 +1,6 @@
 package de.unisaarland.cs.se.selab.parsers
 
+import de.unisaarland.cs.se.selab.Constants
 import de.unisaarland.cs.se.selab.Evening
 import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.Tick
@@ -24,8 +25,6 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlin.math.ceil
-
-private const val DRIVER_SPEED = 5
 
 /** Parses and validates customer groups. */
 class CustomerParser {
@@ -126,6 +125,7 @@ class CustomerParser {
         val restaurantId: Id = jsonObject.getValue("restaurant").jsonPrimitive.int
 
         require(validateRegularGroupRestaurantIdExistence(restaurantId, restaurantStats))
+        require(validateRegularGroupVisitingAtWithinOpeningHours(visitingAt, restaurantId, restaurantStats))
         return RegularGroup(
             id,
             size,
@@ -145,6 +145,17 @@ class CustomerParser {
         return restaurantStats.map { it.restaurantId }.contains(restaurantId)
     }
 
+    private fun validateRegularGroupVisitingAtWithinOpeningHours(
+        visitingAt: Tick,
+        restaurantId: Id,
+        restaurantStats: List<RestaurantStats>
+    ): Boolean {
+        val restaurantStats: RestaurantStats = restaurantStats.first { it.restaurantId == restaurantId }
+        val openingTickStart: Tick = restaurantStats.openingTickStart
+        val openingTickEnd: Tick = restaurantStats.openingTickEnd
+        return visitingAt in openingTickStart..(openingTickEnd - Constants.REGULAR_VISITING_TICK_BUFFER)
+    }
+
     @Throws
     private fun parseCasualGroup(
         jsonObject: JsonObject,
@@ -161,7 +172,9 @@ class CustomerParser {
             jsonObject.getValue("visitingEvenings").jsonArray.parseListOf { it.jsonPrimitive.int }
         val deliveryDistance: Int = jsonObject["deliveryDistance"]?.jsonPrimitive?.int ?: 0
         if (deliveryDistance > 0) {
-            require(visitingAt - (ceil(deliveryDistance.toDouble() / DRIVER_SPEED.toDouble()).toInt() + 3) > 0)
+            require(
+                visitingAt - (ceil(deliveryDistance.toDouble() / Constants.DRIVER_SPEED).toInt() + 3) > 0
+            )
         }
 
         val ratingLikelihood: RatingLikelihood =

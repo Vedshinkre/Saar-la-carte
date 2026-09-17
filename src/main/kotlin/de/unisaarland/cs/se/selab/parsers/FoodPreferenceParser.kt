@@ -15,9 +15,6 @@ import kotlinx.serialization.json.jsonPrimitive
 class FoodPreferenceParser {
     private fun <T> JsonArray.parseListOf(itemParser: (JsonElement) -> T): List<T> = this.map(itemParser)
 
-    private fun <T, K> validateUniquenessBy(list: List<T>, selector: (T) -> K) =
-        require(list.distinctBy(selector).size == list.size)
-
     /** Call with jsonArray containing FoodPreferences, full list of Recipes and Ingredients.
      *  Returns list of valid FoodPreferences or throws exception */
     @Throws

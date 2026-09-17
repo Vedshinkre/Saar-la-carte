@@ -1,0 +1,36 @@
+{
+  "ingredients": [
+    { "name": "rice", "unit": "g", "packagingVolume": 20, "bestBefore": 5 },
+    { "name": "oil", "unit": "mL", "packagingVolume": 500, "bestBefore": 3 },
+    { "name": "onion", "unit": "X", "packagingVolume": 10, "bestBefore": 2 }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "Rice Bowl",
+      "duration": 2,
+      "cookType": ["EXEC"],
+      "ingredients": [{ "name": "rice", "amount": 1 }],
+      "basicDishFor": "ASIAN"
+    },
+    {
+      "id": 2,
+      "dishName": "Fried Rice",
+      "duration": 10,
+      "cookType": ["EXEC", "TOURNANT"],
+      "ingredients": [
+        { "name": "rice", "amount": 100 },
+        { "name": "oil", "amount": 20 },
+        { "name": "onion", "amount": 1 }
+      ]
+    },
+    {
+      "id": 3,
+      "dishName": "Onion Soup",
+      "duration": 5,
+      "cookType": ["VEGETABLE"],
+      "ingredients": [{ "name": "onion", "amount": 2 }],
+      "basicDishFor": "EUROPEAN"
+    }
+  ]
+}

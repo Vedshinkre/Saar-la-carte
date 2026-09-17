@@ -26,8 +26,6 @@ class Pantry(
     fun checkInventory(ingredient: Ingredient, amount: Int): Int {
         var totalAvailable = 0
         for (pkg in inventory) { // Only count packages that haven't expired and match the ingredient name
-            val incidentStock = supplier.stock
-            incidentStock.applyUnavailableDurations()
             val isExpired = pkg.hasExpired()
             val currentIngredient = pkg.ingredient
             if (currentIngredient.name == ingredient.name && !isExpired) {

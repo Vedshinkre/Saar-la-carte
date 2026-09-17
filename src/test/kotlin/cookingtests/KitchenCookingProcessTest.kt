@@ -38,6 +38,8 @@ class KitchenCookingProcessTest {
         output = StringWriter()
         Logger.setup(PrintWriter(output))
         Logger.setup(LogLevel.DEBUG)
+        // logger defaults to id = -1, initialized it here in place of simulation
+        Logger.restaurantID = 1
     }
 
     private fun recipe(

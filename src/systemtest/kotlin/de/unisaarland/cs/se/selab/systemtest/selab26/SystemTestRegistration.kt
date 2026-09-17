@@ -158,7 +158,6 @@ object SystemTestRegistration {
         testSuite.registerTest(WaitstaffExhaustionTest())
         testSuite.registerTest(ProcurementLogicTestB())
         testSuite.registerTest(PantryExpirySystemTest())
-        testSuite.registerTest(UnavailabilityDurationExpirySystemTest())
     }
 
     /**

@@ -41,7 +41,7 @@ class FoodParser {
         val parsedIngredients = mutableListOf<Ingredient>()
 
         //  Must exist at least one ingredient
-        // require(!array.isEmpty()) { "The ingredients list cannot be empty." }
+        require(!array.isEmpty()) { "The ingredients list cannot be empty." }
 
         // Loop through every item
         for (i in 0 until array.size) {
@@ -116,6 +116,8 @@ class FoodParser {
      */
     private fun parseRecipes(array: JsonArray, availableIngredients: List<Ingredient>): List<Recipe> {
         val parsedRecipes = mutableListOf<Recipe>()
+        //  Must exist at least one ingredient
+        require(!array.isEmpty()) { "The recipe list cannot be empty." }
 
         for (i in 0 until array.size) {
             val recipeJson = array[i].jsonObject

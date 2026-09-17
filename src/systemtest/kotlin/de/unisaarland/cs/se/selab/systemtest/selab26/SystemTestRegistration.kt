@@ -10,6 +10,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ExactStockoutT
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.OneCookTwoOrdersTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.PantryExpirySystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SimulationLifecycleSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SingleOrCouple
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.StatisticsOrderingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SupplierProcurementSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.UnavailableIncidentSupplierProcurementSystemTest
@@ -82,6 +83,7 @@ object SystemTestRegistration {
         testSuite.registerTest(ExampleEmptyTickOneCycleTest())
         testSuite.registerTest(EventReservationConflictTest())
         testSuite.registerTest(WaitstaffExhaustionTest())
+        testSuite.registerTest(SingleOrCouple())
         testSuite.registerTest(AppendixScenarioTwoSystemTest())
         testSuite.registerTest(SimulationLifecycleSystemTest())
         testSuite.registerTest(StatisticsOrderingSystemTest())
@@ -136,6 +138,7 @@ object SystemTestRegistration {
         testSuite.registerTest(ExactStockoutTest())
         testSuite.registerTest(OneCookTwoOrdersTest())
         testSuite.registerTest(PantryExpirySystemTest())
+        testSuite.registerTest(SingleOrCouple())
         // temporarily unregistered: cross-check against reference first
     }
 

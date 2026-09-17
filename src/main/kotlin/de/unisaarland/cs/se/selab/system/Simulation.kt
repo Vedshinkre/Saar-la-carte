@@ -58,16 +58,15 @@ class Simulation(simdata: SimulationConfig) {
     }
 
     /**
-     * Logs and applies every incident scheduled for the current evening, in
-     * ascending order of incident id. (Not detailed further in the sequence
-     * diagram, so unchanged from before.)
+     * Logs and applies every incident that occurs before the current evening, in
+     * ascending order of incident id.
      */
     private fun executeIncidents() {
         val evening = Time.getEvening()
         val incidentsForTonight = incidents.filter { it.evening == evening }.sortedBy { it.id }
 
         for (incident in incidentsForTonight) {
-            InitialAndPrepLogger.logIncident(incident.id, incident.javaClass.simpleName)
+            InitialAndPrepLogger.logIncident(incident.id, incident.type)
             incident.apply()
         }
     }
@@ -80,7 +79,6 @@ class Simulation(simdata: SimulationConfig) {
      *    id, re-fetch tonight's event groups, and call prepareForEvening(regulars)
      */
     private fun executePreparationPhase() {
-        val evening = Time.getEvening()
         InitialAndPrepLogger.logPreparationStart()
 
         val regularsTonight = getRegularsForTonight().sortedBy { it.id }
@@ -114,6 +112,7 @@ class Simulation(simdata: SimulationConfig) {
     private fun getRegularsForTonight(): List<RegularGroup> =
         filterRegularGroups(customers).filter {
             it.failedAttempts < 2 &&
+                Time.evening >= it.visitingStart &&
                 (Time.evening - it.visitingStart) % it.visitingPeriod == 0
         }
 
@@ -124,10 +123,10 @@ class Simulation(simdata: SimulationConfig) {
         customers.filterIsInstance<RegularGroup>()
 
     /**
-     * All [CasualGroup]s that are visiting at some point tonight.
+     * All [CasualGroup]s that are visiting at some point tonight, in ascending id order.
      */
     private fun getCasualsForTonight(): List<CasualGroup> =
-        filterCasualGroups(customers).filter { it.isVisitingTonight() }
+        filterCasualGroups(customers).filter { it.isVisitingTonight() }.sortedBy { it.id }
 
     /**
      * Filters a mixed customer list down to just the [CasualGroup]s.
@@ -144,12 +143,10 @@ class Simulation(simdata: SimulationConfig) {
         casuals.filter { it.isVisitingThisTick() }
 
     /**
-     * [EventGroup]s whose event is exactly three evenings away, i.e. the ones for
-     * which reservations need to be made tonight. Per the sequence diagram this is
-     * queried at the *start of the serving phase*, not the preparation phase.
+     * [EventGroup]s whose event is exactly three evenings away in ascending id order.
      */
     private fun getEventGroupsForReservation(): List<EventGroup> =
-        customers.filterIsInstance<EventGroup>().filter { it.visitingInThreeEvenings() }
+        customers.filterIsInstance<EventGroup>().filter { it.visitingInThreeEvenings() }.sortedBy { it.id }
 
     /**
      * Serving phase: 24 ticks (or fewer, if maxTicks is reached first). Tonight's
@@ -159,19 +156,12 @@ class Simulation(simdata: SimulationConfig) {
     private fun executeServingPhase() {
         TickStatusLogger.logServingStart()
 
-        // Result currently unused beyond this call in the observed trace - if your
-        // design needs it (e.g. to kick off reservations for a future evening), wire
-        // it into whatever restaurant/foh call handles that.
-        val eventGroupsReservation = getEventGroupsForReservation()
-        if (eventGroupsReservation.isNotEmpty()) {
-            reserveForEventGroupsInAdvance(eventGroupsReservation)
-        }
-
+        val eventGroupsDecidingTonight = getEventGroupsForReservation()
         val casualsTonight = getCasualsForTonight()
         var stoppedEarly = false
 
         while (Time.getCurrentTick() <= TICKS_PER_EVENING) {
-            executeSingleTick(casualsTonight)
+            executeSingleTick(casualsTonight, eventGroupsDecidingTonight)
 
             ticksElapsed++
             val reachedMax = ticksElapsed >= Time.getMaxTicks()
@@ -196,17 +186,22 @@ class Simulation(simdata: SimulationConfig) {
     }
 
     /**
-     * Runs one tick, per the sequence diagram:
+     * Runs one tick:
      *  - log the current tick
-     *  - filter tonight's casuals down to the ones due to act this tick
-     *  - each such casual either gets assigned to a restaurant's queue (and a
+     *  - restaurant decisions, EVENT groups first (only in the first tick, three evenings before
+     *    their event) and then CASUAL groups, each in ascending id order
+     *  - each deciding casual either gets assigned to a restaurant's queue (and a
      *    "decision" is logged) or is logged as unable to decide
      *  - every restaurant then simulates its own tick, in ascending id order, with
      *    the Logger's restaurantID tagged beforehand so its internal log lines carry
      *    the right restaurant id
      */
-    private fun executeSingleTick(casualsTonight: List<CasualGroup>) {
+    private fun executeSingleTick(casualsTonight: List<CasualGroup>, eventGroupsDecidingTonight: List<EventGroup>) {
         TickStatusLogger.logCurrentTick()
+
+        if (Time.getCurrentTick() == 1) {
+            reserveForEventGroupsInAdvance(eventGroupsDecidingTonight)
+        }
 
         val casualsThisTick = getCasualsForThisTick(casualsTonight)
 

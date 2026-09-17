@@ -35,6 +35,7 @@ class SimulationOrchestrationTest {
         Time.tick = 1
         Time.evening = 1
         Time.maxTicks = 1
+        Time.ticksElapsed = 0
         output = StringWriter()
         Logger.setup(PrintWriter(output))
         Logger.setup(LogLevel.DEBUG)
@@ -45,6 +46,7 @@ class SimulationOrchestrationTest {
         Time.tick = 1
         Time.evening = 1
         Time.maxTicks = 0
+        Time.ticksElapsed = 0
     }
 
     @Test
@@ -110,6 +112,39 @@ class SimulationOrchestrationTest {
 
         assertEquals(listOf(eventGroup), reservedGroups)
         assertSame(RestaurantType.ASIAN, eventGroup.currentRestaurantType)
+    }
+
+    @Test
+    fun `event group with no eligible restaurant is not reserved anywhere`() {
+        val eventGroup = EventGroup(
+            id = 5,
+            size = 2,
+            tableType = TableType.COMMON,
+            visitingAt = 3,
+            foodPreferences = emptyList(),
+            restaurantTypes = listOf(RestaurantType.ASIAN),
+            eventEvening = 4,
+            eventDishes = emptyMap()
+        )
+        val reservedGroups = mutableListOf<EventGroup>()
+        val restaurant = mock<Restaurant> {
+            on { eventCustomers } doReturn reservedGroups
+        }
+        val browser = mock<BrowsingService> {
+            on { getEligibleRestaurants(eventGroup) } doReturn null
+        }
+        val simulation = Simulation(SimulationConfig()).apply {
+            this.browser = browser
+            restaurants = listOf(restaurant)
+        }
+
+        invokePrivate(simulation, "reserveForEventGroupsInAdvance", listOf(eventGroup))
+
+        assertEquals(emptyList(), reservedGroups)
+        assertContains(
+            output.toString(),
+            "[DEBUG] Restaurant No Decision: Group 5 could not decide for a restaurant."
+        )
     }
 
     private fun incident(id: Int, evening: Int): Incident = mock {

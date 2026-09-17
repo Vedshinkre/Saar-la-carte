@@ -16,10 +16,11 @@ class UnavailableIncidentSupplierProcurementSystemTest : ExampleSystemTestExtens
     override val maxTicks = 1
 
     override suspend fun run() {
-        skipUntilString(InitialAndPrepTestLogs.incident(1, "UnavailabilityIncident", 1))
+        skipUntilString(InitialAndPrepTestLogs.incident(1, "UNAVAILABLE", 1))
         skipUntilString(InitialAndPrepTestLogs.prepStart(1))
-        assertNextLine(InitialAndPrepTestLogs.pantryProcured(1, 0, "G", "Chicken"))
-        assertNextLine(InitialAndPrepTestLogs.pantryProcured(1, 100, "G", "Tomato"))
+        // Chicken is unavailable, so nothing is procured for it -- no log line at all,
+        // per spec: the log only describes ingredients that *were* procured.
+        assertNextLine(InitialAndPrepTestLogs.pantryProcured(1, 100, "g", "Tomato"))
         assertNextLine(InitialAndPrepTestLogs.pantryRestocked(1))
     }
 }

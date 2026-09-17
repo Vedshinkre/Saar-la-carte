@@ -30,7 +30,7 @@ class EventReservationConflictTest : ExampleSystemTestExtension() {
         // EVENT group takes all tables, leaving nothing for the REGULAR group (Group 2)
         assertNextLine(InitialAndPrepTestLogs.fohNoReserving(1, 2))
 
-        assertNextLine(InitialAndPrepTestLogs.pantryProcured(1, 2500, "G", "Chicken"))
+        assertNextLine(InitialAndPrepTestLogs.pantryProcured(1, 2500, "g", "Chicken"))
         assertNextLine(InitialAndPrepTestLogs.pantryRestocked(1))
         assertNextLine(TickStatusTestLogs.servingStart(4))
 

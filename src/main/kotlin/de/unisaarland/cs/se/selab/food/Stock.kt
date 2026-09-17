@@ -74,7 +74,7 @@ class Stock( // 0 means available, > 0 means the number of evenings it remains u
 
     /**
      * Decrements the duration of unavailability by 1 for all affected ingredients.
-     * Should be called once during the preparation phase of each evening.
+     * Should be called once during the reset kitchen function of each evening.
      */
 
     fun applyUnavailableDurations() {

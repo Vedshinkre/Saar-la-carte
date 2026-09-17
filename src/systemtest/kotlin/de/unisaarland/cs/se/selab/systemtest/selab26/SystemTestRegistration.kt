@@ -14,6 +14,8 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.StatisticsOrde
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SupplierProcurementSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.UnavailableIncidentSupplierProcurementSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.WaitstaffExhaustionTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ZeroProcurementTestA
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ZeroProcurementTestB
 import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentCookTypeExecForbiddenRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentDriverWithCookTypeRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentNegativeEveningRejectedSystemTest
@@ -118,6 +120,8 @@ object SystemTestRegistration {
         testSuite.registerTest(InvalidRestaurantParserTest())
         testSuite.registerTest(MyParserTest())
         testSuite.registerTest(ProcurementLogicTestB())
+        testSuite.registerTest(ZeroProcurementTestA())
+        testSuite.registerTest(ZeroProcurementTestB())
     }
 
     /**

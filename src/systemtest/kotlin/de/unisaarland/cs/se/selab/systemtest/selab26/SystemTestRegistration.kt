@@ -146,6 +146,7 @@ object SystemTestRegistration {
         // testSuite.registerTest(ExhaustiveSimpleScenarioTest())
         testSuite.registerTest(OneCookTwoOrdersTest())
         testSuite.registerTest(WaitstaffExhaustionTest())
+        testSuite.registerTest(ProcurementLogicTestB())
     }
 
     /**

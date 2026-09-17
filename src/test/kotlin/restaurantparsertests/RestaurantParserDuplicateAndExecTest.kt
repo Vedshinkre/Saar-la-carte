@@ -32,7 +32,10 @@ class RestaurantParserDuplicateAndExecTest {
 
         val jsonArray = Json.parseToJsonElement(file.readText()).jsonObject.getValue("restaurants").jsonArray
         val rice = Ingredient(
-            name = "rice", unit = MeasurementUnit.G, bestBefore = 5, initialPackagingVolume = 20
+            name = "rice",
+            unit = MeasurementUnit.G,
+            bestBefore = 5,
+            initialPackagingVolume = 20
         )
         val ingredients = listOf<Ingredient>(rice)
         val recipes = listOf(
@@ -49,7 +52,9 @@ class RestaurantParserDuplicateAndExecTest {
 
         assertFailsWith<IllegalArgumentException> {
             parser.parseRestaurants(
-                jsonArray, recipes = recipes, stock = stock
+                jsonArray,
+                recipes = recipes,
+                stock = stock
             )
         }
     }

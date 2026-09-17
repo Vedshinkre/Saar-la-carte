@@ -83,7 +83,6 @@ class FoodPreferenceParser {
         preferredIngredients: List<String>,
         favoriteDishes: List<String>
     ) {
-        validateFoodPreferenceNotAllEmpty(excludedIngredients, preferredIngredients, favoriteDishes)
         validateFoodPreferenceExistence(recipes, ingredients, excludedIngredients, preferredIngredients, favoriteDishes)
         validateFoodPreferenceNoIntersection(excludedIngredients, preferredIngredients)
         validateFoodPreferenceNotEverything(
@@ -92,18 +91,6 @@ class FoodPreferenceParser {
             excludedIngredients,
             preferredIngredients,
             favoriteDishes
-        )
-    }
-
-    private fun validateFoodPreferenceNotAllEmpty(
-        excludedIngredients: List<String>,
-        preferredIngredients: List<String>,
-        favoriteDishes: List<String>
-    ) {
-        require(
-            excludedIngredients.isNotEmpty() ||
-                preferredIngredients.isNotEmpty() ||
-                favoriteDishes.isNotEmpty()
         )
     }
 

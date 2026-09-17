@@ -37,7 +37,6 @@ class ArrivalProcessor(
     /** Call with CustomerGroup and menu.
      *  Returns true if CustomerGroup should be removed from the customerQueue, false otherwise. */
     fun processArrival(customerGroup: CustomerGroup, menu: List<Recipe>): Boolean {
-        if (customerGroup is RegularGroup) { customerGroup.hasReservationTonight = false }
         val isInHouse: Boolean =
             customerGroup is RegularGroup || (customerGroup is CasualGroup && !customerGroup.wantsDelivery)
         if (isInHouse) {
@@ -63,6 +62,8 @@ class ArrivalProcessor(
             }
             inHouseGroupsToWaiter.remove(customerGroup)
             turnedAwayGroups.addLast(customerGroup)
+        } else if (customerGroup is RegularGroup) {
+            customerGroup.failedAttempts = 0
         }
 
         val currentOrder = customerGroup.currentOrder ?: return true
@@ -82,7 +83,7 @@ class ArrivalProcessor(
                 null
             )
         }
-        // DOIT Only here failedReservations for regularGroups should be reset to 0
+
         return true
     }
 
@@ -134,25 +135,11 @@ class ArrivalProcessor(
         val reserveSingleTable: (Table) -> Boolean = { table ->
             table.status = TableStatus.RESERVED
             customerToTable[regularOrEventCustomerGroup] = listOf(table)
-            if (regularOrEventCustomerGroup is RegularGroup) {
-                regularOrEventCustomerGroup.hasReservationTonight = true
-                regularOrEventCustomerGroup.failedAttempts = 0
-                // DOIT failedAttempts also count for everyone not being to order after being seated.
-                // This should be reset like this only at the end of processArrivak,
-                // after ordering is completed succesfully
-            }
             true
         }
         val reserveMultipleTables: (List<Table>) -> Boolean = { tables ->
             tables.forEach { table -> table.status = TableStatus.RESERVED }
             customerToTable[regularOrEventCustomerGroup] = tables
-            if (regularOrEventCustomerGroup is RegularGroup) {
-                regularOrEventCustomerGroup.hasReservationTonight = true
-                regularOrEventCustomerGroup.failedAttempts = 0
-                // DOIT failedAttempts also count for everyone not being to order after being seated.
-                // This should be reset like this only at the end of processArrivak,
-                // after ordering is completed succesfully
-            }
             true
         } // Step 1: Filter and sort
         val sortedTables: List<Table> = getSortedPreferredFreeTables(
@@ -179,7 +166,6 @@ class ArrivalProcessor(
         regularOrEventCustomerGroup.experience = ExperienceType.NEGATIVE
         turnedAwayGroups.addLast(regularOrEventCustomerGroup)
         if (regularOrEventCustomerGroup is RegularGroup) {
-            regularOrEventCustomerGroup.hasReservationTonight = false
             regularOrEventCustomerGroup.failedAttempts++
         }
 

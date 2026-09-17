@@ -1,0 +1,51 @@
+{
+  "customerGroups": [
+    {
+      "id": 3,
+      "type": "REGULAR",
+      "size": 10,
+      "tableType": "COMMON",
+      "visitingTick": 4,
+      "visitingStart": 20,
+      "visitingPeriod": 10,
+      "restaurant": 1,
+      "foodPreferences": []
+    },
+    {
+      "id": 1,
+      "type": "CASUAL",
+      "size": 8,
+      "tableType": "COMMON",
+      "restaurantTypes": ["EUROPEAN", "AFRICAN"],
+      "visitingEvenings": [30, 35],
+      "visitingTick": 1,
+      "foodPreferences": [
+        { "size": 2, "excludedIngredients": ["beef", "potato"] }
+      ],
+      "ratingLikelihood": "ALWAYS"
+    },
+    {
+      "id": 2,
+      "type": "CASUAL",
+      "size": 5,
+      "restaurantTypes": ["EUROPEAN", "ASIAN"],
+      "deliveryDistance": 10,
+      "visitingEvenings": [10, 30],
+      "visitingTick": 6,
+      "foodPreferences": [],
+      "ratingLikelihood": "NEVER"
+    },
+    {
+      "id": 5,
+      "type": "CASUAL",
+      "size": 2,
+      "restaurantTypes": ["AMERICAN"],
+      "deliveryDistance": 10,
+      "visitingEvenings": [30, 34],
+      "visitingTick": 6,
+      "foodPreferences": [],
+      "ratingLikelihood": "SOME"
+    }
+  ],
+  "incidents": []
+}

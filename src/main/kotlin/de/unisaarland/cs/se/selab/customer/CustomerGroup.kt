@@ -44,7 +44,7 @@ sealed class CustomerGroup(
     /**
      * takes the order of a customer group
      */
-    open fun placeOrder(waiters: List<Waiter>, menu: List<Recipe>, countertop: Countertop): Boolean {
+    open fun placeOrder(waiters: MutableList<Waiter>, menu: List<Recipe>, countertop: Countertop): Boolean {
         val listOfDishes = mutableListOf<Dish>()
         val currentWaiter = waiters.firstOrNull()
         for (foodPreference in foodPreferences) {

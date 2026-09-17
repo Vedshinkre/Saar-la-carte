@@ -34,6 +34,10 @@ class ArrivalProcessor(
     private var numberOfCustomersSeated: Int = 0
     private var numberOfWaitersSeated: Int = 0
 
+    // Sets used for logging purposes
+    private var customersOrdered: MutableSet<CustomerGroup> = mutableSetOf()
+    private var waitersOrdered: MutableSet<Waiter> = mutableSetOf()
+
     /** Call with CustomerGroup and menu.
      *  Returns true if CustomerGroup should be removed from the customerQueue, false otherwise. */
     fun processArrival(customerGroup: CustomerGroup, menu: List<Recipe>): Boolean {
@@ -75,6 +79,7 @@ class ArrivalProcessor(
                 currentOrder.dishNameToAmount(),
                 listOf(assignedWaiterId)
             )
+            waitersOrdered.add(assignedWaiter)
         } else {
             FohReceptionLogger.logFohOrdering(
                 customerGroup.id,
@@ -82,6 +87,7 @@ class ArrivalProcessor(
                 currentOrder.dishNameToAmount(),
                 null
             )
+            customersOrdered.add(customerGroup)
         }
 
         return true
@@ -121,7 +127,6 @@ class ArrivalProcessor(
                 eventGroup.experience = ExperienceType.NEGATIVE
             }
         }
-
         return true
     }
 
@@ -178,7 +183,16 @@ class ArrivalProcessor(
         FohReceptionLogger.logSeatingStatus(numberOfWaitersSeated, numberOfCustomersSeated, numberOfTablesSeatedOn)
         numberOfTablesSeatedOn = 0
         numberOfCustomersSeated = 0
-        numberOfWaitersSeated = 0 // NOTE: add ordering status variables, log and then reset them
+        numberOfWaitersSeated = 0
+        numberOfCustomersSeated = 0
+        val numberOfCustomersOrdered = customersOrdered.sumOf {
+                customerGroup ->
+            customerGroup.customersRemainingInRestaurant
+        }
+        val numberOfWaitersOrdered = waitersOrdered.size
+        FohReceptionLogger.logOrderingStatus(numberOfCustomersOrdered, numberOfWaitersOrdered)
+        customersOrdered = mutableSetOf()
+        waitersOrdered = mutableSetOf()
     }
 
     private fun seatRegularOrCasualGroup(customerGroup: CustomerGroup): CustomerStatus {

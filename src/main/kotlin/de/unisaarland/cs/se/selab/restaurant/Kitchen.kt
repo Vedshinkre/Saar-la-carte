@@ -107,11 +107,11 @@ class Kitchen(
      */
     // functions with logic
     fun resetKitchen() {
-        for (order in orderQueue) {
+        while (orderQueue.isNotEmpty()) {
+            val order = orderQueue.removeFirst()
             for (dish in order.dishes) {
                 dish.status = DishStatus.ABORTED
             }
-            orderQueue.removeFirst()
         }
         for (cook in cooks) {
             cook.id = null

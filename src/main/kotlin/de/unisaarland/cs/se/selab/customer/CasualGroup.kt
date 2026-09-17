@@ -9,6 +9,8 @@ import de.unisaarland.cs.se.selab.enums.RatingLikelihood
 import de.unisaarland.cs.se.selab.enums.RatingType
 import de.unisaarland.cs.se.selab.enums.RestaurantType
 import de.unisaarland.cs.se.selab.enums.TableType
+import kotlin.math.absoluteValue
+import kotlin.math.sign
 
 // move this to a common constants file
 private const val DISTANCE_PER_TICK = 5
@@ -28,6 +30,11 @@ class CasualGroup(
     val deliveryDistance: Int,
     val ratingLikelihood: RatingLikelihood
 ) : CustomerGroup(id, size, tableType, visitingAt, foodPreferences) {
+
+    /** Divides this value by the other value, ceiling the result to an integer that is closer to positive infinity. */
+    fun Int.ceilDiv(other: Int): Int {
+        return this.floorDiv(other) + this.rem(other).sign.absoluteValue
+    }
 
     /** get if the customer wants delivery */
     val wantsDelivery: Boolean get() = deliveryDistance > 0
@@ -52,11 +59,9 @@ class CasualGroup(
      * returns the tick at which they will put the order to the restaurant
      */
     private fun getDeliveryOrderTick(): Tick {
-        val orderTick = visitingAt - DELIVERY_COOKING_TICKS - ceilDiv(deliveryDistance, DISTANCE_PER_TICK)
+        val orderTick = visitingAt - DELIVERY_COOKING_TICKS - deliveryDistance.ceilDiv(DISTANCE_PER_TICK)
         return orderTick
     }
-
-    private fun ceilDiv(a: Int, b: Int) = (a + b - 1) / b
 
     override fun determineRating(): RatingType {
         return when (ratingLikelihood) {

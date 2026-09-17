@@ -37,6 +37,21 @@ import kotlin.test.assertTrue
 class CustomerParserTypeSpecificTest {
     private val parser = CustomerParser()
 
+    /**
+     * Builds a string with the same `hashCode()` as [value] but that is not equal to it, by
+     * shifting the weight of the last two characters (`char[n-2] * 31 + char[n-1]` is invariant
+     * under `char[n-2] -= 1, char[n-1] += 31`). The parser dispatches on these string constants
+     * via a compiled hashCode+equals switch, and the "same hash bucket, but equals() is false"
+     * path is otherwise unreachable through any semantically distinct input string.
+     */
+    private fun hashCollisionOf(value: String): String {
+        val chars = value.toCharArray()
+        val last = chars.size - 1
+        chars[last - 1] = chars[last - 1] - 1
+        chars[last] = chars[last] + 31
+        return String(chars)
+    }
+
     private val rice = Ingredient("rice", MeasurementUnit.G, bestBefore = 3, initialPackagingVolume = 1000)
     private val ingredients = listOf(rice)
 
@@ -156,6 +171,78 @@ class CustomerParserTypeSpecificTest {
         parser.parseCustomers(JsonArray(groups.toList()), recipes, ingredients, restaurantStats)
 
     // ---- REGULAR ----
+
+    @Test
+    fun `hashCollisionOf produces a distinct string with the same hashCode`() {
+        for (value in listOf("REGULAR", "CASUAL", "EVENT", "COMMON", "BAR", "SEPARATED", "SOME", "NEVER", "ALWAYS")) {
+            val collision = hashCollisionOf(value)
+            assertEquals(value.hashCode(), collision.hashCode())
+            assertTrue(value != collision)
+        }
+    }
+
+    @Test
+    fun `group type colliding with REGULAR's hashCode is rejected`() {
+        assertThrows<IllegalArgumentException> {
+            parse(regularGroup(id = 1) { put("type", hashCollisionOf("REGULAR")) })
+        }
+    }
+
+    @Test
+    fun `group type colliding with CASUAL's hashCode is rejected`() {
+        assertThrows<IllegalArgumentException> {
+            parse(casualGroup(id = 1) { put("type", hashCollisionOf("CASUAL")) })
+        }
+    }
+
+    @Test
+    fun `group type colliding with EVENT's hashCode is rejected`() {
+        assertThrows<IllegalArgumentException> {
+            parse(eventGroup(id = 1) { put("type", hashCollisionOf("EVENT")) })
+        }
+    }
+
+    @Test
+    fun `tableType colliding with COMMON's hashCode is rejected to the COMMON default`() {
+        val group = parse(regularGroup(id = 1) { put("tableType", hashCollisionOf("COMMON")) }).single()
+
+        assertEquals(TableType.COMMON, group.tableType)
+    }
+
+    @Test
+    fun `tableType colliding with BAR's hashCode falls back to COMMON`() {
+        val group = parse(regularGroup(id = 1) { put("tableType", hashCollisionOf("BAR")) }).single()
+
+        assertEquals(TableType.COMMON, group.tableType)
+    }
+
+    @Test
+    fun `tableType colliding with SEPARATED's hashCode falls back to COMMON`() {
+        val group = parse(regularGroup(id = 1) { put("tableType", hashCollisionOf("SEPARATED")) }).single()
+
+        assertEquals(TableType.COMMON, group.tableType)
+    }
+
+    @Test
+    fun `ratingLikelihood colliding with SOME's hashCode is rejected`() {
+        assertThrows<IllegalArgumentException> {
+            parse(casualGroup(id = 1, ratingLikelihood = hashCollisionOf("SOME")))
+        }
+    }
+
+    @Test
+    fun `ratingLikelihood colliding with NEVER's hashCode is rejected`() {
+        assertThrows<IllegalArgumentException> {
+            parse(casualGroup(id = 1, ratingLikelihood = hashCollisionOf("NEVER")))
+        }
+    }
+
+    @Test
+    fun `ratingLikelihood colliding with ALWAYS's hashCode is rejected`() {
+        assertThrows<IllegalArgumentException> {
+            parse(casualGroup(id = 1, ratingLikelihood = hashCollisionOf("ALWAYS")))
+        }
+    }
 
     @Test
     fun `lowercase group type is rejected`() {

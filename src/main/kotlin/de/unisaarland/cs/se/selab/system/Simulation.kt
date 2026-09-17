@@ -86,9 +86,11 @@ class Simulation(simdata: SimulationConfig) {
         val regularsTonight = getRegularsForTonight().sortedBy { it.id }
 
         for (restaurant in restaurants.sortedBy { it.getRestaurantStats().restaurantId }) {
-            Logger.restaurantID = restaurant.getRestaurantStats().restaurantId
+            val restaurantId = restaurant.getRestaurantStats().restaurantId
+            Logger.restaurantID = restaurantId
+            val regularsForRestaurant = regularsTonight.filter { it.restaurantId == restaurantId }
 
-            restaurant.prepareForEvening(regularsTonight)
+            restaurant.prepareForEvening(regularsForRestaurant)
         }
     }
 

@@ -1,5 +1,6 @@
 package de.unisaarland.cs.se.selab.systemtest.selab26
 
+import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExamplePreparationAndServingStartTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExampleSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.customerparsertests.customerParserSystemTests
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ExactStockoutTest
@@ -88,6 +89,7 @@ object SystemTestRegistration {
      */
     fun registerSystemTestsForReferenceImplementation(testSuite: SELab26TestSuite) {
         testSuite.registerTest(ExampleSystemTest())
+        testSuite.registerTest(ExamplePreparationAndServingStartTest())
 
         // testSuite.registerTest(EventReservationConflictTest())
         testSuite.registerTest(ExactStockoutTest())
@@ -151,8 +153,7 @@ object SystemTestRegistration {
         testSuite.registerTest(ExampleSystemTest())
 
         //  testSuite.registerTest(EventReservationConflictTest())
-        testSuite.registerTest(ExactStockoutTest())
-        // testSuite.registerTest(ExhaustiveSimpleScenarioTest())
+        testSuite.registerTest(ExactStockoutTest()) // testSuite.registerTest(ExhaustiveSimpleScenarioTest())
         testSuite.registerTest(OneCookTwoOrdersTest())
         testSuite.registerTest(WaitstaffExhaustionTest())
         testSuite.registerTest(ProcurementLogicTestB())

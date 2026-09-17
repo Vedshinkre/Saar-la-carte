@@ -150,9 +150,9 @@ class CustomerParser {
         restaurantId: Id,
         restaurantStats: List<RestaurantStats>
     ): Boolean {
-        val restaurantStats: RestaurantStats = restaurantStats.first { it.restaurantId == restaurantId }
-        val openingTickStart: Tick = restaurantStats.openingTickStart
-        val openingTickEnd: Tick = restaurantStats.openingTickEnd
+        val restaurant: RestaurantStats = restaurantStats.first { it.restaurantId == restaurantId }
+        val openingTickStart: Tick = restaurant.openingTickStart
+        val openingTickEnd: Tick = restaurant.openingTickEnd
         return visitingAt in openingTickStart..(openingTickEnd - Constants.REGULAR_VISITING_TICK_BUFFER)
     }
 

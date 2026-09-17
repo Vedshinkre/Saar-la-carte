@@ -2,9 +2,13 @@ package de.unisaarland.cs.se.selab.systemtest.selab26
 
 import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExampleSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.customerparsertests.customerParserSystemTests
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ExactStockoutTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ExhaustiveSimpleScenarioTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.InvalidRestaurantParserTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.MyParserTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.OneCookTwoOrdersTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ProcurementLogicTestA
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ProcurementLogicTestB
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SequenceTwoSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SimulationLifecycleSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.StatisticsOrderingSystemTest
@@ -81,8 +85,8 @@ object SystemTestRegistration {
         testSuite.registerTest(ExampleSystemTest())
 
         // testSuite.registerTest(EventReservationConflictTest())
-        //  testSuite.registerTest(ExactStockoutTest())
-        //  testSuite.registerTest(ExhaustiveSimpleScenarioTest())
+        testSuite.registerTest(ExactStockoutTest())
+        testSuite.registerTest(ExhaustiveSimpleScenarioTest())
         testSuite.registerTest(OneCookTwoOrdersTest())
         testSuite.registerTest(WaitstaffExhaustionTest())
         testSuite.registerTest(SequenceTwoSystemTest())
@@ -114,8 +118,8 @@ object SystemTestRegistration {
         // new
         testSuite.registerTest(InvalidRestaurantParserTest())
         testSuite.registerTest(MyParserTest())
-        // testSuite.registerTest(IncidentZeroStaffNumberRejectedSystemTest())
-        //  testSuite.registerTest(IncidentCookTypeExecForbiddenRejectedSystemTest())
+        testSuite.registerTest(ProcurementLogicTestB())
+        testSuite.registerTest(ProcurementLogicTestA())
     }
 
     /**

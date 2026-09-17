@@ -30,8 +30,8 @@ class ExactStockoutTest : ExampleSystemTestExtension() {
         // The kitchen plans for exactly 1 of each recipe
         // 1 * 250g Chicken = 250g = exactly 1 package.
         // 1 * 100g Tomato = 100g = exactly 1 package.
-        assertNextLine(InitialAndPrepTestLogs.pantryProcured(1, 250, "G", "Chicken"))
-        assertNextLine(InitialAndPrepTestLogs.pantryProcured(1, 100, "G", "Tomato"))
+        assertNextLine(InitialAndPrepTestLogs.pantryProcured(1, 250, "g", "Chicken"))
+        assertNextLine(InitialAndPrepTestLogs.pantryProcured(1, 100, "g", "Tomato"))
         assertNextLine(InitialAndPrepTestLogs.pantryRestocked(1))
 
         assertNextLine(TickStatusTestLogs.servingStart(1))

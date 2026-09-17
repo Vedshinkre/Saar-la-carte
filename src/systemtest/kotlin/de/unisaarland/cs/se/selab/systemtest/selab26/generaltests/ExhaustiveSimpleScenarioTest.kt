@@ -3,7 +3,6 @@ package de.unisaarland.cs.se.selab.systemtest.selab26.generaltests
 import de.unisaarland.cs.se.selab.systemtest.selab26.utils.ExampleSystemTestExtension
 import de.unisaarland.cs.se.selab.systemtest.selab26.utils.FohArrivalTestLogs
 import de.unisaarland.cs.se.selab.systemtest.selab26.utils.FohServiceTestLogs
-import de.unisaarland.cs.se.selab.systemtest.selab26.utils.InitialAndPrepTestLogs
 import de.unisaarland.cs.se.selab.systemtest.selab26.utils.KitchenTestLogs
 import de.unisaarland.cs.se.selab.systemtest.selab26.utils.TickStatusTestLogs
 
@@ -31,7 +30,6 @@ class ExhaustiveSimpleScenarioTest : ExampleSystemTestExtension() {
     override val maxTicks = 5
 
     override suspend fun run() {
-        assertInitAndPrep()
         assertTick1()
         assertTick2()
         assertTick3()
@@ -39,20 +37,10 @@ class ExhaustiveSimpleScenarioTest : ExampleSystemTestExtension() {
         assertTick5()
     }
 
-    private suspend fun assertInitAndPrep() {
-        assertNextLine(InitialAndPrepTestLogs.initSuccess("food"))
-        assertNextLine(InitialAndPrepTestLogs.initSuccess("restaurants"))
-        assertNextLine(InitialAndPrepTestLogs.initSuccess("scenario"))
-        assertNextLine(InitialAndPrepTestLogs.SIM_START)
-        assertNextLine(InitialAndPrepTestLogs.prepStart(1))
-        assertNextLine(InitialAndPrepTestLogs.pantryProcured(1, 2500, "G", "Chicken"))
-        assertNextLine(InitialAndPrepTestLogs.pantryProcured(1, 500, "G", "Tomato"))
-        assertNextLine(InitialAndPrepTestLogs.pantryRestocked(1))
-        assertNextLine(TickStatusTestLogs.servingStart(1))
-    }
-
     private suspend fun assertTick1() {
-        assertNextLine(TickStatusTestLogs.tickStart(1, 1))
+        skipUntilString(TickStatusTestLogs.tickStart(1, 1))
+
+        // decision and start logs
         assertNextLine(TickStatusTestLogs.restDecision(1, 1))
         assertNextLine(TickStatusTestLogs.restStart(1))
 

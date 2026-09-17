@@ -160,6 +160,7 @@ class Restaurant(
         val iterator = customerQueue.iterator()
         while (iterator.hasNext()) {
             val customerGroup = iterator.next()
+            if (Time.tick < customerGroup.visitingAt) { continue }
 
             if (customerGroup.isVisitingThisTick()) {
                 FohReceptionLogger.logRestaurantArrival(customerGroup.id)

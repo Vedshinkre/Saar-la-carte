@@ -32,7 +32,7 @@ class ArrivalProcessor(
 ) {
     private var numberOfTablesSeatedOn: Int = 0
     private var numberOfCustomersSeated: Int = 0
-    private var numberOfWaitersSeated: Int = 0
+    private var numberOfWaitersSeated: MutableSet<Waiter> = mutableSetOf()
 
     // Sets used for logging purposes
     private val customersOrdered: MutableSet<CustomerGroup> = mutableSetOf()
@@ -206,11 +206,11 @@ class ArrivalProcessor(
     /** Call after processArrivalSeatingOrdering has been called with each customerGroup in customerQueue.
      *  Logs status and then performs side effect by resetting counters. */
     fun logAndResetSeatingOrderingTickStatus() {
-        FohReceptionLogger.logSeatingStatus(numberOfWaitersSeated, numberOfCustomersSeated, numberOfTablesSeatedOn)
+        FohReceptionLogger.logSeatingStatus(numberOfWaitersSeated.size, numberOfCustomersSeated, numberOfTablesSeatedOn)
         numberOfTablesSeatedOn = 0
         numberOfCustomersSeated = 0
-        numberOfWaitersSeated = 0
-        numberOfCustomersSeated = 0
+        numberOfWaitersSeated.clear()
+
         val numberOfCustomersOrdered = customersOrdered.sumOf {
                 customerGroup ->
             customerGroup.customersRemainingInRestaurant
@@ -267,7 +267,7 @@ class ArrivalProcessor(
         }
 
         numberOfCustomersSeated += customerGroup.size
-        numberOfWaitersSeated += waiters.size
+        numberOfWaitersSeated.addAll(waiters)
         numberOfTablesSeatedOn += assignedTables.size
 
         FohReceptionLogger.logFohSeating(customerGroup.id, mergeId, waiters.map { it.id!! })

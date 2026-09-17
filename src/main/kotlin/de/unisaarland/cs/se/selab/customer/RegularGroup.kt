@@ -15,7 +15,7 @@ class RegularGroup(
     visitingAt: Tick,
     foodPreferences: List<FoodPreference>,
     val visitingStart: Evening,
-    val visitingPeriod: Tick,
+    val visitingPeriod: Evening,
     val restaurantId: Id,
 ) : CustomerGroup(id, size, tableType, visitingAt, foodPreferences) {
     val orderHistory: MutableList<Order> = mutableListOf()

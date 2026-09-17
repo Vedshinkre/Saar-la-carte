@@ -200,8 +200,8 @@ class ArrivalProcessor(
                 currentOrder.dishNameToAmount(),
                 null
             )
-            customersOrdered.add(customerGroup)
         }
+        customersOrdered.add(customerGroup)
         val customersWhoLeftAfterOrdering = customerGroup.getCustomersWhoLeft()
         if (customersWhoLeftAfterOrdering > 0) {
             FohReceptionLogger.logFohNoOrdering(

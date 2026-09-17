@@ -1,0 +1,64 @@
+{
+  "restaurants": [
+    {
+      "id": 7,
+      "name": "Sunrise Diner",
+      "type": "EUROPEAN",
+      "openingTickStart": 1,
+      "openingTickEnd": 24,
+      "recipes": [1],
+      "kitchenStaff": {
+        "EXEC": 0,
+        "SOUS": 0,
+        "TOURNANT": 1,
+        "SAUCE": 0,
+        "FISH": 0,
+        "ROAST": 0,
+        "VEGETABLE": 0,
+        "PASTRY": 0
+      },
+      "waitstaff": 1,
+      "deliveryDrivers": 3,
+      "tables": [
+        { "id": 1, "type": "COMMON", "size": 9 },
+        { "id": 2, "type": "COMMON", "size": 2 },
+        { "id": 3, "type": "COMMON", "size": 3 },
+        { "id": 4, "type": "COMMON", "size": 3 },
+        { "id": 5, "type": "COMMON", "size": 8 }
+      ],
+      "positiveRatings": 10,
+      "negativeRatings": 5,
+      "event": false
+    },
+    {
+      "id": 7,
+      "name": "Sunrise Diner",
+      "type": "EUROPEAN",
+      "openingTickStart": 1,
+      "openingTickEnd": 24,
+      "recipes": [1],
+      "kitchenStaff": {
+        "EXEC": 0,
+        "SOUS": 0,
+        "TOURNANT": 1,
+        "SAUCE": 0,
+        "FISH": 0,
+        "ROAST": 0,
+        "VEGETABLE": 0,
+        "PASTRY": 0
+      },
+      "waitstaff": 1,
+      "deliveryDrivers": 3,
+      "tables": [
+        { "id": 6, "type": "COMMON", "size": 9 },
+        { "id": 7, "type": "COMMON", "size": 2 },
+        { "id": 8, "type": "COMMON", "size": 3 },
+        { "id": 9, "type": "COMMON", "size": 3 },
+        { "id": 10, "type": "COMMON", "size": 8 }
+      ],
+      "positiveRatings": 10,
+      "negativeRatings": 5,
+      "event": false
+    }
+  ]
+}

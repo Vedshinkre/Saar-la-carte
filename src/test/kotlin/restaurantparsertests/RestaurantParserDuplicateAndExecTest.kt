@@ -18,8 +18,7 @@ import kotlin.test.assertFailsWith
 
 class RestaurantParserDuplicateAndExecTest {
 
-    private val basePath =
-        "src/systemtest/resources/RestaurantParserTests/"
+    private val basePath = "src/systemtest/resources/RestaurantParserTests/"
 
     private lateinit var parser: RestaurantParser
 
@@ -33,10 +32,7 @@ class RestaurantParserDuplicateAndExecTest {
 
         val jsonArray = Json.parseToJsonElement(file.readText()).jsonObject.getValue("restaurants").jsonArray
         val rice = Ingredient(
-            name = "rice",
-            unit = MeasurementUnit.G,
-            bestBefore = 5,
-            initialPackagingVolume = 20
+            name = "rice", unit = MeasurementUnit.G, bestBefore = 5, initialPackagingVolume = 20
         )
         val ingredients = listOf<Ingredient>(rice)
         val recipes = listOf(
@@ -53,26 +49,22 @@ class RestaurantParserDuplicateAndExecTest {
 
         assertFailsWith<IllegalArgumentException> {
             parser.parseRestaurants(
-                jsonArray,
-                recipes = recipes,
-                stock = stock
+                jsonArray, recipes = recipes, stock = stock
             )
         }
     }
 
     // PLEASE_FIX These tests fail because the files you pass to the asserInvalidRestaurants don't exist
-    @Disabled
+
     @Test
     fun `restaurantsDuplicateRestaurantIds should fail`() {
         assertInvalidRestaurants("restaurantsDuplicateRestaurantIds.json")
     }
 
-    @Disabled
     @Test
     fun `restaurantsDuplicateTableIds should fail`() {
         assertInvalidRestaurants("restaurantsDuplicateTableIds.json")
-    }
-    // Ansh Fix Head Cooks
+    } // Ansh Fix Head Cooks
 
     @Disabled
     @Test
@@ -80,19 +72,16 @@ class RestaurantParserDuplicateAndExecTest {
         assertInvalidRestaurants("restaurantsMultipleExecCooks.json")
     }
 
-    @Disabled
     @Test
     fun `restaurantsNonExistingRecipe should fail`() {
         assertInvalidRestaurants("restaurantsNonExistingRecipe.json")
     }
 
-    @Disabled
     @Test
     fun `restaurantsSameId should fail`() {
         assertInvalidRestaurants("restaurantsSameId.json")
     }
 
-    @Disabled
     @Test
     fun `restaurantsSameName should fail`() {
         assertInvalidRestaurants("restaurantsSameName.json")

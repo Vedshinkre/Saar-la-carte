@@ -12,7 +12,6 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
@@ -148,7 +147,6 @@ class FoodPreferenceParserTest {
 
     // ---- Only some of the three properties (spec: each preference uses 1-3 of them) ----
 
-    @Disabled("Known bug: FoodPreferenceParser requires all three preference properties")
     @Test
     fun `preference with only excludedIngredients is accepted`() {
         val result = parse(1, preference(preferred = null, favorites = null)).single()
@@ -158,7 +156,6 @@ class FoodPreferenceParserTest {
         assertTrue(result.favouriteDishes.isEmpty())
     }
 
-    @Disabled("Known bug: FoodPreferenceParser requires all three preference properties")
     @Test
     fun `preference with only preferredIngredients is accepted`() {
         val result = parse(1, preference(excluded = null, favorites = null)).single()
@@ -166,7 +163,6 @@ class FoodPreferenceParserTest {
         assertSame(rice, result.preferredIngredients.single())
     }
 
-    @Disabled("Known bug: FoodPreferenceParser requires all three preference properties")
     @Test
     fun `preference with only favoriteDishes is accepted`() {
         val result = parse(1, preference(excluded = null, preferred = null)).single()
@@ -174,7 +170,6 @@ class FoodPreferenceParserTest {
         assertEquals(listOf(RICE_BOWL), result.favouriteDishes)
     }
 
-    @Disabled("Known bug: FoodPreferenceParser requires all three preference properties")
     @Test
     fun `preference with two of the three properties is accepted`() {
         val result = parse(1, preference(favorites = null))
@@ -267,6 +262,60 @@ class FoodPreferenceParserTest {
     fun `duplicate favorite dish is rejected`() {
         assertThrows<IllegalArgumentException> {
             parse(1, preference(favorites = listOf(RICE_BOWL, RICE_BOWL)))
+        }
+    }
+
+    @Test
+    fun `preference without any of the three properties is rejected`() {
+        assertThrows<IllegalArgumentException> {
+            parse(1, preference(excluded = null, preferred = null, favorites = null))
+        }
+    }
+
+    @Test
+    fun `excluding every ingredient in a different order than the food file is rejected`() {
+        assertThrows<IllegalArgumentException> {
+            parse(1, preference(excluded = listOf(RICE, ONION, GARLIC), preferred = null))
+        }
+    }
+
+    @Test
+    fun `ingredient names are matched case-sensitively`() {
+        assertThrows<IllegalArgumentException> {
+            parse(1, preference(excluded = listOf("Onion")))
+        }
+    }
+
+    @Test
+    fun `favorite dish names are matched case-sensitively`() {
+        assertThrows<IllegalArgumentException> {
+            parse(1, preference(favorites = listOf("rice bowl")))
+        }
+    }
+
+    @Test
+    fun `invalid preference after a valid one is rejected`() {
+        assertThrows<IllegalArgumentException> {
+            parse(2, preference(), preference(preferred = listOf("saffron")))
+        }
+    }
+
+    @Test
+    fun `sizes are summed across preferences even if each fits on its own`() {
+        assertThrows<IllegalArgumentException> {
+            parse(3, preference(size = 2), preference(size = 2, excluded = listOf(GARLIC)))
+        }
+    }
+
+    @Test
+    fun `favoring every dish name is rejected even if a name is used by several recipes`() {
+        // Dish names are only unique per restaurant, so two recipes may share a name.
+        val customRiceBowl = Recipe(3, RICE_BOWL, 12, listOf(CookType.SOUS), mutableMapOf(rice to 150), null)
+        val recipesWithSharedName = recipes + customRiceBowl
+        val preferences = JsonArray(listOf(preference(favorites = listOf(RICE_BOWL, GARLIC_SOUP))))
+
+        assertThrows<IllegalArgumentException> {
+            parser.parseFoodPreferences(preferences, recipesWithSharedName, ingredients, 1)
         }
     }
 }

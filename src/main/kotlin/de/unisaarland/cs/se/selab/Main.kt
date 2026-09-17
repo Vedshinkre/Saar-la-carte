@@ -2,7 +2,6 @@ package de.unisaarland.cs.se.selab
 
 import de.unisaarland.cs.se.selab.enums.LogLevel
 import de.unisaarland.cs.se.selab.loggers.Logger
-import de.unisaarland.cs.se.selab.loggers.StatisticsLogger
 import de.unisaarland.cs.se.selab.parsers.ParserController
 import de.unisaarland.cs.se.selab.system.Simulation
 import kotlinx.cli.ArgParser
@@ -19,10 +18,6 @@ import java.io.PrintWriter
  */
 fun main(args: Array<String>) {
     val cli = parseCommandLineArgs(args)
-    if (cli.shouldPrintHelp) {
-        help()
-        return
-    }
 
     setupLogging(cli)
     Time.setMaxTicks(cli.maxTicks)
@@ -34,29 +29,50 @@ fun main(args: Array<String>) {
     }
     val sim = Simulation(simConfig)
     sim.runSimulation()
-
-    StatisticsLogger.logSimulationStatsCalculated()
 }
 
 /**
- * Parses the raw CLI [args] into a [Cliinfo] instance.
+ * Parses the raw CLI [args] into a [Cliinfo] instance. `--help` is handled by [ArgParser] itself,
+ * which prints the usage info and exits.
  */
 private fun parseCommandLineArgs(args: Array<String>): Cliinfo {
-    val parser = ArgParser("SaarLaCarte cli parser")
-    val foodPath by parser.option(ArgType.String, fullName = "food").required()
-    val restaurantsPath by parser.option(ArgType.String, fullName = "restaurants").required()
-    val scenarioPath by parser.option(ArgType.String, fullName = "scenario").required()
-    val maxTicks by parser.option(ArgType.Int, fullName = "maxTicks").required()
-    val logLevelStr by parser.option(ArgType.String, fullName = "logLevel").required()
+    val parser = ArgParser("SaarLaCarte")
+    val foodPath by parser.option(
+        ArgType.String,
+        fullName = "food",
+        description = "Path to the food configuration JSON file (required)"
+    ).required()
+    val restaurantsPath by parser.option(
+        ArgType.String,
+        fullName = "restaurants",
+        description = "Path to the restaurant configuration JSON file (required)"
+    ).required()
+    val scenarioPath by parser.option(
+        ArgType.String,
+        fullName = "scenario",
+        description = "Path to the scenario configuration JSON file (required)"
+    ).required()
+    val maxTicks by parser.option(
+        ArgType.Int,
+        fullName = "maxTicks",
+        description = "Maximum number of ticks the simulation should run for (required)"
+    ).required()
+    val logLevel by parser.option(
+        ArgType.Choice(
+            LogLevel.entries,
+            { LogLevel.valueOf(it) },
+            { it.name }
+        ),
+        fullName = "logLevel",
+        description = "One of DEBUG, INFO, IMPORTANT (required)"
+    ).required()
     val outputFilePathStr by parser.option(
         ArgType.String,
         fullName = "out",
-    ).default("") // empty means stdout
-    val shouldPrintHelp by parser.option(ArgType.Boolean, fullName = "shouldPrintHelp").default(false)
+        description = "Output file for logs (defaults to stdout)"
+    ).default("")
 
     parser.parse(args)
-
-    val logLevel = LogLevel.valueOf(logLevelStr)
 
     return Cliinfo(
         foodFilePath = foodPath,
@@ -65,7 +81,6 @@ private fun parseCommandLineArgs(args: Array<String>): Cliinfo {
         maxTicks = maxTicks,
         logLevel = logLevel,
         outputPath = outputFilePathStr,
-        shouldPrintHelp = shouldPrintHelp,
     )
 }
 
@@ -81,24 +96,4 @@ private fun setupLogging(cli: Cliinfo) {
         PrintWriter(File(cli.outputPath))
     }
     Logger.setup(writer)
-
-    // The specialized loggers (InitialAndPrepLogger, TickStatusLogger, ...) are modeled
-    // as singleton `object`s that all delegate to Logger internally (see the class
-    // diagram's "uses" dependencies), so nothing further needs to be instantiated here.
-}
-
-private fun help() {
-    println(
-        """
-        SaarLaCarte - restaurant simulation
-
-        Usage:
-          --food <path>        Path to the food configuration JSON file (required)
-          --restaurants <path> Path to the restaurant configuration JSON file (required)
-          --scenario <path>    Path to the scenario configuration JSON file (required)
-          --maxTicks <n>       Maximum number of ticks the simulation should run for (required)
-          --logLevel <level>   One of DEBUG, INFO, IMPORTANT (required)
-          --out <path>         Output file for logs (defaults to stdout)
-        """.trimIndent(),
-    )
 }

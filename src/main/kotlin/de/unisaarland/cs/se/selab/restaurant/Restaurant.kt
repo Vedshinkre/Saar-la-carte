@@ -11,7 +11,6 @@ import de.unisaarland.cs.se.selab.food.Order
 import de.unisaarland.cs.se.selab.food.Recipe
 import de.unisaarland.cs.se.selab.food.Stock
 import de.unisaarland.cs.se.selab.loggers.FohReceptionLogger
-import de.unisaarland.cs.se.selab.loggers.InitialAndPrepLogger
 
 /**
  * Class that coordinates the simulation of one tick for a restaurant
@@ -65,17 +64,13 @@ class Restaurant(
         val comingRegulars = mutableListOf<RegularGroup>()
         val comingEventGroups = mutableListOf<EventGroup>()
         for (regularGroup in regularGroups) {
-            if (!frontOfHouse.reserveTables(regularGroup)) {
-                InitialAndPrepLogger.logFohNoReservation(regularGroup.id)
-            } else {
+            if (frontOfHouse.reserveTables(regularGroup)) {
                 customerQueue.addLast(regularGroup)
                 comingRegulars.add(regularGroup)
             }
         }
         for (eventGroup in eventGroupsForTonight) {
-            if (!frontOfHouse.reserveTables(eventGroup)) {
-                InitialAndPrepLogger.logFohNoReservation(eventGroup.id)
-            } else {
+            if (frontOfHouse.reserveTables(eventGroup)) {
                 customerQueue.addLast(eventGroup)
                 comingEventGroups.add(eventGroup)
             }
@@ -101,7 +96,6 @@ class Restaurant(
             restaurantStats.menu,
             eventDishes
         )
-        InitialAndPrepLogger.logPantryRestocked() // getEventFreeSeats()
         // setAvailableEventSeats -> I want to know if seats for EventSeats and normal are same
         // getFreeSeats -> Done
         // setAvailableSeats -> Done

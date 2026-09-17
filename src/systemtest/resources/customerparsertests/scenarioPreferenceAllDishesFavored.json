@@ -1,0 +1,34 @@
+{
+  "customerGroups": [
+    {
+      "id": 1,
+      "type": "CASUAL",
+      "size": 4,
+      "visitingTick": 5,
+      "foodPreferences": [
+        {
+          "size": 1,
+          "excludedIngredients": [
+            "onion"
+          ],
+          "preferredIngredients": [
+            "rice"
+          ],
+          "favoriteDishes": [
+            "Rice Bowl",
+            "Garlic Soup",
+            "Onion Salad"
+          ]
+        }
+      ],
+      "restaurantTypes": [
+        "ASIAN"
+      ],
+      "visitingEvenings": [
+        1
+      ],
+      "ratingLikelihood": "SOME"
+    }
+  ],
+  "incidents": []
+}

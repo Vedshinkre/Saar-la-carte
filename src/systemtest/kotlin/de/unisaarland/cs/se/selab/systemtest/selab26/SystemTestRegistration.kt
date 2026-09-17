@@ -1,6 +1,7 @@
 package de.unisaarland.cs.se.selab.systemtest.selab26
 
 import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExampleSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.customerparsertests.customerParserSystemTests
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ExactStockoutTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.InvalidRestaurantParserTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.MyParserTest
@@ -109,6 +110,7 @@ object SystemTestRegistration {
         testSuite.registerTest(RestaurantsTickNotIn1to24Test())
 
         registerParserControllerLogTests(testSuite)
+        customerParserSystemTests().forEach { testSuite.registerTest(it) }
 
         // new
         testSuite.registerTest(InvalidRestaurantParserTest())
@@ -126,6 +128,7 @@ object SystemTestRegistration {
     fun registerSystemTestsMutantValidation(testSuite: SELab26TestSuite) {
         testSuite.registerTest(ExampleSystemTest())
         registerParserControllerLogTests(testSuite)
+        customerParserSystemTests().forEach { testSuite.registerTest(it) }
     }
 
     /**

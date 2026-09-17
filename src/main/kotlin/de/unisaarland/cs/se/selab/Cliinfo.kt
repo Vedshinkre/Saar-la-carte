@@ -12,6 +12,5 @@ data class Cliinfo(
     val scenarioFilePath: String,
     val maxTicks: Int,
     val logLevel: LogLevel,
-    val outputPath: String?,
-    val shouldPrintHelp: Boolean
+    val outputPath: String?
 )

@@ -18,8 +18,6 @@ class FoodPreferenceParser {
     private fun <T, K> validateUniquenessBy(list: List<T>, selector: (T) -> K) =
         require(list.distinctBy(selector).size == list.size)
 
-    private fun <T> validateNotEmpty(list: List<T>) = require(list.isNotEmpty())
-
     /** Call with jsonArray containing FoodPreferences, full list of Recipes and Ingredients.
      *  Returns list of valid FoodPreferences or throws exception */
     @Throws
@@ -88,7 +86,7 @@ class FoodPreferenceParser {
         preferredIngredients: List<String>,
         favoriteDishes: List<String>
     ) {
-        validateFoodPreferenceNotEmpty(excludedIngredients, preferredIngredients, favoriteDishes)
+        validateFoodPreferenceNotAllEmpty(excludedIngredients, preferredIngredients, favoriteDishes)
         validateFoodPreferenceExistence(recipes, ingredients, excludedIngredients, preferredIngredients, favoriteDishes)
         validateFoodPreferenceUniqueness(excludedIngredients, preferredIngredients, favoriteDishes)
         validateFoodPreferenceNoIntersection(excludedIngredients, preferredIngredients)
@@ -101,14 +99,16 @@ class FoodPreferenceParser {
         )
     }
 
-    private fun validateFoodPreferenceNotEmpty(
+    private fun validateFoodPreferenceNotAllEmpty(
         excludedIngredients: List<String>,
         preferredIngredients: List<String>,
         favoriteDishes: List<String>
     ) {
-        validateNotEmpty(excludedIngredients)
-        validateNotEmpty(preferredIngredients)
-        validateNotEmpty(favoriteDishes)
+        require(
+            excludedIngredients.isNotEmpty() ||
+                preferredIngredients.isNotEmpty() ||
+                favoriteDishes.isNotEmpty()
+        )
     }
 
     private fun validateFoodPreferenceExistence(

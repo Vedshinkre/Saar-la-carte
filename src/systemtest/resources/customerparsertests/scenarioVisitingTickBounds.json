@@ -1,0 +1,33 @@
+{
+  "customerGroups": [
+    {
+      "id": 1,
+      "type": "CASUAL",
+      "size": 4,
+      "visitingTick": 1,
+      "foodPreferences": [],
+      "restaurantTypes": [
+        "ASIAN"
+      ],
+      "visitingEvenings": [
+        1
+      ],
+      "ratingLikelihood": "SOME"
+    },
+    {
+      "id": 2,
+      "type": "CASUAL",
+      "size": 4,
+      "visitingTick": 21,
+      "foodPreferences": [],
+      "restaurantTypes": [
+        "ASIAN"
+      ],
+      "visitingEvenings": [
+        1
+      ],
+      "ratingLikelihood": "SOME"
+    }
+  ],
+  "incidents": []
+}

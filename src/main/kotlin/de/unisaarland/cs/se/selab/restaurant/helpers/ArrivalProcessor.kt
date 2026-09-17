@@ -53,23 +53,8 @@ class ArrivalProcessor(
         if (assignedWaiter != null) {
             somebodyOrdered = customerGroup.placeOrder(listOf(assignedWaiter), menu, countertop)
             assignedWaiter.currentLoad -= customerGroup.size - customerGroup.customersRemainingInRestaurant
-            val currentOrder = customerGroup.currentOrder ?: return false
-            val assignedWaiterId = assignedWaiter.id ?: getNextWaiterId()
-            FohReceptionLogger.logFohOrdering(
-                customerGroup.id,
-                currentOrder.id,
-                currentOrder.dishNameToAmount(),
-                listOf(assignedWaiterId)
-            )
         } else {
             somebodyOrdered = customerGroup.placeOrder(listOf(), menu, countertop)
-            val currentOrder = customerGroup.currentOrder ?: return false
-            FohReceptionLogger.logFohOrdering(
-                customerGroup.id,
-                currentOrder.id,
-                currentOrder.dishNameToAmount(),
-                null
-            )
         }
 
         if (!somebodyOrdered) {
@@ -78,11 +63,26 @@ class ArrivalProcessor(
             }
             inHouseGroupsToWaiter.remove(customerGroup)
             turnedAwayGroups.addLast(customerGroup)
-            FohReceptionLogger.logFohNoOrdering(
+        }
+
+        val currentOrder = customerGroup.currentOrder ?: return true
+        if (assignedWaiter != null) {
+            val assignedWaiterId = assignedWaiter.id ?: getNextWaiterId()
+            FohReceptionLogger.logFohOrdering(
                 customerGroup.id,
-                customerGroup.size - customerGroup.customersRemainingInRestaurant
+                currentOrder.id,
+                currentOrder.dishNameToAmount(),
+                listOf(assignedWaiterId)
+            )
+        } else {
+            FohReceptionLogger.logFohOrdering(
+                customerGroup.id,
+                currentOrder.id,
+                currentOrder.dishNameToAmount(),
+                null
             )
         }
+        // DOIT Only here failedReservations for regularGroups should be reset to 0
         return true
     }
 
@@ -137,6 +137,9 @@ class ArrivalProcessor(
             if (regularOrEventCustomerGroup is RegularGroup) {
                 regularOrEventCustomerGroup.hasReservationTonight = true
                 regularOrEventCustomerGroup.failedAttempts = 0
+                // DOIT failedAttempts also count for everyone not being to order after being seated.
+                // This should be reset like this only at the end of processArrivak,
+                // after ordering is completed succesfully
             }
             true
         }
@@ -146,6 +149,9 @@ class ArrivalProcessor(
             if (regularOrEventCustomerGroup is RegularGroup) {
                 regularOrEventCustomerGroup.hasReservationTonight = true
                 regularOrEventCustomerGroup.failedAttempts = 0
+                // DOIT failedAttempts also count for everyone not being to order after being seated.
+                // This should be reset like this only at the end of processArrivak,
+                // after ordering is completed succesfully
             }
             true
         } // Step 1: Filter and sort

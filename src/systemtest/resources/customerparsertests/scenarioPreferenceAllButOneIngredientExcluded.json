@@ -1,0 +1,27 @@
+{
+  "customerGroups": [
+    {
+      "id": 1,
+      "type": "CASUAL",
+      "size": 4,
+      "visitingTick": 5,
+      "foodPreferences": [
+        {
+          "size": 1,
+          "excludedIngredients": [
+            "garlic",
+            "onion"
+          ]
+        }
+      ],
+      "restaurantTypes": [
+        "ASIAN"
+      ],
+      "visitingEvenings": [
+        1
+      ],
+      "ratingLikelihood": "SOME"
+    }
+  ],
+  "incidents": []
+}

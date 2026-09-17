@@ -1,0 +1,53 @@
+{
+  "customerGroups": [
+    {
+      "id": 1,
+      "type": "CASUAL",
+      "size": 4,
+      "visitingTick": 5,
+      "foodPreferences": [
+        {
+          "size": 2,
+          "excludedIngredients": [
+            "onion"
+          ],
+          "preferredIngredients": [
+            "rice"
+          ],
+          "favoriteDishes": [
+            "Rice Bowl"
+          ]
+        }
+      ],
+      "restaurantTypes": [
+        "ASIAN"
+      ],
+      "visitingEvenings": [
+        1
+      ],
+      "ratingLikelihood": "SOME"
+    },
+    {
+      "id": 2,
+      "type": "CASUAL",
+      "size": 4,
+      "visitingTick": 5,
+      "foodPreferences": [
+        {
+          "size": 1,
+          "favoriteDishes": [
+            "Pizza"
+          ]
+        }
+      ],
+      "restaurantTypes": [
+        "ASIAN"
+      ],
+      "visitingEvenings": [
+        1
+      ],
+      "ratingLikelihood": "SOME"
+    }
+  ],
+  "incidents": []
+}

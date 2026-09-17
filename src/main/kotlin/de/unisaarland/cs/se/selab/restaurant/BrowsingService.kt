@@ -26,7 +26,7 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
     }
 
     private fun getEligibleRestaurantsForCasuals(group: CasualGroup): Int? {
-        if (group.wantsDelivery) {
+        if (!group.wantsDelivery) {
             return getEligibleRestaurantForDineIn(group)
         } else {
             val deliveryRests = mutableListOf<RestaurantStats>()
@@ -60,8 +60,12 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
         }
         val llist = mutableListOf<RestaurantStats>()
         list.forEach { stats ->
-            if (stats.availableSeats[group.tableType]!! >= group.size) {
-                llist.add(stats)
+
+            val numberOfAvailabeSeats = stats.availableSeats[group.tableType]
+            if (numberOfAvailabeSeats != null) {
+                if (numberOfAvailabeSeats >= group.size) {
+                    llist.add(stats)
+                }
             }
         }
         llist.filter { isDietaryCompatible(it, group) }

@@ -38,7 +38,7 @@ sealed class CustomerGroup(
     /**
      * takes the order of a customer group
      */
-    fun placeOrder(waiters: List<Waiter>, menu: List<Recipe>, countertop: Countertop): Boolean {
+    open fun placeOrder(waiters: List<Waiter>, menu: List<Recipe>, countertop: Countertop): Boolean {
         val listOfDishes = mutableListOf<Dish>()
         val currentWaiter = waiters.firstOrNull()
         for (foodPreference in foodPreferences) {
@@ -81,7 +81,7 @@ sealed class CustomerGroup(
     /**
      * updates the pantry and the tickLoad of the waiter which "registers" that a dish has been ordered
      */
-    private fun registerDish(waiter: Waiter, dish: Dish, countertop: Countertop) {
+    fun registerDish(waiter: Waiter, dish: Dish, countertop: Countertop) {
         val recipe = dish.recipe
         countertop.reserveIngredients(recipe)
         waiter.addToTickLoad(ActionType.TAKE_ORDER, 1)
@@ -90,10 +90,11 @@ sealed class CustomerGroup(
     /**
      * updates the pantry which "registers" that a dish has been ordered
      */
-    private fun registerDish(dish: Dish, countertop: Countertop) {
+    fun registerDish(dish: Dish, countertop: Countertop) {
         val recipe = dish.recipe
         countertop.reserveIngredients(recipe)
     }
+    // made this public to acces in Event Group
 
     /** determines rating, computes with likelihood, overridden for casual groups */
     open fun determineRating(): RatingType {

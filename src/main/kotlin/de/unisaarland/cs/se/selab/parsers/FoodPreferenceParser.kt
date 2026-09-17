@@ -15,9 +15,6 @@ import kotlinx.serialization.json.jsonPrimitive
 class FoodPreferenceParser {
     private fun <T> JsonArray.parseListOf(itemParser: (JsonElement) -> T): List<T> = this.map(itemParser)
 
-    private fun <T, K> validateUniquenessBy(list: List<T>, selector: (T) -> K) =
-        require(list.distinctBy(selector).size == list.size)
-
     /** Call with jsonArray containing FoodPreferences, full list of Recipes and Ingredients.
      *  Returns list of valid FoodPreferences or throws exception */
     @Throws
@@ -53,11 +50,11 @@ class FoodPreferenceParser {
 
         val size: Int = jsonObject.getValue("size").jsonPrimitive.int
         val excludedIngredients: List<String> =
-            jsonObject["excludedIngredients"]?.jsonArray?.toListOfString() ?: emptyList()
+            jsonObject["excludedIngredients"]?.jsonArray?.toListOfString()?.distinctBy { it } ?: emptyList()
         val preferredIngredients: List<String> =
-            jsonObject["preferredIngredients"]?.jsonArray?.toListOfString() ?: emptyList()
+            jsonObject["preferredIngredients"]?.jsonArray?.toListOfString()?.distinctBy { it } ?: emptyList()
         val favoriteDishes: List<String> =
-            jsonObject["favoriteDishes"]?.jsonArray?.toListOfString() ?: emptyList()
+            jsonObject["favoriteDishes"]?.jsonArray?.toListOfString()?.distinctBy { it } ?: emptyList()
 
         validateFoodPreference(recipes, ingredients, excludedIngredients, preferredIngredients, favoriteDishes)
 
@@ -88,7 +85,6 @@ class FoodPreferenceParser {
     ) {
         validateFoodPreferenceNotAllEmpty(excludedIngredients, preferredIngredients, favoriteDishes)
         validateFoodPreferenceExistence(recipes, ingredients, excludedIngredients, preferredIngredients, favoriteDishes)
-        validateFoodPreferenceUniqueness(excludedIngredients, preferredIngredients, favoriteDishes)
         validateFoodPreferenceNoIntersection(excludedIngredients, preferredIngredients)
         validateFoodPreferenceNotEverything(
             recipes,
@@ -127,16 +123,6 @@ class FoodPreferenceParser {
                 favoriteDishes
             )
         )
-    }
-
-    private fun validateFoodPreferenceUniqueness(
-        excludedIngredients: List<String>,
-        preferredIngredients: List<String>,
-        favoriteDishes: List<String>
-    ) {
-        validateUniquenessBy(excludedIngredients) { it }
-        validateUniquenessBy(preferredIngredients) { it }
-        validateUniquenessBy(favoriteDishes) { it }
     }
 
     private fun validateFoodPreferenceNoIntersection(

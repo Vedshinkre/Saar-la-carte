@@ -161,7 +161,7 @@ class CustomerParser {
             jsonObject.getValue("visitingEvenings").jsonArray.parseListOf { it.jsonPrimitive.int }
         val deliveryDistance: Int = jsonObject["deliveryDistance"]?.jsonPrimitive?.int ?: 0
         if (deliveryDistance > 0) {
-            require(visitingAt - (ceil((deliveryDistance / DRIVER_SPEED).toDouble()) + 3) > 0)
+            require(visitingAt - (ceil(deliveryDistance.toDouble() / DRIVER_SPEED.toDouble()).toInt() + 3) > 0)
         }
 
         val ratingLikelihood: RatingLikelihood =

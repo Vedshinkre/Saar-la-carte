@@ -41,7 +41,7 @@ class FoodParser {
         val parsedIngredients = mutableListOf<Ingredient>()
 
         //  Must exist at least one ingredient
-        require(!array.isEmpty()) { "The ingredients list cannot be empty." }
+        // require(!array.isEmpty()) { "The ingredients list cannot be empty." }
 
         // Loop through every item
         for (i in 0 until array.size) {
@@ -69,6 +69,7 @@ class FoodParser {
 
             //  parse the ingredient
             val newIngredient = Ingredient(name, unitEnum, bestBefore, packagingVolume)
+            // maybe initial packaging volume is becoming too strict
             val ingredientGood = validateIngredient(newIngredient)
             // validateIngredient
             require(ingredientGood) { "Ingredient $name failed logical validation." }
@@ -142,11 +143,12 @@ class FoodParser {
             require(isUnique) { "Recipe failed uniqueness check (Duplicate ID or conflicting basic dish name)" }
 
             // cook types array
+            // maybe I need to convert the cooktype to enum of cooktype , like I did with unit enm
             val cookTypesArray = recipeJson["cookType"]?.jsonArray
                 ?: throw IllegalArgumentException("Recipe '$name' is missing 'cookType'")
 
             // NEW
-            require(cookTypesArray.isNotEmpty()) { "Recipe '$name' must allow at least one cook type." }
+            // require(cookTypesArray.isNotEmpty()) { "Recipe '$name' must allow at least one cook type." }
 
             val allowedCooks = mutableListOf<CookType>()
             for (j in 0 until cookTypesArray.size) {
@@ -159,7 +161,7 @@ class FoodParser {
                 ?: throw IllegalArgumentException("Recipe '$name' is missing 'ingredients'")
 
             // NEW
-            require(recipeIngredientsArray.isNotEmpty()) { "Recipe '$name' must require at least one ingredient." }
+            //  require(recipeIngredientsArray.isNotEmpty()) { "Recipe '$name' must require at least one ingredient." }
 
             // helper function to parse ingredients(needed due to detekt tests)
             val recipeIngredientsMap = parseRecipeIngredientsMap(
@@ -251,13 +253,13 @@ class FoodParser {
 
             val recipeIngredientName = recipeIngredientJson[KEY_NAME]?.jsonPrimitive?.content
                 ?: throw IllegalArgumentException("Recipe ingredient missing 'name'")
-            // 'unit' is optional here: the ingredient's unit is already defined where it is declared
-            // in the top-level ingredients list, so it isn't required again per recipe ingredient.
-            val recipeIngredientUnitStr = recipeIngredientJson[KEY_UNIT]?.jsonPrimitive?.content
+
+            // val recipeIngredientUnitStr = recipeIngredientJson[KEY_UNIT]?.jsonPrimitive?.content // POSSIBLE
+
             val recipeIngredientAmount = recipeIngredientJson["amount"]?.jsonPrimitive?.int
                 ?: throw IllegalArgumentException("Recipe ingredient missing 'amount'")
 
-            // --- THE CROSS VALIDATION ---
+            // THE CROSS VALIDATION
             require(recipeIngredientAmount > 0) { "Recipe ingredient amount must be greater than 0." }
 
             // get the ingredient from the available ingredients, and crash if it does not exist
@@ -267,13 +269,13 @@ class FoodParser {
             ) ?: throw IllegalArgumentException("'$recipeName' requires '$recipeIngredientName' that does not exist.")
 
             // if a unit was specified, it must match the ingredient's defined unit
-            if (recipeIngredientUnitStr != null) {
-                val recipeIngredientUnit = MeasurementUnit.valueOf(recipeIngredientUnitStr.uppercase())
-                require(recipeIngredientUnit == foundIngredient.unit) {
-                    "'$recipeName' ingredient '$recipeIngredientName' has unit '$recipeIngredientUnitStr' " +
-                        "that does not match its defined unit '${foundIngredient.unit}'."
-                }
-            }
+            // if (recipeIngredientUnitStr != null) { // POSSIBLE
+            //     val recipeIngredientUnit = MeasurementUnit.valueOf(recipeIngredientUnitStr.uppercase()) // POSSIBLE
+            //     require(recipeIngredientUnit == foundIngredient.unit) { // POSSIBLE
+            //   "'$recipeName' ingredient '$recipeIngredientName' has unit '$recipeIngredientUnitStr' " + // POSSIBLE
+            //             "that does not match its defined unit '${foundIngredient.unit}'." // POSSIBLE
+            //     } // POSSIBLE
+            // } // POSSIBLE
 
             // add valid ingredient and amount to the map
             recipeIngredientsMap[foundIngredient] = recipeIngredientAmount

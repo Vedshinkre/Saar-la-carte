@@ -105,8 +105,10 @@ class Pantry(
                 for (pkg in newPackages) {
                     inventory.add(pkg)
                     totalProcuredForIngredient += pkg.currentAmount
-                } //  the exact amount of ingredient delivered by the supplier
-                procuredQuantity[ingredient] = totalProcuredForIngredient
+                } //  the exact amount of ingredient delivered by the supplier but if empty we dont do this
+                if (totalProcuredForIngredient > 0) {
+                    procuredQuantity[ingredient] = totalProcuredForIngredient
+                }
             }
         }
 
@@ -118,7 +120,9 @@ class Pantry(
         sortedIngredients.sortBy { it.name } // Log procured ingredients in ascending alphabetic order
         for (ingredient in sortedIngredients) {
             val amount = procuredQuantity[ingredient] ?: 0
-            InitialAndPrepLogger.logPantryProcured(amount, ingredient.unit, ingredient.name)
+            if (amount > 0) {
+                InitialAndPrepLogger.logPantryProcured(amount, ingredient.unit, ingredient.name)
+            }
         }
 
         InitialAndPrepLogger.logPantryRestocked()

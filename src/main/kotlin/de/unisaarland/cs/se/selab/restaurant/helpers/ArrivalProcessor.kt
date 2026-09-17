@@ -68,6 +68,7 @@ class ArrivalProcessor(
             }
             inHouseGroupsToWaiter.remove(customerGroup)
             turnedAwayGroups.addLast(customerGroup)
+            FohReceptionLogger.logFohNoOrdering(customerGroup.id, customerGroup.size)
         }
         orderSuccess(customerGroup)
 

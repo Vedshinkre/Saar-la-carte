@@ -5,8 +5,8 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExamplePreparati
 import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExampleSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.customerparsertests.customerParserSystemTests
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.AppendixScenarioTwoSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventReservationConflictTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ExactStockoutTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ExhaustiveSimpleScenarioTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.InvalidRestaurantParserTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.MyParserTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.OneCookTwoOrdersTest
@@ -92,9 +92,9 @@ object SystemTestRegistration {
         testSuite.registerTest(ExamplePreparationAndServingStartTest())
         testSuite.registerTest(ExampleEmptyTickOneCycleTest())
 
-        // testSuite.registerTest(EventReservationConflictTest())
+        testSuite.registerTest(EventReservationConflictTest())
         testSuite.registerTest(ExactStockoutTest())
-        testSuite.registerTest(ExhaustiveSimpleScenarioTest())
+        // testSuite.registerTest(ExhaustiveSimpleScenarioTest())
         testSuite.registerTest(OneCookTwoOrdersTest())
         testSuite.registerTest(WaitstaffExhaustionTest())
         testSuite.registerTest(AppendixScenarioTwoSystemTest())
@@ -154,7 +154,7 @@ object SystemTestRegistration {
     fun registerSystemTestsMutantSimulation(testSuite: SELab26TestSuite) {
         testSuite.registerTest(ExampleSystemTest())
 
-        //  testSuite.registerTest(EventReservationConflictTest())
+//        testSuite.registerTest(EventReservationConflictTest())
         testSuite.registerTest(ExactStockoutTest())
         testSuite.registerTest(OneCookTwoOrdersTest())
         testSuite.registerTest(WaitstaffExhaustionTest())

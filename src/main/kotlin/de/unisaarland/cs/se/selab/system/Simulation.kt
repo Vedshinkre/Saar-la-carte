@@ -110,7 +110,10 @@ class Simulation(simdata: SimulationConfig) {
      * All [RegularGroup]s that are visiting tonight, regardless of restaurant.
      */
     private fun getRegularsForTonight(): List<RegularGroup> =
-        filterRegularGroups(customers).filter { it.isVisitingTonight() }
+        filterRegularGroups(customers).filter {
+            it.failedAttempts < 2 &&
+                (Time.evening - it.visitingStart) % it.visitingPeriod == 0
+        }
 
     /**
      * Filters a mixed customer list down to just the [RegularGroup]s.

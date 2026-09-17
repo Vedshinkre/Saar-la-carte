@@ -2,21 +2,36 @@ package casualcustomerdeliverytests
 
 import de.unisaarland.cs.se.selab.Time
 import de.unisaarland.cs.se.selab.customer.CasualGroup
+import de.unisaarland.cs.se.selab.customer.FoodPreference
+import de.unisaarland.cs.se.selab.customer.RegularGroup
 import de.unisaarland.cs.se.selab.enums.ExperienceType
 import de.unisaarland.cs.se.selab.enums.RatingLikelihood
 import de.unisaarland.cs.se.selab.enums.RatingType
 import de.unisaarland.cs.se.selab.enums.RestaurantType
 import de.unisaarland.cs.se.selab.enums.TableType
+import de.unisaarland.cs.se.selab.food.Ingredient
+import de.unisaarland.cs.se.selab.food.Recipe
+import de.unisaarland.cs.se.selab.restaurant.BrowsingService
+import de.unisaarland.cs.se.selab.restaurant.RestaurantStats
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 
 class CasualCustomerDelivery {
 
-    /**
-     * Helper function to quickly instantiate a CasualGroup for testing
-     */
+    @BeforeEach
+    fun setup() {
+        // Ensures global state is reset before every test to prevent flaky failures
+        Time.tick = 1
+    }
+
+    // helper Methods
+
     private fun createGroup(
         visitingAt: Int,
         deliveryDistance: Int,
@@ -35,71 +50,84 @@ class CasualCustomerDelivery {
         )
     }
 
-    // determineRating()
+    private fun createRestaurant(
+        id: Int,
+        positive: Int,
+        negative: Int,
+        drivers: Int = 1,
+        menuList: List<Recipe> = emptyList()
+    ): RestaurantStats {
+        return RestaurantStats(
+            restaurantId = id,
+            restaurantType = RestaurantType.EUROPEAN,
+            openingTickStart = 1,
+            openingTickEnd = 24,
+            event = false,
+            positiveRatings = positive,
+            negativeRatings = negative,
+            menu = menuList
+        ).apply { availableDrivers = drivers }
+    }
+
+    private fun createMockDeliveryGroup(
+        foodPrefs: List<FoodPreference> = emptyList()
+    ): CasualGroup {
+        return mock {
+            whenever(it.wantsDelivery).thenReturn(true)
+            whenever(it.restaurantTypes).thenReturn(listOf(RestaurantType.EUROPEAN))
+            whenever(it.foodPreferences).thenReturn(foodPrefs)
+        }
+    }
+
+    //  determineRating()
 
     @Test
     fun `determineRating-NEVER rating likelihood -always returns NO_RATING`() {
-        //  visitingAt = 10. deliveryDistance = 10 (2 ticks travel).
-        // Ordering Tick = 10 - 3 (cooking) - 2 (travel) = Tick 5.
         val group = createGroup(10, 10, RatingLikelihood.NEVER)
 
-        //  driver arriving at Tick 9 (Early)
         group.experience = ExperienceType.POSITIVE
         assertEquals(RatingType.NO_RATING, group.determineRating())
 
-        //  driver arriving at Tick 10 (On Time)
         group.experience = ExperienceType.NEUTRAL
         assertEquals(RatingType.NO_RATING, group.determineRating())
 
-        //  driver arriving at Tick 11 (Late)
         group.experience = ExperienceType.NEGATIVE
         assertEquals(RatingType.NO_RATING, group.determineRating())
     }
 
     @Test
     fun `determineRating-SOME rating likelihood-returns correct ratings`() {
-        // Math: visitingAt = 15. deliveryDistance = 15 (3 ticks travel).
-        // Ordering Tick = 15 - 3 (cooking) - 3 (travel) = Tick 9.
         val group = createGroup(15, 15, RatingLikelihood.SOME)
 
-        // driver arriving at Tick 14 (Early)
         group.experience = ExperienceType.POSITIVE
         assertEquals(RatingType.POSITIVE, group.determineRating())
 
-        // driver arriving at Tick 15 (On Time)
         group.experience = ExperienceType.NEUTRAL
         assertEquals(RatingType.NO_RATING, group.determineRating())
 
-        // driver arriving at Tick 16 (Late)
         group.experience = ExperienceType.NEGATIVE
         assertEquals(RatingType.NEGATIVE, group.determineRating())
     }
 
     @Test
     fun `determineRating-ALWAYS rating likelihood-returns correct ratings`() {
-        // Math: visitingAt = 12. deliveryDistance = 7 (ceil(7/5) = 2 ticks travel).
-        // Ordering Tick = 12 - 3 (cooking) - 2 (travel) = Tick 7.
         val group = createGroup(12, 7, RatingLikelihood.ALWAYS)
 
-        // driver arriving at Tick 11 (Early)
         group.experience = ExperienceType.POSITIVE
         assertEquals(RatingType.POSITIVE, group.determineRating())
 
-        // driver arriving at Tick 12 (On Time)
         group.experience = ExperienceType.NEUTRAL
         assertEquals(RatingType.POSITIVE, group.determineRating())
 
-        // driver arriving at Tick 13 (Late)
         group.experience = ExperienceType.NEGATIVE
         assertEquals(RatingType.NEGATIVE, group.determineRating())
     }
 
-    // --- Tests for isVisitingThisTick() and getDeliveryOrderTick() ---
+    // isVisitingThisTick() and getDeliveryOrderTick()
 
     @Test
     fun `isVisitingThisTick-no delivery uses-visitingAt directly`() {
         val group = createGroup(visitingAt = 10, deliveryDistance = 0, RatingLikelihood.NEVER)
-
         assertFalse(group.wantsDelivery)
 
         Time.tick = 9
@@ -111,11 +139,7 @@ class CasualCustomerDelivery {
 
     @Test
     fun `isVisitingThisTick- delivery distance 5 uses-correct ordering tick`() {
-        // visitingAt = 12
-        // delivery = 5. ceil(5/5) = 1.
-        // orderingTick = 12 - 3 (cooking) - 1 (travel) = 8
         val group = createGroup(visitingAt = 12, deliveryDistance = 5, RatingLikelihood.NEVER)
-
         assertTrue(group.wantsDelivery)
 
         Time.tick = 7
@@ -127,9 +151,6 @@ class CasualCustomerDelivery {
 
     @Test
     fun `isVisitingThisTick- delivery distance 7-test private ceil function`() {
-        // visitingAt = 15
-        // delivery = 7. ceil(7/5) = 2.
-        // orderingTick = 15 - 3 (cooking) - 2 (travel) = 10
         val group = createGroup(visitingAt = 15, deliveryDistance = 7, RatingLikelihood.NEVER)
 
         Time.tick = 9
@@ -137,5 +158,79 @@ class CasualCustomerDelivery {
 
         Time.tick = 10
         assertTrue(group.isVisitingThisTick())
+    }
+
+    //  BrowsingService getEligibleRestaurants()
+
+    @Test
+    fun `getEligibleRestaurants - casual delivery- highest rating and decrement driver`() {
+        val rest1 = createRestaurant(id = 1, positive = 10, negative = 2, drivers = 1) // Net: +8
+        val rest2 = createRestaurant(id = 2, positive = 50, negative = 0, drivers = 0) // Net: +50, but no drivers
+
+        val browsingService = BrowsingService(listOf(rest1, rest2))
+        val group = createMockDeliveryGroup()
+
+        val selectedId = browsingService.getEligibleRestaurants(group)
+
+        assertEquals(1, selectedId)
+        assertEquals(0, rest1.availableDrivers) // Verifies the driver was decremented
+    }
+
+    @Test
+    fun `getEligibleRestaurants - casual delivery - null when no drivers available`() {
+        val rest = createRestaurant(id = 1, positive = 10, negative = 2, drivers = 0)
+        val browsingService = BrowsingService(listOf(rest))
+
+        val selectedId = browsingService.getEligibleRestaurants(createMockDeliveryGroup())
+
+        assertEquals(null, selectedId)
+    }
+
+    @Test
+    fun `getEligibleRestaurants - casual delivery compares ratings and handles tie breaker`() {
+        val rest1 = createRestaurant(id = 1, positive = 5, negative = 0, drivers = 2) // Net: +5
+        val rest2 = createRestaurant(id = 2, positive = 15, negative = 5, drivers = 2) // Net: +10
+
+        val browsingService = BrowsingService(listOf(rest1, rest2))
+        val selectedId = browsingService.getEligibleRestaurants(createMockDeliveryGroup())
+
+        // Rest2 has a net rating of +10 vs Rest1's +5
+        assertEquals(2, selectedId)
+    }
+
+    @Test
+    fun `getEligibleRestaurants - casual delivery filters out restaurants violating dietary preferences`() {
+        val ingredientX = mock<Ingredient> { whenever(it.name).thenReturn("Peanuts") }
+
+        val safeRecipe = mock<Recipe> {
+            whenever(it.ingredients).thenReturn(mutableMapOf<Ingredient, Int>())
+        }
+        val unsafeRecipe = mock<Recipe> {
+            whenever(it.ingredients).thenReturn(mutableMapOf(ingredientX to 10))
+        }
+
+        val rest1 = createRestaurant(id = 1, positive = 10, negative = 0, menuList = listOf(unsafeRecipe))
+        val rest2 = createRestaurant(id = 2, positive = 5, negative = 0, menuList = listOf(safeRecipe))
+
+        val browsingService = BrowsingService(listOf(rest1, rest2))
+
+        // Create food pref that excludes Peanuts
+        val foodPref = mock<FoodPreference> { whenever(it.excludedIngredients).thenReturn(listOf(ingredientX)) }
+        val group = createMockDeliveryGroup(foodPrefs = listOf(foodPref))
+
+        val selectedId = browsingService.getEligibleRestaurants(group)
+
+        // Rest1 is filtered out by dietary check, so Rest2 wins despite lower rating
+        assertEquals(2, selectedId)
+    }
+
+    @Test
+    fun `getEligibleRestaurants throws exception for unsupported group type`() {
+        val group = mock<RegularGroup>()
+        val browsingService = BrowsingService(emptyList())
+
+        assertThrows<IllegalArgumentException> {
+            browsingService.getEligibleRestaurants(group)
+        }
     }
 }

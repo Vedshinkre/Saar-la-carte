@@ -306,6 +306,8 @@ class FrontOfHouse(
             deliveryGroups.remove(group)
         } else if (turnedAwayGroups.contains(group)) {
             turnedAwayGroups.remove(group)
+        } else if (eventGroups.contains(group)) {
+            turnedAwayGroups.remove(group)
         }
     }
 

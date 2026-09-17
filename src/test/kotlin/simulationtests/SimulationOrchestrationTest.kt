@@ -115,6 +115,7 @@ class SimulationOrchestrationTest {
     private fun incident(id: Int, evening: Int): Incident = mock {
         on { this.id } doReturn id
         on { this.evening } doReturn evening
+        on { this.type } doReturn "STAFF"
     }
 
     private fun invokePrivate(simulation: Simulation, methodName: String, argument: Any) {

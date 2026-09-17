@@ -22,6 +22,8 @@ class StaffChangeIncident(
     private val restaurantStaff: RestaurantStaff
 ) : Incident(id, evening) {
 
+    override val type: String = "STAFF"
+
     /**
      * applies the staff change incident (adds/removes staff from a restaurant)
      */

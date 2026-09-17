@@ -1,9 +1,9 @@
 package de.unisaarland.cs.se.selab.restaurant
 
+import de.unisaarland.cs.se.selab.Constants
 import de.unisaarland.cs.se.selab.Tick
 import de.unisaarland.cs.se.selab.Time
 import de.unisaarland.cs.se.selab.actors.RestaurantStaff
-import de.unisaarland.cs.se.selab.customer.CasualGroup
 import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.customer.EventGroup
 import de.unisaarland.cs.se.selab.customer.RegularGroup
@@ -137,7 +137,7 @@ class Restaurant(
         restaurantStats.availableDrivers = frontOfHouse.getAvailableDrivers()
         restaurantStats.availableSeats.putAll(frontOfHouse.getAvailableSeats())
         restaurantStats.availableEventSeats.putAll(frontOfHouse.getAvailableSeats())
-        if (Time.maxTicks == Time.getCurrentTick()) {
+        if (Time.getCurrentTick() == Constants.TICK_PER_EVENING) {
             endEvening()
         }
     }
@@ -163,12 +163,9 @@ class Restaurant(
         val iterator = customerQueue.iterator()
         while (iterator.hasNext()) {
             val customerGroup = iterator.next()
+            if (Time.tick < customerGroup.visitingAt) { continue }
 
-            if (customerGroup.visitingAt == Time.tick && (
-                    customerGroup !is CasualGroup ||
-                        !customerGroup.wantsDelivery
-                    )
-            ) {
+            if (customerGroup.isVisitingThisTick()) {
                 FohReceptionLogger.logRestaurantArrival(customerGroup.id)
             }
 

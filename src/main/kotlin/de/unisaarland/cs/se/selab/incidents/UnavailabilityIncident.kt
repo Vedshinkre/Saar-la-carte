@@ -15,6 +15,9 @@ class UnavailabilityIncident(
     private var duration: Int,
     private val stock: Stock
 ) : Incident(id, evening) {
+
+    override val type: String = "UNAVAILABLE"
+
     /**
      * to check Overlapping
      */

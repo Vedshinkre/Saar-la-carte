@@ -11,7 +11,7 @@ import de.unisaarland.cs.se.selab.loggers.InitialAndPrepLogger
  */
 class Pantry(
     private val inventory: MutableList<IngredientPackage>,
-    private val supplier: Supplier
+    val supplier: Supplier
 ) {
     // explicit constructor with only stock used to create the supplier
     constructor(stock: Stock) : this(
@@ -26,8 +26,6 @@ class Pantry(
     fun checkInventory(ingredient: Ingredient, amount: Int): Int {
         var totalAvailable = 0
         for (pkg in inventory) { // Only count packages that haven't expired and match the ingredient name
-            val incidentStock = supplier.stock
-            incidentStock.applyUnavailableDurations()
             val isExpired = pkg.hasExpired()
             val currentIngredient = pkg.ingredient
             if (currentIngredient.name == ingredient.name && !isExpired) {
@@ -107,8 +105,10 @@ class Pantry(
                 for (pkg in newPackages) {
                     inventory.add(pkg)
                     totalProcuredForIngredient += pkg.currentAmount
-                } //  the exact amount of ingredient delivered by the supplier
-                procuredQuantity[ingredient] = totalProcuredForIngredient
+                } //  the exact amount of ingredient delivered by the supplier but if empty we dont do this
+                if (totalProcuredForIngredient > 0) {
+                    procuredQuantity[ingredient] = totalProcuredForIngredient
+                }
             }
         }
 
@@ -120,7 +120,9 @@ class Pantry(
         sortedIngredients.sortBy { it.name } // Log procured ingredients in ascending alphabetic order
         for (ingredient in sortedIngredients) {
             val amount = procuredQuantity[ingredient] ?: 0
-            InitialAndPrepLogger.logPantryProcured(amount, ingredient.unit, ingredient.name)
+            if (amount > 0) {
+                InitialAndPrepLogger.logPantryProcured(amount, ingredient.unit, ingredient.name)
+            }
         }
 
         InitialAndPrepLogger.logPantryRestocked()

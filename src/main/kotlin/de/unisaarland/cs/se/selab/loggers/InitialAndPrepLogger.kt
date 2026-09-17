@@ -17,8 +17,7 @@ object InitialAndPrepLogger {
         when (success) {
             true -> Logger.log(
                 LogLevel.INFO,
-                "Initialization Info: $filename successfully parsed and" +
-                    " validated."
+                "Initialization Info: $filename successfully parsed and validated."
             )
             false -> Logger.log(
                 LogLevel.IMPORTANT,
@@ -73,7 +72,7 @@ object InitialAndPrepLogger {
     ) {
         Logger.log(
             LogLevel.DEBUG,
-            "Pantry (R ${Logger.restaurantID}): Procured $amount $unit of $name" +
+            "Pantry (R ${Logger.restaurantID}): Procured $amount ${unit.label} of $name" +
                 " from the supplier."
         )
     }
@@ -99,7 +98,7 @@ object InitialAndPrepLogger {
         Logger.log(
             LogLevel.DEBUG,
             "Pantry (R ${Logger.restaurantID}): Removed $removedIngredientAmount " +
-                "$unit of $ingredientName from the pantry."
+                "${unit.label} of $ingredientName from the pantry."
         )
     }
 }

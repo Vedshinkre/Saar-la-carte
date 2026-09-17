@@ -11,7 +11,6 @@ import de.unisaarland.cs.se.selab.enums.TableType
 import de.unisaarland.cs.se.selab.food.Dish
 import de.unisaarland.cs.se.selab.food.Order
 import de.unisaarland.cs.se.selab.food.Recipe
-import de.unisaarland.cs.se.selab.loggers.FohReceptionLogger
 import de.unisaarland.cs.se.selab.restaurant.Countertop
 
 /** Represents an abstract customer group. */
@@ -36,6 +35,13 @@ sealed class CustomerGroup(
     }
 
     /**
+     * returns the number of customers who left
+     */
+    fun getCustomersWhoLeft(): Int {
+        return size - customersRemainingInRestaurant
+    }
+
+    /**
      * takes the order of a customer group
      */
     open fun placeOrder(waiters: List<Waiter>, menu: List<Recipe>, countertop: Countertop): Boolean {
@@ -56,10 +62,6 @@ sealed class CustomerGroup(
         if (listOfDishes.size < customersRemainingInRestaurant) {
             customersRemainingInRestaurant = listOfDishes.size
             experience = ExperienceType.NEGATIVE
-            FohReceptionLogger.logFohNoOrdering(
-                id,
-                size - customersRemainingInRestaurant
-            )
         }
 
         if (customersRemainingInRestaurant == 0) {

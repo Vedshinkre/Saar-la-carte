@@ -107,11 +107,11 @@ class Kitchen(
      */
     // functions with logic
     fun resetKitchen() {
-        for (order in orderQueue) {
+        while (orderQueue.isNotEmpty()) {
+            val order = orderQueue.removeFirst()
             for (dish in order.dishes) {
                 dish.status = DishStatus.ABORTED
             }
-            orderQueue.removeFirst()
         }
         for (cook in cooks) {
             cook.id = null
@@ -498,6 +498,10 @@ class Kitchen(
         val sortedCooks = getCooksSorted()
 
         for (cook in sortedCooks) {
+            // capture the dish/order being cooked before cookDishes() clears it on completion
+            val dishNameBeforeCooking = cook.currentRecipe?.name
+            val orderIdBeforeCooking = cook.orderId
+
             // access the output of cookDishes()
             val (chefWasActive, totalAssigned, finished) = cook.cookDishes()
 
@@ -511,7 +515,7 @@ class Kitchen(
 
             // Replaced with helper
             if (finished > 0) {
-                logFinishedMeals(cook, finished)
+                logFinishedMeals(cook, finished, dishNameBeforeCooking, orderIdBeforeCooking)
             }
         }
 
@@ -527,14 +531,9 @@ class Kitchen(
     /**
      * Helper function to find the base order and log finished meals (to solve detekt issue).
      */
-
-    private fun logFinishedMeals(cook: Cook, finished: Int) {
-        val dishRecipe = cook.currentRecipe
+    private fun logFinishedMeals(cook: Cook, finished: Int, dishNameBeforeCooking: String?, baseOrderId: Int?) {
         val cookId = cook.id ?: -1
-        val dishName = dishRecipe?.name ?: "Unknown Dish"
-
-        // base order id of the dish that started this cooking
-        val baseOrderId = cook.orderId
+        val dishName = dishNameBeforeCooking ?: "Unknown Dish"
 
         // get the base order
         var baseOrder: Order? = null
@@ -544,6 +543,7 @@ class Kitchen(
                 break
             }
         }
+
         // time since the order has been ordered
         var cookDurationTick = 0
         if (baseOrder != null) {

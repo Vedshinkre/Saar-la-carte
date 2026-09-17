@@ -197,6 +197,7 @@ class ServingProcessor(
     }
 
     private fun isWithinTimeWindow(order: Order): Boolean {
+        // DOTO: look into how to set firstDishCookedAt
         val firstCooked = order.firstDishCookedAt ?: return true
         return Time.tick - firstCooked <= Constants.PARTIAL_SERVING_WAIT_TICKS
     }

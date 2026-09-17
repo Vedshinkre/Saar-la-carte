@@ -22,10 +22,7 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
-private const val MIN_TABLE_SIZE = 2
-private const val MAX_TABLE_SIZE = 30
-private const val MIN_OPENING_TICK = 1
-private const val MAX_OPENING_TICK = 24
+// MIN_TABLE_SIZE/MAX_TABLE_SIZE and MIN_OPENING_TICK/MAX_OPENING_TICK are already enforced by restaurant.schema
 
 /** Parses and validates restaurants */
 class RestaurantParser {
@@ -42,7 +39,8 @@ class RestaurantParser {
         recipes: List<Recipe>,
         stock: Stock
     ): Pair<List<RestaurantStats>, List<Restaurant>> {
-        require(restaurantArray.isNotEmpty()) { "Restaurant file must contain at least one restaurant" }
+        // already enforced by restaurants.schema (minItems: 1)
+        // require(restaurantArray.isNotEmpty()) { "Restaurant file must contain at least one restaurant" }
 
         this.recipes = recipes // not mutable
         restaurantIds.clear()
@@ -69,45 +67,53 @@ class RestaurantParser {
     ): Restaurant {
         val id = jsonObject.getValue("id").jsonPrimitive.int
         val name = jsonObject.getValue("name").jsonPrimitive.content
-        require(id >= 0) { "Restaurant ID must be non-negative" }
-        require(name.isNotEmpty()) { "Restaurant name must not be empty" }
+        // already enforced by restaurant.schema (id minimum: 0, name minLength: 1)
+        // require(id >= 0) { "Restaurant ID must be non-negative" }
+        // require(name.isNotEmpty()) { "Restaurant name must not be empty" }
         require(checkUniquenessOfRestaurant(id, name)) { "Restaurant IDs and names must be unique" }
         require(
-            checkPresenceOfSingleCookWaiterTableRecipe(jsonObject)
-        ) { "Restaurant must define recipes, waitstaff, and tables" }
+            checkRestaurantHasAtLeastOneRecipe(jsonObject)
+        ) { "Restaurant must define at least one recipe" }
 
         tableIds.clear()
 
         val typeStr = "type"
-        // DOIT: find a better way to satisfy detekt
         val type = enumValue<RestaurantType>(jsonObject.getValue(typeStr).jsonPrimitive.content, typeStr)
         restaurantTypes.add(type)
         val openingTickStart = jsonObject.getValue("openingTickStart").jsonPrimitive.int
         val openingTickEnd = jsonObject.getValue("openingTickEnd").jsonPrimitive.int
-        require(checkStartEndTicks(openingTickStart, openingTickEnd)) { "Opening ticks not 1 <= s < e <= 24" }
+        // checkStartEndTicks now only checks openingTickEnd > openingTickStart
+        // 1..24 per-field range is already enforced by restaurant.schema (minimum: 1, maximum: 24)
+        require(checkStartEndTicks(openingTickStart, openingTickEnd)) { "openingTickStart must be < openingTickEnd" }
 
         val recipeArray = jsonObject.getValue("recipes").jsonArray
         val recipeIds = recipeArray.map { it.jsonPrimitive.int }
-        require(recipeIds.all { it >= 0 }) { "Restaurant recipe IDs must be non-negative" }
+        // already enforced by restaurant.schema (recipes items minimum: 0)
+        // require(recipeIds.all { it >= 0 }) { "Restaurant recipe IDs must be non-negative" }
         require(
             checkRestaurantRecipesExist(recipeIds, recipes.map { it.id })
         ) { "Restaurant $id references a recipe that does not exist" }
-        require(recipeIds.isNotEmpty()) { "Restaurant $id has no recipes" }
+        // already checked via checkRestaurantHasAtLeastOneRecipe above
+        // require(recipeIds.isNotEmpty()) { "Restaurant $id has no recipes" }
         require(checkUniqueDishNamesInRestaurant(recipeIds, recipes)) { "R $id dup dish name" }
 
         val kitchenStaff = parseKitchenStaff(jsonObject.getValue("kitchenStaff").jsonObject)
         val waitstaffCount = jsonObject.getValue("waitstaff").jsonPrimitive.int
-        require(waitstaffCount > 0) { "Restaurant $id must employ waitstaff" }
+        // already enforced by restaurant.schema (waitstaff exclusiveMinimum: 0)
+        // require(waitstaffCount > 0) { "Restaurant $id must employ waitstaff" }
 
         val driverCount = jsonObject.getValue("deliveryDrivers").jsonPrimitive.int
-        require(driverCount >= 0) { "Restaurant $id has a negative driver count" }
+        // already enforced by restaurant.schema (deliveryDrivers minimum: 0)
+        // require(driverCount >= 0) { "Restaurant $id has a negative driver count" }
 
         val positiveRatings = jsonObject.getValue("positiveRatings").jsonPrimitive.int
         val negativeRatings = jsonObject.getValue("negativeRatings").jsonPrimitive.int
-        require(positiveRatings >= 0 && negativeRatings >= 0) { "Restaurant ratings must be non-negative" }
+        // already enforced by restaurant.schema (both minimum: 0)
+        // require(positiveRatings >= 0 && negativeRatings >= 0) { "Restaurant ratings must be non-negative" }
 
         val tablesJson = jsonObject.getValue("tables").jsonArray
-        require(tablesJson.isNotEmpty()) { "Restaurant $id has no tables" }
+        // already enforced by restaurant.schema (tables minItems: 1)
+        // require(tablesJson.isNotEmpty()) { "Restaurant $id has no tables" }
         val tables = tablesJson.map { element -> parseTable(element.jsonObject) }
 
         val menu = buildMenu(recipeIds, recipes, type)
@@ -136,11 +142,13 @@ class RestaurantParser {
 
     private fun parseTable(jsonObject: JsonObject): Table {
         val id = jsonObject.getValue("id").jsonPrimitive.int
-        require(id >= 0) { "Table ID must be non-negative" }
+        // already enforced by restaurant.schema (table id minimum: 0)
+        // require(id >= 0) { "Table ID must be non-negative" }
         require(checkUniquenessOfTable(id)) { "Duplicate table ID: $id" }
 
         val size = jsonObject.getValue("size").jsonPrimitive.int
-        require(size in MIN_TABLE_SIZE..MAX_TABLE_SIZE) { "Table $id size $MIN_TABLE_SIZE and $MAX_TABLE_SIZE" }
+        // already enforced by restaurant.schema (table size minimum: 2, maximum: 30)
+        // require(size in MIN_TABLE_SIZE..MAX_TABLE_SIZE) { "Table $id size $MIN_TABLE_SIZE and $MAX_TABLE_SIZE" }
 
         val type = enumValue<TableType>(jsonObject.getValue("type").jsonPrimitive.content, "table type")
 
@@ -151,13 +159,14 @@ class RestaurantParser {
         val cooks = mutableListOf<Cook>()
         for (cookType in CookType.entries) {
             val count = jsonObject.getValue(cookType.name).jsonPrimitive.int
-            require(count >= 0) { "Negative ${cookType.name} staff count" }
-
-            if (cookType == CookType.EXEC) {
-                require(count <= 1) { "There can be at most one EXEC cook" }
-            }
+            // already enforced by restaurant.schema (each cook type minimum: 0, EXEC maximum: 1)
+            // require(count >= 0) { "Negative ${cookType.name} staff count" }
+            // if (cookType == CookType.EXEC) {
+            //     require(count <= 1) { "There can be at most one EXEC cook" }
+            // }
             repeat(count) { cooks.add(Cook(cookType)) }
         }
+        // Not covered by the schema (no aggregate check across the 8 cook types)
         require(cooks.isNotEmpty()) { "Restaurant must employ at least one cook" }
 
         return cooks
@@ -173,15 +182,18 @@ class RestaurantParser {
         return true
     }
 
-    private fun checkPresenceOfSingleCookWaiterTableRecipe(jsonObject: JsonObject): Boolean {
-        return jsonObject.getValue("recipes").jsonArray.isNotEmpty() &&
-            jsonObject.getValue("tables").jsonArray.isNotEmpty() &&
-            jsonObject.getValue("waitstaff").jsonPrimitive.int > 0
+    private fun checkRestaurantHasAtLeastOneRecipe(jsonObject: JsonObject): Boolean {
+        // tables.isNotEmpty() and waitstaff > 0 are already enforced by restaurant.schema
+        // (tables minItems: 1, waitstaff exclusiveMinimum: 0). Only "at least one recipe" is
+        // not expressible in the per-restaurant schema (recipes array has no minItems), must be kept
+        return jsonObject.getValue("recipes").jsonArray.isNotEmpty()
     }
 
     private fun checkRestaurantRecipesExist(recipeIdsInRestaurant: List<Int>, recipeIds: List<Int>): Boolean {
-        return recipeIdsInRestaurant.distinct().size == recipeIdsInRestaurant.size &&
-            recipeIdsInRestaurant.all { it in recipeIds }
+        // uniqueness of recipe ids within a restaurant is already enforced by restaurant.schema
+        // (recipes uniqueItems: true, and items are plain integers so this is value-level unique).
+        // cross-file existence against food.json's recipes needs checking
+        return recipeIdsInRestaurant.all { it in recipeIds }
     }
 
     private fun checkUniqueDishNamesInRestaurant(recipeIdsInRestaurant: List<Int>, recipes: List<Recipe>): Boolean {
@@ -209,9 +221,10 @@ class RestaurantParser {
     }
 
     private fun checkStartEndTicks(openingTickStart: Tick, openingTickEnd: Tick): Boolean {
-        return openingTickStart in MIN_OPENING_TICK..MAX_OPENING_TICK &&
-            openingTickEnd in MIN_OPENING_TICK..MAX_OPENING_TICK &&
-            openingTickEnd > openingTickStart
+        // 1..24 range of each field is already enforced by restaurant.schema
+        // (openingTickStart/openingTickEnd minimum: 1, maximum: 24); only the relational
+        // constraint "openingTickStart must be less than openingTickEnd" needs checking
+        return openingTickEnd > openingTickStart
     }
 
     private fun checkUniquenessOfTable(id: Id): Boolean {

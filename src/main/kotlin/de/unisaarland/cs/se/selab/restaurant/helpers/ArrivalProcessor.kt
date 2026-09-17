@@ -32,7 +32,11 @@ class ArrivalProcessor(
 ) {
     private var numberOfTablesSeatedOn: Int = 0
     private var numberOfCustomersSeated: Int = 0
-    private var numberOfWaitersSeated: Int = 0
+    private var numberOfWaitersSeated: MutableSet<Waiter> = mutableSetOf()
+
+    // Sets used for logging purposes
+    private val customersOrdered: MutableSet<CustomerGroup> = mutableSetOf()
+    private val waitersOrdered: MutableSet<Waiter> = mutableSetOf()
 
     /** Call with CustomerGroup and menu.
      *  Returns true if CustomerGroup should be removed from the customerQueue, false otherwise. */
@@ -75,12 +79,21 @@ class ArrivalProcessor(
                 currentOrder.dishNameToAmount(),
                 listOf(assignedWaiterId)
             )
+            waitersOrdered.add(assignedWaiter)
         } else {
             FohReceptionLogger.logFohOrdering(
                 customerGroup.id,
                 currentOrder.id,
                 currentOrder.dishNameToAmount(),
                 null
+            )
+            customersOrdered.add(customerGroup)
+        }
+        val customersWhoLeftAfterOrdering = customerGroup.getCustomersWhoLeft()
+        if (customersWhoLeftAfterOrdering > 0) {
+            FohReceptionLogger.logFohNoOrdering(
+                customerGroup.id,
+                customersWhoLeftAfterOrdering
             )
         }
 
@@ -115,13 +128,31 @@ class ArrivalProcessor(
         } else {
             successfulSeating(eventGroup, consumedWaiters)
             if (eventGroup.placeOrder(consumedWaiters, menu, countertop)) {
+                val currentOrder = eventGroup.currentOrder
+                if (currentOrder != null) {
+                    FohReceptionLogger.logFohOrdering(
+                        eventGroup.id,
+                        currentOrder.id,
+                        currentOrder.dishNameToAmount(),
+                        null
+                    )
+                }
+
                 eventGroups.add(eventGroup)
+                customersOrdered.add(eventGroup)
+                waitersOrdered.addAll(consumedWaiters)
             } else {
                 turnedAwayGroups.addLast(eventGroup)
                 eventGroup.experience = ExperienceType.NEGATIVE
             }
         }
-
+        val customersWhoLeftAfterOrdering = eventGroup.getCustomersWhoLeft()
+        if (customersWhoLeftAfterOrdering > 0) {
+            FohReceptionLogger.logFohNoOrdering(
+                eventGroup.id,
+                customersWhoLeftAfterOrdering
+            )
+        }
         return true
     }
 
@@ -175,10 +206,19 @@ class ArrivalProcessor(
     /** Call after processArrivalSeatingOrdering has been called with each customerGroup in customerQueue.
      *  Logs status and then performs side effect by resetting counters. */
     fun logAndResetSeatingOrderingTickStatus() {
-        FohReceptionLogger.logSeatingStatus(numberOfWaitersSeated, numberOfCustomersSeated, numberOfTablesSeatedOn)
+        FohReceptionLogger.logSeatingStatus(numberOfWaitersSeated.size, numberOfCustomersSeated, numberOfTablesSeatedOn)
         numberOfTablesSeatedOn = 0
         numberOfCustomersSeated = 0
-        numberOfWaitersSeated = 0 // NOTE: add ordering status variables, log and then reset them
+        numberOfWaitersSeated.clear()
+
+        val numberOfCustomersOrdered = customersOrdered.sumOf {
+                customerGroup ->
+            customerGroup.customersRemainingInRestaurant
+        }
+        val numberOfWaitersOrdered = waitersOrdered.size
+        FohReceptionLogger.logOrderingStatus(numberOfCustomersOrdered, numberOfWaitersOrdered)
+        customersOrdered.clear()
+        waitersOrdered.clear()
     }
 
     private fun seatRegularOrCasualGroup(customerGroup: CustomerGroup): CustomerStatus {
@@ -227,7 +267,7 @@ class ArrivalProcessor(
         }
 
         numberOfCustomersSeated += customerGroup.size
-        numberOfWaitersSeated += waiters.size
+        numberOfWaitersSeated.addAll(waiters)
         numberOfTablesSeatedOn += assignedTables.size
 
         FohReceptionLogger.logFohSeating(customerGroup.id, mergeId, waiters.map { it.id!! })

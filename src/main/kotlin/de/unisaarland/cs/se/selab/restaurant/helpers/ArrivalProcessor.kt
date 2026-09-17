@@ -32,7 +32,7 @@ class ArrivalProcessor(
 ) {
     private var numberOfTablesSeatedOn: Int = 0
     private var numberOfCustomersSeated: Int = 0
-    private var numberOfWaitersSeated: MutableSet<Waiter> = mutableSetOf()
+    private val numberOfWaitersSeated: MutableSet<Waiter> = mutableSetOf()
 
     // Sets used for logging purposes
     private val customersOrdered: MutableSet<CustomerGroup> = mutableSetOf()

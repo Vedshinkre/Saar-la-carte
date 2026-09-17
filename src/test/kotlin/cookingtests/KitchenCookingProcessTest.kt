@@ -299,6 +299,33 @@ class KitchenCookingProcessTest {
         assertFalse(logContains("Kitchen Meal Cooked"))
     }
 
+    // staff tie-break (chooseCook / findLowestRankingCook / getNumericalRank) ---
+
+    @Test
+    fun `processCooking - multiple eligible cook types - picks the lowest-ranking cook`() {
+        // eligible for PASTRY, SAUCE and TOURNANT; PASTRY is the lowest-ranking of the three
+        val multiTypeRecipe = Recipe(
+            id = 1,
+            name = "Fusion Plate",
+            duration = 10,
+            cookType = listOf(CookType.PASTRY, CookType.SAUCE, CookType.TOURNANT),
+            ingredients = mutableMapOf(ingredient to 1),
+            basicDishFor = RestaurantType.EUROPEAN
+        )
+        val dish = Dish(multiTypeRecipe)
+        val order = Order(listOf(dish))
+        // listed highest-seniority-first, so the two lower-ranking types get rejected in turn
+        val cooks = listOf(Cook(CookType.PASTRY), Cook(CookType.SAUCE), Cook(CookType.TOURNANT))
+        val k = kitchen(cooks, mutableListOf(order))
+
+        k.processCooking()
+
+        assertEquals(DishStatus.COOKED, dish.status)
+        val expected = "Kitchen Dish Assignment (R 1): Cook 1 of type PASTRY starts cooking 1 meals " +
+            "of dish Fusion Plate based on order ${order.id} for orders ${order.id}."
+        assertTrue(logContains(expected), "expected PASTRY to be chosen as lowest-ranking, got:\n$output")
+    }
+
     // --- cleanOrderQueue (reached via processCooking) ---
 
     @Test
@@ -454,5 +481,100 @@ class KitchenCookingProcessTest {
         val expected = "Kitchen Meal Cooked (R 1): Cook -1 finished cooking 1 meals " +
             "of dish Soup 0 ticks after ordering."
         assertTrue(logContains(expected), "expected the fallback cook id -1, got:\n$output")
+    }
+
+    // --- numberOfCookedMeals (statistics) ---
+
+    @Test
+    fun `numberOfCookedMeals - can be assigned directly`() {
+        val k = kitchen(listOf(Cook(CookType.TOURNANT)))
+
+        k.numberOfCookedMeals = 42
+
+        assertEquals(42, k.numberOfCookedMeals)
+    }
+
+    // --- createShoppingList: accumulating known history with the estimate for remaining seats ---
+
+    @Test
+    fun `createShoppingList - empty history and zero front capacity - returns an empty list`() {
+        val k = kitchen(listOf(Cook(CookType.TOURNANT)))
+
+        val shoppingList = k.createShoppingList(emptyMap(), frontCapacity = 0, menu = listOf(recipe(duration = 10)))
+
+        assertTrue(shoppingList.isEmpty())
+    }
+
+    @Test
+    fun `createShoppingList - history and menu estimate share an ingredient - amounts are summed`() {
+        val k = kitchen(listOf(Cook(CookType.TOURNANT)))
+        val historyRecipe = recipe(id = 1, duration = 10, name = "Potato Soup")
+        val menuRecipe = recipe(id = 2, duration = 10, name = "Onion Rings") // same shared ingredient
+
+        // 3 known visits of historyRecipe, plus estimatedVariable = (2 + 9) / 10 = 1 per menu dish
+        val shoppingList = k.createShoppingList(
+            mapOf(historyRecipe to 3),
+            frontCapacity = 2,
+            menu = listOf(historyRecipe, menuRecipe)
+        )
+
+        // historyRecipe contributes 3 (history) + 1 (menu estimate) = 4, menuRecipe contributes 1;
+        // both recipes need 1 unit of the same shared ingredient, so the total is 5
+        assertEquals(5, shoppingList[ingredient])
+    }
+
+    @Test
+    fun `createShoppingList - zero estimated front capacity - skips the menu estimate entirely`() {
+        val k = kitchen(listOf(Cook(CookType.TOURNANT)))
+        val historyRecipe = recipe(id = 1, duration = 10, name = "Potato Soup")
+        val menuOnlyRecipe = recipe(id = 2, duration = 10, name = "Onion Rings")
+
+        // frontCapacity = 0 makes estimatedVariable = (0 + 9) / 10 = 0, so the menu loop never runs
+        val shoppingList = k.createShoppingList(
+            mapOf(historyRecipe to 2),
+            frontCapacity = 0,
+            menu = listOf(menuOnlyRecipe)
+        )
+
+        assertEquals(2, shoppingList[ingredient])
+    }
+
+    // --- planForIngredients: aggregating regular history and event favorites, then restocking ---
+
+    @Test
+    fun `planForIngredients - repeated history recipe and overlapping event favorite - restocks correctly`() {
+        val k = kitchen(listOf(Cook(CookType.TOURNANT)))
+        val regularRecipe = recipe(id = 1, duration = 10, name = "Potato Soup")
+        val eventRecipe = recipe(id = 2, duration = 10, name = "Onion Rings")
+
+        // two past visits ordering the same dish
+        val orderHistory = listOf(
+            Order(listOf(Dish(regularRecipe))),
+            Order(listOf(Dish(regularRecipe)))
+        )
+        // one event favorite that overlaps with history (already known) and one that is new
+        val eventGroupFavDishes = listOf(regularRecipe to 5, eventRecipe to 3)
+
+        k.planForIngredients(orderHistory, frontCapacity = 0, menu = emptyList(), eventGroupFavDishes)
+
+        // regularRecipe: 2 (history) + 5 (event) = 7, eventRecipe: 3; both need 1 unit of the
+        // shared ingredient (packaging volume 10) -> deficit 10 -> exactly one package procured
+        assertTrue(logContains("Procured 10 X of onion"), "expected a full package procured, got:\n$output")
+        assertTrue(logContains("Restocked ingredients."))
+    }
+
+    @Test
+    fun `planForIngredients - no history and no event favorites - only restocks from the menu estimate`() {
+        val k = kitchen(listOf(Cook(CookType.TOURNANT)))
+        val menuRecipe = recipe(duration = 10, name = "Potato Soup")
+
+        k.planForIngredients(
+            orderHistory = emptyList(),
+            frontCapacity = 2, // estimatedVariable = (2 + 9) / 10 = 1
+            menu = listOf(menuRecipe),
+            eventGroupFavDishes = emptyList()
+        )
+
+        assertTrue(logContains("Restocked ingredients."))
     }
 }

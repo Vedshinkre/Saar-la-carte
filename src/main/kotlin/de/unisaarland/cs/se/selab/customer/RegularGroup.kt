@@ -18,11 +18,20 @@ class RegularGroup(
     val visitingPeriod: Evening,
     val restaurantId: Id,
 ) : CustomerGroup(id, size, tableType, visitingAt, foodPreferences) {
-    val orderHistory: MutableList<Order> = mutableListOf()
+    val orderHistory: ArrayDeque<Order> = ArrayDeque()
     var failedAttempts: Int = 0
 
     override fun isVisitingTonight(): Boolean {
         val isPeriodicVisitEvening: Boolean = (Time.evening - visitingStart) % visitingPeriod == 0
         return failedAttempts < 2 && isPeriodicVisitEvening
+    }
+
+    /** Call with the order that was made.
+     *  Updates the orderHistory of the regular customer group. */
+    fun addOrderToHistory(order: Order) {
+        if (orderHistory.size >= 3) {
+            orderHistory.removeFirst()
+        }
+        orderHistory.addLast(order)
     }
 }

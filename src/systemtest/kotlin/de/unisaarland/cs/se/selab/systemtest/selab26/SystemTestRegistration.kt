@@ -5,6 +5,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExamplePreparati
 import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExampleSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.customerparsertests.customerParserSystemTests
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.AppendixScenarioTwoSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CookChangeNoOrderTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventReservationConflictTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ExactStockoutTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.OneCookTwoOrdersTest
@@ -110,7 +111,7 @@ object SystemTestRegistration {
         testSuite.registerTest(RestaurantsRecipesNotExistTest())
         testSuite.registerTest(RestaurantsSameNameDifferentIdTest())
         testSuite.registerTest(RestaurantsTickNotIn1to24Test())
-
+        testSuite.registerTest(CookChangeNoOrderTest())
         registerParserControllerLogTests(testSuite)
         customerParserSystemTests().forEach { testSuite.registerTest(it) }
     }

@@ -1,0 +1,47 @@
+{
+  "customerGroups": [
+    {
+      "id": 1,
+      "type": "CASUAL",
+      "size": 2,
+      "tableType": "COMMON",
+      "restaurantTypes": ["EUROPEAN"],
+      "visitingTick": 1,
+      "visitingEvenings": [1],
+      "ratingLikelihood": "NEVER",
+      "foodPreferences": [
+        {
+          "size": 2,
+          "excludedIngredients": ["Tomato"]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "CASUAL",
+      "size": 2,
+      "tableType": "COMMON",
+      "restaurantTypes": ["EUROPEAN"],
+      "visitingTick": 1,
+      "visitingEvenings": [2],
+      "ratingLikelihood": "NEVER",
+      "foodPreferences": [
+        {
+          "size": 2,
+          "excludedIngredients": ["Tomato"]
+        }
+      ]
+    }
+  ],
+  "incidents": [
+    {
+      "id": 1,
+      "type": "STAFF",
+      "evening": 2,
+      "restaurant": 1,
+      "staffType": "COOK",
+      "cookType": "ROAST",
+      "number": -1
+    }
+  ]
+}

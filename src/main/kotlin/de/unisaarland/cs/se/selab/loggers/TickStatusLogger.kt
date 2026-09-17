@@ -2,7 +2,7 @@ package de.unisaarland.cs.se.selab.loggers
 
 import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.Time.evening
-import de.unisaarland.cs.se.selab.Time.tick
+import de.unisaarland.cs.se.selab.Time.ticksElapsed
 import de.unisaarland.cs.se.selab.enums.LogLevel
 /**
  * Handles simulation and tick status logs.
@@ -24,7 +24,7 @@ object TickStatusLogger {
     fun logCurrentTick() {
         Logger.log(
             LogLevel.IMPORTANT,
-            "Simulation: Tick $tick ($evening) started."
+            "Simulation: Tick $ticksElapsed ($evening) started."
         )
     }
 

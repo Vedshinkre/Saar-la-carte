@@ -7,6 +7,7 @@ object Time {
     internal var tick: Tick = 1
     internal var evening: Evening = 1
     internal var maxTicks: Tick = 0
+    internal var ticksElapsed: Tick = 0
 
     /**
      * resets the Current tick to 1 (used before next serving phase)
@@ -55,5 +56,12 @@ object Time {
      */
     fun incrementTick() {
         tick++
+    }
+
+    /**
+     * Increments the total elapsed ticks by 1
+     */
+    fun incrementTicksElapsed() {
+        ticksElapsed++
     }
 }

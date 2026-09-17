@@ -25,17 +25,13 @@ class Simulation(simdata: SimulationConfig) {
     var incidents: List<Incident> = simdata.incidents
     var customers: List<CustomerGroup> = simdata.customers
 
-    // Total ticks elapsed across all evenings so far. Time only tracks the tick
-    // within the current evening.
-    private var ticksElapsed: Int = 0
-
     /**
      * The function that runs the simulation, gets called from main.
      */
     fun runSimulation() {
         InitialAndPrepLogger.logSimulationStart()
 
-        while (ticksElapsed < Time.getMaxTicks()) {
+        while (Time.ticksElapsed < Time.getMaxTicks()) {
             simulateEvening()
         }
 
@@ -50,7 +46,7 @@ class Simulation(simdata: SimulationConfig) {
         executePreparationPhase()
         executeServingPhase()
 
-        if (ticksElapsed < Time.getMaxTicks()) {
+        if (Time.ticksElapsed < Time.getMaxTicks()) {
             Time.resetTick()
             Time.incrementEvening()
         }
@@ -160,8 +156,8 @@ class Simulation(simdata: SimulationConfig) {
         while (Time.getCurrentTick() <= TICKS_PER_EVENING) {
             executeSingleTick(casualsTonight, eventGroupsDecidingTonight)
 
-            ticksElapsed++
-            val reachedMax = ticksElapsed >= Time.getMaxTicks()
+            Time.incrementTicksElapsed()
+            val reachedMax = Time.ticksElapsed >= Time.getMaxTicks()
             val reachedEndOfEvening = Time.getCurrentTick() == TICKS_PER_EVENING
 
             if (reachedMax && !reachedEndOfEvening) {

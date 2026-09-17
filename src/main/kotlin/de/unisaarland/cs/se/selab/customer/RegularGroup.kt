@@ -20,14 +20,9 @@ class RegularGroup(
 ) : CustomerGroup(id, size, tableType, visitingAt, foodPreferences) {
     val orderHistory: MutableList<Order> = mutableListOf()
     var failedAttempts: Int = 0
-    var hasReservationTonight: Boolean = false
 
     override fun isVisitingTonight(): Boolean {
         val isPeriodicVisitEvening: Boolean = (Time.evening - visitingStart) % visitingPeriod == 0
-        return hasReservationTonight && failedAttempts < 2 && isPeriodicVisitEvening
-        // DOIT what is hasReservationTonight's purpose in this function?
-        // isVisitingTonight() is used in simulation to discern if regulars need to be prepared for in the prep phase.
-        // When I call the function it will always return false because the default value is false and
-        // no regulars will be processed
+        return failedAttempts < 2 && isPeriodicVisitEvening
     }
 }

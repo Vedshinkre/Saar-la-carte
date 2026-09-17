@@ -63,10 +63,6 @@ class ArrivalProcessor(
             }
             inHouseGroupsToWaiter.remove(customerGroup)
             turnedAwayGroups.addLast(customerGroup)
-            FohReceptionLogger.logFohNoOrdering(
-                customerGroup.id,
-                customerGroup.size - customerGroup.customersRemainingInRestaurant
-            )
         }
 
         val currentOrder = customerGroup.currentOrder ?: return true

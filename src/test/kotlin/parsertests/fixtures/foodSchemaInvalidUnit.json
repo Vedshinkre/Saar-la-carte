@@ -1,0 +1,15 @@
+{
+  "ingredients": [
+    { "name": "rice", "unit": "kg", "packagingVolume": 20, "bestBefore": 5 }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "Rice Bowl",
+      "duration": 2,
+      "cookType": ["EXEC"],
+      "ingredients": [{ "name": "rice", "amount": 1 }],
+      "basicDishFor": "ASIAN"
+    }
+  ]
+}

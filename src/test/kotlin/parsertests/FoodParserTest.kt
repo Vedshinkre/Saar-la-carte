@@ -216,5 +216,163 @@ class FoodParserTest {
         assertEquals(1, parsedRecipes.size)
     }
 
-    // DOTO: SKERDI's OTHER RECIPE TESTS
+    // RECIPES: schema fields
+
+    @Test
+    fun `valid recipe is parsed with correct fields`() {
+        val recipes = """
+            [{"id": 1, "dishName": "Rice Bowl", "duration": 20, "cookType": ["EXEC", "SOUS"],
+              "ingredients": [{"name": "rice", "amount": 150}], "basicDishFor": "ASIAN"}]
+        """
+        val (_, parsedRecipes) = parseWithRice(recipes)
+
+        assertEquals(1, parsedRecipes.size)
+        val recipe = parsedRecipes.single()
+        assertEquals(1, recipe.id)
+        assertEquals("Rice Bowl", recipe.name)
+        assertEquals(20, recipe.duration)
+        assertEquals(listOf(CookType.EXEC, CookType.SOUS), recipe.cookType)
+        assertEquals(RestaurantType.ASIAN, recipe.basicDishFor)
+        assertEquals(1, recipe.ingredients.size)
+        assertEquals(150, recipe.ingredients.entries.single { it.key.name == "rice" }.value)
+    }
+
+    @Test
+    fun `recipe without basicDishFor is parsed as non-basic`() {
+        val (_, parsedRecipes) = parseWithRice(recipeJson())
+        assertNull(parsedRecipes.single().basicDishFor)
+    }
+
+    @Test
+    fun `empty recipes list is accepted and yields no recipes`() {
+        val (_, parsedRecipes) = parseWithRice("[]")
+        assertTrue(parsedRecipes.isEmpty())
+    }
+
+    @Test
+    fun `recipe missing id is rejected`() {
+        val recipes = """[{"dishName": "Rice Bowl", "duration": 20, "cookType": ["EXEC"],
+            "ingredients": [{"name": "rice", "amount": 150}]}]"""
+        assertFailsWith<IllegalArgumentException> { parseWithRice(recipes) }
+    }
+
+    @Test
+    fun `recipe missing dishName is rejected`() {
+        val recipes = """[{"id": 1, "duration": 20, "cookType": ["EXEC"],
+            "ingredients": [{"name": "rice", "amount": 150}]}]"""
+        assertFailsWith<IllegalArgumentException> { parseWithRice(recipes) }
+    }
+
+    @Test
+    fun `recipe missing duration is rejected`() {
+        val recipes = """[{"id": 1, "dishName": "Rice Bowl", "cookType": ["EXEC"],
+            "ingredients": [{"name": "rice", "amount": 150}]}]"""
+        assertFailsWith<IllegalArgumentException> { parseWithRice(recipes) }
+    }
+
+    @Test
+    fun `recipe missing cookType is rejected`() {
+        val recipes = """[{"id": 1, "dishName": "Rice Bowl", "duration": 20,
+            "ingredients": [{"name": "rice", "amount": 150}]}]"""
+        assertFailsWith<IllegalArgumentException> { parseWithRice(recipes) }
+    }
+
+    @Test
+    fun `recipe with empty cookType is rejected`() {
+        val recipes = """[{"id": 1, "dishName": "Rice Bowl", "duration": 20, "cookType": [],
+            "ingredients": [{"name": "rice", "amount": 150}]}]"""
+        assertFailsWith<IllegalArgumentException> { parseWithRice(recipes) }
+    }
+
+    @Test
+    fun `recipe with unknown cook type is rejected`() {
+        val recipes = """[{"id": 1, "dishName": "Rice Bowl", "duration": 20, "cookType": ["MANAGER"],
+            "ingredients": [{"name": "rice", "amount": 150}]}]"""
+        assertFailsWith<IllegalArgumentException> { parseWithRice(recipes) }
+    }
+
+    @Test
+    fun `recipe missing ingredients is rejected`() {
+        val recipes = """[{"id": 1, "dishName": "Rice Bowl", "duration": 20, "cookType": ["EXEC"]}]"""
+        assertFailsWith<IllegalArgumentException> { parseWithRice(recipes) }
+    }
+
+    @Test
+    fun `recipe with empty ingredients is rejected`() {
+        val recipes = """[{"id": 1, "dishName": "Rice Bowl", "duration": 20, "cookType": ["EXEC"],
+            "ingredients": []}]"""
+        assertFailsWith<IllegalArgumentException> { parseWithRice(recipes) }
+    }
+
+    // RECIPE: durations
+
+    @Test
+    fun `recipe duration one tick below the minimum is rejected`() {
+        assertFailsWith<IllegalArgumentException> { parseWithRice(recipeJson(duration = 1)) }
+    }
+
+    @Test
+    fun `recipe duration at the minimum boundary is accepted`() {
+        val (_, parsedRecipes) = parseWithRice(recipeJson(duration = 2))
+        assertEquals(2, parsedRecipes.single().duration)
+    }
+
+    @Test
+    fun `recipe duration at the maximum boundary is accepted`() {
+        val (_, parsedRecipes) = parseWithRice(recipeJson(duration = 40))
+        assertEquals(40, parsedRecipes.single().duration)
+    }
+
+    @Test
+    fun `recipe duration one tick above the maximum is rejected`() {
+        assertFailsWith<IllegalArgumentException> { parseWithRice(recipeJson(duration = 41)) }
+    }
+
+    // RECIPE: unique id and basic dishname
+
+    @Test
+    fun `duplicate recipe id is rejected`() {
+        val recipes = """
+            [{"id": 1, "dishName": "Rice Bowl", "duration": 20, "cookType": ["EXEC"],
+              "ingredients": [{"name": "rice", "amount": 150}]},
+             {"id": 1, "dishName": "Other Bowl", "duration": 20, "cookType": ["EXEC"],
+              "ingredients": [{"name": "rice", "amount": 150}]}]
+        """
+        assertFailsWith<IllegalArgumentException> { parseWithRice(recipes) }
+    }
+
+    @Test
+    fun `two basic recipes with distinct dish names are both accepted`() {
+        val recipes = """
+            [{"id": 1, "dishName": "Rice Bowl", "duration": 20, "cookType": ["EXEC"],
+              "ingredients": [{"name": "rice", "amount": 150}], "basicDishFor": "ASIAN"},
+             {"id": 2, "dishName": "Rice Soup", "duration": 20, "cookType": ["EXEC"],
+              "ingredients": [{"name": "rice", "amount": 150}], "basicDishFor": "EUROPEAN"}]
+        """
+        val (_, parsedRecipes) = parseWithRice(recipes)
+        assertEquals(2, parsedRecipes.size)
+    }
+
+    @Test
+    fun `two basic recipes sharing the same dish name are rejected`() {
+        val recipes = """
+            [{"id": 1, "dishName": "Rice Bowl", "duration": 20, "cookType": ["EXEC"],
+              "ingredients": [{"name": "rice", "amount": 150}], "basicDishFor": "ASIAN"},
+             {"id": 2, "dishName": "Rice Bowl", "duration": 22, "cookType": ["EXEC"],
+              "ingredients": [{"name": "rice", "amount": 150}], "basicDishFor": "EUROPEAN"}]
+        """
+        assertFailsWith<IllegalArgumentException> { parseWithRice(recipes) }
+    }
+
+    @Test
+    fun `a basic and a non-basic recipe may share the same dish name`() {
+        val recipes = """
+            [{"id": 1, "dishName": "Rice Bowl", "duration": 20, "cookType": ["EXEC"],
+              "ingredients": [{"name": "rice", "amount": 150}]},
+             {"id": 2, "dishName": "Rice Bowl", "duration": 22, "cookType": ["EXEC"],
+              "ingredients": [{"name": "rice", "amount": 150}], "basicDishFor": "ASIAN"}]
+        """
+        val (_, parsedRecipes) = parseWithRice(recipes)
+        assertEquals(2, parsedRecipes.size)
+    }
 }

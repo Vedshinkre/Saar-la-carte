@@ -55,5 +55,21 @@ class FoodParserIntegrationTest {
         assertEquals(RestaurantType.EUROPEAN, onionSoup.basicDishFor)
     }
 
-    // DOTO: SKERDI TESTS
+    @Test
+    fun `schema rejects an ingredient with an unrecognized unit before the parser ever runs`() {
+        val result = parse(FIXTURES + "foodSchemaInvalidUnit.json")
+
+        assertTrue(result.wasInvalidFile)
+        assertTrue(result.ingredients.isEmpty())
+        assertTrue(result.recipes.isEmpty())
+    }
+
+    @Test
+    fun `two basic recipes sharing a dish name are parsed by the schema but rejected by the parser`() {
+        val result = parse(FIXTURES + "foodDuplicateDishNameMixedBasic.json")
+
+        assertTrue(result.wasInvalidFile)
+        assertTrue(result.ingredients.isEmpty())
+        assertTrue(result.recipes.isEmpty())
+    }
 }

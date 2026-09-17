@@ -11,7 +11,6 @@ import de.unisaarland.cs.se.selab.enums.TableType
 import de.unisaarland.cs.se.selab.food.Dish
 import de.unisaarland.cs.se.selab.food.Order
 import de.unisaarland.cs.se.selab.food.Recipe
-import de.unisaarland.cs.se.selab.loggers.FohReceptionLogger
 import de.unisaarland.cs.se.selab.restaurant.Countertop
 
 /** Represents an event customer group. */
@@ -81,10 +80,6 @@ class EventGroup(
         if (listOfDishes.size < customersRemainingInRestaurant) {
             customersRemainingInRestaurant = listOfDishes.size
             experience = ExperienceType.NEGATIVE
-            FohReceptionLogger.logFohNoOrdering(
-                id,
-                size - customersRemainingInRestaurant
-            )
         }
 
         if (customersRemainingInRestaurant == 0) {

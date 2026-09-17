@@ -89,6 +89,13 @@ class ArrivalProcessor(
             )
             customersOrdered.add(customerGroup)
         }
+        val customersWhoLeftAfterOrdering = customerGroup.getCustomersWhoLeft()
+        if (customersWhoLeftAfterOrdering > 0) {
+            FohReceptionLogger.logFohNoOrdering(
+                customerGroup.id,
+                customersWhoLeftAfterOrdering
+            )
+        }
 
         return true
     }
@@ -121,11 +128,30 @@ class ArrivalProcessor(
         } else {
             successfulSeating(eventGroup, consumedWaiters)
             if (eventGroup.placeOrder(consumedWaiters, menu, countertop)) {
+                val currentOrder = eventGroup.currentOrder
+                if (currentOrder != null) {
+                    FohReceptionLogger.logFohOrdering(
+                        eventGroup.id,
+                        currentOrder.id,
+                        currentOrder.dishNameToAmount(),
+                        null
+                    )
+                }
+
                 eventGroups.add(eventGroup)
+                customersOrdered.add(eventGroup)
+                waitersOrdered.addAll(consumedWaiters)
             } else {
                 turnedAwayGroups.addLast(eventGroup)
                 eventGroup.experience = ExperienceType.NEGATIVE
             }
+        }
+        val customersWhoLeftAfterOrdering = eventGroup.getCustomersWhoLeft()
+        if (customersWhoLeftAfterOrdering > 0) {
+            FohReceptionLogger.logFohNoOrdering(
+                eventGroup.id,
+                customersWhoLeftAfterOrdering
+            )
         }
         return true
     }

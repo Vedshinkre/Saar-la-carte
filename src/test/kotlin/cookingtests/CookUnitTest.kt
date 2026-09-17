@@ -143,4 +143,106 @@ class CookUnitTest {
         assertSame(recipeTwo, cook.currentRecipe)
         assertEquals(2, cook.orderId)
     }
+
+    @Test
+    fun `cookDishes - not cooking - returns inactive result without side effects`() {
+        val cook = Cook(CookType.TOURNANT)
+
+        val result = cook.cookDishes()
+
+        assertEquals(CookResult(false, 0, 0), result)
+        assertFalse(cook.isCooking)
+    }
+
+    @Test
+    fun `cookDishes - zero-tick recipe - finishes in the same call it was started`() {
+        val recipe = recipe(duration = 10)
+        val cook = Cook(CookType.TOURNANT)
+        val dishList = dishesOf(recipe, 3)
+        cook.startCooking(recipe, dishList, baseOrderId = 5)
+
+        val result = cook.cookDishes()
+
+        assertEquals(CookResult(true, 3, 3), result)
+        assertFalse(cook.isCooking)
+        assertNull(cook.currentRecipe)
+        assertNull(cook.orderId)
+        assertTrue(cook.getDishes().isEmpty())
+        dishList.forEach { assertEquals(DishStatus.COOKED, it.status) }
+    }
+
+    @Test
+    fun `cookDishes - multi-tick recipe - stays cooking until the final tick`() {
+        val recipe = recipe(duration = 30) // 2 remaining ticks
+        val cook = Cook(CookType.TOURNANT)
+        val dishList = dishesOf(recipe, 2)
+        cook.startCooking(recipe, dishList, baseOrderId = 9)
+
+        val firstTick = cook.cookDishes()
+        assertEquals(CookResult(true, 2, 0), firstTick)
+        assertTrue(cook.isCooking)
+        dishList.forEach { assertEquals(DishStatus.COOKING, it.status) }
+
+        val secondTick = cook.cookDishes()
+        assertEquals(CookResult(true, 2, 0), secondTick)
+        assertTrue(cook.isCooking)
+
+        val finalTick = cook.cookDishes()
+        assertEquals(CookResult(true, 2, 2), finalTick)
+        assertFalse(cook.isCooking)
+        dishList.forEach { assertEquals(DishStatus.COOKED, it.status) }
+    }
+
+    @Test
+    fun `cookDishes - after finishing - returns inactive result again`() {
+        val recipe = recipe(duration = 10)
+        val cook = Cook(CookType.TOURNANT)
+        cook.startCooking(recipe, dishesOf(recipe, 1), baseOrderId = 1)
+        cook.cookDishes() // finishes immediately
+
+        val result = cook.cookDishes()
+
+        assertEquals(CookResult(false, 0, 0), result)
+    }
+
+    @Test
+    fun `cookDishes - id keeps its value across cooking and finishing`() {
+        val recipe = recipe(duration = 10)
+        val cook = Cook(CookType.TOURNANT)
+        cook.setId(3)
+        cook.startCooking(recipe, dishesOf(recipe, 1), baseOrderId = 1)
+
+        cook.cookDishes()
+
+        // id is retained for the rest of the evening even though the assignment is done
+        assertEquals(3, cook.id)
+    }
+
+    // --- setRemainingTicks / getDishes exposure ---
+
+    @Test
+    fun `setRemainingTicks - overrides the remaining duration`() {
+        val recipe = recipe(duration = 30) // would normally need 2 more ticks
+        val cook = Cook(CookType.TOURNANT)
+        cook.startCooking(recipe, dishesOf(recipe, 1), baseOrderId = 1)
+
+        cook.setRemainingTicks(0)
+
+        assertEquals(CookResult(true, 1, 1), cook.cookDishes())
+    }
+
+    @Test
+    fun `getDishes - reflects the live internal list until it is cleared`() {
+        val recipe = recipe(duration = 30)
+        val cook = Cook(CookType.TOURNANT)
+        val dishList = dishesOf(recipe, 2)
+        cook.startCooking(recipe, dishList, baseOrderId = 1)
+
+        assertEquals(2, cook.getDishes().size)
+
+        cook.setRemainingTicks(0)
+        cook.cookDishes()
+
+        assertTrue(cook.getDishes().isEmpty())
+    }
 }

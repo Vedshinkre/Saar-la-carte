@@ -126,12 +126,12 @@ object FohReceptionLogger {
      */
     fun logOrderingStatus(
         customerNumber: Int,
-        tableNumber: Int
+        waitstaffNumber: Int
     ) {
         Logger.log(
             LogLevel.DEBUG,
             "FOH Ordering Status (R ${Logger.restaurantID}): The restaurant " +
-                "received orders from $customerNumber customers, $tableNumber " +
+                "received orders from $customerNumber customers, $waitstaffNumber " +
                 "waitstaff took orders."
         )
     }

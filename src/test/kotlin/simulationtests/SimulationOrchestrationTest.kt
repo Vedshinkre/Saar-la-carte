@@ -12,7 +12,6 @@ import de.unisaarland.cs.se.selab.restaurant.Restaurant
 import de.unisaarland.cs.se.selab.restaurant.RestaurantStats
 import de.unisaarland.cs.se.selab.system.Simulation
 import de.unisaarland.cs.se.selab.system.SimulationConfig
-import org.junit.jupiter.api.Disabled
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.inOrder
 import org.mockito.kotlin.mock
@@ -48,7 +47,6 @@ class SimulationOrchestrationTest {
         Time.maxTicks = 0
     }
 
-    @Disabled
     @Test
     fun `runSimulation applies current evening incidents in id order and stops at max ticks`() {
         val laterIncident = incident(id = 2, evening = 1)
@@ -117,6 +115,7 @@ class SimulationOrchestrationTest {
     private fun incident(id: Int, evening: Int): Incident = mock {
         on { this.id } doReturn id
         on { this.evening } doReturn evening
+        on { this.type } doReturn "STAFF"
     }
 
     private fun invokePrivate(simulation: Simulation, methodName: String, argument: Any) {

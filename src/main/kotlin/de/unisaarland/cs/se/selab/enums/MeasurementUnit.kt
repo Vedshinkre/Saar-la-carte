@@ -1,8 +1,8 @@
 package de.unisaarland.cs.se.selab.enums
 
 /**
- * beep I;m a document
+ * The measurement units for ingredients, with their spec-defined display labels.
  */
-enum class MeasurementUnit {
-    G, X, ML
+enum class MeasurementUnit(val label: String) {
+    G("g"), X("X"), ML("mL")
 }

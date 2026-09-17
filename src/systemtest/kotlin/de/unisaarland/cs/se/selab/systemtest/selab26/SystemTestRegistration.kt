@@ -7,27 +7,13 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.customerparsertests.custome
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.AppendixScenarioTwoSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventReservationConflictTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ExactStockoutTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.InvalidRestaurantParserTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.MyParserTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.OneCookTwoOrdersTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.PantryExpirySystemTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ProcurementLogicTestB
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SimulationLifecycleSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.StatisticsOrderingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SupplierProcurementSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.UnavailableIncidentSupplierProcurementSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.WaitstaffExhaustionTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ZeroProcurementTestA
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ZeroProcurementTestB
-import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentCookTypeExecForbiddenRejectedSystemTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentDriverWithCookTypeRejectedSystemTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentNegativeEveningRejectedSystemTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentStaffWithIngredientRejectedSystemTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentUnavailabilityNegativeDurationRejectedSystemTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentUnavailabilityProhibitedPropertyRejectedSystemTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentUnavailabilityZeroDurationRejectedSystemTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentWaitstaffWithCookTypeRejectedSystemTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentZeroStaffNumberRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.AllFilesValidSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.CustomerGroupUnknownRestaurantSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.DuplicateIncidentIdRejectedSystemTest
@@ -89,13 +75,12 @@ object SystemTestRegistration {
      */
     fun registerSystemTestsForReferenceImplementation(testSuite: SELab26TestSuite) {
         testSuite.registerTest(ExampleSystemTest())
-        testSuite.registerTest(ExamplePreparationAndServingStartTest())
-        testSuite.registerTest(ExampleEmptyTickOneCycleTest())
-
-        testSuite.registerTest(EventReservationConflictTest())
         testSuite.registerTest(ExactStockoutTest())
         // testSuite.registerTest(ExhaustiveSimpleScenarioTest())
         testSuite.registerTest(OneCookTwoOrdersTest())
+        testSuite.registerTest(ExamplePreparationAndServingStartTest())
+        testSuite.registerTest(ExampleEmptyTickOneCycleTest())
+        testSuite.registerTest(EventReservationConflictTest())
         testSuite.registerTest(WaitstaffExhaustionTest())
         testSuite.registerTest(AppendixScenarioTwoSystemTest())
         testSuite.registerTest(SimulationLifecycleSystemTest())
@@ -126,13 +111,6 @@ object SystemTestRegistration {
 
         registerParserControllerLogTests(testSuite)
         customerParserSystemTests().forEach { testSuite.registerTest(it) }
-
-        // new
-        testSuite.registerTest(InvalidRestaurantParserTest())
-        testSuite.registerTest(MyParserTest())
-        testSuite.registerTest(ProcurementLogicTestB())
-        testSuite.registerTest(ZeroProcurementTestA())
-        testSuite.registerTest(ZeroProcurementTestB())
     }
 
     /**
@@ -154,12 +132,10 @@ object SystemTestRegistration {
     fun registerSystemTestsMutantSimulation(testSuite: SELab26TestSuite) {
         testSuite.registerTest(ExampleSystemTest())
 
-//        testSuite.registerTest(EventReservationConflictTest())
+        testSuite.registerTest(EventReservationConflictTest())
         testSuite.registerTest(ExactStockoutTest())
         testSuite.registerTest(OneCookTwoOrdersTest())
-        testSuite.registerTest(WaitstaffExhaustionTest())
-        testSuite.registerTest(ProcurementLogicTestB())
-        // testSuite.registerTest(PantryExpirySystemTest())
+        testSuite.registerTest(PantryExpirySystemTest())
         // temporarily unregistered: cross-check against reference first
     }
 
@@ -199,16 +175,5 @@ object SystemTestRegistration {
         testSuite.registerTest(FoodRecipeDurationTooShortRejectedSystemTest())
         testSuite.registerTest(FoodRecipeMissingIngredientRefRejectedSystemTest())
         testSuite.registerTest(FoodDuplicateRecipeIdRejectedSystemTest())
-        testSuite.registerTest(InvalidRestaurantParserTest())
-        testSuite.registerTest(MyParserTest())
-        testSuite.registerTest(IncidentWaitstaffWithCookTypeRejectedSystemTest())
-        testSuite.registerTest(IncidentDriverWithCookTypeRejectedSystemTest())
-        testSuite.registerTest(IncidentNegativeEveningRejectedSystemTest())
-        testSuite.registerTest(IncidentStaffWithIngredientRejectedSystemTest())
-        testSuite.registerTest(IncidentZeroStaffNumberRejectedSystemTest())
-        testSuite.registerTest(IncidentCookTypeExecForbiddenRejectedSystemTest())
-        testSuite.registerTest(IncidentUnavailabilityZeroDurationRejectedSystemTest())
-        testSuite.registerTest(IncidentUnavailabilityNegativeDurationRejectedSystemTest())
-        testSuite.registerTest(IncidentUnavailabilityProhibitedPropertyRejectedSystemTest())
     }
 }

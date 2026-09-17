@@ -69,6 +69,7 @@ class FoodParser {
 
             //  parse the ingredient
             val newIngredient = Ingredient(name, unitEnum, bestBefore, packagingVolume)
+            // maybe initial packaging volume is becoming too strict
             val ingredientGood = validateIngredient(newIngredient)
             // validateIngredient
             require(ingredientGood) { "Ingredient $name failed logical validation." }
@@ -142,6 +143,7 @@ class FoodParser {
             require(isUnique) { "Recipe failed uniqueness check (Duplicate ID or conflicting basic dish name)" }
 
             // cook types array
+            // maybe I need to convert the cooktype to enum of cooktype , like I did with unit enm
             val cookTypesArray = recipeJson["cookType"]?.jsonArray
                 ?: throw IllegalArgumentException("Recipe '$name' is missing 'cookType'")
 
@@ -257,7 +259,7 @@ class FoodParser {
             val recipeIngredientAmount = recipeIngredientJson["amount"]?.jsonPrimitive?.int
                 ?: throw IllegalArgumentException("Recipe ingredient missing 'amount'")
 
-            // --- THE CROSS VALIDATION ---
+            // THE CROSS VALIDATION
             require(recipeIngredientAmount > 0) { "Recipe ingredient amount must be greater than 0." }
 
             // get the ingredient from the available ingredients, and crash if it does not exist

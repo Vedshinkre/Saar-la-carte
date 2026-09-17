@@ -82,6 +82,7 @@ class ArrivalProcessor(
                 null
             )
         }
+        // DOIT Only here failedReservations for regularGroups should be reset to 0
         return true
     }
 
@@ -136,6 +137,9 @@ class ArrivalProcessor(
             if (regularOrEventCustomerGroup is RegularGroup) {
                 regularOrEventCustomerGroup.hasReservationTonight = true
                 regularOrEventCustomerGroup.failedAttempts = 0
+                // DOIT failedAttempts also count for everyone not being to order after being seated.
+                // This should be reset like this only at the end of processArrivak,
+                // after ordering is completed succesfully
             }
             true
         }
@@ -145,6 +149,9 @@ class ArrivalProcessor(
             if (regularOrEventCustomerGroup is RegularGroup) {
                 regularOrEventCustomerGroup.hasReservationTonight = true
                 regularOrEventCustomerGroup.failedAttempts = 0
+                // DOIT failedAttempts also count for everyone not being to order after being seated.
+                // This should be reset like this only at the end of processArrivak,
+                // after ordering is completed succesfully
             }
             true
         } // Step 1: Filter and sort

@@ -35,8 +35,8 @@ class ArrivalProcessor(
     private var numberOfWaitersSeated: Int = 0
 
     // Sets used for logging purposes
-    private var customersOrdered: MutableSet<CustomerGroup> = mutableSetOf()
-    private var waitersOrdered: MutableSet<Waiter> = mutableSetOf()
+    private val customersOrdered: MutableSet<CustomerGroup> = mutableSetOf()
+    private val waitersOrdered: MutableSet<Waiter> = mutableSetOf()
 
     /** Call with CustomerGroup and menu.
      *  Returns true if CustomerGroup should be removed from the customerQueue, false otherwise. */
@@ -191,8 +191,8 @@ class ArrivalProcessor(
         }
         val numberOfWaitersOrdered = waitersOrdered.size
         FohReceptionLogger.logOrderingStatus(numberOfCustomersOrdered, numberOfWaitersOrdered)
-        customersOrdered = mutableSetOf()
-        waitersOrdered = mutableSetOf()
+        customersOrdered.clear()
+        waitersOrdered.clear()
     }
 
     private fun seatRegularOrCasualGroup(customerGroup: CustomerGroup): CustomerStatus {

@@ -72,7 +72,7 @@ class KitchenCookingProcessTest {
         )
     }
 
-    private fun logContains(expected: String): Boolean = output.toString().contains(expected)
+    // private fun logContains(expected: String): Boolean = output.toString().contains(expected)
 
     // --- getServableDishesNumber ---
 

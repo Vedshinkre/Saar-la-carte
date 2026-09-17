@@ -120,6 +120,7 @@ class Kitchen(
             cook.setRemainingTicks(0)
             cook.isCooking = false
         }
+        nextAvailableCookId = 1
     }
 
     /**

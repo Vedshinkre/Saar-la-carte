@@ -4,8 +4,15 @@ import de.unisaarland.cs.se.selab.Evening
 import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.Tick
 import de.unisaarland.cs.se.selab.Time
+import de.unisaarland.cs.se.selab.actors.Waiter
+import de.unisaarland.cs.se.selab.enums.ExperienceType
 import de.unisaarland.cs.se.selab.enums.RestaurantType
 import de.unisaarland.cs.se.selab.enums.TableType
+import de.unisaarland.cs.se.selab.food.Dish
+import de.unisaarland.cs.se.selab.food.Order
+import de.unisaarland.cs.se.selab.food.Recipe
+import de.unisaarland.cs.se.selab.loggers.FohReceptionLogger
+import de.unisaarland.cs.se.selab.restaurant.Countertop
 
 /** Represents an event customer group. */
 class EventGroup(
@@ -50,5 +57,44 @@ class EventGroup(
             return eventDishes[currentRestaurantType]
         }
         return null
+    }
+
+    /**
+     * takes the order of a customer group
+     */
+    override fun placeOrder(waiters: List<Waiter>, menu: List<Recipe>, countertop: Countertop): Boolean {
+        val listOfDishes = mutableListOf<Dish>()
+        val currentWaiter = waiters.firstOrNull()
+        for (foodPreference in foodPreferences) {
+            val availableDishes = countertop.getAvailableRecipes(menu)
+            val eventFavoriteDish = requireNotNull(eventDishes[currentRestaurantType])
+            val customerDish = foodPreference.decideDish(availableDishes, eventFavoriteDish)
+            if (customerDish != null) {
+                if (currentWaiter != null) {
+                    registerDish(currentWaiter, customerDish, countertop)
+                } else {
+                    registerDish(customerDish, countertop = countertop)
+                }
+                listOfDishes.add(customerDish)
+            }
+        }
+        if (listOfDishes.size < customersRemainingInRestaurant) {
+            customersRemainingInRestaurant = listOfDishes.size
+            experience = ExperienceType.NEGATIVE
+            FohReceptionLogger.logFohNoOrdering(
+                id,
+                size - customersRemainingInRestaurant
+            )
+        }
+
+        if (customersRemainingInRestaurant == 0) {
+            return false
+        }
+
+        val customerOrder = Order(listOfDishes)
+        currentOrder = customerOrder
+        countertop.addOrder(customerOrder)
+
+        return true
     }
 }

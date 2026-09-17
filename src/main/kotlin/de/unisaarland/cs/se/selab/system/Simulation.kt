@@ -65,7 +65,7 @@ class Simulation(simdata: SimulationConfig) {
         val incidentsForTonight = incidents.filter { it.evening == evening }.sortedBy { it.id }
 
         for (incident in incidentsForTonight) {
-            InitialAndPrepLogger.logIncident(incident.id, incident.javaClass.simpleName)
+            InitialAndPrepLogger.logIncident(incident.id, incident.type)
             incident.apply()
         }
     }

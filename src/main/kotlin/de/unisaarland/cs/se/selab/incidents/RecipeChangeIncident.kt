@@ -19,6 +19,8 @@ class RecipeChangeIncident(
     private val recipes: List<Recipe>
 ) : Incident(id, evening) {
 
+    override val type: String = "RECIPE"
+
     /**
      * applies the recipe change incident (adapts the amount of [ingredient]
      * in every recipe that uses it by [adaptation] percent)

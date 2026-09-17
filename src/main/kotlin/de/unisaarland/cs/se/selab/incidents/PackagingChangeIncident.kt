@@ -13,6 +13,9 @@ class PackagingChangeIncident(
     private val ingredient: Ingredient,
     private val packagingVolume: Int
 ) : Incident(id, evening) {
+
+    override val type: String = "PACKAGING"
+
     /**
      * This function Handles the incident
      */

@@ -38,9 +38,11 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
             }
             val availableDriversAndDietaryCheck =
                 deliveryRests.filter { it.availableDrivers > 0 }.filter { isDietaryCompatible(it, group) }
-            val res = availableDriversAndDietaryCheck.maxWithOrNull(compareBy<RestaurantStats> {
-                it.positiveRatings - it.negativeRatings
-            }.thenByDescending { -it.restaurantId })
+            val res = availableDriversAndDietaryCheck.maxWithOrNull(
+                compareBy<RestaurantStats> {
+                    it.positiveRatings - it.negativeRatings
+                }.thenByDescending { -it.restaurantId }
+            )
             if (res != null) {
                 res.availableDrivers = res.availableDrivers - 1
                 return res.restaurantId
@@ -68,9 +70,11 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
             }
         }
         val dietaryCompatibleList = llist.filter { isDietaryCompatible(it, group) }
-        val res = dietaryCompatibleList.maxWithOrNull(compareBy<RestaurantStats> {
-            it.positiveRatings - it.negativeRatings
-        }.thenByDescending { -it.restaurantId })
+        val res = dietaryCompatibleList.maxWithOrNull(
+            compareBy<RestaurantStats> {
+                it.positiveRatings - it.negativeRatings
+            }.thenByDescending { -it.restaurantId }
+        )
         if (res != null) {
             res.availableSeats[group.tableType] = res.availableSeats[group.tableType]!! - group.size
             return res.restaurantId
@@ -93,9 +97,11 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
             }
         }
         val dietaryChecked = result.filter { isDietaryCompatible(it, group) }
-        val res = dietaryChecked.maxWithOrNull(compareBy<RestaurantStats> {
-            it.positiveRatings - it.negativeRatings
-        }.thenByDescending { -it.restaurantId })
+        val res = dietaryChecked.maxWithOrNull(
+            compareBy<RestaurantStats> {
+                it.positiveRatings - it.negativeRatings
+            }.thenByDescending { -it.restaurantId }
+        )
         if (res != null) {
             res.availableEventSeats[group.tableType] = res.availableEventSeats[group.tableType]!! - group.size
             return res.restaurantId

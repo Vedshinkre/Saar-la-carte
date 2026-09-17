@@ -7,11 +7,13 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ExhaustiveSimp
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.InvalidRestaurantParserTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.MyParserTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.OneCookTwoOrdersTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.PantryExpirySystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ProcurementLogicTestB
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SequenceTwoSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SimulationLifecycleSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.StatisticsOrderingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SupplierProcurementSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.UnavailabilityDurationExpirySystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.UnavailableIncidentSupplierProcurementSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.WaitstaffExhaustionTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ZeroProcurementTestA
@@ -97,6 +99,8 @@ object SystemTestRegistration {
         testSuite.registerTest(StatisticsOrderingSystemTest())
         testSuite.registerTest(SupplierProcurementSystemTest())
         testSuite.registerTest(UnavailableIncidentSupplierProcurementSystemTest())
+        testSuite.registerTest(PantryExpirySystemTest())
+        testSuite.registerTest(UnavailabilityDurationExpirySystemTest())
         testSuite.registerTest(RestaurantsDifferentNameSameIdTest())
         testSuite.registerTest(RestaurantsMultipleExecCooksTest())
         testSuite.registerTest(RestaurantsNoBasicDishOfItsTypeTest())
@@ -152,6 +156,8 @@ object SystemTestRegistration {
         testSuite.registerTest(OneCookTwoOrdersTest())
         testSuite.registerTest(WaitstaffExhaustionTest())
         testSuite.registerTest(ProcurementLogicTestB())
+        testSuite.registerTest(PantryExpirySystemTest())
+        testSuite.registerTest(UnavailabilityDurationExpirySystemTest())
     }
 
     /**

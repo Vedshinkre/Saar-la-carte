@@ -11,7 +11,7 @@ import de.unisaarland.cs.se.selab.loggers.InitialAndPrepLogger
  */
 class Pantry(
     private val inventory: MutableList<IngredientPackage>,
-    private val supplier: Supplier
+    val supplier: Supplier
 ) {
     // explicit constructor with only stock used to create the supplier
     constructor(stock: Stock) : this(

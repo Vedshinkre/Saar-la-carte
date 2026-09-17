@@ -36,6 +36,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.FoodRecipeDu
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.FoodRecipeMissingIngredientRefRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.OverlappingUnavailabilityRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.RestaurantsDifferentNameSameIdRejectedSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.RestaurantsMultipleExecCooksRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.RestaurantsNoBasicDishOfItsTypeRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.RestaurantsNoCookExistsRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.RestaurantsNoDupliacteDishNameRejectedSystemTest
@@ -55,6 +56,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.RestaurantsT
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.StaffIncidentUnknownRestaurantSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.ValidIncidentsAcceptedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.restaurantparsertests.RestaurantsDifferentNameSameIdTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.restaurantparsertests.RestaurantsMultipleExecCooksTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.restaurantparsertests.RestaurantsNoBasicDishOfItsTypeTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.restaurantparsertests.RestaurantsNoCookExistsTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.restaurantparsertests.RestaurantsNoDuplicateDishNameTest
@@ -96,6 +98,7 @@ object SystemTestRegistration {
         testSuite.registerTest(SupplierProcurementSystemTest())
         testSuite.registerTest(UnavailableIncidentSupplierProcurementSystemTest())
         testSuite.registerTest(RestaurantsDifferentNameSameIdTest())
+        testSuite.registerTest(RestaurantsMultipleExecCooksTest())
         testSuite.registerTest(RestaurantsNoBasicDishOfItsTypeTest())
         testSuite.registerTest(RestaurantsNoCookExistsTest())
         testSuite.registerTest(RestaurantsNoDuplicateDishNameTest())
@@ -171,6 +174,7 @@ object SystemTestRegistration {
         testSuite.registerTest(RestaurantsNoTableExistsRejectedSystemTest())
         testSuite.registerTest(RestaurantsNoRecipieExistsRejectedSystemTest())
         testSuite.registerTest(RestaurantsNoMultipleHeadCooksieEXECRejectedSystemTest())
+        testSuite.registerTest(RestaurantsMultipleExecCooksRejectedSystemTest())
         testSuite.registerTest(RestaurantsNoInvalidTableSizeRejectedSystemTest())
         testSuite.registerTest(RestaurantsNoInvalidTableSize1RejectedSystemTest())
         testSuite.registerTest(RestaurantsOpeningTickEndLessThanOpeningTickStartRejectedSystemTest())

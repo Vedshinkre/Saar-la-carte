@@ -202,6 +202,15 @@ class RestaurantsNoMultipleHeadCooksieEXECRejectedSystemTest : RestaurantFixture
 )
 
 /**
+ * A restaurant with multiple EXEC cooks is rejected.
+ */
+class RestaurantsMultipleExecCooksRejectedSystemTest : RestaurantFixtureRejectedSystemTest(
+    "restaurantsMultipleExecCooks.json",
+    name = "restaurantsMultipleExecCooks Is Rejected System Test",
+    description = "A restaurant with multiple EXEC cooks is rejected."
+)
+
+/**
  * A table size outside the valid range is rejected.
  */
 class RestaurantsNoInvalidTableSizeRejectedSystemTest : RestaurantFixtureRejectedSystemTest(

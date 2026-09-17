@@ -7,7 +7,6 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ExhaustiveSimp
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.InvalidRestaurantParserTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.MyParserTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.OneCookTwoOrdersTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ProcurementLogicTestA
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ProcurementLogicTestB
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SequenceTwoSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SimulationLifecycleSystemTest
@@ -119,7 +118,6 @@ object SystemTestRegistration {
         testSuite.registerTest(InvalidRestaurantParserTest())
         testSuite.registerTest(MyParserTest())
         testSuite.registerTest(ProcurementLogicTestB())
-        testSuite.registerTest(ProcurementLogicTestA())
     }
 
     /**

@@ -17,8 +17,8 @@ class SupplierProcurementSystemTest : ExampleSystemTestExtension() {
 
     override suspend fun run() {
         skipUntilString(InitialAndPrepTestLogs.prepStart(1))
-        assertNextLine(InitialAndPrepTestLogs.pantryProcured(1, 250, "G", "Chicken"))
-        assertNextLine(InitialAndPrepTestLogs.pantryProcured(1, 100, "G", "Tomato"))
+        assertNextLine(InitialAndPrepTestLogs.pantryProcured(1, 250, "g", "Chicken"))
+        assertNextLine(InitialAndPrepTestLogs.pantryProcured(1, 100, "g", "Tomato"))
         assertNextLine(InitialAndPrepTestLogs.pantryRestocked(1))
     }
 }

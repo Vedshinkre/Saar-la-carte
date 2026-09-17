@@ -1,20 +1,24 @@
 package de.unisaarland.cs.se.selab.systemtest.selab26
 
+import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExampleEmptyTickOneCycleTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExamplePreparationAndServingStartTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExampleSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.customerparsertests.customerParserSystemTests
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.AppendixScenarioTwoSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventReservationConflictTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ExactStockoutTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ExhaustiveSimpleScenarioTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.InvalidRestaurantParserTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.MyParserTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.OneCookTwoOrdersTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ProcurementLogicTestA
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.PantryExpirySystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ProcurementLogicTestB
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SequenceTwoSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SimulationLifecycleSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.StatisticsOrderingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SupplierProcurementSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.UnavailableIncidentSupplierProcurementSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.WaitstaffExhaustionTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ZeroProcurementTestA
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ZeroProcurementTestB
 import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentCookTypeExecForbiddenRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentDriverWithCookTypeRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentNegativeEveningRejectedSystemTest
@@ -35,6 +39,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.FoodRecipeDu
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.FoodRecipeMissingIngredientRefRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.OverlappingUnavailabilityRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.RestaurantsDifferentNameSameIdRejectedSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.RestaurantsMultipleExecCooksRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.RestaurantsNoBasicDishOfItsTypeRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.RestaurantsNoCookExistsRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.RestaurantsNoDupliacteDishNameRejectedSystemTest
@@ -54,6 +59,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.RestaurantsT
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.StaffIncidentUnknownRestaurantSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.ValidIncidentsAcceptedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.restaurantparsertests.RestaurantsDifferentNameSameIdTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.restaurantparsertests.RestaurantsMultipleExecCooksTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.restaurantparsertests.RestaurantsNoBasicDishOfItsTypeTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.restaurantparsertests.RestaurantsNoCookExistsTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.restaurantparsertests.RestaurantsNoDuplicateDishNameTest
@@ -83,18 +89,24 @@ object SystemTestRegistration {
      */
     fun registerSystemTestsForReferenceImplementation(testSuite: SELab26TestSuite) {
         testSuite.registerTest(ExampleSystemTest())
+        testSuite.registerTest(ExamplePreparationAndServingStartTest())
+        testSuite.registerTest(ExampleEmptyTickOneCycleTest())
 
-        // testSuite.registerTest(EventReservationConflictTest())
+        testSuite.registerTest(EventReservationConflictTest())
         testSuite.registerTest(ExactStockoutTest())
-        testSuite.registerTest(ExhaustiveSimpleScenarioTest())
+        // testSuite.registerTest(ExhaustiveSimpleScenarioTest())
         testSuite.registerTest(OneCookTwoOrdersTest())
         testSuite.registerTest(WaitstaffExhaustionTest())
-        testSuite.registerTest(SequenceTwoSystemTest())
+        testSuite.registerTest(AppendixScenarioTwoSystemTest())
         testSuite.registerTest(SimulationLifecycleSystemTest())
         testSuite.registerTest(StatisticsOrderingSystemTest())
         testSuite.registerTest(SupplierProcurementSystemTest())
         testSuite.registerTest(UnavailableIncidentSupplierProcurementSystemTest())
+        testSuite.registerTest(
+            PantryExpirySystemTest()
+        ) // testSuite.registerTest(UnavailabilityDurationExpirySystemTest())
         testSuite.registerTest(RestaurantsDifferentNameSameIdTest())
+        testSuite.registerTest(RestaurantsMultipleExecCooksTest())
         testSuite.registerTest(RestaurantsNoBasicDishOfItsTypeTest())
         testSuite.registerTest(RestaurantsNoCookExistsTest())
         testSuite.registerTest(RestaurantsNoDuplicateDishNameTest())
@@ -119,7 +131,8 @@ object SystemTestRegistration {
         testSuite.registerTest(InvalidRestaurantParserTest())
         testSuite.registerTest(MyParserTest())
         testSuite.registerTest(ProcurementLogicTestB())
-        testSuite.registerTest(ProcurementLogicTestA())
+        testSuite.registerTest(ZeroProcurementTestA())
+        testSuite.registerTest(ZeroProcurementTestB())
     }
 
     /**
@@ -141,11 +154,13 @@ object SystemTestRegistration {
     fun registerSystemTestsMutantSimulation(testSuite: SELab26TestSuite) {
         testSuite.registerTest(ExampleSystemTest())
 
-        //  testSuite.registerTest(EventReservationConflictTest())
+//        testSuite.registerTest(EventReservationConflictTest())
         testSuite.registerTest(ExactStockoutTest())
-        testSuite.registerTest(ExhaustiveSimpleScenarioTest())
         testSuite.registerTest(OneCookTwoOrdersTest())
         testSuite.registerTest(WaitstaffExhaustionTest())
+        testSuite.registerTest(ProcurementLogicTestB())
+        // testSuite.registerTest(PantryExpirySystemTest())
+        // temporarily unregistered: cross-check against reference first
     }
 
     /**
@@ -168,6 +183,7 @@ object SystemTestRegistration {
         testSuite.registerTest(RestaurantsNoTableExistsRejectedSystemTest())
         testSuite.registerTest(RestaurantsNoRecipieExistsRejectedSystemTest())
         testSuite.registerTest(RestaurantsNoMultipleHeadCooksieEXECRejectedSystemTest())
+        testSuite.registerTest(RestaurantsMultipleExecCooksRejectedSystemTest())
         testSuite.registerTest(RestaurantsNoInvalidTableSizeRejectedSystemTest())
         testSuite.registerTest(RestaurantsNoInvalidTableSize1RejectedSystemTest())
         testSuite.registerTest(RestaurantsOpeningTickEndLessThanOpeningTickStartRejectedSystemTest())

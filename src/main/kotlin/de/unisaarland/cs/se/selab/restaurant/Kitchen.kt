@@ -107,6 +107,7 @@ class Kitchen(
      */
     // functions with logic
     fun resetKitchen() {
+        pantry.supplier.stock.applyUnavailableDurations()
         while (orderQueue.isNotEmpty()) {
             val order = orderQueue.removeFirst()
             for (dish in order.dishes) {

@@ -145,6 +145,24 @@ class RestaurantsNoInvalidTableSize1Test : RestaurantParserSystemTest() {
 }
 
 /**
+ * System test asserting parsing fails when a restaurant has multiple EXEC cooks.
+ */
+class RestaurantsMultipleExecCooksTest : RestaurantParserSystemTest() {
+
+    override val name: String = "Restaurants Multiple Exec Cooks System Test"
+
+    override val description: String = "System test asserting parsing fails when a restaurant has multiple EXEC cooks."
+
+    override val restaurants: String = "RestaurantParserTests/restaurantsMultipleExecCooks.json"
+
+    override suspend fun run() {
+        assertInvalidRestaurantLog(
+            "restaurantsMultipleExecCooks.json"
+        )
+    }
+}
+
+/**
  * System test asserting parsing fails when multiple head cooks exist.
  */
 class RestaurantsNoMultipleHeadCooksEXECTest : RestaurantParserSystemTest() {

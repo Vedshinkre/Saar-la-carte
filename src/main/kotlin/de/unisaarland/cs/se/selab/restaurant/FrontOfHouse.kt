@@ -11,6 +11,7 @@ import de.unisaarland.cs.se.selab.customer.RegularGroup
 import de.unisaarland.cs.se.selab.enums.ActionType
 import de.unisaarland.cs.se.selab.enums.DishStatus
 import de.unisaarland.cs.se.selab.enums.DriverState
+import de.unisaarland.cs.se.selab.enums.ExperienceType
 import de.unisaarland.cs.se.selab.enums.TableStatus
 import de.unisaarland.cs.se.selab.enums.TableType
 import de.unisaarland.cs.se.selab.food.Recipe
@@ -41,7 +42,6 @@ class FrontOfHouse(
     private val turnedAwayGroups: MutableList<CustomerGroup> = mutableListOf()
 
     // statistics
-    var numberOfCustomersServed: Int = 0
     var numberOfCustomersDelivered: Int = 0
 
     private var waiterIdCounter: Id = 1
@@ -50,6 +50,9 @@ class FrontOfHouse(
     private fun getInHouseGroups(): List<CustomerGroup> {
         return inHouseGroupsToWaiter.keys.toList()
     }
+
+    // DOTO: use this consistently instead of adding lists everywhere
+    private fun getSeatedGroups(): List<CustomerGroup> = getInHouseGroups() + eventGroups
 
     // priority order used when sorting groups for serving/eating/escorting/rating; see the constants above.
     private fun getServingPriority(group: CustomerGroup): Int = when (group) {
@@ -61,18 +64,21 @@ class FrontOfHouse(
     private fun getAssignedTableId(group: CustomerGroup): Id? = customerToTable[group]?.minOfOrNull { it.id }
 
     // recruit waiters for an EVENT group, accumulates enough (ordered by asc id) to cover group's servable dishes.
-    // shared by SEATING (SEAT) and SERVING (SERVE); NOTE: does not yet handle ActionType.TAKE_ORDER.
+    // shared by SEATING (SEAT), ORDERING (TAKE_ORDER) and SERVING (SERVE).
     private fun recruitWaitersForEventGroup(actionType: ActionType, eventGroup: EventGroup): List<Waiter> {
         return when (actionType) {
             ActionType.SEAT -> waiters.filter {
                 it.getTickLoad(ActionType.SEAT) < Constants.ACTION_LIMIT
             }.sortedByDescending { it.currentLoad }
 
-            ActionType.TAKE_ORDER -> TODO()
+            ActionType.TAKE_ORDER -> waiters.filter {
+                it.getTickLoad(ActionType.TAKE_ORDER) < Constants.ACTION_LIMIT
+            }.sortedByDescending { it.currentLoad }
+
             ActionType.SERVE -> recruitWaiterForServing(eventGroup)
             ActionType.ESCORT -> waiters.filter {
                 it.getTickLoad(ActionType.ESCORT) < Constants.ACTION_LIMIT
-            }
+            }.sortedBy { it.currentLoad }
         }
     }
 
@@ -86,7 +92,7 @@ class FrontOfHouse(
                 it == targetWaiter
             }.keys
             customerGroups.forEach {
-                val num = it.currentOrder!!.getServableDishes().size
+                val num = it.currentOrder?.getServableDishes()?.size ?: 0
                 res += num
             }
             waiterToCookedDishes[targetWaiter] = res
@@ -123,21 +129,24 @@ class FrontOfHouse(
         waiters = waiters,
         drivers = drivers,
         deliveryGroups = deliveryGroups,
-        getInHouseGroups = { getInHouseGroups() },
+        getInHouseGroups = { getSeatedGroups() },
         waiterFor = { group -> inHouseGroupsToWaiter[group] },
         getServingPriority = { group -> getServingPriority(group) },
         getAssignedTableId = { group -> getAssignedTableId(group) },
         recruitWaitersForEventGroup = { actionType, eventGroup -> recruitWaitersForEventGroup(actionType, eventGroup) },
+        getNextWaiterId = ::getNextWaiterId,
     )
 
-    private val delivering = DeliveryProcessor(drivers = drivers)
+    // statistics: counted by the serving step, where the meals actually change hands (item 180)
+    val numberOfCustomersServed: Int get() = serving.numberOfCustomersServed
+
+    private val delivering = DeliveryProcessor(drivers = drivers, deliveryGroups = deliveryGroups)
 
     private val eating = EatingProcessor(
         deliveryGroups = deliveryGroups,
-        getInHouseGroups = { getInHouseGroups() },
+        getInHouseGroups = { getSeatedGroups() },
         getServingPriority = { group -> getServingPriority(group) },
         getAssignedTableId = { group -> getAssignedTableId(group) },
-        addCustomersServed = { count -> numberOfCustomersServed += count },
         addCustomersDelivered = { count -> numberOfCustomersDelivered += count },
     )
 
@@ -147,7 +156,8 @@ class FrontOfHouse(
         inHouseGroupsToWaiter = inHouseGroupsToWaiter,
         getInHouseGroups = { getInHouseGroups() },
         getServingPriority = { group -> getServingPriority(group) },
-        ::recruitWaitersForEventGroup
+        ::recruitWaitersForEventGroup,
+        ::getNextWaiterId
     )
 
     private val rating = RatingProcessor(
@@ -165,9 +175,21 @@ class FrontOfHouse(
      *  processArrival(customerGroup, menu) || customerGroup.isWaitingToBeSeated.
      *  If true, keep in the customerQueue, otherwise remove from the customerQueue. */
     fun processArrival(customerGroup: CustomerGroup, menu: List<Recipe>): Boolean {
-        return when (customerGroup) {
+        val isProcessed = when (customerGroup) {
             is CasualGroup, is RegularGroup -> arrival.processArrival(customerGroup, menu)
             is EventGroup -> arrival.processArrival(customerGroup, menu)
+        }
+        registerDeliveryGroup(customerGroup)
+        return isProcessed
+    }
+
+    /** Add CasualGroup that wants delivery to deliveryGroups if the order was made successfully. */
+    private fun registerDeliveryGroup(customerGroup: CustomerGroup) {
+        if (customerGroup !is CasualGroup || !customerGroup.wantsDelivery) {
+            return
+        }
+        if (customerGroup.currentOrder != null && !turnedAwayGroups.contains(customerGroup)) {
+            deliveryGroups.addLast(customerGroup)
         }
     }
 
@@ -179,6 +201,10 @@ class FrontOfHouse(
     /** Call after processArrivalSeatingOrdering has been called with each customerGroup in customerQueue.
      *  Logs status and then performs side effect by resetting counters. */
     fun logAndResetSeatingOrderingTickStatus() = arrival.logAndResetSeatingOrderingTickStatus()
+
+    /** Turns a group away unlogged because the restaurant is in the last 3 ticks of its opening
+     *  time and no longer accepts new customers. */
+//    fun refuseLateArrival(customerGroup: CustomerGroup) = arrival.refuseLateArrival(customerGroup)
 
     /** process serving */
     fun processServing() = serving.processServing()
@@ -229,35 +255,27 @@ class FrontOfHouse(
     }
 
     /**
-     * Ends the evening by removing remaining customers, processing their
-     * closing ratings, freeing all tables, and clearing waiter assignments.
-     *
-     * @param positiveRatings current number of positive ratings
-     * @param negativeRatings current number of negative ratings
-     * @return updated positive and negative rating counts
+     * Escorts everybody still inside out of the restaurant when the opening time ends, without
+     * the waiters having to perform an action. Groups that had not finished eating keep a
+     * negative experience. Call this *before* the tick's rating step so that the closing ratings
+     * are part of that step and are counted by its status log.
      */
-    fun endFohOpeningTime(
-        positiveRatings: Int,
-        negativeRatings: Int
-    ): Pair<Int, Int> {
-        var positive = positiveRatings
-        var negative = negativeRatings
-        val inHouseGroups = getInHouseGroups()
-        val allGroups = inHouseGroups + eventGroups
-        escorting.escortAllAtClosing(allGroups)
-
-        allGroups.forEach { group ->
-            val result = rating.rate(
-                group,
-                positive,
-                negative,
-                true
-            )
-
-            positive = result.first
-            negative = result.second
+    fun startFohClosing() {
+        val closingGroups = getInHouseGroups() + eventGroups
+        escorting.escortAllAtClosing(closingGroups)
+        closingGroups.forEach { group ->
+            val order = group.currentOrder
+            if (order == null || !order.areAllDishesEaten()) {
+                group.experience = ExperienceType.NEGATIVE
+            }
         }
+    }
 
+    /**
+     * Ends the opening time: frees all tables, discards this evening's reservations and clears
+     * the waiter assignments. Call after the rating step, i.e. after [startFohClosing].
+     */
+    fun endFohOpeningTime() {
         val customerIds = customerToTable.keys.map { it.id }
 
         customerIds.forEach {
@@ -266,7 +284,6 @@ class FrontOfHouse(
 
         inHouseGroupsToWaiter.clear()
         resetWaiters()
-        return Pair(positive, negative)
     }
 
     private fun resetWaiters() {
@@ -281,21 +298,21 @@ class FrontOfHouse(
     /** lets drivers that are RETURNING continue, otherwise abort their order and make them IDLE */
     fun resetDrivers() {
         for (driver in drivers) {
-            if (driver.state != DriverState.IDLE) {
-                val currentOrder = requireNotNull(driver.currentOrder)
-                currentOrder.dishes.forEach {
+            if (driver.state == DriverState.RETURNING) {
+                continue
+            }
+            driver.currentOrder?.dishes?.forEach {
+                if (it.status != DishStatus.EATEN) {
                     it.status = DishStatus.ABORTED
-                    driver.state = DriverState.IDLE
-                    driver.currentOrder = null
-                    driver.targetGroup = null
-                    driver.totalTripTicks = 0
-                    driver.ticksToDest = 0
                 }
             }
+            driver.state = DriverState.IDLE
             driver.currentOrder = null
             driver.targetGroup = null
             driver.totalTripTicks = 0
             driver.ticksToDest = 0
+            driver.tripDistance = 0
+            driver.distanceDriven = 0
         }
     }
 
@@ -306,11 +323,10 @@ class FrontOfHouse(
             deliveryGroups.remove(group)
         } else if (turnedAwayGroups.contains(group)) {
             turnedAwayGroups.remove(group)
-        } else if (eventGroups.contains(group)) {
-            turnedAwayGroups.remove(group)
+        } else if (group is EventGroup) {
+            eventGroups.remove(group)
         }
     }
-
     private fun removeInHouseGroup(group: CustomerGroup) {
         inHouseGroupsToWaiter.remove(group)
     }

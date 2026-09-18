@@ -22,7 +22,8 @@ class RegularGroup(
     var failedAttempts: Int = 0
 
     override fun isVisitingTonight(): Boolean {
-        val isPeriodicVisitEvening: Boolean = (Time.evening - visitingStart) % visitingPeriod == 0
+        val isPeriodicVisitEvening: Boolean = Time.evening >= visitingStart &&
+            (Time.evening - visitingStart) % visitingPeriod == 0
         return failedAttempts < 2 && isPeriodicVisitEvening
     }
 

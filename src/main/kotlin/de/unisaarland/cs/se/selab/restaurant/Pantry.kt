@@ -40,14 +40,14 @@ class Pantry(
     }
 
     /**
-     *  Return a list of all packages in the pantry matching the given ingredient.
+     *  Return a list of all packages(not expired) in the pantry matching the given ingredient.
      */
 
     fun getPackagesForIngredient(ingredient: Ingredient): List<IngredientPackage> {
         val matchingPackages = mutableListOf<IngredientPackage>()
         for (pkg in inventory) {
             val currentIngredient = pkg.ingredient
-            if (currentIngredient.name == ingredient.name) {
+            if (currentIngredient.name == ingredient.name && !pkg.hasExpired()) {
                 matchingPackages.add(pkg)
             }
         }
@@ -79,8 +79,9 @@ class Pantry(
         val sortedIngredients = removedQuantity.keys.sortedBy { it.name }
         for (ingredient in sortedIngredients) {
             val amount = removedQuantity[ingredient] ?: 0
-
-            InitialAndPrepLogger.logPantryRemovedIngredient(amount, ingredient.unit, ingredient.name)
+            if (amount > 0) {
+                InitialAndPrepLogger.logPantryRemovedIngredient(amount, ingredient.unit, ingredient.name)
+            }
         }
     }
 
@@ -89,7 +90,6 @@ class Pantry(
      */
 
     fun ensureQuantities(ingredientsToEnsure: Map<Ingredient, Int>) {
-        throwExpiredIngredients()
         val procuredQuantity = mutableMapOf<Ingredient, Int>()
 
         for ((ingredient, requiredAmount) in ingredientsToEnsure) {
@@ -174,6 +174,12 @@ class Pantry(
 
             val removed = pkg.removeAmount(amountNeeded)
             amountNeeded -= removed
+        }
+        for (i in inventory.size - 1 downTo 0) {
+            val pkg = inventory[i]
+            if (pkg.currentAmount <= 0) {
+                inventory.removeAt(i)
+            }
         }
     }
 

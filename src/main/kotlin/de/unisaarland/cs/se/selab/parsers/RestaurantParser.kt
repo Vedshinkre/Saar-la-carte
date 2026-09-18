@@ -206,8 +206,18 @@ class RestaurantParser {
     private fun buildMenu(recipeIdsInRestaurant: List<Int>, recipes: List<Recipe>, type: RestaurantType): List<Recipe> {
         val existingRecipes = recipeIdsInRestaurant.map { recipeId -> recipes.first { it.id == recipeId } }
         val existingDishNames = existingRecipes.map { it.name }.toSet()
+        val basicDishNames = recipes.filter { it.basicDishFor == type }.map { it.name }.toSet()
+        // adapted recipe doesn't carry basicDishFor of its own (only default recipe does which is unique by name)
+        // the dish it replaces is still a basic dish of this restaurant, on the menu it keeps its basic status
+        val menuRecipes = existingRecipes.map { recipe ->
+            if (recipe.basicDishFor == null && recipe.name in basicDishNames) {
+                recipe.copy(basicDishFor = type)
+            } else {
+                recipe
+            }
+        }
         val defaultBasicDishes = recipes.filter { it.basicDishFor == type && it.name !in existingDishNames }
-        return (existingRecipes + defaultBasicDishes).sortedBy { it.id }
+        return (menuRecipes + defaultBasicDishes).sortedBy { it.id }
     }
 
     // cross validation

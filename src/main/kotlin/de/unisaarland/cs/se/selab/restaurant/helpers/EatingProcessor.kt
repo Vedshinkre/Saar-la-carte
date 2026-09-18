@@ -4,6 +4,7 @@ import de.unisaarland.cs.se.selab.Constants
 import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.Time
 import de.unisaarland.cs.se.selab.customer.CustomerGroup
+import de.unisaarland.cs.se.selab.customer.RegularGroup
 import de.unisaarland.cs.se.selab.enums.DishStatus
 import de.unisaarland.cs.se.selab.enums.ExperienceType
 import de.unisaarland.cs.se.selab.food.Dish
@@ -24,7 +25,6 @@ class EatingProcessor(
     private val getInHouseGroups: () -> List<CustomerGroup>,
     private val getServingPriority: (CustomerGroup) -> Int,
     private val getAssignedTableId: (CustomerGroup) -> Id?,
-    private val addCustomersServed: (Int) -> Unit,
     private val addCustomersDelivered: (Int) -> Unit,
 ) {
     /** main eating function: makes customers that waited too long leave and customers eating progress eating */
@@ -38,6 +38,9 @@ class EatingProcessor(
             if (order == null) continue
             val tableId = getAssignedTableId(group)
             if (tableId == null) continue
+
+            // receiving any food at all makes this visit a success, ending a REGULAR failure streak
+            if (group is RegularGroup && order.dishes.any { wasServed(it) }) group.failedAttempts = 0
 
             handleLeavingCustomers(group, order, tableId)
             handleFullyServedOrder(group, order) // for experience
@@ -74,13 +77,16 @@ class EatingProcessor(
 
         // all unserved customers leave, any unserved dish is aborted, customers remaining decremented
         unservedDishes.forEach { it.status = DishStatus.ABORTED }
-        group.customersRemainingInRestaurant -= if (noDishServed) {
+        val leavingCustomers = if (noDishServed) {
+            // nobody was served: the whole group walks out, which is a failed attempt for a REGULAR group
+            if (group is RegularGroup) group.failedAttempts++
             group.customersRemainingInRestaurant
         } else {
             unservedDishes.size
         }
+        group.customersRemainingInRestaurant -= leavingCustomers
         group.experience = ExperienceType.NEGATIVE
-        FohServiceLogger.logRestaurantNoEating(unservedDishes.size, group.id, tableId)
+        FohServiceLogger.logRestaurantNoEating(leavingCustomers, group.id, tableId)
     }
 
     /** decides the customer's experience first time the order is fully served */
@@ -94,7 +100,9 @@ class EatingProcessor(
         if (!fullyServed) return
 
         order.lastDishServedAt = Time.tick
-        addCustomersServed(group.size) // statistics
+
+        // experience is negative as soon as food arrives too late or not at all for at least one customer
+        if (group.experience == ExperienceType.NEGATIVE) return
 
         group.experience = if (Time.tick - order.orderedAt <= Constants.EXPECTATION_WINDOW_TICKS) {
             ExperienceType.POSITIVE

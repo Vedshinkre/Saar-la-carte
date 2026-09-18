@@ -1,0 +1,25 @@
+{
+  "ingredients": [
+    {
+      "name": "Chicken",
+      "unit": "g",
+      "packagingVolume": 1000,
+      "bestBefore": 5
+    }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "Slow Grilled Chicken",
+      "duration": 30,
+      "basicDishFor": "EUROPEAN",
+      "cookType": ["ROAST"],
+      "ingredients": [
+        {
+          "name": "Chicken",
+          "amount": 200
+        }
+      ]
+    }
+  ]
+}

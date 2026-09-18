@@ -44,7 +44,12 @@ class ReservationOutcomeTest {
 
     private fun countertop(): Countertop {
         val stock = Stock(emptyList<Ingredient>())
-        return Countertop(pantry = Pantry(stock), orderQueue = ArrayDeque(), cooks = emptyList())
+        return Countertop(
+            pantry = Pantry(stock),
+            orderQueue = ArrayDeque(),
+            cooks = emptyList(),
+            restaurantType = RestaurantType.EUROPEAN
+        )
     }
 
     private fun processor(

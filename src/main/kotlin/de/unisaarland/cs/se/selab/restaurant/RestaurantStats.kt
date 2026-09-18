@@ -29,7 +29,14 @@ class RestaurantStats(
     /**
      * sake of detect
      */
+    fun isOpenAt(tick: Tick): Boolean {
+        return tick in openingTickStart..openingTickEnd - 3
+    }
+
+    /**
+     * sake of detect
+     */
     fun isOpen(): Boolean {
-        return Time.tick in openingTickStart..openingTickEnd - 3
+        return isOpenAt(Time.tick)
     }
 }

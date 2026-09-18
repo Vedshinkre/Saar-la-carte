@@ -1,25 +1,17 @@
 package deliveryservicetest
 
-import de.unisaarland.cs.se.selab.Time
-import de.unisaarland.cs.se.selab.actors.Driver
-import de.unisaarland.cs.se.selab.customer.CasualGroup
-import de.unisaarland.cs.se.selab.enums.DriverState
-import de.unisaarland.cs.se.selab.enums.ExperienceType
-import de.unisaarland.cs.se.selab.enums.LogLevel
-import de.unisaarland.cs.se.selab.enums.RatingLikelihood
-import de.unisaarland.cs.se.selab.enums.RestaurantType
-import de.unisaarland.cs.se.selab.enums.TableType
-import de.unisaarland.cs.se.selab.food.Order
-import de.unisaarland.cs.se.selab.loggers.Logger
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.whenever
+import org.junit.jupiter.api.Disabled
 
-private const val VISITING = 10
+// Disabled: this whole file was written against Driver.processTick(), which the delivery
+// refactor in 347de06 ("refactor delivery code to match logs from spec adjustment") replaced
+// with the separate driveTowardsCustomer/driveTowardsRestaurant/logArrival/handOverToCustomer/
+// finishReturnTrip steps orchestrated by FrontOfHouse. That behavior is now covered by
+// DeliveryPipelineTest. Kept disabled (rather than deleted) so the original per-branch driver
+// coverage can be ported over to the new API instead of quietly dropped.
+@Disabled("Driver.processTick() was removed by the delivery refactor; see DeliveryPipelineTest")
 class DriverTest {
 
+    /*
     @BeforeEach
     fun setup() {
         // Reset time
@@ -66,7 +58,6 @@ class DriverTest {
         assertEquals(5, driver.ticksToDest) // Unchanged
     }
 
-    /*
     @Test
     fun `driveToCustomer-returns early-missing attributes`() {
         val driver = setupDriver(DriverState.DELIVERING, 5)
@@ -95,7 +86,7 @@ class DriverTest {
         driver.id = null
         driver.processTick()
         assertEquals(5, driver.ticksToDest)
-    }*/
+    }
 
     @Test
     fun `driveToRestaurant - returns early if missing ID`() {
@@ -150,7 +141,7 @@ class DriverTest {
     }
 
     // edge cases
-/*
+
     @Test
     fun `driveToCustomer - timeouts trigger abortOrder and NEGATIVE experience`() {
         val driver = setupDriver(DriverState.DELIVERING, 5)
@@ -183,5 +174,6 @@ class DriverTest {
         assertEquals(DriverState.IDLE, driver.state)
         assertNull(driver.currentOrder)
         assertNull(driver.targetGroup)
-    }*/
+    }
+    */
 }

@@ -11,6 +11,9 @@ import kotlinx.cli.required
 import java.io.File
 import java.io.PrintWriter
 
+private const val MIN_MAX_TICKS = 0
+private const val MAX_MAX_TICKS = 1000
+
 /**
  * Entry point of the simulation. Parses the CLI arguments, sets up global state
  * (logger + Time), delegates config parsing to the [ParserController] and then
@@ -73,6 +76,9 @@ private fun parseCommandLineArgs(args: Array<String>): Cliinfo {
     ).default("")
 
     parser.parse(args)
+    require(maxTicks in MIN_MAX_TICKS..MAX_MAX_TICKS) {
+        "--maxTicks has to be between $MIN_MAX_TICKS and $MAX_MAX_TICKS, but was $maxTicks"
+    }
 
     return Cliinfo(
         foodFilePath = foodPath,

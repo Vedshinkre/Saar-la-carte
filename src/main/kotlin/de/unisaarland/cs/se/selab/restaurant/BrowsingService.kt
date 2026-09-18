@@ -41,7 +41,7 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
             val res = availableDriversAndDietaryCheck.maxWithOrNull(
                 compareBy<RestaurantStats> {
                     it.positiveRatings - it.negativeRatings
-                }.thenByDescending { -it.restaurantId }
+                }.thenByDescending { it.restaurantId }
             )
             if (res != null) {
                 res.availableDrivers = res.availableDrivers - 1
@@ -73,7 +73,7 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
         val res = dietaryCompatibleList.maxWithOrNull(
             compareBy<RestaurantStats> {
                 it.positiveRatings - it.negativeRatings
-            }.thenByDescending { -it.restaurantId }
+            }.thenByDescending { it.restaurantId }
         )
         if (res != null) {
             res.availableSeats[group.tableType] = res.availableSeats[group.tableType]!! - group.size
@@ -87,12 +87,12 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
         val eventRests = mutableListOf<RestaurantStats>()
         val result = mutableListOf<RestaurantStats>()
         restaurantStats.filter { it.restaurantType in group.restaurantTypes }.filter { it.event }.forEach { stats ->
-            if (stats.isOpen()) {
+            if (stats.isOpenAt(group.visitingAt)) {
                 eventRests.add(stats)
             }
         }
         eventRests.forEach {
-            if (it.availableEventSeats.values.sum() >= group.size) {
+            if ((it.availableEventSeats[group.tableType] ?: 0) >= group.size) {
                 result.add(it)
             }
         }
@@ -100,7 +100,7 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
         val res = dietaryChecked.maxWithOrNull(
             compareBy<RestaurantStats> {
                 it.positiveRatings - it.negativeRatings
-            }.thenByDescending { -it.restaurantId }
+            }.thenByDescending { it.restaurantId }
         )
         if (res != null) {
             res.availableEventSeats[group.tableType] = res.availableEventSeats[group.tableType]!! - group.size

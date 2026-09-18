@@ -1,5 +1,6 @@
 package de.unisaarland.cs.se.selab.customer
 
+import de.unisaarland.cs.se.selab.enums.RestaurantType
 import de.unisaarland.cs.se.selab.food.Dish
 import de.unisaarland.cs.se.selab.food.Ingredient
 import de.unisaarland.cs.se.selab.food.Recipe
@@ -40,7 +41,7 @@ class FoodPreference(
      *  5. Any remaining tie (including the "no preferences at all" case) is
      *     broken by the highest recipe id.
      */
-    fun decideDish(availableMenu: List<Recipe>, eventFavourite: String): Dish? {
+    fun decideDish(availableMenu: List<Recipe>, eventFavourite: String, restaurantType: RestaurantType): Dish? {
         val notExcluded = availableMenu.filter { recipe ->
             excludedIngredients.none { it in recipe.ingredients.keys }
         }
@@ -51,17 +52,17 @@ class FoodPreference(
         if (eventFavourite.isNotEmpty()) {
             val eventMatch = notExcluded.firstOrNull { it.name == eventFavourite }
             if (eventMatch != null) {
-                return Dish(eventMatch)
+                return Dish(eventMatch, restaurantType)
             }
         }
 
         val favouriteMatch = firstMatchingFavorite(notExcluded)
         if (favouriteMatch != null) {
-            return Dish(favouriteMatch)
+            return Dish(favouriteMatch, restaurantType)
         }
 
         val chosen = mostPreferredIngredients(notExcluded).maxByOrNull { it.id } ?: return null
-        return Dish(chosen)
+        return Dish(chosen, restaurantType)
     }
 
     /**

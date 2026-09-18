@@ -1,0 +1,39 @@
+{
+  "restaurants": [
+    {
+      "id": 1,
+      "name": "EarlyBirdEats",
+      "type": "EUROPEAN",
+      "openingTickStart": 1,
+      "openingTickEnd": 5,
+      "deliveryDrivers": 1,
+      "event": false,
+      "positiveRatings": 10,
+      "negativeRatings": 0,
+      "recipes": [1],
+      "kitchenStaff": {
+        "EXEC": 0,
+        "SOUS": 0,
+        "TOURNANT":0,
+        "SAUCE": 0,
+        "FISH": 0,
+        "ROAST": 1,
+        "VEGETABLE": 0,
+        "PASTRY": 0
+      },
+      "waitstaff": 1,
+      "tables": [
+        {
+          "id": 1,
+          "type": "COMMON",
+          "size": 2
+        },
+        {
+          "id": 2,
+          "type": "COMMON",
+          "size": 2
+        }
+      ]
+    }
+  ]
+}

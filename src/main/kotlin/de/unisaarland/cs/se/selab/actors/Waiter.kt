@@ -28,6 +28,9 @@ class Waiter {
     /** get how many actions of a given type the waiter performed this tick */
     fun getTickLoad(action: ActionType): Int = tickLoads[action] ?: 0
 
+    /** Returns the waiter's current id or assigns a new one if it does not exist. */
+    fun ensureId(getNextWaiterId: () -> Id): Id = id ?: getNextWaiterId().also { id = it }
+
     /** add to how many actions of the given type this waiter performed this tick */
     fun addToTickLoad(action: ActionType, number: Int) {
         tickLoads[action] = getTickLoad(action) + number

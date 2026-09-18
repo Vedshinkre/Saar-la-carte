@@ -15,8 +15,6 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualDelivery
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualTiebreakLowestIdTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CookChangeNoOrderTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryCumulativeDistanceSystemTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOrderSuccessTestA
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOrderSuccessTestB
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOutboundTripSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventReservationConflictTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ExactStockoutTest
@@ -28,6 +26,10 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RegularGradual
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RegularRetrySucceedsSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SimulationLifecycleSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SingleOrCouple
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.StaffIdResetAcrossEveningsSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.StaffLoadBalancingFallbackSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.StaffLoadConcentrationSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.StaffMultiWaiterExhaustionSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.StatisticsOrderingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SupplierProcurementSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.UnavailableIncidentSupplierProcurementSystemTest
@@ -100,6 +102,10 @@ object SystemTestRegistration {
         testSuite.registerTest(ExampleEmptyTickOneCycleTest())
         testSuite.registerTest(EventReservationConflictTest())
         testSuite.registerTest(WaitstaffExhaustionTest())
+        testSuite.registerTest(StaffLoadConcentrationSystemTest())
+        testSuite.registerTest(StaffMultiWaiterExhaustionSystemTest())
+        testSuite.registerTest(StaffLoadBalancingFallbackSystemTest())
+        testSuite.registerTest(StaffIdResetAcrossEveningsSystemTest())
         testSuite.registerTest(CasualAdHocTableMergingSystemTest())
         testSuite.registerTest(RegularRetrySucceedsSystemTest())
         testSuite.registerTest(RegularGradualCookServingTest())
@@ -169,6 +175,10 @@ object SystemTestRegistration {
         testSuite.registerTest(OneCookTwoOrdersTest())
         testSuite.registerTest(PantryExpirySystemTest())
         testSuite.registerTest(SingleOrCouple()) // temporarily unregistered: cross-check against reference first
+        testSuite.registerTest(StaffLoadConcentrationSystemTest())
+        testSuite.registerTest(StaffMultiWaiterExhaustionSystemTest())
+        testSuite.registerTest(StaffLoadBalancingFallbackSystemTest())
+        testSuite.registerTest(StaffIdResetAcrossEveningsSystemTest())
     }
 
     /**

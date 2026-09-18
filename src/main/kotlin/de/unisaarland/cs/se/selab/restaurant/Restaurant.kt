@@ -31,13 +31,13 @@ class Restaurant(
     init {
         val pantry = Pantry(stock)
         val orderQueue: ArrayDeque<Order> = ArrayDeque()
-        val countertop = Countertop(pantry, orderQueue, staff.cooks)
+        val countertop = Countertop(pantry, orderQueue, staff.cooks, restaurantStats.restaurantType)
         frontOfHouse = FrontOfHouse(tables, staff.waiters, staff.drivers, countertop)
         kitchen = Kitchen(staff.cooks, pantry, orderQueue, restaurantStats.restaurantType)
     }
 
     /**
-     acceptDeliveryOrder returns if the maximum cook ticks of a dish in the order and current tick <= openingEndTick
+    acceptDeliveryOrder returns if the maximum cook ticks of a dish in the order and current tick <= openingEndTick
      */
     fun acceptDeliveryOrder(order: Order, openingEndTick: Tick): Boolean {
         return order.orderedAt == openingEndTick
@@ -64,19 +64,21 @@ class Restaurant(
         val eventGroupsForTonight = eventCustomers.filter { it.isVisitingTonight() }.sortedBy { it.id }
         val comingRegulars = mutableListOf<RegularGroup>()
         val comingEventGroups = mutableListOf<EventGroup>()
-        for (regularGroup in regularGroups) {
-            if (frontOfHouse.reserveTables(regularGroup)) {
-                customerQueue.addLast(regularGroup)
-                comingRegulars.add(regularGroup)
-            }
-        }
+        // tables are reserved for each EVENT group first and only then for the REGULAR groups
         for (eventGroup in eventGroupsForTonight) {
             if (frontOfHouse.reserveTables(eventGroup)) {
-                customerQueue.addLast(eventGroup)
                 comingEventGroups.add(eventGroup)
             }
             eventCustomers.remove(eventGroup)
         }
+        for (regularGroup in regularGroups) {
+            if (frontOfHouse.reserveTables(regularGroup)) {
+                comingRegulars.add(regularGroup)
+            }
+        }
+        // the queue is processed by group type (REGULAR, EVENT, CASUAL), not in reservation order
+        comingRegulars.forEach { addToCustomerQueue(it) }
+        comingEventGroups.forEach { addToCustomerQueue(it) }
         val collectiveOrderHistory = mutableListOf<Order>()
         for (regularGroup in comingRegulars) {
             val orderHistory = regularGroup.orderHistory
@@ -110,18 +112,64 @@ class Restaurant(
     }
 
     /**
-     * Simulates one tick
+     * Simulates one tick. Before the restaurant opens nothing happens and nothing is logged
+     * between Restaurant Start and Restaurant End.
      */
     fun simulateTick() {
-        frontOfHouse.clearActionLoads()
-        processArrivalSeatingOrdering()
-        kitchen.processCooking()
+        val tick = Time.getCurrentTick()
+        if (tick >= restaurantStats.openingTickStart) {
+            simulateOpeningHoursTick(isBeforeClosing = tick <= restaurantStats.openingTickEnd)
+        }
+        refreshAvailableSeats()
+        if (tick == Constants.TICK_PER_EVENING) {
+            endEvening()
+        }
+    }
 
-        frontOfHouse.processServing()
+    /**
+     * Items 153/154: the browsing service must see the seats that are free *right now* — tables
+     * freed again during this tick are handed back — minus the seats already claimed by casual
+     * groups that decided on this restaurant but are not sitting at a table yet. Reservations of
+     * REGULAR and EVENT groups need no such correction: their tables are already RESERVED.
+     */
+    private fun refreshAvailableSeats() {
+        val available = frontOfHouse.getAvailableSeats().toMutableMap()
+        customerQueue.filterIsInstance<CasualGroup>()
+            .filter { !it.wantsDelivery }
+            .forEach { available[it.tableType] = (available[it.tableType] ?: 0) - it.size }
+        restaurantStats.availableSeats.putAll(available)
+    }
+
+    /**
+     * The seven tick steps. After the opening time has ended only delivering, eating and rating
+     * may still run and log, so [isBeforeClosing] switches the other four steps off.
+     */
+    private fun simulateOpeningHoursTick(isBeforeClosing: Boolean) {
+        frontOfHouse.clearActionLoads()
+        if (isBeforeClosing) {
+            processArrivalSeatingOrdering()
+            kitchen.processCooking()
+            frontOfHouse.processServing()
+        }
         frontOfHouse.processDelivering()
         frontOfHouse.processEating()
-        frontOfHouse.processEscorting()
+        if (isBeforeClosing) {
+            frontOfHouse.processEscorting()
+        }
 
+        val isClosingTick = isBeforeClosing && restaurantStats.openingTickEnd == Time.getCurrentTick()
+        if (isClosingTick) {
+            // the closing ratings belong to this tick's rating step, so everybody still inside is
+            // escorted out before it runs rather than afterwards
+            frontOfHouse.startFohClosing()
+        }
+        processRatingStep()
+        if (isClosingTick) {
+            endOfOpeningTime()
+        }
+    }
+
+    private fun processRatingStep() {
         val previousPositiveRatings = restaurantStats.positiveRatings
         val previousNegativeRatings = restaurantStats.negativeRatings
         val (positiveRatings, negativeRatings) = frontOfHouse.processRatings(
@@ -132,12 +180,6 @@ class Restaurant(
         restaurantStats.negativeRatings = negativeRatings
         restaurantStats.simulationPositiveRatings += positiveRatings - previousPositiveRatings
         restaurantStats.simulationNegativeRatings += negativeRatings - previousNegativeRatings
-        if (restaurantStats.openingTickEnd == Time.getCurrentTick()) {
-            endOfOpeningTime()
-        }
-        if (Time.getCurrentTick() == Constants.TICK_PER_EVENING) {
-            endEvening()
-        }
     }
 
     private fun endEvening() {
@@ -145,21 +187,9 @@ class Restaurant(
     }
 
     private fun endOfOpeningTime() { // free tables
-        frontOfHouse.endFohOpeningTime(
-            positiveRatings = restaurantStats.positiveRatings,
-            negativeRatings = restaurantStats.negativeRatings
-        )
+        frontOfHouse.endFohOpeningTime()
         kitchen.resetKitchen()
     }
-
-    /** Group type (REGULAR, EVENT, CASUAL) first, then ascending id. */
-    val arrivalOrder: Comparator<CustomerGroup> = compareBy({
-        when (it) {
-            is RegularGroup -> 0
-            is EventGroup -> 1
-            is CasualGroup -> 2
-        }
-    }, { it.id })
 
     /**
      * Processes arrival, seating and ordering for every customer group currently in the
@@ -197,8 +227,20 @@ class Restaurant(
     fun getNumberOfCustomersDelivered(): Int = frontOfHouse.numberOfCustomersDelivered
 
     /** Call with CustomerGroup.
-     *  Adds customerGroup to customerQueue. */
+     *  Adds customerGroup to customerQueue. Joining the queue starts a new visit, so anything the
+     *  group still carries from an earlier evening - its order, its headcount and its experience -
+     *  is cleared first. */
     fun addToCustomerQueue(customerGroup: CustomerGroup) {
+        customerGroup.startNewVisit()
         customerQueue.add(customerGroup)
     }
+
+    /** Group type (REGULAR, EVENT, CASUAL) first, then ascending id. */
+    val arrivalOrder: Comparator<CustomerGroup> = compareBy({
+        when (it) {
+            is RegularGroup -> 0
+            is EventGroup -> 1
+            is CasualGroup -> 2
+        }
+    }, { it.id })
 }

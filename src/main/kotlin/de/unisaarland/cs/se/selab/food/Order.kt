@@ -24,7 +24,7 @@ class Order(val dishes: List<Dish>) {
     companion object {
         private val nextId = AtomicInteger(1)
 
-        /** Restarts order ids at 1; needed when running several simulations in one JVM. */
+        /** restarts order ids at 1; call once per simulation run so ids do not leak between runs */
         fun resetIds() {
             nextId.set(1)
         }
@@ -56,11 +56,18 @@ class Order(val dishes: List<Dish>) {
     }
 
     /**
-     * resets servingStarted, sets servedAt to the currentTick
+     * Clears the "one-by-one serving is under way" flag, but only once every dish really has been
+     * served. A partially served table has to keep the flag so the next tick carries on serving
+     * instead of falling back into the waiting branch (items 109, 110).
+     *
+     * [lastDishServedAt] is deliberately not touched here: it is owned by the eating step, which
+     * uses "still null" to detect the first tick an order is complete
+     * (see [de.unisaarland.cs.se.selab.restaurant.helpers.EatingProcessor]).
      */
     fun markFullyServed() {
-        servingStarted = false
-        lastDishServedAt = Time.tick
+        if (areAllDishesServed()) {
+            servingStarted = false
+        }
     }
 
     /** get dishes in the order that can be served this tick, ordered by basic dishes first then ascending recipe id */

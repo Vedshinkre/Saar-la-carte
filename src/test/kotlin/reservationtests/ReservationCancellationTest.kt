@@ -34,7 +34,12 @@ class ReservationCancellationTest {
 
     private fun frontOfHouse(tables: List<Table>): FrontOfHouse {
         val stock = Stock(emptyList<Ingredient>())
-        val countertop = Countertop(pantry = Pantry(stock), orderQueue = ArrayDeque(), cooks = emptyList())
+        val countertop = Countertop(
+            pantry = Pantry(stock),
+            orderQueue = ArrayDeque(),
+            cooks = emptyList(),
+            restaurantType = RestaurantType.EUROPEAN
+        )
         return FrontOfHouse(tables = tables, waiters = emptyList(), drivers = emptyList(), countertop = countertop)
     }
 
@@ -66,7 +71,7 @@ class ReservationCancellationTest {
         val foh = frontOfHouse(listOf(table))
         foh.reserveTables(regularGroup(id = 1, size = 4))
 
-        foh.endFohOpeningTime(positiveRatings = 0, negativeRatings = 0)
+        foh.endFohOpeningTime()
 
         assertEquals(TableStatus.FREE, table.status)
     }
@@ -76,7 +81,7 @@ class ReservationCancellationTest {
         val table = Table(id = 1, size = 4, tableType = TableType.COMMON)
         val foh = frontOfHouse(listOf(table))
         foh.reserveTables(regularGroup(id = 1, size = 4))
-        foh.endFohOpeningTime(positiveRatings = 0, negativeRatings = 0)
+        foh.endFohOpeningTime()
 
         val reservedAgain = foh.reserveTables(regularGroup(id = 2, size = 4))
 
@@ -91,7 +96,7 @@ class ReservationCancellationTest {
         val foh = frontOfHouse(listOf(tableOne, tableTwo))
         foh.reserveTables(eventGroup(id = 1, size = 4))
 
-        foh.endFohOpeningTime(positiveRatings = 0, negativeRatings = 0)
+        foh.endFohOpeningTime()
 
         assertEquals(TableStatus.FREE, tableOne.status)
         assertEquals(TableStatus.FREE, tableTwo.status)
@@ -105,7 +110,7 @@ class ReservationCancellationTest {
         foh.reserveTables(regularGroup(id = 1, size = 4))
         foh.reserveTables(eventGroup(id = 2, size = 4))
 
-        foh.endFohOpeningTime(positiveRatings = 0, negativeRatings = 0)
+        foh.endFohOpeningTime()
 
         assertEquals(TableStatus.FREE, regularsTable.status)
         assertEquals(TableStatus.FREE, eventsTable.status)

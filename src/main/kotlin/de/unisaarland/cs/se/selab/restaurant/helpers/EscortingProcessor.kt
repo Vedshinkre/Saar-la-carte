@@ -82,6 +82,9 @@ class EscortingProcessor(
             val customersBefore = group.customersRemainingInRestaurant
             waiter.escortEventGroups(group)
             val customersEscorted = customersBefore - group.customersRemainingInRestaurant
+            if (customersEscorted <= 0) {
+                return@forEach
+            }
             logFohEscorting(
                 waiterId,
                 customersEscorted,

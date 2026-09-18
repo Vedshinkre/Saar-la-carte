@@ -7,6 +7,7 @@ import de.unisaarland.cs.se.selab.customer.RegularGroup
 import de.unisaarland.cs.se.selab.enums.ActionType
 import de.unisaarland.cs.se.selab.enums.ExperienceType
 import de.unisaarland.cs.se.selab.enums.LogLevel
+import de.unisaarland.cs.se.selab.enums.RestaurantType
 import de.unisaarland.cs.se.selab.enums.TableStatus
 import de.unisaarland.cs.se.selab.enums.TableType
 import de.unisaarland.cs.se.selab.food.Ingredient
@@ -48,7 +49,12 @@ class SeatingOutcomeTest {
 
     private fun countertop(): Countertop {
         val stock = Stock(emptyList<Ingredient>())
-        return Countertop(pantry = Pantry(stock), orderQueue = ArrayDeque(), cooks = emptyList())
+        return Countertop(
+            pantry = Pantry(stock),
+            orderQueue = ArrayDeque(),
+            cooks = emptyList(),
+            restaurantType = RestaurantType.EUROPEAN
+        )
     }
 
     private fun processor(

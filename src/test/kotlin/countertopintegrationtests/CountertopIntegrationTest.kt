@@ -3,6 +3,7 @@ package countertopintegrationtests
 import de.unisaarland.cs.se.selab.actors.Cook
 import de.unisaarland.cs.se.selab.enums.CookType
 import de.unisaarland.cs.se.selab.enums.MeasurementUnit
+import de.unisaarland.cs.se.selab.enums.RestaurantType
 import de.unisaarland.cs.se.selab.food.Dish
 import de.unisaarland.cs.se.selab.food.Ingredient
 import de.unisaarland.cs.se.selab.food.IngredientPackage
@@ -60,7 +61,8 @@ class CountertopIntegrationTest {
         return Countertop(
             pantry = pantry,
             orderQueue = ArrayDeque(),
-            cooks = cooks
+            cooks = cooks,
+            restaurantType = RestaurantType.EUROPEAN
         )
     }
 

@@ -204,21 +204,27 @@ class Restaurant(
      * Processes arrival, seating and ordering for every customer group currently in the
      * queue, removing groups that are done per FrontOfHouse.processArrivalSeatingOrdering's
      * keep-in-queue formula, then logs and resets the tick's seating/ordering status.
+     *
+     * No new customers are admitted in the last 3 ticks of the opening time (spec adjustment),
+     * including groups that already arrived on an earlier tick but could not be seated -
+     * the status logs still fire for that tick regardless.
      */
     private fun processArrivalSeatingOrdering() {
-        val processedGroups: MutableList<CustomerGroup> = mutableListOf()
-        for (customerGroup in customerQueue.sortedWith(arrivalOrder)) {
-            if (Time.tick < customerGroup.visitingAt && !customerGroup.isVisitingThisTick()) { continue }
+        if (restaurantStats.isOpen()) {
+            val processedGroups: MutableList<CustomerGroup> = mutableListOf()
+            for (customerGroup in customerQueue.sortedWith(arrivalOrder)) {
+                if (Time.tick < customerGroup.visitingAt && !customerGroup.isVisitingThisTick()) { continue }
 
-            if (customerGroup.isVisitingThisTick()) {
-                FohReceptionLogger.logRestaurantArrival(customerGroup.id)
-            }
+                if (customerGroup.isVisitingThisTick()) {
+                    FohReceptionLogger.logRestaurantArrival(customerGroup.id)
+                }
 
-            if (frontOfHouse.processArrival(customerGroup, restaurantStats.menu)) {
-                processedGroups.add(customerGroup)
+                if (frontOfHouse.processArrival(customerGroup, restaurantStats.menu)) {
+                    processedGroups.add(customerGroup)
+                }
             }
+            customerQueue.removeAll(processedGroups)
         }
-        customerQueue.removeAll(processedGroups)
         frontOfHouse.logAndResetSeatingOrderingTickStatus()
     }
 

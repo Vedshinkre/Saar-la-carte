@@ -61,7 +61,12 @@ class SeatingIntegrationTest {
     private fun frontOfHouse(tables: List<Table>, waiters: List<Waiter>): FrontOfHouse {
         val stock = Stock(listOf(flour))
         val pantry = Pantry(inventory = mutableListOf(IngredientPackage(flour)), supplier = Supplier(stock))
-        val countertop = Countertop(pantry = pantry, orderQueue = ArrayDeque(), cooks = listOf(Cook(CookType.TOURNANT)))
+        val countertop = Countertop(
+            pantry = pantry,
+            orderQueue = ArrayDeque(),
+            cooks = listOf(Cook(CookType.TOURNANT)),
+            restaurantType = RestaurantType.EUROPEAN
+        )
         return FrontOfHouse(tables = tables, waiters = waiters, drivers = emptyList(), countertop = countertop)
     }
 

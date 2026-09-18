@@ -11,6 +11,7 @@ import de.unisaarland.cs.se.selab.customer.RegularGroup
 import de.unisaarland.cs.se.selab.enums.ActionType
 import de.unisaarland.cs.se.selab.enums.DishStatus
 import de.unisaarland.cs.se.selab.enums.DriverState
+import de.unisaarland.cs.se.selab.enums.ExperienceType
 import de.unisaarland.cs.se.selab.enums.TableStatus
 import de.unisaarland.cs.se.selab.enums.TableType
 import de.unisaarland.cs.se.selab.food.Recipe
@@ -253,28 +254,22 @@ class FrontOfHouse(
      * @param negativeRatings current number of negative ratings
      * @return updated positive and negative rating counts
      */
-    fun endFohOpeningTime(
-        positiveRatings: Int,
-        negativeRatings: Int
-    ): Pair<Int, Int> {
-        var positive = positiveRatings
-        var negative = negativeRatings
-        val inHouseGroups = getInHouseGroups()
-        val allGroups = inHouseGroups + eventGroups
-        escorting.escortAllAtClosing(allGroups)
-
-        allGroups.forEach { group ->
-            val result = rating.rate(
-                group,
-                positive,
-                negative,
-                true
-            )
-
-            positive = result.first
-            negative = result.second
+    fun startFohClosing() {
+        val closingGroups = getInHouseGroups() + eventGroups
+        escorting.escortAllAtClosing(closingGroups)
+        closingGroups.forEach { group ->
+            val order = group.currentOrder
+            if (order == null || !order.areAllDishesEaten()) {
+                group.experience = ExperienceType.NEGATIVE
+            }
         }
+    }
 
+    /**
+     * Ends the opening time: frees all tables, discards this evening's reservations and clears
+     * the waiter assignments. Call after the rating step, i.e. after [startFohClosing].
+     */
+    fun endFohOpeningTime() {
         val customerIds = customerToTable.keys.map { it.id }
 
         customerIds.forEach {
@@ -283,7 +278,6 @@ class FrontOfHouse(
 
         inHouseGroupsToWaiter.clear()
         resetWaiters()
-        return Pair(positive, negative)
     }
 
     private fun resetWaiters() {
@@ -295,24 +289,25 @@ class FrontOfHouse(
         waiterIdCounter = 1
     }
 
-    /** lets drivers that are RETURNING continue, otherwise abort their order and make them IDLE */
+    /** Item 132: at the end of the evening a delivery on its way to a customer is aborted, while a
+     *  driver on the way back to the restaurant carries on so their Delivery Returned still fires. */
     fun resetDrivers() {
         for (driver in drivers) {
-            if (driver.state != DriverState.IDLE) {
-                val currentOrder = requireNotNull(driver.currentOrder)
-                currentOrder.dishes.forEach {
+            if (driver.state == DriverState.RETURNING) {
+                continue
+            }
+            driver.currentOrder?.dishes?.forEach {
+                if (it.status != DishStatus.EATEN) {
                     it.status = DishStatus.ABORTED
-                    driver.state = DriverState.IDLE
-                    driver.currentOrder = null
-                    driver.targetGroup = null
-                    driver.totalTripTicks = 0
-                    driver.ticksToDest = 0
                 }
             }
+            driver.state = DriverState.IDLE
             driver.currentOrder = null
             driver.targetGroup = null
             driver.totalTripTicks = 0
             driver.ticksToDest = 0
+            driver.tripDistance = 0
+            driver.distanceDriven = 0
         }
     }
 
@@ -323,11 +318,10 @@ class FrontOfHouse(
             deliveryGroups.remove(group)
         } else if (turnedAwayGroups.contains(group)) {
             turnedAwayGroups.remove(group)
-        } else if (eventGroups.contains(group)) {
+        } else if (group is EventGroup) {
             eventGroups.remove(group)
         }
     }
-
     private fun removeInHouseGroup(group: CustomerGroup) {
         inHouseGroupsToWaiter.remove(group)
     }

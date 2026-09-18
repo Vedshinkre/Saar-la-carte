@@ -139,6 +139,7 @@ object SystemTestRegistration {
         testSuite.registerTest(ExactStockoutTest())
         testSuite.registerTest(OneCookTwoOrdersTest())
         testSuite.registerTest(PantryExpirySystemTest())
+        testSuite.registerTest(CookChangeNoOrderTest())
         testSuite.registerTest(SingleOrCouple())
         // temporarily unregistered: cross-check against reference first
     }

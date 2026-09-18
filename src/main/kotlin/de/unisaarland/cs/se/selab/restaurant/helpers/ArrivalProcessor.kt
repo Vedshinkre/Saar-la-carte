@@ -68,6 +68,7 @@ class ArrivalProcessor(
             }
             inHouseGroupsToWaiter.remove(customerGroup)
             turnedAwayGroups.addLast(customerGroup)
+            FohReceptionLogger.logFohNoOrdering(customerGroup.id, customerGroup.size)
         }
         orderSuccess(customerGroup)
 
@@ -200,8 +201,8 @@ class ArrivalProcessor(
                 currentOrder.dishNameToAmount(),
                 null
             )
-            customersOrdered.add(customerGroup)
         }
+        customersOrdered.add(customerGroup)
         val customersWhoLeftAfterOrdering = customerGroup.getCustomersWhoLeft()
         if (customersWhoLeftAfterOrdering > 0) {
             FohReceptionLogger.logFohNoOrdering(

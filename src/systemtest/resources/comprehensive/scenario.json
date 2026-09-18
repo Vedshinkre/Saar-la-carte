@@ -1,0 +1,70 @@
+{
+  "customerGroups": [
+    {
+      "id": 1,
+      "type": "EVENT",
+      "size": 4,
+      "tableType": "COMMON",
+      "restaurantTypes": ["EUROPEAN"],
+      "visitingTick": 3,
+      "eventEvening": 4,
+      "favoriteDishes": {
+        "EUROPEAN": "Tomato Soup"
+      },
+      "foodPreferences": []
+    },
+    {
+      "id": 2,
+      "type": "CASUAL",
+      "size": 2,
+      "tableType": "COMMON",
+      "restaurantTypes": ["EUROPEAN"],
+      "visitingTick": 2,
+      "visitingEvenings": [1],
+      "ratingLikelihood": "SOME",
+      "foodPreferences": []
+    },
+    {
+      "id": 3,
+      "type": "REGULAR",
+      "size": 2,
+      "tableType": "COMMON",
+      "visitingTick": 4,
+      "visitingStart": 1,
+      "visitingPeriod": 1,
+      "restaurant": 1,
+      "foodPreferences": []
+    }
+  ],
+  "incidents": [
+    {
+      "id": 1,
+      "type": "STAFF",
+      "evening": 1,
+      "restaurant": 1,
+      "staffType": "WAITSTAFF",
+      "number": 1
+    },
+    {
+      "id": 2,
+      "type": "RECIPE",
+      "evening": 1,
+      "ingredient": "Chicken",
+      "adaptation": 10
+    },
+    {
+      "id": 3,
+      "type": "PACKAGING",
+      "evening": 1,
+      "ingredient": "Tomato",
+      "packagingVolume": 200
+    },
+    {
+      "id": 4,
+      "type": "UNAVAILABLE",
+      "evening": 2,
+      "ingredient": "Chicken",
+      "duration": 2
+    }
+  ]
+}

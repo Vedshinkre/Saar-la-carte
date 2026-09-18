@@ -128,17 +128,21 @@ class FrontOfHouse(
         getServingPriority = { group -> getServingPriority(group) },
         getAssignedTableId = { group -> getAssignedTableId(group) },
         recruitWaitersForEventGroup = { actionType, eventGroup -> recruitWaitersForEventGroup(actionType, eventGroup) },
+        getNextWaiterId = ::getNextWaiterId,
     )
 
-    private val delivering = DeliveryProcessor(drivers = drivers)
+    private val delivering = DeliveryProcessor(
+        drivers = drivers,
+        deliveryGroups = deliveryGroups,
+    )
 
     private val eating = EatingProcessor(
         deliveryGroups = deliveryGroups,
         getInHouseGroups = { getInHouseGroups() },
         getServingPriority = { group -> getServingPriority(group) },
         getAssignedTableId = { group -> getAssignedTableId(group) },
-        addCustomersServed = { count -> numberOfCustomersServed += count },
         addCustomersDelivered = { count -> numberOfCustomersDelivered += count },
+
     )
 
     private val escorting = EscortingProcessor(
@@ -147,7 +151,8 @@ class FrontOfHouse(
         inHouseGroupsToWaiter = inHouseGroupsToWaiter,
         getInHouseGroups = { getInHouseGroups() },
         getServingPriority = { group -> getServingPriority(group) },
-        ::recruitWaitersForEventGroup
+        ::recruitWaitersForEventGroup,
+        ::getNextWaiterId
     )
 
     private val rating = RatingProcessor(

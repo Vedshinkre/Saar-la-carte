@@ -14,6 +14,10 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualAdHocTab
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualDeliveryEarlyDecisionTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualTiebreakLowestIdTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CookChangeNoOrderTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryCumulativeDistanceSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOrderSuccessTestA
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOrderSuccessTestB
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOutboundTripSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventReservationConflictTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ExactStockoutTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ExhaustiveSimpleScenarioTest
@@ -102,6 +106,8 @@ object SystemTestRegistration {
         testSuite.registerTest(RegularBeforeCasualServingTest())
         testSuite.registerTest(CasualTiebreakLowestIdTest())
         testSuite.registerTest(CasualDeliveryEarlyDecisionTest())
+        testSuite.registerTest(DeliveryOutboundTripSystemTest())
+        testSuite.registerTest(DeliveryCumulativeDistanceSystemTest())
         testSuite.registerTest(SingleOrCouple())
         testSuite.registerTest(AppendixScenarioTwoPreparationSystemTest())
         testSuite.registerTest(AppendixScenarioTwoTickStartSystemTest())

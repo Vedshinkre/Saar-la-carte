@@ -97,7 +97,7 @@ class SeatingOutcomeTest {
     }
 
     @Test
-    fun `no free waiter after the retry tick turns the REGULAR group away and counts a failed attempt`() {
+    fun `no free waiter after the retry tick turns the REGULAR group away and keeps their reservation`() {
         val table = Table(id = 1, size = 4, tableType = TableType.COMMON)
         table.status = TableStatus.RESERVED
         val group = regularGroup(id = 1, size = 4, visitingAt = 1)
@@ -117,7 +117,8 @@ class SeatingOutcomeTest {
         assertEquals(ExperienceType.NEGATIVE, group.experience)
         assertTrue(turnedAwayGroups.contains(group))
         assertEquals(1, group.failedAttempts)
-        assertFalse(customerToTable.containsKey(group))
+        // The table stays reserved for this group for the whole evening (spec: even after they left).
+        assertTrue(customerToTable.containsKey(group))
     }
 
     @Test

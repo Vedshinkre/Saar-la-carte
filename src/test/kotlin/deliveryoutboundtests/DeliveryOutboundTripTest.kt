@@ -17,20 +17,18 @@ import de.unisaarland.cs.se.selab.food.Recipe
 import de.unisaarland.cs.se.selab.loggers.Logger
 import de.unisaarland.cs.se.selab.restaurant.helpers.DeliveryProcessor
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.PrintWriter
 import java.io.StringWriter
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
-import kotlin.test.assertNotNull
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
  * Unit tests for the outbound half of F29: [DeliveryProcessor.processDelivering] preparing a
- * delivery (WAITING -> DELIVERING) and [Driver.processTick] driving to and handing over at the
- * customer. The return trip and end-of-evening handling are out of scope (see the F29 split).
+ * delivery (WAITING -> DELIVERING), driving to the customer and handing over there. The return
+ * trip and end-of-evening handling are out of scope (see the F29 split).
  */
 class DeliveryOutboundTripTest {
 
@@ -64,24 +62,35 @@ class DeliveryOutboundTripTest {
         return Order(List(2) { Dish(recipe).apply { status = DishStatus.SERVED } })
     }
 
-    private fun waitingDriver(group: CasualGroup, order: Order = servedOrder(), id: Int = 1): Driver =
-        Driver().apply {
+    /** One delivery phase of a tick; the group's order is registered like FrontOfHouse would. */
+    private fun tick(driver: Driver, group: CasualGroup) {
+        Time.tick += 1
+        DeliveryProcessor(listOf(driver), listOf(group)).processDelivering()
+    }
+
+    private fun waitingDriver(group: CasualGroup, order: Order = servedOrder(), id: Int = 1): Driver {
+        group.currentOrder = order
+        return Driver().apply {
             this.id = id
             targetGroup = group
             currentOrder = order
             state = DriverState.WAITING
         }
+    }
 
     /** Puts a driver mid-trip so driving can be tested without going through preparation. */
-    private fun drivingDriver(group: CasualGroup, order: Order, oneWayTicks: Int): Driver =
-        Driver().apply {
+    private fun drivingDriver(group: CasualGroup, order: Order, oneWayTicks: Int): Driver {
+        group.currentOrder = order
+        return Driver().apply {
             id = 1
             targetGroup = group
             currentOrder = order
             state = DriverState.DELIVERING
             ticksToDest = oneWayTicks
             totalTripTicks = oneWayTicks * 2
+            tripDistance = group.deliveryDistance
         }
+    }
 
     // ---- Preparation ----
 
@@ -89,22 +98,24 @@ class DeliveryOutboundTripTest {
     fun `preparing a delivery takes ceil of distance over 5 ticks and starts the driver`() {
         val expectedTicksByDistance = mapOf(1 to 1, 5 to 1, 6 to 2, 13 to 3)
         for ((distance, expectedTicks) in expectedTicksByDistance) {
-            val driver = waitingDriver(deliveryGroup(distance = distance))
+            val group = deliveryGroup(distance = distance)
+            val driver = waitingDriver(group)
 
-            DeliveryProcessor(listOf(driver)).processDelivering()
+            tick(driver, group)
 
             assertEquals(expectedTicks * 2, driver.totalTripTicks, "round trip for $distance km")
-            // Not asserting DELIVERING: see the disabled same-tick-driving test below.
-            assertTrue(driver.state != DriverState.WAITING, "driver must have left the WAITING state")
+            assertEquals(expectedTicks, driver.ticksToDest, "one way for $distance km, no drive yet")
+            assertEquals(DriverState.DELIVERING, driver.state)
         }
     }
 
     @Test
     fun `preparation logs the driver, order, group and one-way tick count`() {
         val order = servedOrder()
-        val driver = waitingDriver(deliveryGroup(id = 7, distance = 13), order, id = 3)
+        val group = deliveryGroup(id = 7, distance = 13)
+        val driver = waitingDriver(group, order, id = 3)
 
-        DeliveryProcessor(listOf(driver)).processDelivering()
+        tick(driver, group)
 
         val expected = "Delivery Preparation (R 1): Driver 3 prepares driving order ${order.id} to group 7, " +
             "which will take 3 ticks."
@@ -113,31 +124,21 @@ class DeliveryOutboundTripTest {
 
     @Test
     fun `an idle driver is not started`() {
+        val group = deliveryGroup()
         val driver = Driver().apply { id = 1 }
 
-        DeliveryProcessor(listOf(driver)).processDelivering()
+        tick(driver, group)
 
         assertEquals(DriverState.IDLE, driver.state)
         assertTrue(logLines().isEmpty())
     }
 
-    /**
-     * DISABLED - fails against existing code not authored by Vlad Marciu.
-     *
-     * Spec (page 36): drivers "prepare driving, which will start in the next tick", and forum
-     * thread 288 (delivery assigned in tick 4 -> first drive in tick 5). But
-     * DeliveryProcessor.processDelivering (Ansh Tiwatne) builds `activeDrivers` AFTER
-     * `prepareDelivery` has already flipped the driver to DELIVERING, so the very same call also runs
-     * `processTick()`: the driver drives (logging Delivery Driving and consuming a tick) in the
-     * preparation tick itself. Fix: compute `activeDrivers` before the preparation loop, so
-     * freshly prepared drivers only start moving on the next tick.
-     */
-    @Disabled("DeliveryProcessor drives a freshly prepared driver in the same tick (Ansh's code) - see comment")
     @Test
     fun `a driver prepared this tick only starts driving next tick`() {
-        val driver = waitingDriver(deliveryGroup(distance = 13))
+        val group = deliveryGroup(distance = 13)
+        val driver = waitingDriver(group)
 
-        DeliveryProcessor(listOf(driver)).processDelivering()
+        tick(driver, group)
 
         assertEquals(3, driver.ticksToDest, "no tick of driving consumed yet")
         assertFalse(logLines().any { it.contains("Delivery Driving") })
@@ -147,31 +148,22 @@ class DeliveryOutboundTripTest {
 
     @Test
     fun `each driving tick logs the remaining ticks counting down to zero`() {
-        val driver = drivingDriver(deliveryGroup(distance = 13), servedOrder(), oneWayTicks = 3)
+        val group = deliveryGroup(distance = 13)
+        val driver = drivingDriver(group, servedOrder(), oneWayTicks = 3)
 
-        repeat(3) { driver.processTick() }
+        repeat(3) { tick(driver, group) }
 
         val remaining = logLines().filter { it.contains("Delivery Driving") }
             .map { it.substringAfter("needs ").substringBefore(" more") }
         assertEquals(listOf("2", "1", "0"), remaining)
     }
 
-    /**
-     * DISABLED - fails against existing code not authored by Vlad Marciu.
-     *
-     * Forum thread 126 (tutors moha00013, Ciprian, Daniel.krivcov): the Delivery Driving log
-     * reports the CUMULATIVE distance driven, at 5 km per tick and capped at the total, e.g.
-     * 13 km -> 5, 10, 13 and 9 km -> 5, 9 (no rounding). Driver.driveToCustomer (Ansh Tiwatne)
-     * always passes the constant `Constants.DRIVER_SPEED.toInt()` (5) as the distance, so the log
-     * reads 5, 5, 5. Fix: pass `minOf(elapsedTicks * DRIVER_SPEED, group.deliveryDistance)` where
-     * `elapsedTicks = totalTripTicks / 2 - ticksToDest` (after the decrement).
-     */
-    @Disabled("Driver.driveToCustomer logs a constant 5 km instead of cumulative distance (Ansh's code)")
     @Test
     fun `the driving log reports cumulative distance capped at the total`() {
-        val driver = drivingDriver(deliveryGroup(distance = 13), servedOrder(), oneWayTicks = 3)
+        val group = deliveryGroup(distance = 13)
+        val driver = drivingDriver(group, servedOrder(), oneWayTicks = 3)
 
-        repeat(3) { driver.processTick() }
+        repeat(3) { tick(driver, group) }
 
         val distances = logLines().filter { it.contains("Delivery Driving") }
             .map { it.substringAfter("drove ").substringBefore(" km") }
@@ -179,11 +171,23 @@ class DeliveryOutboundTripTest {
     }
 
     @Test
-    fun `a one tick trip arrives immediately after a single drive`() {
-        val order = servedOrder()
-        val driver = drivingDriver(deliveryGroup(distance = 3), order, oneWayTicks = 1)
+    fun `a nine kilometre trip logs five then nine kilometres`() {
+        val group = deliveryGroup(distance = 9)
+        val driver = drivingDriver(group, servedOrder(), oneWayTicks = 2)
 
-        driver.processTick()
+        repeat(2) { tick(driver, group) }
+
+        val distances = logLines().filter { it.contains("Delivery Driving") }
+            .map { it.substringAfter("drove ").substringBefore(" km") }
+        assertEquals(listOf("5", "9"), distances)
+    }
+
+    @Test
+    fun `a one tick trip arrives immediately after a single drive`() {
+        val group = deliveryGroup(distance = 3)
+        val driver = drivingDriver(group, servedOrder(), oneWayTicks = 1)
+
+        tick(driver, group)
 
         assertTrue(logLines().any { it.contains("Delivery Arrival (R 1): Driver 1 arrived at group 1") })
         assertEquals(DriverState.RETURNING, driver.state)
@@ -191,9 +195,10 @@ class DeliveryOutboundTripTest {
 
     @Test
     fun `the driver does not arrive before the last driving tick`() {
-        val driver = drivingDriver(deliveryGroup(distance = 13), servedOrder(), oneWayTicks = 3)
+        val group = deliveryGroup(distance = 13)
+        val driver = drivingDriver(group, servedOrder(), oneWayTicks = 3)
 
-        repeat(2) { driver.processTick() }
+        repeat(2) { tick(driver, group) }
 
         assertFalse(logLines().any { it.contains("Delivery Arrival") })
         assertEquals(DriverState.DELIVERING, driver.state)
@@ -206,9 +211,9 @@ class DeliveryOutboundTripTest {
         val order = servedOrder()
         val group = deliveryGroup(visitingAt = 10)
         val driver = drivingDriver(group, order, oneWayTicks = 1)
-        Time.tick = 9
+        Time.tick = 8 // tick() advances to 9
 
-        driver.processTick()
+        tick(driver, group)
 
         val finished = "Delivery Finished (R 1): Driver 1 gave delivery of order ${order.id}"
         assertTrue(logLines().any { it.contains(finished) })
@@ -226,9 +231,9 @@ class DeliveryOutboundTripTest {
         for ((arrivalTick, expected) in expectations) {
             val group = deliveryGroup(visitingAt = 10)
             val driver = drivingDriver(group, servedOrder(), oneWayTicks = 1)
-            Time.tick = arrivalTick
+            Time.tick = arrivalTick - 1
 
-            driver.processTick()
+            tick(driver, group)
 
             assertEquals(expected, group.experience, "arriving at tick $arrivalTick")
         }
@@ -237,9 +242,10 @@ class DeliveryOutboundTripTest {
     @Test
     fun `arriving with an already aborted order logs failed and records no delivery`() {
         val order = servedOrder().apply { dishes.first().status = DishStatus.ABORTED }
-        val driver = drivingDriver(deliveryGroup(), order, oneWayTicks = 1)
+        val group = deliveryGroup()
+        val driver = drivingDriver(group, order, oneWayTicks = 1)
 
-        driver.processTick()
+        tick(driver, group)
 
         val failed = "Delivery Failed (R 1): Driver 1 failed to deliver order ${order.id}"
         assertTrue(logLines().any { it.contains(failed) })
@@ -249,43 +255,45 @@ class DeliveryOutboundTripTest {
 
     // ---- Customer gives up waiting ----
 
-    /**
-     * DISABLED - fails against existing code not authored by Vlad Marciu.
-     *
-     * Forum thread 126 (tutor moha00013): when the group gives up (3 ticks after the expected
-     * arrival) "the driver continues driving and logs their progress normally. Upon arrival ... the
-     * delivery fails, prompting a Delivery Failed log. Only after this failed attempt does the
-     * driver begin the return journey ... the driver is not stopping midway and going back."
-     * Driver.driveToCustomer (Ansh Tiwatne) instead aborts, logs Delivery Given Up and calls
-     * startReturnTrip() immediately, turning the driver around mid-trip and never logging the failed
-     * arrival. Fix: on give-up only abort the order, set the experience and log Given Up once, then
-     * keep driving; the normal arrival path already logs Delivery Failed for aborted orders.
-     */
-    @Disabled("Driver turns around as soon as the customer gives up instead of failing on arrival (Ansh's code)")
     @Test
     fun `a driver keeps driving after the customer gave up and fails on arrival`() {
         val order = servedOrder()
-        val group = deliveryGroup(visitingAt = 5)
+        val group = deliveryGroup(distance = 13, visitingAt = 5)
         val driver = drivingDriver(group, order, oneWayTicks = 3)
-        Time.tick = 9 // more than CUSTOMER_DELIVERY_WAIT_TICKS after visitingAt
+        Time.tick = 8 // tick() advances to 9, well past the customer's patience
 
-        driver.processTick()
+        tick(driver, group)
 
         assertEquals(DriverState.DELIVERING, driver.state, "still on the way to the customer")
         assertTrue(logLines().any { it.contains("Delivery Given Up (R 1): Group 1 gave up on waiting") })
-        assertNotNull(driver.currentOrder)
+
+        repeat(2) { tick(driver, group) }
+
+        assertTrue(logLines().any { it.contains("Delivery Failed (R 1): Driver 1 failed to deliver") })
+        assertEquals(DriverState.RETURNING, driver.state)
     }
 
     @Test
     fun `a customer who gave up gets a negative experience and their order is aborted`() {
         val order = servedOrder()
-        val group = deliveryGroup(visitingAt = 5)
+        val group = deliveryGroup(distance = 13, visitingAt = 5)
         val driver = drivingDriver(group, order, oneWayTicks = 3)
-        Time.tick = 9
+        Time.tick = 8
 
-        driver.processTick()
+        tick(driver, group)
 
         assertEquals(ExperienceType.NEGATIVE, group.experience)
         assertTrue(order.dishes.all { it.status == DishStatus.ABORTED })
+    }
+
+    @Test
+    fun `giving up is logged only once`() {
+        val group = deliveryGroup(distance = 13, visitingAt = 5)
+        val driver = drivingDriver(group, servedOrder(), oneWayTicks = 3)
+        Time.tick = 8
+
+        repeat(3) { tick(driver, group) }
+
+        assertEquals(1, logLines().count { it.contains("Delivery Given Up") })
     }
 }

@@ -71,7 +71,8 @@ class ServingOutcomeTest {
         waiterFor = { waiterFor[it] },
         getServingPriority = ::servingPriority,
         getAssignedTableId = { tableFor[it] },
-        recruitWaitersForEventGroup = { _, _ -> emptyList() }
+        recruitWaitersForEventGroup = { _, _ -> emptyList() },
+        getNextWaiterId = { 0 }
     )
 
     private fun recipe(id: Int, name: String, basicDishFor: RestaurantType? = null): Recipe = Recipe(

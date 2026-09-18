@@ -29,14 +29,7 @@ class Countertop(
             var available = true
             val ingredients = recipe.ingredients
             ingredients.forEach { (ingredient: Ingredient, amount: Int) ->
-                val ingredientPackages = pantry.getPackagesForIngredient(ingredient)
-                var totalAmount = 0
-                ingredientPackages.forEach {
-                    if (!it.hasExpired()) {
-                        totalAmount += it.currentAmount
-                    }
-                }
-                if (totalAmount < amount) {
+                if (availableAmount(ingredient) < amount) {
                     available = false
                 }
             }
@@ -48,6 +41,20 @@ class Countertop(
             }
         }
         return availableRecipes
+    }
+
+    /**
+     * Sums the non-expired stock currently in the pantry for a single ingredient.
+     */
+    private fun availableAmount(ingredient: Ingredient): Int {
+        val ingredientPackages = pantry.getPackagesForIngredient(ingredient)
+        var totalAmount = 0
+        ingredientPackages.forEach {
+            if (!it.hasExpired()) {
+                totalAmount += it.currentAmount
+            }
+        }
+        return totalAmount
     }
 
     /**

@@ -32,7 +32,9 @@ class Countertop(
                 val ingredientPackages = pantry.getPackagesForIngredient(ingredient)
                 var totalAmount = 0
                 ingredientPackages.forEach {
-                    totalAmount += it.currentAmount
+                    if (!it.hasExpired()) {
+                        totalAmount += it.currentAmount
+                    }
                 }
                 if (totalAmount < amount) {
                     available = false

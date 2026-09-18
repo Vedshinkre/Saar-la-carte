@@ -37,7 +37,7 @@ class Restaurant(
     }
 
     /**
-    acceptDeliveryOrder returns if the maximum cook ticks of a dish in the order and current tick <= openingEndTick
+     acceptDeliveryOrder returns if the maximum cook ticks of a dish in the order and current tick <= openingEndTick
      */
     fun acceptDeliveryOrder(order: Order, openingEndTick: Tick): Boolean {
         return order.orderedAt == openingEndTick

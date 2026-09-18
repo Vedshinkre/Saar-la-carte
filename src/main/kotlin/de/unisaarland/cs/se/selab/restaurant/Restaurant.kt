@@ -152,6 +152,15 @@ class Restaurant(
         kitchen.resetKitchen()
     }
 
+    /** Group type (REGULAR, EVENT, CASUAL) first, then ascending id. */
+    val arrivalOrder: Comparator<CustomerGroup> = compareBy({
+        when (it) {
+            is RegularGroup -> 0
+            is EventGroup -> 1
+            is CasualGroup -> 2
+        }
+    }, { it.id })
+
     /**
      * Processes arrival, seating and ordering for every customer group currently in the
      * queue, removing groups that are done per FrontOfHouse.processArrivalSeatingOrdering's
@@ -192,13 +201,4 @@ class Restaurant(
     fun addToCustomerQueue(customerGroup: CustomerGroup) {
         customerQueue.add(customerGroup)
     }
-
-    /** Group type (REGULAR, EVENT, CASUAL) first, then ascending id. */
-    val arrivalOrder: Comparator<CustomerGroup> = compareBy({
-        when (it) {
-            is RegularGroup -> 0
-            is EventGroup -> 1
-            is CasualGroup -> 2
-        }
-    }, { it.id })
 }

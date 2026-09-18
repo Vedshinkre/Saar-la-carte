@@ -19,7 +19,6 @@ import de.unisaarland.cs.se.selab.loggers.Logger
 import de.unisaarland.cs.se.selab.restaurant.helpers.DeliveryProcessor
 import de.unisaarland.cs.se.selab.restaurant.helpers.ServingProcessor
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -81,9 +80,10 @@ class DeliveryOutboundIntegrationTest {
             waiterFor = { null },
             getServingPriority = { 2 },
             getAssignedTableId = { null },
-            recruitWaitersForEventGroup = { _, _ -> emptyList() }
+            recruitWaitersForEventGroup = { _, _ -> emptyList() },
+            getNextWaiterId = { 1 }
         )
-        return Pipeline(serving, DeliveryProcessor(drivers))
+        return Pipeline(serving, DeliveryProcessor(drivers, groups))
     }
 
     @Test
@@ -106,15 +106,7 @@ class DeliveryOutboundIntegrationTest {
         assertTrue(lines.any { it.contains("Delivery Preparation (R 1): Driver 1 prepares driving") })
     }
 
-    /**
-     * DISABLED - fails against existing code not authored by Vlad Marciu; same root cause as the
-     * disabled same-tick test in [DeliveryOutboundTripTest]. Spec: the order is handed over and
-     * prepared in tick 4 and the driving starts in tick 5, so a 5 km trip (1 tick) arrives in tick 5.
-     * DeliveryProcessor.processDelivering (Ansh Tiwatne) drives the freshly prepared driver in the
-     * preparation tick itself, so the customer already receives the meal in tick 4. Fix: only advance
-     * drivers that were already DELIVERING/RETURNING before this tick's preparation loop.
-     */
-    @Disabled("Driver arrives in the preparation tick instead of the next tick (Ansh's DeliveryProcessor)")
+    // Regression: the driving used to start in the preparation tick itself (fixed in DeliveryProcessor).
     @Test
     fun `a one tick delivery prepared in tick 4 arrives in tick 5`() {
         val group = deliveryGroup(id = 1, distance = 5)
@@ -131,6 +123,9 @@ class DeliveryOutboundIntegrationTest {
     fun `simultaneously prepared drivers are prepared in ascending group id order`() {
         val groupFive = deliveryGroup(id = 5)
         val groupTwo = deliveryGroup(id = 2)
+        listOf(groupFive, groupTwo).forEach { g ->
+            g.currentOrder!!.dishes.forEach { it.status = DishStatus.SERVED }
+        }
         val driverA = Driver().apply {
             id = 1
             targetGroup = groupFive
@@ -144,7 +139,7 @@ class DeliveryOutboundIntegrationTest {
             state = DriverState.WAITING
         }
 
-        DeliveryProcessor(listOf(driverA, driverB)).processDelivering()
+        DeliveryProcessor(listOf(driverA, driverB), listOf(groupFive, groupTwo)).processDelivering()
 
         val prepLines = logLines().filter { it.contains("Delivery Preparation") }
         assertTrue(prepLines[0].contains("to group 2"))
@@ -170,8 +165,8 @@ class DeliveryOutboundIntegrationTest {
         val idle = Driver()
         val busy = Driver().apply { state = DriverState.DELIVERING }
 
-        assertTrue(DeliveryProcessor(listOf(idle)).isDriverAvailable())
-        assertFalse(DeliveryProcessor(listOf(busy)).isDriverAvailable())
-        assertTrue(DeliveryProcessor(listOf(busy, idle)).isDriverAvailable())
+        assertTrue(DeliveryProcessor(listOf(idle), emptyList()).isDriverAvailable())
+        assertFalse(DeliveryProcessor(listOf(busy), emptyList()).isDriverAvailable())
+        assertTrue(DeliveryProcessor(listOf(busy, idle), emptyList()).isDriverAvailable())
     }
 }

@@ -4,21 +4,28 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExampleEmptyTick
 import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExamplePreparationAndServingStartTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExampleSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.customerparsertests.customerParserSystemTests
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.AppendixScenarioTwoSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.AppendixScenarioTwoArrivalSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.AppendixScenarioTwoKitchenSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.AppendixScenarioTwoPreparationSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.AppendixScenarioTwoServiceSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.AppendixScenarioTwoStatisticsSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.AppendixScenarioTwoTickStartSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualAdHocTableMergingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualDeliveryEarlyDecisionTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualTiebreakLowestIdTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CookChangeNoOrderTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryCumulativeDistanceSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOrderSuccessTestA
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOrderSuccessTestB
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOutboundTripSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventReservationConflictTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ExactStockoutTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ExhaustiveSimpleScenarioTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.OneCookTwoOrdersTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.PantryExpirySystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RegularBeforeCasualServingTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RegularGradualCookServingTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RegularRetrySucceedsSystemTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RestaurantClosingTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SimulationLifecycleSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SingleOrCouple
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.StatisticsOrderingSystemTest
@@ -87,7 +94,7 @@ object SystemTestRegistration {
     fun registerSystemTestsForReferenceImplementation(testSuite: SELab26TestSuite) {
         testSuite.registerTest(ExampleSystemTest())
         testSuite.registerTest(ExactStockoutTest())
-        testSuite.registerTest(RestaurantClosingTest())
+        testSuite.registerTest(ExhaustiveSimpleScenarioTest())
         testSuite.registerTest(OneCookTwoOrdersTest())
         testSuite.registerTest(ExamplePreparationAndServingStartTest())
         testSuite.registerTest(ExampleEmptyTickOneCycleTest())
@@ -99,8 +106,15 @@ object SystemTestRegistration {
         testSuite.registerTest(RegularBeforeCasualServingTest())
         testSuite.registerTest(CasualTiebreakLowestIdTest())
         testSuite.registerTest(CasualDeliveryEarlyDecisionTest())
+        testSuite.registerTest(DeliveryOutboundTripSystemTest())
+        testSuite.registerTest(DeliveryCumulativeDistanceSystemTest())
         testSuite.registerTest(SingleOrCouple())
-        testSuite.registerTest(AppendixScenarioTwoSystemTest())
+        testSuite.registerTest(AppendixScenarioTwoPreparationSystemTest())
+        testSuite.registerTest(AppendixScenarioTwoTickStartSystemTest())
+        testSuite.registerTest(AppendixScenarioTwoArrivalSystemTest())
+        testSuite.registerTest(AppendixScenarioTwoKitchenSystemTest())
+        testSuite.registerTest(AppendixScenarioTwoServiceSystemTest())
+        testSuite.registerTest(AppendixScenarioTwoStatisticsSystemTest())
         testSuite.registerTest(SimulationLifecycleSystemTest())
         testSuite.registerTest(StatisticsOrderingSystemTest())
         testSuite.registerTest(SupplierProcurementSystemTest())
@@ -129,10 +143,6 @@ object SystemTestRegistration {
         testSuite.registerTest(CookChangeNoOrderTest())
         registerParserControllerLogTests(testSuite)
         customerParserSystemTests().forEach { testSuite.registerTest(it) }
-
-        // new
-        testSuite.registerTest(DeliveryOrderSuccessTestB())
-        testSuite.registerTest(DeliveryOrderSuccessTestA())
     }
 
     /**
@@ -158,9 +168,7 @@ object SystemTestRegistration {
         testSuite.registerTest(ExactStockoutTest())
         testSuite.registerTest(OneCookTwoOrdersTest())
         testSuite.registerTest(PantryExpirySystemTest())
-        testSuite.registerTest(CookChangeNoOrderTest())
-        testSuite.registerTest(SingleOrCouple())
-        // temporarily unregistered: cross-check against reference first
+        testSuite.registerTest(SingleOrCouple()) // temporarily unregistered: cross-check against reference first
     }
 
     /**

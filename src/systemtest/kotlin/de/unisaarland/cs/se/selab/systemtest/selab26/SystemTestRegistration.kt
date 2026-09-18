@@ -13,6 +13,8 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventReservati
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ExactStockoutTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.OneCookTwoOrdersTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.PantryExpirySystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RegularBeforeCasualServingTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RegularGradualCookServingTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RegularRetrySucceedsSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RestaurantClosingTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SimulationLifecycleSystemTest
@@ -91,6 +93,8 @@ object SystemTestRegistration {
         testSuite.registerTest(WaitstaffExhaustionTest())
         testSuite.registerTest(CasualAdHocTableMergingSystemTest())
         testSuite.registerTest(RegularRetrySucceedsSystemTest())
+        testSuite.registerTest(RegularGradualCookServingTest())
+        testSuite.registerTest(RegularBeforeCasualServingTest())
         testSuite.registerTest(SingleOrCouple())
         testSuite.registerTest(AppendixScenarioTwoSystemTest())
         testSuite.registerTest(SimulationLifecycleSystemTest())

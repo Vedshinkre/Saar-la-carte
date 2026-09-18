@@ -23,6 +23,9 @@ class Cook(
     // Internal attribute to store the list of dishes to be worked on
     private val assignedDishes = mutableListOf<Dish>()
 
+    // until cooking is done instead of being flattened away at assignment time.
+    private val assignedDishesByOrder = mutableMapOf<Int, MutableList<Dish>>()
+
     // explicit constructor with only Cook type
     constructor(type: CookType) : this(
         id = null,
@@ -55,6 +58,17 @@ class Cook(
     }
 
     /**
+     * How many of the dishes currently with the cook belong to each order, by ascending order `id`.
+     */
+    fun getAssignedCountsByOrder(): Map<Int, Int> {
+        val result = sortedMapOf<Int, Int>()
+        for ((orderId, dishes) in assignedDishesByOrder) {
+            result[orderId] = dishes.size
+        }
+        return result
+    }
+
+    /**
      * Read-only exposure of assigned dishes.
      */
     fun setRemainingTicks(numm: Int) {
@@ -68,7 +82,8 @@ class Cook(
     fun startCooking(
         recipe: Recipe,
         dishes: List<Dish>,
-        baseOrderId: Int
+        baseOrderId: Int,
+        dishesByOrder: Map<Int, List<Dish>> = mapOf(baseOrderId to dishes)
     ) {
         currentRecipe = recipe
         orderId = baseOrderId
@@ -85,6 +100,11 @@ class Cook(
         }
         assignedDishes.clear()
         assignedDishes.addAll(dishes)
+
+        assignedDishesByOrder.clear()
+        for ((orderId, orderDishes) in dishesByOrder) {
+            assignedDishesByOrder[orderId] = orderDishes.toMutableList()
+        }
 
         for (dish in assignedDishes) {
             dish.status = DishStatus.COOKING
@@ -117,6 +137,7 @@ class Cook(
             currentRecipe = null
             orderId = null
             assignedDishes.clear()
+            assignedDishesByOrder.clear()
             return CookResult(true, totalAssignedMeals, finishedThisTick)
         }
 

@@ -36,6 +36,8 @@ class Kitchen(
 ) { // INTERNAL ATTRIBUTE: The ticket dispenser for Cook IDs
     private var nextAvailableCookId: Int = 1
 
+    private val orderedAtByOrderId: MutableMap<Int, Int> = mutableMapOf()
+
     // explicit constructor with only list of cooks, pantry and orderQueue
     constructor(cooks: List<Cook>, pantry: Pantry, orderQueue: MutableList<Order>, restaurantType: RestaurantType) :
         this(
@@ -47,6 +49,24 @@ class Kitchen(
             finishedNumberOfMeals = 0,
             numberOfCookedMeals = 0
         )
+
+    // Add these helper functions:
+    private fun rememberOrderTicks() {
+        for (order in orderQueue) {
+            orderedAtByOrderId[order.id] = order.orderedAt
+        }
+    }
+
+    private fun recordFirstCookedTicks() {
+        for (order in orderQueue) {
+            if (order.firstDishCookedAt != null) {
+                continue
+            }
+            if (order.dishes.any { it.status == DishStatus.COOKED }) {
+                order.firstDishCookedAt = Time.tick
+            }
+        }
+    }
     // sorting function
     /**
      * Sorts the cooks ONLY on the basis of their ids, null id is put at last .
@@ -400,9 +420,11 @@ class Kitchen(
      * Processes all cooking activities for the current tick.
      */
     fun processCooking() {
+        rememberOrderTicks()
         cleanOrderQueue()
         assignRecipesToCooks()
         executeCookingStep()
+        recordFirstCookedTicks()
     }
 
     /**
@@ -455,7 +477,7 @@ class Kitchen(
         val allDishes = mutableListOf<Dish>()
         val allOrderIds = mutableListOf<Int>()
         var baseOrderId = -1
-
+        val dishesByOrder = mutableMapOf<Int, List<Dish>>()
         for (order in orderQueue) {
             val (orderId, matchingDishes) = collectRecipes(recipe, order)
 
@@ -464,6 +486,7 @@ class Kitchen(
                     allDishes.add(dish)
                 }
                 allOrderIds.add(orderId)
+                dishesByOrder[orderId] = matchingDishes
 
                 // The first order we find becomes the base order ID
                 if (baseOrderId == -1) {
@@ -473,7 +496,7 @@ class Kitchen(
         }
 
         if (allDishes.isNotEmpty()) {
-            cook.startCooking(recipe, allDishes, baseOrderId)
+            cook.startCooking(recipe, allDishes, baseOrderId, dishesByOrder)
             val cookIDCurrent = cook.id ?: -1
             val cookTypeCurrent = cook.type.name
             val curDishName = recipe.name
@@ -501,7 +524,7 @@ class Kitchen(
         for (cook in sortedCooks) {
             // capture the dish/order being cooked before cookDishes() clears it on completion
             val dishNameBeforeCooking = cook.currentRecipe?.name
-            val orderIdBeforeCooking = cook.orderId
+            val baseOrderIdBeforeCooking = cook.orderId
 
             // access the output of cookDishes()
             val (chefWasActive, totalAssigned, finished) = cook.cookDishes()
@@ -516,7 +539,7 @@ class Kitchen(
 
             // Replaced with helper
             if (finished > 0) {
-                logFinishedMeals(cook, finished, dishNameBeforeCooking, orderIdBeforeCooking)
+                logFinishedMeals(cook, finished, dishNameBeforeCooking, baseOrderIdBeforeCooking)
             }
         }
 
@@ -537,19 +560,8 @@ class Kitchen(
         val dishName = dishNameBeforeCooking ?: "Unknown Dish"
 
         // get the base order
-        var baseOrder: Order? = null
-        for (order in orderQueue) {
-            if (order.id == baseOrderId) {
-                baseOrder = order
-                break
-            }
-        }
-
-        // time since the order has been ordered
-        var cookDurationTick = 0
-        if (baseOrder != null) {
-            cookDurationTick = Time.tick - baseOrder.orderedAt
-        }
+        val orderedAt = orderedAtByOrderId[baseOrderId]
+        val cookDurationTick = if (orderedAt != null) Time.tick - orderedAt else 0
 
         KitchenLogger.logKitchenMealCooked(
             cookId = cookId,

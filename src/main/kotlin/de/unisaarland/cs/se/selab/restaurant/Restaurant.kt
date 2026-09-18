@@ -36,6 +36,15 @@ class Restaurant(
         kitchen = Kitchen(staff.cooks, pantry, orderQueue, restaurantStats.restaurantType)
     }
 
+    /** Group type (REGULAR, EVENT, CASUAL) first, then ascending id. */
+    val arrivalOrder: Comparator<CustomerGroup> = compareBy({
+        when (it) {
+            is RegularGroup -> 0
+            is EventGroup -> 1
+            is CasualGroup -> 2
+        }
+    }, { it.id })
+
     /**
      acceptDeliveryOrder returns if the maximum cook ticks of a dish in the order and current tick <= openingEndTick
      */
@@ -234,13 +243,4 @@ class Restaurant(
         customerGroup.startNewVisit()
         customerQueue.add(customerGroup)
     }
-
-    /** Group type (REGULAR, EVENT, CASUAL) first, then ascending id. */
-    val arrivalOrder: Comparator<CustomerGroup> = compareBy({
-        when (it) {
-            is RegularGroup -> 0
-            is EventGroup -> 1
-            is CasualGroup -> 2
-        }
-    }, { it.id })
 }

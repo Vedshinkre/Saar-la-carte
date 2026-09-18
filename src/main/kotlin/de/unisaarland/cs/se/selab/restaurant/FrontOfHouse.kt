@@ -86,7 +86,7 @@ class FrontOfHouse(
                 it == targetWaiter
             }.keys
             customerGroups.forEach {
-                val num = it.currentOrder!!.getServableDishes().size
+                val num = it.currentOrder?.getServableDishes()?.size ?: 0
                 res += num
             }
             waiterToCookedDishes[targetWaiter] = res

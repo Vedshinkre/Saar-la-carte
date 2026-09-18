@@ -1,6 +1,7 @@
 package de.unisaarland.cs.se.selab.restaurant
 
 import de.unisaarland.cs.se.selab.actors.Cook
+import de.unisaarland.cs.se.selab.enums.RestaurantType
 import de.unisaarland.cs.se.selab.food.Ingredient
 import de.unisaarland.cs.se.selab.food.Order
 import de.unisaarland.cs.se.selab.food.Recipe
@@ -11,13 +12,16 @@ import de.unisaarland.cs.se.selab.food.Recipe
 class Countertop(
     private val pantry: Pantry,
     private val orderQueue: ArrayDeque<Order>,
-    private val cooks: List<Cook>
+    private val cooks: List<Cook>,
+    /** the type of the restaurant this counter belongs to; decides which recipes count as basic here */
+    val restaurantType: RestaurantType
 ) {
     /** (F13)
      * Returns the recipes from the menu that are currently available to order.
      *
      * A recipe is available if all required ingredients are available in the
-     * pantry and at least one cook can prepare the recipe.
+     * pantry and the restaurant employs at least one cook who can prepare the
+     * recipe - whether or not that cook is busy cooking something else.
      *
      * @param menu the restaurant's menu
      * @return the recipes that can currently be ordered

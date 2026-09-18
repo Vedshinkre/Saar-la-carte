@@ -33,7 +33,11 @@ class AppendixScenarioTwoArrivalSystemTest : ExampleSystemTestExtension() {
         assertNextLine(FohArrivalTestLogs.seating(1, 1, 2, listOf(1)))
         assertNextLine(
             FohArrivalTestLogs.ordering(
-                1, 1, 2, mapOf("beef pasta" to 2, "chicken rice" to 3, potatoSoup to 3), 1
+                1,
+                1,
+                2,
+                mapOf("beef pasta" to 2, "chicken rice" to 3, potatoSoup to 3),
+                1
             )
         )
         assertNextLine(FohArrivalTestLogs.seatingStatus(1, 1, 8, 1))

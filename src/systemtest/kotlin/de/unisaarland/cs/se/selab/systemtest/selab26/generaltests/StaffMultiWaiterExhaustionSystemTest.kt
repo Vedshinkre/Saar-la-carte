@@ -18,7 +18,8 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.utils.TickStatusTestLogs
  */
 class StaffMultiWaiterExhaustionSystemTest : ExampleSystemTestExtension() {
     override val name = "StaffMultiWaiterExhaustionSystemTest"
-    override val description = "Both of 2 waiters hit their per-tick SEAT limit despite low current load; retry next tick"
+    override val description =
+        "Both of 2 waiters hit their per-tick SEAT limit despite low current load; retry next tick"
     override val restaurants = "staffmultiwaiterexhaustionjson/restaurants.json"
     override val scenario = "staffmultiwaiterexhaustionjson/scenario.json"
     override val food = "staffmultiwaiterexhaustionjson/food.json"

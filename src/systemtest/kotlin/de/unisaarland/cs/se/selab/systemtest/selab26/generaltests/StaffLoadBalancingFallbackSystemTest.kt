@@ -17,6 +17,8 @@ class StaffLoadBalancingFallbackSystemTest : ExampleSystemTestExtension() {
     override val logLevel = "DEBUG"
     override val maxTicks = 5
 
+    private val riceBowl = "Rice Bowl"
+
     override suspend fun run() { // Groups 1 and 2 each saturate one waiter to current load 10 and successfully order;
         // covered here only far enough to establish who has which waiter, then skipped past
         // their (multi-tick) cooking/serving/eating - not this test's concern.
@@ -24,10 +26,10 @@ class StaffLoadBalancingFallbackSystemTest : ExampleSystemTestExtension() {
         assertNextLine(TickStatusTestLogs.restStart(1))
         assertNextLine(FohArrivalTestLogs.arrival(1, 1))
         assertNextLine(FohArrivalTestLogs.seating(1, 1, 1, listOf(1)))
-        assertNextLine(FohArrivalTestLogs.ordering(1, 1, 1, mapOf("Rice Bowl" to 10), 1))
+        assertNextLine(FohArrivalTestLogs.ordering(1, 1, 1, mapOf(riceBowl to 10), 1))
         assertNextLine(FohArrivalTestLogs.arrival(1, 2))
         assertNextLine(FohArrivalTestLogs.seating(1, 2, 2, listOf(2)))
-        assertNextLine(FohArrivalTestLogs.ordering(1, 2, 2, mapOf("Rice Bowl" to 10), 2))
+        assertNextLine(FohArrivalTestLogs.ordering(1, 2, 2, mapOf(riceBowl to 10), 2))
 
         // Tick 5: groups 1 and 2 are still eating (they only finish and get escorted in tick
         // 6), so both waiters still show current load 10. Group 3 (size 2) arrives and is
@@ -37,7 +39,7 @@ class StaffLoadBalancingFallbackSystemTest : ExampleSystemTestExtension() {
         assertNextLine(TickStatusTestLogs.restStart(1))
         assertNextLine(FohArrivalTestLogs.arrival(1, 3))
         assertNextLine(FohArrivalTestLogs.seating(1, 3, 3, listOf(1)))
-        assertNextLine(FohArrivalTestLogs.ordering(1, 3, 3, mapOf("Rice Bowl" to 2), 1))
+        assertNextLine(FohArrivalTestLogs.ordering(1, 3, 3, mapOf(riceBowl to 2), 1))
         assertNextLine(FohArrivalTestLogs.seatingStatus(1, 1, 2, 1))
         assertNextLine(FohArrivalTestLogs.orderingStatus(1, 2, 1))
     }

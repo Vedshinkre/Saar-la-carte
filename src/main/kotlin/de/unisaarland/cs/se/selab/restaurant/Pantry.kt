@@ -175,6 +175,12 @@ class Pantry(
             val removed = pkg.removeAmount(amountNeeded)
             amountNeeded -= removed
         }
+        for (i in inventory.size - 1 downTo 0) {
+            val pkg = inventory[i]
+            if (pkg.currentAmount <= 0) {
+                inventory.removeAt(i)
+            }
+        }
     }
 
     /**

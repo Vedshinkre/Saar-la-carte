@@ -18,11 +18,16 @@ class Order(val dishes: List<Dish>) {
     var deliveredAt: Tick? = null
     private var servingStarted: Boolean = false
 
-    // TODO(Vlad): nextId is a JVM-wide static counter that is never reset, so it leaks across
-    //  separate Simulation instances run in the same process (e.g. back-to-back tests), causing
-    //  order ids to not start at 1 for a fresh simulation.
-    private companion object {
-        val nextId = AtomicInteger(1)
+    /**
+     * object used to set the IDs of orders during the simulation
+     */
+    companion object {
+        private val nextId = AtomicInteger(1)
+
+        /** Restarts order ids at 1; needed when running several simulations in one JVM. */
+        fun resetIds() {
+            nextId.set(1)
+        }
     }
 
     init {

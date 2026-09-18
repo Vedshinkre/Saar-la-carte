@@ -46,6 +46,7 @@ class Simulation(simdata: SimulationConfig) {
      * Runs a single evening: incidents, preparation phase, serving phase.
      */
     private fun simulateEvening() {
+        customers.forEach { it.resetForNewEvening() }
         executeIncidents()
         executePreparationPhase()
         executeServingPhase()

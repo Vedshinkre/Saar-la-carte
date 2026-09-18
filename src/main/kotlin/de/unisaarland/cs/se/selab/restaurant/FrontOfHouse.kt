@@ -42,7 +42,6 @@ class FrontOfHouse(
     private val turnedAwayGroups: MutableList<CustomerGroup> = mutableListOf()
 
     // statistics
-    var numberOfCustomersServed: Int = 0
     var numberOfCustomersDelivered: Int = 0
 
     private var waiterIdCounter: Id = 1
@@ -51,6 +50,9 @@ class FrontOfHouse(
     private fun getInHouseGroups(): List<CustomerGroup> {
         return inHouseGroupsToWaiter.keys.toList()
     }
+
+    // DOTO: use this consistently instead of adding lists everywhere
+    private fun getSeatedGroups(): List<CustomerGroup> = getInHouseGroups() + eventGroups
 
     // priority order used when sorting groups for serving/eating/escorting/rating; see the constants above.
     private fun getServingPriority(group: CustomerGroup): Int = when (group) {
@@ -62,18 +64,21 @@ class FrontOfHouse(
     private fun getAssignedTableId(group: CustomerGroup): Id? = customerToTable[group]?.minOfOrNull { it.id }
 
     // recruit waiters for an EVENT group, accumulates enough (ordered by asc id) to cover group's servable dishes.
-    // shared by SEATING (SEAT) and SERVING (SERVE); NOTE: does not yet handle ActionType.TAKE_ORDER.
+    // shared by SEATING (SEAT), ORDERING (TAKE_ORDER) and SERVING (SERVE).
     private fun recruitWaitersForEventGroup(actionType: ActionType, eventGroup: EventGroup): List<Waiter> {
         return when (actionType) {
             ActionType.SEAT -> waiters.filter {
                 it.getTickLoad(ActionType.SEAT) < Constants.ACTION_LIMIT
             }.sortedByDescending { it.currentLoad }
 
-            ActionType.TAKE_ORDER -> TODO()
+            ActionType.TAKE_ORDER -> waiters.filter {
+                it.getTickLoad(ActionType.TAKE_ORDER) < Constants.ACTION_LIMIT
+            }.sortedByDescending { it.currentLoad }
+
             ActionType.SERVE -> recruitWaiterForServing(eventGroup)
             ActionType.ESCORT -> waiters.filter {
                 it.getTickLoad(ActionType.ESCORT) < Constants.ACTION_LIMIT
-            }
+            }.sortedBy { it.currentLoad }
         }
     }
 
@@ -143,7 +148,6 @@ class FrontOfHouse(
         getServingPriority = { group -> getServingPriority(group) },
         getAssignedTableId = { group -> getAssignedTableId(group) },
         addCustomersDelivered = { count -> numberOfCustomersDelivered += count },
-
     )
 
     private val escorting = EscortingProcessor(
@@ -197,6 +201,9 @@ class FrontOfHouse(
     /** Call after processArrivalSeatingOrdering has been called with each customerGroup in customerQueue.
      *  Logs status and then performs side effect by resetting counters. */
     fun logAndResetSeatingOrderingTickStatus() = arrival.logAndResetSeatingOrderingTickStatus()
+
+    /** Turns a group away unlogged because the restaurant is in the last 3 ticks of its opening
+     *  time and no longer accepts new customers. */
 
     /** process serving */
     fun processServing() = serving.processServing()
@@ -289,8 +296,7 @@ class FrontOfHouse(
         waiterIdCounter = 1
     }
 
-    /** Item 132: at the end of the evening a delivery on its way to a customer is aborted, while a
-     *  driver on the way back to the restaurant carries on so their Delivery Returned still fires. */
+    /** lets drivers that are RETURNING continue, otherwise abort their order and make them IDLE */
     fun resetDrivers() {
         for (driver in drivers) {
             if (driver.state == DriverState.RETURNING) {

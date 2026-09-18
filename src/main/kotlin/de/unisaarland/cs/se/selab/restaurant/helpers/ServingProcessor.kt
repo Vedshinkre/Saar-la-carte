@@ -23,7 +23,17 @@ class ServingProcessor(
     private val getServingPriority: (CustomerGroup) -> Int,
     private val getAssignedTableId: (CustomerGroup) -> Id?,
     private val recruitWaitersForEventGroup: (ActionType, EventGroup) -> List<Waiter>,
+    private val getNextWaiterId: () -> Id,
 ) {
+    /**
+     * how many customers have received a meal in this restaurant
+     * where the meals "change hands" rather than per fully served order
+     * a group whose remaining members leave unserved still counts the ones that did eat
+     * a customer who never got a meal ordered counts for nobody.
+     */
+    var numberOfCustomersServed: Int = 0
+        private set
+
     private var nextDriverIdCounter: Id = 1
 
     private fun getNextDriverId() = nextDriverIdCounter++
@@ -126,19 +136,27 @@ class ServingProcessor(
     }
 
     private fun serveDeliveryGroups() {
-        val readyGroups = deliveryGroups.filter { it.currentOrder?.areAllDishesCooked() == true }
+        val readyGroups = deliveryGroups.filter { isReadyForHandOver(it) }
             .sortedBy { it.currentOrder?.id ?: Int.MAX_VALUE }
 
         for (group in readyGroups) {
             val order = group.currentOrder
             if (order == null) continue
-            val readyDishes = order.getServableDishes()
-            val driver = if (readyDishes.isEmpty()) null else getOrAssignDriver(group, order)
+            val driver = getOrAssignDriver(group, order)
             if (driver != null) {
-                serveToDriver(readyDishes, driver, order)
-                order.markFullyServed()
+                serveToDriver(order.getServableDishes(), driver, order)
             }
         }
+    }
+
+    /** order queues until all meals are ready
+     * once the hand-off has begun, already handed-over meals are SERVED and wait with driver
+     * remaining cooked meals must keep being handed over in the following ticks
+     */
+    private fun isReadyForHandOver(group: CustomerGroup): Boolean {
+        val order = group.currentOrder ?: return false
+        if (order.getServableDishes().isEmpty()) return false
+        return order.areAllDishesCooked() || drivers.any { it.currentOrder === order }
     }
 
     /** picks waiter to serve driver delivery meals: waiter with min id whose SERVING tick load < action limit */
@@ -169,11 +187,9 @@ class ServingProcessor(
             waiter.serve(batch)
             waiter.addToTickLoad(ActionType.SERVE, batch.size)
 
-            val waiterId = waiter.id
-            val driverId = driver.id
-            if (waiterId != null && driverId != null) {
-                FohServiceLogger.logFohDelivery(waiterId, toDishNameAmounts(batch), driverId, order.id)
-            }
+            val waiterId = waiter.ensureId(getNextWaiterId)
+            val driverId = requireNotNull(driver.id) { "a driver taking an order always has an id" }
+            FohServiceLogger.logFohDelivery(waiterId, toDishNameAmounts(batch), driverId, order.id)
             remaining = remaining.drop(batch.size)
         }
     }
@@ -187,12 +203,11 @@ class ServingProcessor(
         val batch = dishes.take(capacity)
         waiter.serve(batch)
         waiter.addToTickLoad(ActionType.SERVE, batch.size)
+        numberOfCustomersServed += batch.size
 
-        val waiterId = waiter.id
-        if (waiterId != null) {
-            val ticksSinceOrdering = Time.tick - order.orderedAt
-            FohServiceLogger.logFohServing(waiterId, toDishNameAmounts(batch), tableId, ticksSinceOrdering)
-        }
+        val waiterId = waiter.ensureId(getNextWaiterId)
+        val ticksSinceOrdering = Time.tick - order.orderedAt
+        FohServiceLogger.logFohServing(waiterId, toDishNameAmounts(batch), tableId, ticksSinceOrdering)
         return dishes.drop(batch.size)
     }
 
@@ -213,7 +228,8 @@ class ServingProcessor(
     }
 
     private fun logNoServing(waiter: Waiter?, mealCount: Int, tableId: Id) {
-        val waiterId = waiter?.id ?: return
+        // no candidate at all means nobody attempted, so there is nothing to report
+        val waiterId = (waiter ?: return).ensureId(getNextWaiterId)
         FohServiceLogger.logFohNoServing(waiterId, mealCount, tableId)
     }
 

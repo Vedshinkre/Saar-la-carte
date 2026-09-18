@@ -142,6 +142,7 @@ class Kitchen(
             cook.isCooking = false
         }
         nextAvailableCookId = 1
+        orderedAtByOrderId.clear()
     }
 
     /**

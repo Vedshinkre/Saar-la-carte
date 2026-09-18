@@ -36,8 +36,10 @@ class CasualGroup(
         return this.floorDiv(other) + this.rem(other).sign.absoluteValue
     }
 
-    /** get if the customer wants delivery */
-    val wantsDelivery: Boolean get() = deliveryDistance > 0
+    /** CASUAL group is a delivery iff `deliveryDistance > 0`
+     * `"deliveryDistance": 0` with no `tableType` is an ordinary in-restaurant group
+     */
+    var wantsDelivery: Boolean = deliveryDistance > 0
 
     /**
      * returns true if they are coming to the restaurant this tick

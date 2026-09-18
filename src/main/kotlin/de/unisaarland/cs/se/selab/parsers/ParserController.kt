@@ -1,5 +1,6 @@
 package de.unisaarland.cs.se.selab.parsers
 
+import com.github.erosb.jsonsKema.JsonParseException
 import com.github.erosb.jsonsKema.JsonParser
 import com.github.erosb.jsonsKema.SchemaLoader
 import com.github.erosb.jsonsKema.Validator
@@ -11,6 +12,7 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import java.io.File
+import java.io.IOException
 
 /** delegates objects to other parsers */
 class ParserController {
@@ -64,6 +66,7 @@ class ParserController {
         simConfig.recipes = recipes
         simConfig.restaurants = restaurants
         simConfig.restaurantStats = restaurantStats
+        simConfig.stock = stock
         simConfig.incidents = incidents
         simConfig.customers = customers
 
@@ -72,28 +75,49 @@ class ParserController {
 
     /** Schema-validates [filePath], runs [block] over JSON object, logging and recording file errors */
     private inline fun <T> processFile(filePath: String, schemaPath: String, block: (JsonObject) -> T): T? {
-        if (!isSchemaValid(filePath, schemaPath)) return null
+        // a file that cannot be read at all (missing, a directory, no permission) is an invalid
+        // configuration file just like one that fails the schema, not a crash (item 20)
+        val content = readConfigFile(filePath) ?: return null
+        if (!isSchemaValid(content, filePath, schemaPath)) return null
 
-        val json = Json.parseToJsonElement(File(filePath).readText()).jsonObject
+        val json = Json.parseToJsonElement(content).jsonObject
         return try {
             block(json).also { InitialAndPrepLogger.logInitialization(true, filePath) }
         } catch (_: IllegalArgumentException) {
-            InitialAndPrepLogger.logInitialization(false, filePath)
-            // System.err.println("Invalid data in '$filePath': ${e.message ?: "Unknown error"}")
-            simConfig.wasInvalidFile = true
+            markFileInvalid(filePath)
             null
         }
         // NoSuchElementException isn't caught, it means we should fix the getValue, not that the file is invalid
         // only IllegalArgumentException is thrown intentionally, catching other errors will hide problems in parsers
     }
 
-    private fun isSchemaValid(filePath: String, schemaPath: String): Boolean {
-        val jsonInstance = JsonParser(File(filePath).readText()).parse()
+    /** the file's contents, or `null` (logged as invalid) if it cannot be read */
+    private fun readConfigFile(filePath: String): String? =
+        try {
+            File(filePath).readText()
+        } catch (_: IOException) {
+            markFileInvalid(filePath)
+            null
+        }
+
+    /** logs [filePath] as an invalid configuration file and records it in the config */
+    private fun markFileInvalid(filePath: String) {
+        InitialAndPrepLogger.logInitialization(false, filePath)
+        simConfig.wasInvalidFile = true
+    }
+
+    private fun isSchemaValid(content: String, filePath: String, schemaPath: String): Boolean {
+        // malformed JSON is an invalid configuration file, not a crash either
+        val jsonInstance = try {
+            JsonParser(content).parse()
+        } catch (_: JsonParseException) {
+            markFileInvalid(filePath)
+            return false
+        }
         val schema = SchemaLoader.forURL(schemaPath).load()
         val isValid = Validator.forSchema(schema).validate(jsonInstance) == null
         if (!isValid) {
-            InitialAndPrepLogger.logInitialization(false, filePath)
-            simConfig.wasInvalidFile = true
+            markFileInvalid(filePath)
         }
         return isValid
     }

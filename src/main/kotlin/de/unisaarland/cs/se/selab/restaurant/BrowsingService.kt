@@ -87,12 +87,12 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
         val eventRests = mutableListOf<RestaurantStats>()
         val result = mutableListOf<RestaurantStats>()
         restaurantStats.filter { it.restaurantType in group.restaurantTypes }.filter { it.event }.forEach { stats ->
-            if (stats.isOpen()) {
+            if (stats.isOpenAt(group.visitingAt)) {
                 eventRests.add(stats)
             }
         }
         eventRests.forEach {
-            if (it.availableEventSeats.values.sum() >= group.size) {
+            if ((it.availableEventSeats[group.tableType] ?: 0) >= group.size) {
                 result.add(it)
             }
         }

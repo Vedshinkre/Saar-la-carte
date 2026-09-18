@@ -5,6 +5,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExamplePreparati
 import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExampleSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.customerparsertests.customerParserSystemTests
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.AppendixScenarioTwoSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualAdHocTableMergingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CookChangeNoOrderTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOrderSuccessTestA
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOrderSuccessTestB
@@ -12,6 +13,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventReservati
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ExactStockoutTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.OneCookTwoOrdersTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.PantryExpirySystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RegularRetrySucceedsSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RestaurantClosingTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SimulationLifecycleSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SingleOrCouple
@@ -87,6 +89,8 @@ object SystemTestRegistration {
         testSuite.registerTest(ExampleEmptyTickOneCycleTest())
         testSuite.registerTest(EventReservationConflictTest())
         testSuite.registerTest(WaitstaffExhaustionTest())
+        testSuite.registerTest(CasualAdHocTableMergingSystemTest())
+        testSuite.registerTest(RegularRetrySucceedsSystemTest())
         testSuite.registerTest(SingleOrCouple())
         testSuite.registerTest(AppendixScenarioTwoSystemTest())
         testSuite.registerTest(SimulationLifecycleSystemTest())

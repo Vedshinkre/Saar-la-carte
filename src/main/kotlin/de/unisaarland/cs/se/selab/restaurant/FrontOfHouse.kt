@@ -129,7 +129,7 @@ class FrontOfHouse(
         waiters = waiters,
         drivers = drivers,
         deliveryGroups = deliveryGroups,
-        getInHouseGroups = { getInHouseGroups() },
+        getInHouseGroups = { getSeatedGroups() },
         waiterFor = { group -> inHouseGroupsToWaiter[group] },
         getServingPriority = { group -> getServingPriority(group) },
         getAssignedTableId = { group -> getAssignedTableId(group) },
@@ -137,14 +137,14 @@ class FrontOfHouse(
         getNextWaiterId = ::getNextWaiterId,
     )
 
-    private val delivering = DeliveryProcessor(
-        drivers = drivers,
-        deliveryGroups = deliveryGroups,
-    )
+    // statistics: counted by the serving step, where the meals actually change hands (item 180)
+    val numberOfCustomersServed: Int get() = serving.numberOfCustomersServed
+
+    private val delivering = DeliveryProcessor(drivers = drivers, deliveryGroups = deliveryGroups)
 
     private val eating = EatingProcessor(
         deliveryGroups = deliveryGroups,
-        getInHouseGroups = { getInHouseGroups() },
+        getInHouseGroups = { getSeatedGroups() },
         getServingPriority = { group -> getServingPriority(group) },
         getAssignedTableId = { group -> getAssignedTableId(group) },
         addCustomersDelivered = { count -> numberOfCustomersDelivered += count },
@@ -204,6 +204,7 @@ class FrontOfHouse(
 
     /** Turns a group away unlogged because the restaurant is in the last 3 ticks of its opening
      *  time and no longer accepts new customers. */
+//    fun refuseLateArrival(customerGroup: CustomerGroup) = arrival.refuseLateArrival(customerGroup)
 
     /** process serving */
     fun processServing() = serving.processServing()
@@ -254,12 +255,10 @@ class FrontOfHouse(
     }
 
     /**
-     * Ends the evening by removing remaining customers, processing their
-     * closing ratings, freeing all tables, and clearing waiter assignments.
-     *
-     * @param positiveRatings current number of positive ratings
-     * @param negativeRatings current number of negative ratings
-     * @return updated positive and negative rating counts
+     * Escorts everybody still inside out of the restaurant when the opening time ends, without
+     * the waiters having to perform an action. Groups that had not finished eating keep a
+     * negative experience. Call this *before* the tick's rating step so that the closing ratings
+     * are part of that step and are counted by its status log.
      */
     fun startFohClosing() {
         val closingGroups = getInHouseGroups() + eventGroups

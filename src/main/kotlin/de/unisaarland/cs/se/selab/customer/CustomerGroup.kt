@@ -1,5 +1,6 @@
 package de.unisaarland.cs.se.selab.customer
 
+import de.unisaarland.cs.se.selab.Constants
 import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.Tick
 import de.unisaarland.cs.se.selab.Time
@@ -12,6 +13,27 @@ import de.unisaarland.cs.se.selab.food.Dish
 import de.unisaarland.cs.se.selab.food.Order
 import de.unisaarland.cs.se.selab.food.Recipe
 import de.unisaarland.cs.se.selab.restaurant.Countertop
+
+/**
+ * Hands out the waiters taking a group's order one customer at a time, moving on to the next
+ * waiter once the current one has reached their TAKE_ORDER action limit for this tick. Groups
+ * with a single assigned waiter simply keep using that waiter.
+ */
+internal class WaiterRota(private val waiters: List<Waiter>) {
+    private var index = 0
+
+    /** the waiter who takes the next customer's order, or `null` for a delivery order */
+    fun next(): Waiter? {
+        while (index < waiters.size - 1 &&
+            waiters[index].getTickLoad(ActionType.TAKE_ORDER) >= Constants.ACTION_LIMIT
+        ) {
+            index++
+        }
+        // once even the last waiter is at their limit the overflow stays with them: a group larger
+        // than the action limit has to be taken by somebody, and the spec names no other waiter.
+        return waiters.getOrNull(index)
+    }
+}
 
 /** Represents an abstract customer group. */
 sealed class CustomerGroup(
@@ -26,6 +48,17 @@ sealed class CustomerGroup(
     // relevant to F27
     var currentOrder: Order? = null
     var customersRemainingInRestaurant = size
+
+    /**
+     * Wipes everything that belongs to a single visit, so a group coming back on a later evening
+     * starts from scratch instead of carrying last evening's order, headcount and experience with
+     * it. Call once per visit, when the group joins a restaurant's customer queue.
+     */
+    fun startNewVisit() {
+        currentOrder = null
+        customersRemainingInRestaurant = size
+        experience = ExperienceType.NEUTRAL
+    }
 
     /**
      * returns true if the customerGroup is visiting this tick
@@ -44,13 +77,14 @@ sealed class CustomerGroup(
     /**
      * takes the order of a customer group
      */
-    open fun placeOrder(waiters: MutableList<Waiter>, menu: List<Recipe>, countertop: Countertop): Boolean {
+    open fun placeOrder(waiters: List<Waiter>, menu: List<Recipe>, countertop: Countertop): Boolean {
         val listOfDishes = mutableListOf<Dish>()
-        val currentWaiter = waiters.firstOrNull()
-        for (foodPreference in foodPreferences) {
+        val waiterRota = WaiterRota(waiters)
+        for (foodPreference in orderingSequence()) {
             val availableDishes = countertop.getAvailableRecipes(menu)
-            val customerDish = foodPreference.decideDish(availableDishes, "")
+            val customerDish = foodPreference.decideDish(availableDishes, "", countertop.restaurantType)
             if (customerDish != null) {
+                val currentWaiter = waiterRota.next()
                 if (currentWaiter != null) {
                     registerDish(currentWaiter, customerDish, countertop)
                 } else {
@@ -76,13 +110,14 @@ sealed class CustomerGroup(
     }
 
     /**
-     * clears everything a group accumulated during a previous visit, so that a returning group starts fresh
+     * The group's customers in the sequence in which they order: the customer(s) with the most
+     * excluded ingredients first, then the ones with the fewest favourite dishes. Ties keep the
+     * order the preferences were listed in the group's JSON (the sort is stable).
      */
-    fun resetForNewEvening() {
-        experience = ExperienceType.NEUTRAL
-        currentOrder = null
-        customersRemainingInRestaurant = size
-    }
+    protected fun orderingSequence(): List<FoodPreference> = foodPreferences.sortedWith(
+        compareByDescending<FoodPreference> { it.excludedIngredients.size }
+            .thenBy { it.favouriteDishes.size }
+    )
 
     /**
      * returns true if group is visiting a restaurant tonight

@@ -12,6 +12,7 @@ import de.unisaarland.cs.se.selab.enums.CustomerStatus
 import de.unisaarland.cs.se.selab.enums.ExperienceType
 import de.unisaarland.cs.se.selab.enums.TableStatus
 import de.unisaarland.cs.se.selab.enums.TableType
+import de.unisaarland.cs.se.selab.food.Order
 import de.unisaarland.cs.se.selab.food.Recipe
 import de.unisaarland.cs.se.selab.loggers.FohReceptionLogger
 import de.unisaarland.cs.se.selab.loggers.InitialAndPrepLogger
@@ -31,9 +32,12 @@ class ArrivalProcessor(
     private val recruitWaitersForEventGroup: (ActionType, EventGroup) -> List<Waiter>,
     private val getNextWaiterId: () -> Id
 ) {
-    private val tablesSeatedOn: MutableSet<Table> = mutableSetOf()
+    // item 95: the (merged) tables that were seated on this tick. A merge set contributes its
+    // merged id once, and a table a group vacated again this tick - because nobody could order -
+    // is not counted twice when the next group is seated on it.
+    private val tablesSeatedOn: MutableSet<Id> = mutableSetOf()
     private var numberOfCustomersSeated: Int = 0
-    private val waitersThatSeated: MutableSet<Waiter> = mutableSetOf()
+    private val numberOfWaitersSeated: MutableSet<Waiter> = mutableSetOf()
 
     // Sets used for logging purposes
     private val customersOrdered: MutableSet<CustomerGroup> = mutableSetOf()
@@ -55,21 +59,22 @@ class ArrivalProcessor(
         val assignedWaiter = inHouseGroupsToWaiter[customerGroup]
         var somebodyOrdered: Boolean
         if (assignedWaiter != null) {
-            somebodyOrdered = customerGroup.placeOrder(mutableListOf(assignedWaiter), menu, countertop)
+            somebodyOrdered = customerGroup.placeOrder(listOf(assignedWaiter), menu, countertop)
             assignedWaiter.currentLoad -= customerGroup.size - customerGroup.customersRemainingInRestaurant
         } else {
-            somebodyOrdered = customerGroup.placeOrder(mutableListOf(), menu, countertop)
+            somebodyOrdered = customerGroup.placeOrder(listOf(), menu, countertop)
         }
 
         if (!somebodyOrdered) {
             if (customerGroup is RegularGroup) {
                 customerGroup.failedAttempts++
             } else {
+                // the group has left, so it keeps no claim on the table it was just seated at.
+                // A REGULAR group's table stays reserved for the rest of the evening (item 164).
                 customerToTable.remove(customerGroup)?.forEach { it.status = TableStatus.FREE }
             }
             inHouseGroupsToWaiter.remove(customerGroup)
             turnedAwayGroups.addLast(customerGroup)
-            FohReceptionLogger.logFohNoOrdering(customerGroup.id, customerGroup.size)
         }
         orderSuccess(customerGroup)
 
@@ -80,18 +85,22 @@ class ArrivalProcessor(
      *  Returns true if CustomerGroup should be removed from the customerQueue, false otherwise. */
     fun processArrival(eventGroup: EventGroup, menu: List<Recipe>): Boolean {
         val recruitedWaiters: List<Waiter> = recruitWaitersForEventGroup(ActionType.SEAT, eventGroup)
-        val consumedWaiters: MutableList<Waiter> = mutableListOf()
+        // EVENT seating is all-or-nothing, so the distribution is planned first and the SEATING
+        // tick load is only charged once the whole group is known to fit.
+        val seatingPlan: MutableList<Pair<Waiter, Int>> = mutableListOf()
         var eventGroupSize: Int = eventGroup.size
         for (waiter in recruitedWaiters) {
             if (eventGroupSize <= 0) {
                 break
             }
-            waiter.ensureId(getNextWaiterId)
             val remainingSeatingLoad: Int = Constants.ACTION_LIMIT - waiter.getTickLoad(ActionType.SEAT)
             val seatingLoad: Int = min(remainingSeatingLoad, eventGroupSize)
-            waiter.tickLoads[ActionType.SEAT] = waiter.tickLoads[ActionType.SEAT]!! + seatingLoad
             eventGroupSize -= seatingLoad
-            consumedWaiters.addLast(waiter)
+            seatingPlan.addLast(waiter to seatingLoad)
+        }
+        // every waiter in the plan attempted to seat, so each keeps an id even if the attempt fails
+        val consumedWaiters: List<Waiter> = seatingPlan.map { (waiter, _) ->
+            waiter.also { it.ensureId(getNextWaiterId) }
         }
 
         if (eventGroupSize != 0) {
@@ -100,6 +109,7 @@ class ArrivalProcessor(
             turnedAwayGroups.addLast(eventGroup)
             eventGroup.experience = ExperienceType.NEGATIVE
         } else {
+            seatingPlan.forEach { (waiter, seatingLoad) -> waiter.addToTickLoad(ActionType.SEAT, seatingLoad) }
             successfulSeating(eventGroup, consumedWaiters)
             if (eventGroup.placeOrder(consumedWaiters, menu, countertop)) {
                 val currentOrder = eventGroup.currentOrder
@@ -129,6 +139,20 @@ class ArrivalProcessor(
             )
         }
         return true
+    }
+
+    /** The restaurant does not accept new customers in the last 3 ticks of its opening time, not
+     *  even ones that arrived earlier and could not be seated yet. Such a group simply leaves:
+     *  its reservation is released and it is turned away without an arrival, seating or ordering
+     *  log, but it still gets to rate the restaurant this tick. */
+    fun refuseLateArrival(customerGroup: CustomerGroup) {
+        customerToTable[customerGroup]?.forEach { it.status = TableStatus.FREE }
+        customerToTable.remove(customerGroup)
+        if (customerGroup is RegularGroup) {
+            customerGroup.failedAttempts++
+        }
+        customerGroup.experience = ExperienceType.NEGATIVE
+        turnedAwayGroups.addLast(customerGroup)
     }
 
     /** Call only with Regular- or EventGroup.
@@ -178,9 +202,26 @@ class ArrivalProcessor(
         return false
     }
     private fun orderSuccess(customerGroup: CustomerGroup) {
+        val currentOrder = customerGroup.currentOrder
+        if (currentOrder != null) {
+            logPlacedOrder(customerGroup, currentOrder)
+        }
+        // item 104: the group reports the customers who found no dish whether or not the rest of
+        // the group managed to order, so this line also fires when nobody in the group could order
+        val customersWhoLeftAfterOrdering = customerGroup.getCustomersWhoLeft()
+        if (customersWhoLeftAfterOrdering > 0) {
+            FohReceptionLogger.logFohNoOrdering(
+                customerGroup.id,
+                customersWhoLeftAfterOrdering
+            )
+        }
+    }
+
+    private fun logPlacedOrder(customerGroup: CustomerGroup, currentOrder: Order) {
         val assignedWaiter = inHouseGroupsToWaiter[customerGroup]
-        val currentOrder = customerGroup.currentOrder ?: return
         if (customerGroup is RegularGroup) {
+            // the streak is only broken once the group is actually served (see EatingProcessor),
+            // otherwise two consecutive "nobody was served" evenings could never add up to two failures
             customerGroup.addOrderToHistory(currentOrder)
         }
         if (assignedWaiter != null) {
@@ -200,23 +241,17 @@ class ArrivalProcessor(
                 null
             )
         }
+        // counted for the ordering status whether they ate in or ordered a delivery
         customersOrdered.add(customerGroup)
-        val customersWhoLeftAfterOrdering = customerGroup.getCustomersWhoLeft()
-        if (customersWhoLeftAfterOrdering > 0) {
-            FohReceptionLogger.logFohNoOrdering(
-                customerGroup.id,
-                customersWhoLeftAfterOrdering
-            )
-        }
     }
 
     /** Call after processArrivalSeatingOrdering has been called with each customerGroup in customerQueue.
      *  Logs status and then performs side effect by resetting counters. */
     fun logAndResetSeatingOrderingTickStatus() {
-        FohReceptionLogger.logSeatingStatus(waitersThatSeated.size, numberOfCustomersSeated, tablesSeatedOn.size)
+        FohReceptionLogger.logSeatingStatus(numberOfWaitersSeated.size, numberOfCustomersSeated, tablesSeatedOn.size)
         tablesSeatedOn.clear()
         numberOfCustomersSeated = 0
-        waitersThatSeated.clear()
+        numberOfWaitersSeated.clear()
 
         val numberOfCustomersOrdered = customersOrdered.sumOf {
                 customerGroup ->
@@ -250,6 +285,9 @@ class ArrivalProcessor(
         FohReceptionLogger.logFohNoSeatingNoWaitstaff(customerGroup.id)
         if (!customerGroup.isVisitingThisTick()) {
             if (customerGroup is RegularGroup) {
+                // the table stays reserved for the group for the rest of the evening (item 164)
+                // and is only released when the opening time ends, so the mapping has to survive:
+                // dropping it here would strand the table as RESERVED for every later evening
                 customerGroup.failedAttempts++
             }
             turnedAwayGroups.addLast(customerGroup)
@@ -260,8 +298,9 @@ class ArrivalProcessor(
     }
 
     private fun successfulSeating(customerGroup: CustomerGroup, waiters: List<Waiter>) {
-        val assignedTables: List<Table> = customerToTable[customerGroup] ?: return
-        val mergeId: Id = assignedTables.minBy { it.id }.id
+        val assignedTables: List<Table> = customerToTable[customerGroup] ?: listOf()
+        // without a table there is no seating to report; leaving early keeps this from throwing
+        val mergeId: Id = assignedTables.minByOrNull { it.id }?.id ?: return
         if (assignedTables.size > 1) {
             FohReceptionLogger.logFohMergingTables(
                 customerGroup.id,
@@ -271,8 +310,9 @@ class ArrivalProcessor(
         }
 
         numberOfCustomersSeated += customerGroup.size
-        waitersThatSeated.addAll(waiters)
-        tablesSeatedOn.addAll(assignedTables)
+        numberOfWaitersSeated.addAll(waiters)
+        // a merged table counts only once towards the number of tables seated on
+        tablesSeatedOn.add(mergeId)
 
         FohReceptionLogger.logFohSeating(customerGroup.id, mergeId, waiters.map { it.id!! })
     }
@@ -329,7 +369,10 @@ class ArrivalProcessor(
     }
 
     private fun mergeTables(customerGroup: CustomerGroup, tables: List<Table>, threeQuarters: Boolean): List<Table>? {
-        if (customerGroup.tableType == TableType.BAR) { return null }
+        // BAR tables cannot be merged, and the candidates are all of the group's own table type
+        if (customerGroup.tableType == TableType.BAR) {
+            return null
+        }
         val acc: MutableList<Table> = mutableListOf()
         var mergeSize = 0
 

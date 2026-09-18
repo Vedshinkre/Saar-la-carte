@@ -11,6 +11,7 @@ import de.unisaarland.cs.se.selab.enums.ActionType
 import de.unisaarland.cs.se.selab.enums.CustomerStatus
 import de.unisaarland.cs.se.selab.enums.ExperienceType
 import de.unisaarland.cs.se.selab.enums.TableStatus
+import de.unisaarland.cs.se.selab.enums.TableType
 import de.unisaarland.cs.se.selab.food.Recipe
 import de.unisaarland.cs.se.selab.loggers.FohReceptionLogger
 import de.unisaarland.cs.se.selab.loggers.InitialAndPrepLogger
@@ -30,9 +31,9 @@ class ArrivalProcessor(
     private val recruitWaitersForEventGroup: (ActionType, EventGroup) -> List<Waiter>,
     private val getNextWaiterId: () -> Id
 ) {
-    private var numberOfTablesSeatedOn: Int = 0
+    private val tablesSeatedOn: MutableSet<Table> = mutableSetOf()
     private var numberOfCustomersSeated: Int = 0
-    private val numberOfWaitersSeated: MutableSet<Waiter> = mutableSetOf()
+    private val waitersThatSeated: MutableSet<Waiter> = mutableSetOf()
 
     // Sets used for logging purposes
     private val customersOrdered: MutableSet<CustomerGroup> = mutableSetOf()
@@ -64,7 +65,7 @@ class ArrivalProcessor(
             if (customerGroup is RegularGroup) {
                 customerGroup.failedAttempts++
             } else {
-                customerToTable[customerGroup]?.forEach { it.status = TableStatus.FREE }
+                customerToTable.remove(customerGroup)?.forEach { it.status = TableStatus.FREE }
             }
             inHouseGroupsToWaiter.remove(customerGroup)
             turnedAwayGroups.addLast(customerGroup)
@@ -85,10 +86,8 @@ class ArrivalProcessor(
             if (eventGroupSize <= 0) {
                 break
             }
-            if (waiter.id == null) {
-                waiter.id = getNextWaiterId()
-            }
-            val remainingSeatingLoad: Int = Constants.ACTION_LIMIT - waiter.tickLoads[ActionType.SEAT]!!
+            waiter.ensureId(getNextWaiterId)
+            val remainingSeatingLoad: Int = Constants.ACTION_LIMIT - waiter.getTickLoad(ActionType.SEAT)
             val seatingLoad: Int = min(remainingSeatingLoad, eventGroupSize)
             waiter.tickLoads[ActionType.SEAT] = waiter.tickLoads[ActionType.SEAT]!! + seatingLoad
             eventGroupSize -= seatingLoad
@@ -182,11 +181,10 @@ class ArrivalProcessor(
         val assignedWaiter = inHouseGroupsToWaiter[customerGroup]
         val currentOrder = customerGroup.currentOrder ?: return
         if (customerGroup is RegularGroup) {
-            customerGroup.failedAttempts = 0
             customerGroup.addOrderToHistory(currentOrder)
         }
         if (assignedWaiter != null) {
-            val assignedWaiterId = assignedWaiter.id ?: getNextWaiterId()
+            val assignedWaiterId = assignedWaiter.ensureId(getNextWaiterId)
             FohReceptionLogger.logFohOrdering(
                 customerGroup.id,
                 currentOrder.id,
@@ -215,10 +213,10 @@ class ArrivalProcessor(
     /** Call after processArrivalSeatingOrdering has been called with each customerGroup in customerQueue.
      *  Logs status and then performs side effect by resetting counters. */
     fun logAndResetSeatingOrderingTickStatus() {
-        FohReceptionLogger.logSeatingStatus(numberOfWaitersSeated.size, numberOfCustomersSeated, numberOfTablesSeatedOn)
-        numberOfTablesSeatedOn = 0
+        FohReceptionLogger.logSeatingStatus(waitersThatSeated.size, numberOfCustomersSeated, tablesSeatedOn.size)
+        tablesSeatedOn.clear()
         numberOfCustomersSeated = 0
-        numberOfWaitersSeated.clear()
+        waitersThatSeated.clear()
 
         val numberOfCustomersOrdered = customersOrdered.sumOf {
                 customerGroup ->
@@ -234,8 +232,7 @@ class ArrivalProcessor(
         val waiter: Waiter = assignWaiter(customerGroup) ?: return rejectForNoWaiter(customerGroup)
 
         if (customerGroup is CasualGroup && !assignTables(customerGroup)) {
-            // DOTO: try to fix the waiter.id
-            FohReceptionLogger.logFohNoSeating(customerGroup.id, waiter.id ?: getNextWaiterId())
+            FohReceptionLogger.logFohNoSeating(customerGroup.id, waiter.ensureId(getNextWaiterId))
             turnedAwayGroups.addLast(customerGroup)
             customerGroup.experience = ExperienceType.NEGATIVE
             return CustomerStatus.TO_LEAVE
@@ -253,7 +250,6 @@ class ArrivalProcessor(
         FohReceptionLogger.logFohNoSeatingNoWaitstaff(customerGroup.id)
         if (!customerGroup.isVisitingThisTick()) {
             if (customerGroup is RegularGroup) {
-                customerToTable.remove(customerGroup)
                 customerGroup.failedAttempts++
             }
             turnedAwayGroups.addLast(customerGroup)
@@ -264,8 +260,7 @@ class ArrivalProcessor(
     }
 
     private fun successfulSeating(customerGroup: CustomerGroup, waiters: List<Waiter>) {
-        // DOTO: fix empty list
-        val assignedTables: List<Table> = customerToTable[customerGroup] ?: listOf()
+        val assignedTables: List<Table> = customerToTable[customerGroup] ?: return
         val mergeId: Id = assignedTables.minBy { it.id }.id
         if (assignedTables.size > 1) {
             FohReceptionLogger.logFohMergingTables(
@@ -276,8 +271,8 @@ class ArrivalProcessor(
         }
 
         numberOfCustomersSeated += customerGroup.size
-        numberOfWaitersSeated.addAll(waiters)
-        numberOfTablesSeatedOn += assignedTables.size
+        waitersThatSeated.addAll(waiters)
+        tablesSeatedOn.addAll(assignedTables)
 
         FohReceptionLogger.logFohSeating(customerGroup.id, mergeId, waiters.map { it.id!! })
     }
@@ -293,11 +288,11 @@ class ArrivalProcessor(
 
         if (currentLoadPool.isNotEmpty()) {
             return currentLoadPool.sortedWith(compareByDescending(nullsLast()) { it.id }).sortedBy { it.currentLoad }
-                .last().also { if (it.id == null) it.id = getNextWaiterId() }
+                .last().also { it.ensureId(getNextWaiterId) }
         }
 
         return freeWaiters.sortedWith(compareBy(nullsLast()) { it.id }).sortedBy { it.currentLoad }.first()
-            .also { if (it.id == null) it.id = getNextWaiterId() }
+            .also { it.ensureId(getNextWaiterId) }
     }
 
     private fun assignTables(casualGroup: CasualGroup): Boolean {
@@ -334,6 +329,7 @@ class ArrivalProcessor(
     }
 
     private fun mergeTables(customerGroup: CustomerGroup, tables: List<Table>, threeQuarters: Boolean): List<Table>? {
+        if (customerGroup.tableType == TableType.BAR) { return null }
         val acc: MutableList<Table> = mutableListOf()
         var mergeSize = 0
 

@@ -165,9 +165,21 @@ class FrontOfHouse(
      *  processArrival(customerGroup, menu) || customerGroup.isWaitingToBeSeated.
      *  If true, keep in the customerQueue, otherwise remove from the customerQueue. */
     fun processArrival(customerGroup: CustomerGroup, menu: List<Recipe>): Boolean {
-        return when (customerGroup) {
+        val isProcessed = when (customerGroup) {
             is CasualGroup, is RegularGroup -> arrival.processArrival(customerGroup, menu)
             is EventGroup -> arrival.processArrival(customerGroup, menu)
+        }
+        registerDeliveryGroup(customerGroup)
+        return isProcessed
+    }
+
+    /** Add CasualGroup that wants delivery to deliveryGroups if the order was made successfully. */
+    private fun registerDeliveryGroup(customerGroup: CustomerGroup) {
+        if (customerGroup !is CasualGroup || !customerGroup.wantsDelivery) {
+            return
+        }
+        if (customerGroup.currentOrder != null && !turnedAwayGroups.contains(customerGroup)) {
+            deliveryGroups.addLast(customerGroup)
         }
     }
 

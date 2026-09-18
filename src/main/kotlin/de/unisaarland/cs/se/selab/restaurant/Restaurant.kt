@@ -4,6 +4,7 @@ import de.unisaarland.cs.se.selab.Constants
 import de.unisaarland.cs.se.selab.Tick
 import de.unisaarland.cs.se.selab.Time
 import de.unisaarland.cs.se.selab.actors.RestaurantStaff
+import de.unisaarland.cs.se.selab.customer.CasualGroup
 import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.customer.EventGroup
 import de.unisaarland.cs.se.selab.customer.RegularGroup
@@ -157,19 +158,19 @@ class Restaurant(
      * keep-in-queue formula, then logs and resets the tick's seating/ordering status.
      */
     private fun processArrivalSeatingOrdering() {
-        val iterator = customerQueue.iterator()
-        while (iterator.hasNext()) {
-            val customerGroup = iterator.next()
-            if (Time.tick < customerGroup.visitingAt) { continue }
+        val processedGroups: MutableList<CustomerGroup> = mutableListOf()
+        for (customerGroup in customerQueue.sortedWith(arrivalOrder)) {
+            if (Time.tick < customerGroup.visitingAt && !customerGroup.isVisitingThisTick()) { continue }
 
             if (customerGroup.isVisitingThisTick()) {
                 FohReceptionLogger.logRestaurantArrival(customerGroup.id)
             }
 
             if (frontOfHouse.processArrival(customerGroup, restaurantStats.menu)) {
-                iterator.remove()
+                processedGroups.add(customerGroup)
             }
         }
+        customerQueue.removeAll(processedGroups)
         frontOfHouse.logAndResetSeatingOrderingTickStatus()
     }
 
@@ -191,4 +192,13 @@ class Restaurant(
     fun addToCustomerQueue(customerGroup: CustomerGroup) {
         customerQueue.add(customerGroup)
     }
+
+    /** Group type (REGULAR, EVENT, CASUAL) first, then ascending id. */
+    val arrivalOrder: Comparator<CustomerGroup> = compareBy({
+        when (it) {
+            is RegularGroup -> 0
+            is EventGroup -> 1
+            is CasualGroup -> 2
+        }
+    }, { it.id })
 }

@@ -6,6 +6,8 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExampleSystemTes
 import de.unisaarland.cs.se.selab.systemtest.selab26.customerparsertests.customerParserSystemTests
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.AppendixScenarioTwoSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CookChangeNoOrderTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOrderSuccessTestA
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOrderSuccessTestB
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventReservationConflictTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ExactStockoutTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.OneCookTwoOrdersTest
@@ -114,6 +116,10 @@ object SystemTestRegistration {
         testSuite.registerTest(CookChangeNoOrderTest())
         registerParserControllerLogTests(testSuite)
         customerParserSystemTests().forEach { testSuite.registerTest(it) }
+
+        // new
+        testSuite.registerTest(DeliveryOrderSuccessTestB())
+        testSuite.registerTest(DeliveryOrderSuccessTestA())
     }
 
     /**

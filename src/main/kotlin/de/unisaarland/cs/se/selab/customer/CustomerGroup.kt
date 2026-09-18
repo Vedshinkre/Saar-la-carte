@@ -61,6 +61,15 @@ sealed class CustomerGroup(
     }
 
     /**
+     * clears everything a group accumulated during a previous visit, so that a returning group starts fresh
+     */
+    fun resetForNewEvening() {
+        experience = ExperienceType.NEUTRAL
+        currentOrder = null
+        customersRemainingInRestaurant = size
+    }
+
+    /**
      * returns true if the customerGroup is visiting this tick
      */
     open fun isVisitingThisTick(): Boolean {

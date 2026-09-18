@@ -6,6 +6,8 @@ import de.unisaarland.cs.se.selab.customer.CasualGroup
 import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.customer.EventGroup
 import de.unisaarland.cs.se.selab.customer.RegularGroup
+import de.unisaarland.cs.se.selab.food.Order
+import de.unisaarland.cs.se.selab.food.Stock
 import de.unisaarland.cs.se.selab.incidents.Incident
 import de.unisaarland.cs.se.selab.loggers.InitialAndPrepLogger
 import de.unisaarland.cs.se.selab.loggers.Logger
@@ -24,11 +26,13 @@ class Simulation(simdata: SimulationConfig) {
     var browser: BrowsingService = BrowsingService(simdata.restaurantStats)
     var incidents: List<Incident> = simdata.incidents
     var customers: List<CustomerGroup> = simdata.customers
+    private val stock: Stock = simdata.stock
 
     /**
      * The function that runs the simulation, gets called from main.
      */
     fun runSimulation() {
+        Order.resetIds()
         InitialAndPrepLogger.logSimulationStart()
 
         while (Time.ticksElapsed < Time.getMaxTicks()) {
@@ -45,6 +49,7 @@ class Simulation(simdata: SimulationConfig) {
         executeIncidents()
         executePreparationPhase()
         executeServingPhase()
+        stock.applyUnavailableDurations()
 
         if (Time.ticksElapsed < Time.getMaxTicks()) {
             Time.resetTick()

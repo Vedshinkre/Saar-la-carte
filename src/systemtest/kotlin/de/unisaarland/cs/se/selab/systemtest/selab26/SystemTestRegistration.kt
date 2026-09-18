@@ -6,6 +6,8 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExampleSystemTes
 import de.unisaarland.cs.se.selab.systemtest.selab26.customerparsertests.customerParserSystemTests
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.AppendixScenarioTwoSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualAdHocTableMergingSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualDeliveryEarlyDecisionTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualTiebreakLowestIdTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CookChangeNoOrderTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOrderSuccessTestA
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOrderSuccessTestB
@@ -95,6 +97,8 @@ object SystemTestRegistration {
         testSuite.registerTest(RegularRetrySucceedsSystemTest())
         testSuite.registerTest(RegularGradualCookServingTest())
         testSuite.registerTest(RegularBeforeCasualServingTest())
+        testSuite.registerTest(CasualTiebreakLowestIdTest())
+        testSuite.registerTest(CasualDeliveryEarlyDecisionTest())
         testSuite.registerTest(SingleOrCouple())
         testSuite.registerTest(AppendixScenarioTwoSystemTest())
         testSuite.registerTest(SimulationLifecycleSystemTest())

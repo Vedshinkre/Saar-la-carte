@@ -1,0 +1,16 @@
+{
+  "customerGroups": [
+    {
+      "id": 1,
+      "type": "CASUAL",
+      "size": 2,
+      "restaurantTypes": ["EUROPEAN"],
+      "visitingTick": 10,
+      "visitingEvenings": [1],
+      "deliveryDistance": 5,
+      "ratingLikelihood": "NEVER",
+      "foodPreferences": []
+    }
+  ],
+  "incidents": []
+}

@@ -41,7 +41,7 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
             val res = availableDriversAndDietaryCheck.maxWithOrNull(
                 compareBy<RestaurantStats> {
                     it.positiveRatings - it.negativeRatings
-                }.thenByDescending { -it.restaurantId }
+                }.thenByDescending { it.restaurantId }
             )
             if (res != null) {
                 res.availableDrivers = res.availableDrivers - 1
@@ -73,7 +73,7 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
         val res = dietaryCompatibleList.maxWithOrNull(
             compareBy<RestaurantStats> {
                 it.positiveRatings - it.negativeRatings
-            }.thenByDescending { -it.restaurantId }
+            }.thenByDescending { it.restaurantId }
         )
         if (res != null) {
             res.availableSeats[group.tableType] = res.availableSeats[group.tableType]!! - group.size
@@ -100,7 +100,7 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
         val res = dietaryChecked.maxWithOrNull(
             compareBy<RestaurantStats> {
                 it.positiveRatings - it.negativeRatings
-            }.thenByDescending { -it.restaurantId }
+            }.thenByDescending { it.restaurantId }
         )
         if (res != null) {
             res.availableEventSeats[group.tableType] = res.availableEventSeats[group.tableType]!! - group.size

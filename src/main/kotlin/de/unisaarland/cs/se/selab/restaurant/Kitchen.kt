@@ -127,9 +127,6 @@ class Kitchen(
      */
     // functions with logic
     fun resetKitchen() {
-        pantry.supplier.stock.applyUnavailableDurations()
-        // DOTO: the supplier's stock shared across restaurants
-        // unavailability durations counted down once per evening at simulation, not per restaurant
         while (orderQueue.isNotEmpty()) {
             val order = orderQueue.removeFirst()
             for (dish in order.dishes) {

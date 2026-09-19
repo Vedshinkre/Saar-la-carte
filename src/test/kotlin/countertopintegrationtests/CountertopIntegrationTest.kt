@@ -14,7 +14,6 @@ import de.unisaarland.cs.se.selab.restaurant.Countertop
 import de.unisaarland.cs.se.selab.restaurant.Pantry
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 class CountertopIntegrationTest {
@@ -82,8 +81,6 @@ class CountertopIntegrationTest {
         assertTrue(available.contains(recipe))
     }
 
-    // DOIT this test should pass, change the assertion to assertTrue
-    @Disabled
     @Test
     fun `getAvailableRecipes- Eligible Cook Is Busy -fails`() {
         val recipe = createDummyRecipe(requiredAmount = 50)
@@ -95,7 +92,7 @@ class CountertopIntegrationTest {
         val countertop = setupCountertop(listOf(pkg), listOf(cook))
         val available = countertop.getAvailableRecipes(listOf(recipe))
 
-        assertFalse(available.contains(recipe))
+        assertTrue(available.contains(recipe))
     }
 
     @Test

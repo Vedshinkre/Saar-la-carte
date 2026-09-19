@@ -1,179 +1,161 @@
 package deliveryservicetest
 
-import org.junit.jupiter.api.Disabled
+import de.unisaarland.cs.se.selab.Time
+import de.unisaarland.cs.se.selab.actors.Driver
+import de.unisaarland.cs.se.selab.customer.CasualGroup
+import de.unisaarland.cs.se.selab.enums.DriverState
+import de.unisaarland.cs.se.selab.enums.ExperienceType
+import de.unisaarland.cs.se.selab.enums.LogLevel
+import de.unisaarland.cs.se.selab.enums.RatingLikelihood
+import de.unisaarland.cs.se.selab.enums.TableType
+import de.unisaarland.cs.se.selab.food.Order
+import de.unisaarland.cs.se.selab.loggers.Logger
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
-// Disabled: this whole file was written against Driver.processTick(), which the delivery
-// refactor in 347de06 ("refactor delivery code to match logs from spec adjustment") replaced
-// with the separate driveTowardsCustomer/driveTowardsRestaurant/logArrival/handOverToCustomer/
-// finishReturnTrip steps orchestrated by FrontOfHouse. That behavior is now covered by
-// DeliveryPipelineTest. Kept disabled (rather than deleted) so the original per-branch driver
-// coverage can be ported over to the new API instead of quietly dropped.
-@Disabled("Driver.processTick() was removed by the delivery refactor; see DeliveryPipelineTest")
 class DriverTest {
 
-    /*
     @BeforeEach
     fun setup() {
-        // Reset time
         Time.tick = 0
-
-        // Initialize the logger to DEBUG so it accepts all log messages
         Logger.setup(LogLevel.DEBUG)
-    }
-    private fun createDeliveryGroup(visitingAt: Int = VISITING): CasualGroup {
-        return CasualGroup(
-            id = 1,
-            size = 2,
-            tableType = TableType.COMMON,
-            visitingAt = visitingAt,
-            foodPreferences = emptyList(),
-            restaurantTypes = listOf(RestaurantType.EUROPEAN),
-            visitingEvenings = listOf(1),
-            deliveryDistance = 5,
-            ratingLikelihood = RatingLikelihood.ALWAYS
-        )
     }
 
     private fun setupDriver(state: DriverState, ticksToDest: Int): Driver {
         return Driver().apply {
             id = 1
             this.state = state
-            targetGroup = createDeliveryGroup(10)
-            currentOrder = mock<Order> { whenever(it.dishes).thenReturn(emptyList()) }
+            targetGroup = CasualGroup(
+                id = 1, size = 2, tableType = TableType.COMMON, visitingAt = 10,
+                foodPreferences = emptyList(), restaurantTypes = emptyList(),
+                visitingEvenings = listOf(1), deliveryDistance = 5, ratingLikelihood = RatingLikelihood.NEVER
+            )
+            currentOrder = Order(emptyList())
             this.ticksToDest = ticksToDest
             totalTripTicks = 10
+            tripDistance = 5
+            distanceDriven = 0
         }
     }
 
-    //  Null / Early Return Branch Tests
+    // Null / Early Return Branch Tests
 
     @Test
-    fun `processTick - does nothing -state IDLE or WAITING`() {
-        val driver = setupDriver(DriverState.IDLE, 5)
-        driver.processTick()
-        assertEquals(5, driver.ticksToDest) // Unchanged
+    fun `driver - return early when id is null`() {
+        val driver = setupDriver(DriverState.DELIVERING, 5)
+        driver.id = null
 
-        driver.state = DriverState.WAITING
-        driver.processTick()
-        assertEquals(5, driver.ticksToDest) // Unchanged
+        // should abort when id is null
+        driver.driveTowardsCustomer()
+        driver.logArrival()
+        driver.handOverToCustomer()
+
+        // Assert nothing changed, driver still drives to the customer, logs nothing delivered and comes to restaurant
+        assertEquals(5, driver.ticksToDest)
+        assertEquals(DriverState.DELIVERING, driver.state)
     }
 
     @Test
-    fun `driveToCustomer-returns early-missing attributes`() {
+    fun `logArrival and handOverToCustomer - when targetGroup is null`() {
         val driver = setupDriver(DriverState.DELIVERING, 5)
 
-        // Null group
+        // Remove the target group to trigger the early return safety check
         driver.targetGroup = null
-        driver.processTick()
-        assertEquals(5, driver.ticksToDest)
+        driver.logArrival()
+        driver.handOverToCustomer()
 
-        // Wrong group type
-        driver.targetGroup = mock<CustomerGroup>()
-        driver.processTick()
-        assertEquals(5, driver.ticksToDest)
-
-        // Null order
-        driver.targetGroup = createDeliveryGroup(10)
-        driver.currentOrder = null
-        driver.processTick()
-        assertEquals(5, driver.ticksToDest)
-
-        // Null ID
-        driver.currentOrder = mock<Order> {
-            whenever(it.id).thenReturn(99)
-            whenever(it.dishes).thenReturn(emptyList())
-        }
-        driver.id = null
-        driver.processTick()
-        assertEquals(5, driver.ticksToDest)
+        // driver still drives to the customer, logs nothing delivered and comes to restaurant
+        assertEquals(DriverState.DELIVERING, driver.state)
     }
 
     @Test
-    fun `driveToRestaurant - returns early if missing ID`() {
-        val driver = setupDriver(DriverState.RETURNING, 5)
-        driver.id = null
-        driver.processTick()
-        assertEquals(5, driver.ticksToDest) // Unchanged
-    }
-
-    // success paths
-
-    @Test
-    fun `driveToCustomer - arrives early-POSITIVE experience`() {
-        val driver = setupDriver(DriverState.DELIVERING, 1)
-        Time.tick = 8 // visitingAt is 10
-
-        driver.processTick()
-
-        // Detekt
-        val customerGroup = driver.targetGroup as? CasualGroup ?: error("targetGroup is null or wrong type")
-
-        assertEquals(ExperienceType.POSITIVE, customerGroup.experience)
-        assertEquals(DriverState.RETURNING, driver.state)
-        assertEquals(5, driver.ticksToDest) // totalTripTicks(10) / 2
-    }
-
-    @Test
-    fun `driveToCustomer - arrives exactly on time-NEUTRAL experience`() {
-        val driver = setupDriver(DriverState.DELIVERING, 1)
-        Time.tick = 10 // visitingAt is 10
-
-        driver.processTick()
-
-        // Detekt
-        val customerGroup = driver.targetGroup as? CasualGroup ?: error("targetGroup is null or wrong type")
-
-        assertEquals(ExperienceType.NEUTRAL, customerGroup.experience)
-        assertEquals(DriverState.RETURNING, driver.state)
-    }
-
-    @Test
-    fun `driveToCustomer - arrives late-NEGATIVE experience`() {
-        val driver = setupDriver(DriverState.DELIVERING, 1)
-        Time.tick = 11 // Late
-
-        driver.processTick()
-
-        // Detekt
-        val customerGroup = driver.targetGroup as? CasualGroup ?: error("targetGroup is null or wrong type")
-
-        assertEquals(ExperienceType.NEGATIVE, customerGroup.experience)
-    }
-
-    // edge cases
-
-    @Test
-    fun `driveToCustomer - timeouts trigger abortOrder and NEGATIVE experience`() {
+    fun `logArrival and handOverToCustomer - when currentOrder is null`() {
         val driver = setupDriver(DriverState.DELIVERING, 5)
-        val mockDishCooking = mock<Dish> { whenever(it.status).thenReturn(DishStatus.COOKING) }
-        val mockDishCooked = mock<Dish> { whenever(it.status).thenReturn(DishStatus.COOKED) }
-        val mockOrder = mock<Order> { whenever(it.dishes).thenReturn(listOf(mockDishCooking, mockDishCooked)) }
-        driver.currentOrder = mockOrder
 
-        // Timeout formula: group.visitingAt(10) + Constants.CUSTOMER_DELIVERY_WAIT_TICKS
-        Time.tick = 10 + Constants.CUSTOMER_DELIVERY_WAIT_TICKS + 1
+        // Remove the order to trigger the early return safety check
+        driver.currentOrder = null
+        driver.logArrival()
+        driver.handOverToCustomer()
 
-        driver.processTick()
-
-        // Verify status updates
-        assertEquals(ExperienceType.NEGATIVE, (driver.targetGroup as CasualGroup).experience)
-        assertEquals(DriverState.RETURNING, driver.state)
-
-        // Verify abortOrder correctly skipped the EATEN dish but updated the COOKING dish
-        verify(mockDishCooking).status = DishStatus.ABORTED
-        verify(mockDishCooked, never()).status = DishStatus.ABORTED
+        // driver still drives to the customer, logs nothing delivered and comes to restaurant
+        assertEquals(DriverState.DELIVERING, driver.state)
     }
 
     @Test
-    fun `driveToRestaurant - finishes trip and resets state`() {
-        val driver = setupDriver(DriverState.RETURNING, 1)
+    fun `driveTowardsCustomer- if ticksToDest is zero or less`() {
+        val driver = setupDriver(DriverState.DELIVERING, 0)
 
-        driver.processTick()
+        driver.driveTowardsCustomer()
+
+        // Ticks and distance should remain completely untouched
+        assertEquals(0, driver.ticksToDest)
+        assertEquals(0, driver.distanceDriven)
+    }
+
+    @Test
+    fun `driveTowardsRestaurant- if ticksToDest is zero or less`() {
+        val driver = setupDriver(DriverState.RETURNING, 0)
+
+        driver.driveTowardsRestaurant()
 
         assertEquals(0, driver.ticksToDest)
+    }
+
+    // Edge Cases
+
+    @Test
+    fun `handOverToCustomer - pre-existing NEGATIVE experience is maintained regardless of arrival time`() {
+        val driver = setupDriver(DriverState.DELIVERING, 0)
+        val group = driver.targetGroup as? CasualGroup ?: error("targetGroup is null or wrong type")
+
+        // Group is already mad
+        group.experience = ExperienceType.NEGATIVE
+
+        // Arrive early
+        Time.tick = 1
+
+        driver.handOverToCustomer()
+
+        // Experience must stay NEGATIVE
+        assertEquals(ExperienceType.NEGATIVE, group.experience)
+        assertEquals(DriverState.RETURNING, driver.state)
+    }
+
+    // The Return Trip
+
+    @Test
+    fun `finishReturnTrip - reset all driver stats to idle`() {
+        val driver = setupDriver(DriverState.RETURNING, 0)
+
+        driver.finishReturnTrip()
+
         assertEquals(DriverState.IDLE, driver.state)
         assertNull(driver.currentOrder)
         assertNull(driver.targetGroup)
+        assertEquals(0, driver.totalTripTicks)
+        assertEquals(0, driver.ticksToDest)
+        assertEquals(0, driver.tripDistance)
+        assertEquals(0, driver.distanceDriven)
     }
-    */
+
+    @Test
+    fun `finishReturnTrip- even if id is null`() {
+        val driver = setupDriver(DriverState.RETURNING, 0)
+
+        // somehow magically
+        driver.id = null
+
+        driver.finishReturnTrip()
+
+        // still he is resetted to normal
+        assertEquals(DriverState.IDLE, driver.state)
+        assertNull(driver.currentOrder)
+        assertNull(driver.targetGroup)
+        assertEquals(0, driver.totalTripTicks)
+        assertEquals(0, driver.ticksToDest)
+        assertEquals(0, driver.tripDistance)
+        assertEquals(0, driver.distanceDriven)
+    }
 }

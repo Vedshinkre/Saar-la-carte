@@ -12,9 +12,9 @@ import de.unisaarland.cs.se.selab.food.Order
 import de.unisaarland.cs.se.selab.loggers.DeliveryLogger
 import de.unisaarland.cs.se.selab.loggers.FohServiceLogger
 
-// NOTE: used comparison with null instead of elivs operator everywhere in my code
+// NOTE: used comparison with null instead of Elvis operator everywhere in my code
 // e.g. `if (order == null) continue` instead of `val order = group.currentOrder ?: continue`
-// detekt is not able to resolve elvis operator jumps in loops and marks the loop body as unreachable
+// detekt is not able to resolve Elvis operator jumps in loops and marks the loop body as unreachable
 // found this documentation of the issue: https://github.com/detekt/detekt/issues/6129
 
 /**

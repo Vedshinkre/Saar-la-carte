@@ -100,7 +100,7 @@ object SystemTestRegistration {
         testSuite.registerTest(LateCasualNoWaiterSystemTest())
         registeratharvaRefrenceTests(testSuite)
         customerParserSystemTests().forEach { testSuite.registerTest(it) }
-        fullScenarioSystemTests().forEach { testSuite.registerTest(it) }
+        fullScenarioSystemTests(false).forEach { testSuite.registerTest(it) }
         testSuite.registerTest(DeliveryOrderSuccessTestA())
         testSuite.registerTest(DeliveryOrderSuccessTestB())
     }
@@ -115,6 +115,7 @@ object SystemTestRegistration {
         testSuite.registerTest(ExampleSystemTest())
         registeratharvaMutantValidationTests(testSuite)
         customerParserSystemTests().forEach { testSuite.registerTest(it) }
+        fullScenarioSystemTests(true).forEach { testSuite.registerTest(it) }
     }
 
     /**
@@ -136,6 +137,7 @@ object SystemTestRegistration {
         testSuite.registerTest(
             StaffLoadBalancingFallbackSystemTest()
         )
+        fullScenarioSystemTests(true).forEach { testSuite.registerTest(it) }
     }
 
     /**

@@ -12,7 +12,6 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
@@ -242,38 +241,6 @@ class FoodPreferenceParserTest {
     fun `preferring every ingredient is rejected`() {
         assertThrows<IllegalArgumentException> {
             parse(1, preference(excluded = null, preferred = listOf(RICE, GARLIC, ONION)))
-        }
-    }
-
-    @Disabled
-    @Test
-    fun `duplicate excluded ingredient is rejected`() {
-        assertThrows<IllegalArgumentException> {
-            parse(1, preference(excluded = listOf(ONION, ONION)))
-        }
-    }
-
-    @Disabled
-    @Test
-    fun `duplicate preferred ingredient is rejected`() {
-        assertThrows<IllegalArgumentException> {
-            parse(1, preference(preferred = listOf(RICE, RICE)))
-        }
-    }
-
-    @Disabled
-    @Test
-    fun `duplicate favorite dish is rejected`() {
-        assertThrows<IllegalArgumentException> {
-            parse(1, preference(favorites = listOf(RICE_BOWL, RICE_BOWL)))
-        }
-    }
-
-    @Disabled
-    @Test
-    fun `preference without any of the three properties is rejected`() {
-        assertThrows<IllegalArgumentException> {
-            parse(1, preference(excluded = null, preferred = null, favorites = null))
         }
     }
 

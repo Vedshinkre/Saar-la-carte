@@ -7,12 +7,14 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.customerparsertests.custome
 import de.unisaarland.cs.se.selab.systemtest.selab26.fulltests.fullScenarioSystemTests
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualAdHocTableMergingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualDeliveryEarlyDecisionTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualNoDecisionNoSpaceTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualTiebreakLowestIdTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CustomerBehaviourDecisionSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryCumulativeDistanceSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOrderSuccessTestA
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOrderSuccessTestB
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOutboundTripSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EatingFinishedAndEscortedSameTickTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventReservationConflictTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ExactStockoutTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.LateCasualNoWaiterSystemTest
@@ -188,6 +190,8 @@ object SystemTestRegistration {
         testSuite.registerTest(StaffIdResetAcrossEveningsSystemTest())
         testSuite.registerTest(StaffLoadBalancingFallbackSystemTest())
         testSuite.registerTest(RecipeChangeRoundingSystemTest())
+        testSuite.registerTest(CasualNoDecisionNoSpaceTest())
+        testSuite.registerTest(EatingFinishedAndEscortedSameTickTest())
     }
     private fun registeratharvaMutantValidationTests(testSuite: SELab26TestSuite) {
         testSuite.registerTest(OverlappingUnavailabilityRejectedSystemTest())

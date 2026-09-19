@@ -1063,7 +1063,7 @@
 [IMPORTANT] Kitchen Meal Cooked (R 1): Cook 2 finished cooking 25 meals of dish bean stew 1 ticks after ordering.
 [DEBUG] Kitchen Status (R 1): 2 cooks were active cooking 35 and finishing 35 meals. 35 meals can be served by the waitstaff.
 [IMPORTANT] FOH Serving (R 1): Waitstaff 1 serves corn cake:10 to table 6 3 ticks after ordering.
-[DEBUG] FOH No Serving (R 1): Waitstaff 1 did not serve 25 meals to table 1.
+...
 [DEBUG] FOH Serving Status (R 1): 1 waitstaff served 10 meals.
 [DEBUG] FOH Eating Status (R 1): 10 customers are eating and 0 customers have finished eating this tick.
 [DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.

@@ -20,10 +20,9 @@
       "foodPreferences": [{"size": 10, "excludedIngredients": ["oats"]}]
     },
     {
-      "id": 4, "type": "CASUAL", "size": 2,
+      "id": 4, "type": "CASUAL", "size": 2, "tableType": "COMMON",
       "visitingTick": 3, "restaurantTypes": ["EUROPEAN"], "visitingEvenings": [1],
       "ratingLikelihood": "ALWAYS",
-      "deliveryDistance": 0,
       "foodPreferences": [{"size": 2, "excludedIngredients": ["oats"]}]
     },
     {

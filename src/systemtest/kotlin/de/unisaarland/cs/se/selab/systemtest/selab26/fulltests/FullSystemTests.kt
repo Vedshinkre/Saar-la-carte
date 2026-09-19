@@ -8,6 +8,9 @@ private const val SCENARIO_DIR = "fulltests/scenarios"
 private const val EXPECTED_LOG_DIR = "fulltests/logs"
 private const val INIT_INFO = "Initialization Info: "
 
+/** marks a region of the log the expectation deliberately does not pin down */
+private const val ELLIPSIS = "..."
+
 private const val STAFF_AND_TABLES = "staff-and-tables"
 private const val KITCHEN_AND_SERVING = "kitchen-and-serving"
 private const val DELIVERY_HANDOFF = "delivery-handoff"
@@ -26,6 +29,7 @@ fun fullScenarioSystemTests(): List<SystemTestSELab26> = listOf(
 
 /** replays the `fulltests` scenario [scenarioName]
  * asserts its output line by line against the expected log in `fulltests/logs`
+ * a line of `...` in the expected log skips ahead to the next expected line instead of asserting it
  * [variant] names the run for one scenario is replayed several ways e.g. `staff-and-tables.info`
  */
 class FullScenarioSystemTest(
@@ -45,10 +49,18 @@ class FullScenarioSystemTest(
     override val scenario = "$SCENARIO_DIR/$scenarioName/scenario.json"
 
     override suspend fun run() {
+        var skipping = false
         for (line in expectedLines()) {
-            assertNextLine(line)
+            if (line == ELLIPSIS) {
+                skipping = true
+            } else if (skipping) {
+                skipUntilString(line)
+                skipping = false
+            } else {
+                assertNextLine(line)
+            }
         }
-        assertEnd()
+        if (!skipping) assertEnd()
     }
 
     private fun expectedLines(): List<String> {

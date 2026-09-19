@@ -20,10 +20,8 @@
 [IMPORTANT] Kitchen Dish Assignment (R 1): Cook 1 of type PASTRY starts cooking 5 meals of dish bean stew based on order 1 for orders 1,2.
 [IMPORTANT] Kitchen Dish Assignment (R 1): Cook 2 of type SOUS starts cooking 8 meals of dish corn cake based on order 1 for orders 1,3.
 [IMPORTANT] Simulation: Tick 4 (1) started.
-[IMPORTANT] Kitchen Meal Cooked (R 1): Cook 1 finished cooking 2 meals of dish bean stew 1 ticks after ordering.
-[IMPORTANT] Kitchen Meal Cooked (R 1): Cook 1 finished cooking 3 meals of dish bean stew 1 ticks after ordering.
-[IMPORTANT] Kitchen Meal Cooked (R 1): Cook 2 finished cooking 2 meals of dish corn cake 1 ticks after ordering.
-[IMPORTANT] Kitchen Meal Cooked (R 1): Cook 2 finished cooking 6 meals of dish corn cake 1 ticks after ordering.
+[IMPORTANT] Kitchen Meal Cooked (R 1): Cook 1 finished cooking 5 meals of dish bean stew 1 ticks after ordering.
+[IMPORTANT] Kitchen Meal Cooked (R 1): Cook 2 finished cooking 8 meals of dish corn cake 1 ticks after ordering.
 [IMPORTANT] FOH Serving (R 1): Waitstaff 1 serves bean stew:2,corn cake:2 to table 2 1 ticks after ordering.
 [IMPORTANT] FOH Serving (R 1): Waitstaff 1 serves bean stew:3 to table 3 1 ticks after ordering.
 [IMPORTANT] FOH Serving (R 1): Waitstaff 2 serves corn cake:6 to table 1 1 ticks after ordering.

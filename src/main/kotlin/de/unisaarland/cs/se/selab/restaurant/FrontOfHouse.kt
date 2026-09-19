@@ -204,7 +204,7 @@ class FrontOfHouse(
 
     /** Turns a group away unlogged because the restaurant is in the last 3 ticks of its opening
      *  time and no longer accepts new customers. */
-//    fun refuseLateArrival(customerGroup: CustomerGroup) = arrival.refuseLateArrival(customerGroup)
+    fun refuseLateArrival(customerGroup: CustomerGroup) = arrival.refuseLateArrival(customerGroup)
 
     /** process serving */
     fun processServing() = serving.processServing()

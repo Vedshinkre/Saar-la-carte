@@ -96,7 +96,7 @@ private fun parseCommandLineArgs(args: Array<String>): Cliinfo {
  */
 private fun setupLogging(cli: Cliinfo) {
     Logger.setup(cli.logLevel)
-    val writer = if (cli.outputPath.isNullOrEmpty()) {
+    val writer = if (cli.outputPath.isEmpty()) {
         PrintWriter(System.out)
     } else {
         PrintWriter(File(cli.outputPath))

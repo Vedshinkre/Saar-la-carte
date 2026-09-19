@@ -5,7 +5,7 @@
       "name": "Slow Pot",
       "type": "EUROPEAN",
       "openingTickStart": 1,
-      "openingTickEnd": 24,
+      "openingTickEnd": 10,
       "deliveryDrivers": 0,
       "event": false,
       "positiveRatings": 0,

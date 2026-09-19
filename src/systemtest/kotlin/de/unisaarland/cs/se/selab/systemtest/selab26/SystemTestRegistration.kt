@@ -8,6 +8,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.fulltests.fullScenarioSyste
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualAdHocTableMergingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualDeliveryEarlyDecisionTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualTiebreakLowestIdTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CustomerBehaviourDecisionSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryCumulativeDistanceSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOrderSuccessTestA
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOrderSuccessTestB
@@ -23,6 +24,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SingleOrCouple
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.StaffLoadBalancingFallbackSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.StatisticsOrderingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SupplierProcurementSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.UnavailabilityDurationExpirySystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.UnavailableIncidentSupplierProcurementSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.WaitstaffExhaustionTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.AllFilesValidSystemTest
@@ -98,6 +100,7 @@ object SystemTestRegistration {
         testSuite.registerTest(RegularGradualCookServingTest())
         testSuite.registerTest(RegularBeforeCasualServingTest())
         testSuite.registerTest(CasualTiebreakLowestIdTest())
+        testSuite.registerTest(CustomerBehaviourDecisionSystemTest())
         testSuite.registerTest(CasualDeliveryEarlyDecisionTest())
         testSuite.registerTest(DeliveryOutboundTripSystemTest())
         testSuite.registerTest(DeliveryCumulativeDistanceSystemTest())
@@ -113,6 +116,7 @@ object SystemTestRegistration {
         testSuite.registerTest(StatisticsOrderingSystemTest())
         testSuite.registerTest(SupplierProcurementSystemTest())
         testSuite.registerTest(UnavailableIncidentSupplierProcurementSystemTest())
+        testSuite.registerTest(UnavailabilityDurationExpirySystemTest())
         testSuite.registerTest(
             PantryExpirySystemTest()
         )

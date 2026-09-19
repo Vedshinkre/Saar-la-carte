@@ -7,6 +7,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.utils.KitchenTestLogs
 import de.unisaarland.cs.se.selab.systemtest.selab26.utils.TickStatusTestLogs
 
 private const val GRILLED_CHICKEN = "Grilled Chicken"
+private const val TOMATO_SOUP = "Tomato Soup"
 
 /**
  * System test that exhaustively verifies a complete restaurant simulation up to Tick 5.
@@ -16,6 +17,8 @@ private const val GRILLED_CHICKEN = "Grilled Chicken"
  *
  * - **Tick 1:** Event group reservation and restaurant decision.
  * - **Tick 2:** Casual group arrival, waitstaff seating, order placement, and kitchen assignment.
+ *   The pantry only holds enough chicken for 2 portions, so of the 4 customers (no preferences,
+ *   highest recipe id first) 2 get Grilled Chicken and the other 2 fall back to Tomato Soup.
  * - **Tick 3:** Kitchen cooking completion and waitstaff serving operations.
  * - **Tick 4:** Customer eating phase duration.
  * - **Tick 5:** Meal completion, escorting customers outside, and collecting experience ratings.
@@ -68,7 +71,7 @@ class ExhaustiveSimpleScenarioTest : ExampleSystemTestExtension() {
                 restId = 1,
                 groupId = 2,
                 orderId = 1,
-                dishes = mapOf(GRILLED_CHICKEN to 4),
+                dishes = mapOf(GRILLED_CHICKEN to 2, TOMATO_SOUP to 2),
                 waitstaffId = 1
             )
         )
@@ -80,15 +83,29 @@ class ExhaustiveSimpleScenarioTest : ExampleSystemTestExtension() {
             KitchenTestLogs.kitchenAssign(
                 restId = 1,
                 cookId = 1,
+                cookType = "TOURNANT",
+                meals = 2,
+                dishName = TOMATO_SOUP,
+                baseOrderId = 1,
+                allOrders = listOf(1)
+            )
+        )
+        assertNextLine(
+            KitchenTestLogs.kitchenAssign(
+                restId = 1,
+                cookId = 2,
                 cookType = "ROAST",
-                meals = 4,
+                meals = 2,
                 dishName = GRILLED_CHICKEN,
                 baseOrderId = 1,
                 allOrders = listOf(1)
             )
         )
 
-        assertNextLine(KitchenTestLogs.kitchenStatus(1, 1, 4, 0, 0))
+        // The soup (duration 10) is done within the tick it was started; the chicken is not.
+        assertNextLine(KitchenTestLogs.kitchenCooked(1, 1, 2, TOMATO_SOUP, 0))
+        assertNextLine(KitchenTestLogs.kitchenStatus(1, 2, 4, 2, 2))
+        assertNextLine(FohServiceTestLogs.noServing(1, 1, 2, 1))
         assertNextLine(FohServiceTestLogs.servingStatus(1, 0, 0))
         assertNextLine(FohServiceTestLogs.eatingStatus(1, 0, 0))
         assertNextLine(FohServiceTestLogs.escortingStatus(1, 0, 0))
@@ -102,14 +119,14 @@ class ExhaustiveSimpleScenarioTest : ExampleSystemTestExtension() {
         assertNextLine(FohArrivalTestLogs.seatingStatus(1, 0, 0, 0))
         assertNextLine(FohArrivalTestLogs.orderingStatus(1, 0, 0))
 
-        assertNextLine(KitchenTestLogs.kitchenCooked(1, 1, 4, GRILLED_CHICKEN, 1))
-        assertNextLine(KitchenTestLogs.kitchenStatus(1, 1, 4, 4, 4))
+        assertNextLine(KitchenTestLogs.kitchenCooked(1, 2, 2, GRILLED_CHICKEN, 1))
+        assertNextLine(KitchenTestLogs.kitchenStatus(1, 1, 2, 2, 4))
 
         assertNextLine(
             FohServiceTestLogs.serving(
                 restId = 1,
                 waitstaffId = 1,
-                dishes = mapOf("Grilled Chicken" to 4),
+                dishes = mapOf(GRILLED_CHICKEN to 2, TOMATO_SOUP to 2),
                 tableId = 1,
                 ticks = 1
             )

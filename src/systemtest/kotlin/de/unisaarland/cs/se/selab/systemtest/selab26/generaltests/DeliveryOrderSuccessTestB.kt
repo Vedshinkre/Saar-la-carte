@@ -10,7 +10,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.utils.TickStatusTestLogs
  * and correctly increment the delivered meals statistic.
  */
 class DeliveryOrderSuccessTestB : ExampleSystemTestExtension() {
-    override val name = "DeliveryOrderSuccessTest"
+    override val name = "DeliveryOrderSuccessTestB"
     override val description = "Checks delivery order flow and statistics (served = 0))"
 
     override val restaurants = "deliverytestjson/restaurants.json"

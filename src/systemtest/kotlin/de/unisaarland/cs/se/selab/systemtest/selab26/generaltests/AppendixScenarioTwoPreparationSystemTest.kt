@@ -31,24 +31,25 @@ class AppendixScenarioTwoPreparationSystemTest : ExampleSystemTestExtension() {
         // evening 10) straight to the evening the diagram documents.
         skipUntilString(InitialAndPrepTestLogs.prepStart(30))
 
-        // rc3's previous order history (chicken rice, beef pasta, potato soup) drives the
-        // shopping list: the pantry first drops what's left from evening 10's stock, then
-        // procures fresh ingredients for the 14 free seats available tonight.
+        // Ingredients with bestBefore 1 bought the evening before expire, and so does the rice
+        // bought on evening 27 (bestBefore 3). The pasta bought on evening 28 is still good.
         assertNextLine(InitialAndPrepTestLogs.pantryRemoved(1, 500, gram, "beef"))
         assertNextLine(InitialAndPrepTestLogs.pantryRemoved(1, 1000, gram, "chicken"))
         assertNextLine(InitialAndPrepTestLogs.pantryRemoved(1, 100, gram, "garlic"))
         assertNextLine(InitialAndPrepTestLogs.pantryRemoved(1, 500, "mL", "oil"))
         assertNextLine(InitialAndPrepTestLogs.pantryRemoved(1, 10, "X", "onion"))
-        assertNextLine(InitialAndPrepTestLogs.pantryRemoved(1, 1000, gram, "pasta"))
         assertNextLine(InitialAndPrepTestLogs.pantryRemoved(1, 1000, gram, "potato"))
         assertNextLine(InitialAndPrepTestLogs.pantryRemoved(1, 1000, gram, "rice"))
-        assertNextLine(InitialAndPrepTestLogs.pantryProcured(1, 300, gram, "beef"))
+        // Needed tonight: rc3's last order (2 beef pasta, 5 chicken rice, 3 potato soup) plus
+        // ceil(14 free seats / 10) = 2 of every dish -> 4 beef pasta, 7 chicken rice, 5 potato
+        // soup. The 1000 g of pasta still in stock covers the 800 g of pasta, so none is bought.
+        assertNextLine(InitialAndPrepTestLogs.pantryProcured(1, 600, gram, "beef"))
         assertNextLine(InitialAndPrepTestLogs.pantryProcured(1, 1000, gram, "chicken"))
-        assertNextLine(InitialAndPrepTestLogs.pantryProcured(1, 100, gram, "garlic"))
+        assertNextLine(InitialAndPrepTestLogs.pantryProcured(1, 200, gram, "garlic"))
         assertNextLine(InitialAndPrepTestLogs.pantryProcured(1, 500, "mL", "oil"))
-        assertNextLine(InitialAndPrepTestLogs.pantryProcured(1, 10, "X", "onion"))
-        assertNextLine(InitialAndPrepTestLogs.pantryProcured(1, 1000, gram, "potato"))
-        assertNextLine(InitialAndPrepTestLogs.pantryProcured(1, 1000, gram, "rice"))
+        assertNextLine(InitialAndPrepTestLogs.pantryProcured(1, 20, "X", "onion"))
+        assertNextLine(InitialAndPrepTestLogs.pantryProcured(1, 2000, gram, "potato"))
+        assertNextLine(InitialAndPrepTestLogs.pantryProcured(1, 2000, gram, "rice"))
         assertNextLine(InitialAndPrepTestLogs.pantryRestocked(1))
     }
 }

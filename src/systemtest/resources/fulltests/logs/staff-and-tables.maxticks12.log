@@ -41,10 +41,8 @@
 [DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
 [DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
 [DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
-[IMPORTANT] Kitchen Meal Cooked (R 1): Cook 1 finished cooking 2 meals of dish bean stew 1 ticks after ordering.
-[IMPORTANT] Kitchen Meal Cooked (R 1): Cook 1 finished cooking 3 meals of dish bean stew 1 ticks after ordering.
-[IMPORTANT] Kitchen Meal Cooked (R 1): Cook 2 finished cooking 2 meals of dish corn cake 1 ticks after ordering.
-[IMPORTANT] Kitchen Meal Cooked (R 1): Cook 2 finished cooking 6 meals of dish corn cake 1 ticks after ordering.
+[IMPORTANT] Kitchen Meal Cooked (R 1): Cook 1 finished cooking 5 meals of dish bean stew 1 ticks after ordering.
+[IMPORTANT] Kitchen Meal Cooked (R 1): Cook 2 finished cooking 8 meals of dish corn cake 1 ticks after ordering.
 [DEBUG] Kitchen Status (R 1): 2 cooks were active cooking 13 and finishing 13 meals. 13 meals can be served by the waitstaff.
 [IMPORTANT] FOH Serving (R 1): Waitstaff 1 serves bean stew:2,corn cake:2 to table 2 1 ticks after ordering.
 [IMPORTANT] FOH Serving (R 1): Waitstaff 1 serves bean stew:3 to table 3 1 ticks after ordering.

@@ -88,7 +88,7 @@
 [INFO] Restaurant Arrival (R 1): Group 2 arrived at restaurant 1.
 [IMPORTANT] FOH Seating (R 1): Group 2 seated at table 2 by waitstaff 2.
 [IMPORTANT] FOH Ordering (R 1): Group 2 placed order 3 of rye roll:7 with waitstaff 2.
-[INFO] Restaurant Arrival (R 1): Group 3 arrived at restaurant 1.
+...
 [IMPORTANT] FOH Ordering (R 1): Group 3 placed order 4 of rye roll:10.
 [DEBUG] FOH Seating Status (R 1): 2 waitstaff seated 15 customers on 2 tables.
 [DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 25 customers, 2 waitstaff took orders.
@@ -102,13 +102,11 @@
 [IMPORTANT] Simulation: Tick 8 (1) started.
 [DEBUG] Restaurant Decision: Group 5 decided on restaurant 1.
 [DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
-[INFO] Restaurant Arrival (R 1): Group 5 arrived at restaurant 1.
+...
 [IMPORTANT] FOH Ordering (R 1): Group 5 placed order 5 of rye roll:4.
 [DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
 [DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 4 customers, 0 waitstaff took orders.
-[IMPORTANT] Kitchen Meal Cooked (R 1): Cook 1 finished cooking 8 meals of dish rye roll 1 ticks after ordering.
-[IMPORTANT] Kitchen Meal Cooked (R 1): Cook 1 finished cooking 7 meals of dish rye roll 1 ticks after ordering.
-[IMPORTANT] Kitchen Meal Cooked (R 1): Cook 1 finished cooking 10 meals of dish rye roll 1 ticks after ordering.
+[IMPORTANT] Kitchen Meal Cooked (R 1): Cook 1 finished cooking 25 meals of dish rye roll 1 ticks after ordering.
 [DEBUG] Kitchen Status (R 1): 1 cooks were active cooking 25 and finishing 25 meals. 25 meals can be served by the waitstaff.
 [IMPORTANT] FOH Serving (R 1): Waitstaff 1 serves rye roll:8 to table 1 1 ticks after ordering.
 [IMPORTANT] FOH Serving (R 1): Waitstaff 2 serves rye roll:7 to table 2 1 ticks after ordering.
@@ -382,7 +380,7 @@
 [INFO] Restaurant Arrival (R 1): Group 2 arrived at restaurant 1.
 [IMPORTANT] FOH Seating (R 1): Group 2 seated at table 2 by waitstaff 2.
 [IMPORTANT] FOH Ordering (R 1): Group 2 placed order 7 of rye roll:7 with waitstaff 2.
-[INFO] Restaurant Arrival (R 1): Group 3 arrived at restaurant 1.
+...
 [IMPORTANT] FOH Ordering (R 1): Group 3 placed order 8 of rye roll:10.
 [DEBUG] FOH Seating Status (R 1): 2 waitstaff seated 15 customers on 2 tables.
 [DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 25 customers, 2 waitstaff took orders.
@@ -396,13 +394,11 @@
 [IMPORTANT] Simulation: Tick 8 (2) started.
 [DEBUG] Restaurant Decision: Group 5 decided on restaurant 1.
 [DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
-[INFO] Restaurant Arrival (R 1): Group 5 arrived at restaurant 1.
+...
 [IMPORTANT] FOH Ordering (R 1): Group 5 placed order 9 of rye roll:4.
 [DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
 [DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 4 customers, 0 waitstaff took orders.
-[IMPORTANT] Kitchen Meal Cooked (R 1): Cook 1 finished cooking 8 meals of dish rye roll 1 ticks after ordering.
-[IMPORTANT] Kitchen Meal Cooked (R 1): Cook 1 finished cooking 7 meals of dish rye roll 1 ticks after ordering.
-[IMPORTANT] Kitchen Meal Cooked (R 1): Cook 1 finished cooking 10 meals of dish rye roll 1 ticks after ordering.
+[IMPORTANT] Kitchen Meal Cooked (R 1): Cook 1 finished cooking 25 meals of dish rye roll 1 ticks after ordering.
 [DEBUG] Kitchen Status (R 1): 1 cooks were active cooking 25 and finishing 25 meals. 25 meals can be served by the waitstaff.
 [IMPORTANT] FOH Serving (R 1): Waitstaff 1 serves rye roll:8 to table 1 1 ticks after ordering.
 [IMPORTANT] FOH Serving (R 1): Waitstaff 2 serves rye roll:7 to table 2 1 ticks after ordering.

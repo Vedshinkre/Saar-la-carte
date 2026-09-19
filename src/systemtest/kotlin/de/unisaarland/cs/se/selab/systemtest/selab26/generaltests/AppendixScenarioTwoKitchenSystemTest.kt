@@ -3,6 +3,7 @@ package de.unisaarland.cs.se.selab.systemtest.selab26.generaltests
 import de.unisaarland.cs.se.selab.systemtest.selab26.utils.ExampleSystemTestExtension
 import de.unisaarland.cs.se.selab.systemtest.selab26.utils.FohArrivalTestLogs
 import de.unisaarland.cs.se.selab.systemtest.selab26.utils.KitchenTestLogs
+import de.unisaarland.cs.se.selab.systemtest.selab26.utils.TickStatusTestLogs
 
 /**
  * System test derived from the appendix sequence diagram for "Restaurant Fire" (id 1):
@@ -25,12 +26,13 @@ class AppendixScenarioTwoKitchenSystemTest : ExampleSystemTestExtension() {
     override suspend fun run() {
         // Skip past initialization, preparation, tick start, and FOH arrival/ordering --
         // covered by earlier phases -- straight to the kitchen's tick processing.
-        skipUntilString(FohArrivalTestLogs.orderingStatus(1, 0, 1))
+        skipUntilString(TickStatusTestLogs.tickStart(1, 30))
+        skipUntilString(FohArrivalTestLogs.orderingStatus(1, 13, 1))
 
         // Only one TOURNANT cook is on staff, so the potato soup (basic dish for EUROPEAN)
-        // is picked and cooked first, ahead of the beef pasta and chicken rice in the order.
-        assertNextLine(KitchenTestLogs.kitchenAssign(1, 1, "TOURNANT", 3, potatoSoup, 2, listOf(2)))
-        assertNextLine(KitchenTestLogs.kitchenCooked(1, 1, 3, potatoSoup, 0))
-        assertNextLine(KitchenTestLogs.kitchenStatus(1, 1, 3, 3, 3))
+        // is picked and cooked first, ahead of the beef pasta and chicken rice.
+        assertNextLine(KitchenTestLogs.kitchenAssign(1, 1, "TOURNANT", 6, potatoSoup, 3, listOf(3)))
+        assertNextLine(KitchenTestLogs.kitchenCooked(1, 1, 6, potatoSoup, 0))
+        assertNextLine(KitchenTestLogs.kitchenStatus(1, 1, 6, 6, 6))
     }
 }

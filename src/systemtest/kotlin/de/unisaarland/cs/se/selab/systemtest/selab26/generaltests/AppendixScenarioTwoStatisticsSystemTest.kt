@@ -23,12 +23,15 @@ class AppendixScenarioTwoStatisticsSystemTest : ExampleSystemTestExtension() {
     override suspend fun run() {
         // Skip past initialization, preparation, tick start, arrival, kitchen, and service --
         // covered by earlier phases -- straight to end-of-tick statistics.
+        skipUntilString(TickStatusTestLogs.tickStart(1, 30))
         skipUntilString(TickStatusTestLogs.restEnd(1))
 
         assertNextLine(StatisticsTestLogs.STATS_CALCULATED)
-        assertNextLine(StatisticsTestLogs.statsCooked(1, 13))
-        assertNextLine(StatisticsTestLogs.statsServed(1, 0))
-        assertNextLine(StatisticsTestLogs.statsDelivered(1, 0))
-        assertNextLine(StatisticsTestLogs.statsReceived(1, 2))
+        // Cumulative over the whole run: rc3's 10 meals (evening 20), cc2's 5 delivered meals
+        // (evening 10) and the 6 potato soups cooked tonight. Only rc3 left a rating (cc2: NEVER).
+        assertNextLine(StatisticsTestLogs.statsCooked(1, 21))
+        assertNextLine(StatisticsTestLogs.statsServed(1, 10))
+        assertNextLine(StatisticsTestLogs.statsDelivered(1, 5))
+        assertNextLine(StatisticsTestLogs.statsReceived(1, 1))
     }
 }

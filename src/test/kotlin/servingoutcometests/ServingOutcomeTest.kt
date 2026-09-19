@@ -20,7 +20,6 @@ import de.unisaarland.cs.se.selab.food.Recipe
 import de.unisaarland.cs.se.selab.loggers.Logger
 import de.unisaarland.cs.se.selab.restaurant.helpers.ServingProcessor
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -269,37 +268,19 @@ class ServingOutcomeTest {
         assertFalse(output.toString().contains("FOH No Serving (R 1): Waitstaff"))
     }
 
-    // ---- Known bug: partial-serving timeout is unreachable ----
+    // ---- Partial serving after the wait window ----
 
     /**
-     * DISABLED - fails against a pre-existing bug this test did not introduce and that I
-     * was told not to fix, since it is not in code I (Vlad Marciu) authored.
-     *
-     * Per spec (F19): once [Constants.PARTIAL_SERVING_WAIT_TICKS] has passed since the
-     * first dish of an order was cooked, the table should start being served one dish at a
-     * time even though the rest of the order is still cooking. `ServingProcessor
-     * .isWithinTimeWindow` (authored by Ansh Tiwatne, ServingProcessor.kt) implements this
-     * by comparing against `order.firstDishCookedAt` - but nothing in the codebase ever
-     * assigns that field (confirmed via `git grep firstDishCookedAt`: only declared in
-     * Order.kt and read in ServingProcessor.kt, never written; the natural place to set it,
-     * Cook.kt's cookDishes(), is authored by Ved and does not touch it either). So
-     * `isWithinTimeWindow` always takes its `firstCooked ?: return true` early-out and the
-     * "give up waiting, serve partially" branch can never trigger, no matter how long a
-     * customer has been waiting for the rest of their table's order.
-     *
-     * This test asserts the spec-correct behavior; it fails today because the cooked dish
-     * is never served no matter how many ticks pass.
+     * Once [Constants.PARTIAL_SERVING_WAIT_TICKS] has passed since the first dish of
+     * an order was cooked, the table is served one dish at a time even though the rest of the order
+     * is still cooking. `Kitchen.recordFirstCookedTicks` sets `order.firstDishCookedAt`. This unit
+     * test runs only the ServingProcessor, so it sets that field itself.
      */
-    @Disabled(
-        "Fails: ServingProcessor.isWithinTimeWindow can never time out because " +
-            "order.firstDishCookedAt is never set anywhere (ServingProcessor.kt/Cook.kt, not my code) - " +
-            "see comment above."
-    )
     @Test
     fun `a partially cooked table is eventually served one dish at a time once the wait window passes`() {
         val cookedDish = Dish(recipe(1, "Soup")).apply { status = DishStatus.COOKED }
         val stillCooking = Dish(recipe(2, "Bread"))
-        val order = Order(listOf(cookedDish, stillCooking))
+        val order = Order(listOf(cookedDish, stillCooking)).apply { firstDishCookedAt = 1 }
         val group = regularGroup(1, order)
         val waiter = waiterWithId(1)
 

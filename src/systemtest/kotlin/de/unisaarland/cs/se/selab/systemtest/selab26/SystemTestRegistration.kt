@@ -15,6 +15,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOrderS
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOutboundTripSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventReservationConflictTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ExactStockoutTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.LateCasualNoWaiterSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.OneCookTwoOrdersTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.PantryExpirySystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RegularBeforeCasualServingTest
@@ -96,6 +97,7 @@ object SystemTestRegistration {
         testSuite.registerTest(
             PantryExpirySystemTest()
         )
+        testSuite.registerTest(LateCasualNoWaiterSystemTest())
         registeratharvaRefrenceTests(testSuite)
         customerParserSystemTests().forEach { testSuite.registerTest(it) }
         fullScenarioSystemTests().forEach { testSuite.registerTest(it) }
@@ -128,7 +130,6 @@ object SystemTestRegistration {
         testSuite.registerTest(PantryExpirySystemTest())
         testSuite.registerTest(SingleOrCouple())
         testSuite.registerTest(CustomerBehaviourDecisionSystemTest())
-        testSuite.registerTest(LateCasualNoWaiterSystemTest())
         testSuite.registerTest(UnavailabilityDurationExpirySystemTest())
         testSuite.registerTest(SingleOrCouple()) // testSuite.registerTest(StaffLoadConcentrationSystemTest())
         // testSuite.registerTest(StaffMultiWaiterExhaustionSystemTest())

@@ -122,4 +122,42 @@ class StaffChangeIncidentTest {
         // Originally 1, removed 1 = 0 total
         assertEquals(0, staff.drivers.size)
     }
+
+    @Test
+    fun `apply- Cook Change with null cookType -Returns Early`() {
+        val staff = createDummyStaff()
+
+        // Pass null for cookType
+        val incident = createIncident(1, StaffType.COOK, null, staff)
+        incident.apply()
+
+        // Size should remain completely unchanged
+        assertEquals(2, staff.cooks.size)
+    }
+
+    @Test
+    fun `apply - Remove Cooks skip non-matching cook types`() {
+        val staff = createDummyStaff() // Current list: [TOURNANT, ROAST]
+
+        // Ask to remove a ROAST cook.
+        val incident = createIncident(-1, StaffType.COOK, CookType.ROAST, staff)
+        incident.apply()
+
+        // Verifies the ROAST was removed and the TOURNANT was safely skipped
+        assertEquals(1, staff.cooks.size)
+        assertEquals(CookType.TOURNANT, staff.cooks.first().type)
+    }
+
+    @Test
+    fun `apply - Remove Cooks- count exceeds available cooks`() {
+        val staff = createDummyStaff() // Current list: [TOURNANT, ROAST]
+
+        // Try to remove 5 TOURNANT cooks, even though only 1 exists.
+        val incident = createIncident(-5, StaffType.COOK, CookType.TOURNANT, staff)
+        incident.apply()
+
+        // Verifies it removed the 1 available TOURNANT and stopped safely
+        assertEquals(1, staff.cooks.size)
+        assertEquals(CookType.ROAST, staff.cooks.first().type)
+    }
 }

@@ -16,6 +16,8 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualDelivery
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualTiebreakLowestIdTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CookChangeNoOrderTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryCumulativeDistanceSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOrderSuccessTestA
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOrderSuccessTestB
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOutboundTripSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventReservationConflictTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ExactStockoutTest
@@ -128,7 +130,7 @@ object SystemTestRegistration {
         testSuite.registerTest(UnavailableIncidentSupplierProcurementSystemTest())
         testSuite.registerTest(
             PantryExpirySystemTest()
-        ) // testSuite.registerTest(UnavailabilityDurationExpirySystemTest())
+        )
         testSuite.registerTest(RestaurantsDifferentNameSameIdTest())
         testSuite.registerTest(RestaurantsMultipleExecCooksTest())
         testSuite.registerTest(RestaurantsNoBasicDishOfItsTypeTest())
@@ -147,10 +149,11 @@ object SystemTestRegistration {
         testSuite.registerTest(RestaurantsRecipesNotExistTest())
         testSuite.registerTest(RestaurantsSameNameDifferentIdTest())
         testSuite.registerTest(RestaurantsTickNotIn1to24Test())
-        testSuite.registerTest(CookChangeNoOrderTest())
         registerParserControllerLogTests(testSuite)
         customerParserSystemTests().forEach { testSuite.registerTest(it) }
         fullScenarioSystemTests().forEach { testSuite.registerTest(it) }
+        testSuite.registerTest(DeliveryOrderSuccessTestA())
+        testSuite.registerTest(DeliveryOrderSuccessTestB())
     }
 
     /**
@@ -176,7 +179,8 @@ object SystemTestRegistration {
         testSuite.registerTest(ExactStockoutTest())
         testSuite.registerTest(OneCookTwoOrdersTest())
         testSuite.registerTest(PantryExpirySystemTest())
-        testSuite.registerTest(SingleOrCouple()) // temporarily unregistered: cross-check against reference first
+        testSuite.registerTest(SingleOrCouple())
+        testSuite.registerTest(CookChangeNoOrderTest())
         testSuite.registerTest(StaffLoadConcentrationSystemTest())
         testSuite.registerTest(StaffMultiWaiterExhaustionSystemTest())
         testSuite.registerTest(StaffLoadBalancingFallbackSystemTest())

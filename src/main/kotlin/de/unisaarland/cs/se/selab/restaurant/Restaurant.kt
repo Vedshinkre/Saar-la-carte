@@ -224,6 +224,9 @@ class Restaurant(
                 }
             }
             customerQueue.removeAll(processedGroups)
+        } else {
+            customerQueue.forEach { frontOfHouse.refuseLateArrival(it) }
+            customerQueue.clear()
         }
         frontOfHouse.logAndResetSeatingOrderingTickStatus()
     }

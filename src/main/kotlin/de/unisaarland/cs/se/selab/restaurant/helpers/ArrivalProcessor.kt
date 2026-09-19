@@ -136,8 +136,7 @@ class ArrivalProcessor(
      *  its reservation is released and it is turned away without an arrival, seating or ordering
      *  log, but it still gets to rate the restaurant this tick. */
     fun refuseLateArrival(customerGroup: CustomerGroup) {
-        customerToTable[customerGroup]?.forEach { it.status = TableStatus.FREE }
-        customerToTable.remove(customerGroup)
+        customerToTable.remove(customerGroup)?.forEach { it.status = TableStatus.FREE }
         if (customerGroup is RegularGroup) {
             customerGroup.failedAttempts++
         }
@@ -286,20 +285,20 @@ class ArrivalProcessor(
 
     private fun successfulSeating(customerGroup: CustomerGroup, waiters: List<Waiter>) {
         val assignedTables: List<Table> = customerToTable[customerGroup] ?: return
-        val mergeId: Id = assignedTables.minBy { it.id }.id
+        val mergeTable: Table = assignedTables.minBy { it.id }
         if (assignedTables.size > 1) {
             FohReceptionLogger.logFohMergingTables(
                 customerGroup.id,
                 assignedTables.map { it.id }.sorted(),
-                mergeId
+                mergeTable.id
             )
         }
 
         numberOfCustomersSeated += customerGroup.size
         waitersThatSeated.addAll(waiters)
-        tablesSeatedOn.addAll(assignedTables)
+        tablesSeatedOn.add(mergeTable)
 
-        FohReceptionLogger.logFohSeating(customerGroup.id, mergeId, waiters.map { it.id!! })
+        FohReceptionLogger.logFohSeating(customerGroup.id, mergeTable.id, waiters.map { it.id!! })
     }
 
     private fun assignWaiter(customerGroup: CustomerGroup): Waiter? {

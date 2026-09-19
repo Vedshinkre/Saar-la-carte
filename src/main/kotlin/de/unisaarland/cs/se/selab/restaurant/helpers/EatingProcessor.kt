@@ -12,13 +12,15 @@ import de.unisaarland.cs.se.selab.food.Order
 import de.unisaarland.cs.se.selab.loggers.DeliveryLogger
 import de.unisaarland.cs.se.selab.loggers.FohServiceLogger
 
+// NOTE: used comparison with null instead of elivs operator everywhere in my code
+// e.g. `if (order == null) continue` instead of `val order = group.currentOrder ?: continue`
+// detekt is not able to resolve elvis operator jumps in loops and marks the loop body as unreachable
+// found this documentation of the issue: https://github.com/detekt/detekt/issues/6129
+
 /**
- * Handles the EATING phase of a tick: progressing in-house and delivery groups' eating,
- * dropping customers who waited too long for unserved dishes, and deciding a group's
- * experience once its order is fully served. Extracted out of  (which still
- * owns the shared seating/statistics state) to keep that class's function count manageable;
- * the collections, lookups and statistics counters it needs are handed in from [de.unisaarland.cs.se.selab.restaurant.FrontOfHouse]
- * so both classes see the same shared state.
+ * handles EATING phase of a tick: progressing in-house and delivery groups' eating
+ * drops customers who waited too long for unserved dishes
+ * decides a group's experience once its order is fully served
  */
 class EatingProcessor(
     private val deliveryGroups: List<CustomerGroup>,
@@ -36,6 +38,7 @@ class EatingProcessor(
         for (group in sortedGroups) {
             val order = group.currentOrder
             if (order == null) continue
+
             val tableId = getAssignedTableId(group)
             if (tableId == null) continue
 
@@ -69,7 +72,8 @@ class EatingProcessor(
         val noDishServed = !(order.dishes.any { wasServed(it) })
         val unservedCustomersLeave = if (noDishServed) {
             ticksSinceOrder >= Constants.UNSERVED_WAIT_TICKS
-        } else { // wait another 2 ticks if someone in the group was served
+        } else {
+            // wait another 2 ticks if someone in the group was served
             ticksSinceOrder >= Constants.UNSERVED_WAIT_TICKS + Constants.ADDITIONAL_UNSERVED_WAIT_TICKS
         }
 
@@ -93,7 +97,8 @@ class EatingProcessor(
     private fun handleFullyServedOrder(
         group: CustomerGroup,
         order: Order
-    ) { // run the function only as soon as the order is first completely served
+    ) {
+        // run the function only as soon as the order is first completely served
         if (order.lastDishServedAt != null) return
 
         val fullyServed = order.dishes.all { wasServed(it) }
@@ -111,17 +116,15 @@ class EatingProcessor(
         }
     }
 
-    // helpers
-
-    private fun wasServed(dish: Dish): Boolean = dish.status == DishStatus.SERVED || dish.status == DishStatus.EATEN
-
     private fun progressEating(order: Order): Pair<Int, Int> {
         var eating = 0
         var finished = 0
+
         for (dish in order.getServedDishes()) {
             dish.updateEating()
             if (dish.status == DishStatus.EATEN) finished++ else eating++
         }
+
         return Pair(eating, finished)
     }
 
@@ -129,25 +132,24 @@ class EatingProcessor(
     private fun processDeliveryEating() {
         for (group in deliveryGroups.sortedBy { it.id }) {
             val order = group.currentOrder
-            if (order == null) continue
-            if (order.deliveredAt == null || order.areAllDishesEaten()) continue
+            if (order == null || order.deliveredAt == null || order.areAllDishesEaten()) continue
 
             // for statistics, runs exactly once per order (when driver hands over the order)
             if (order.deliveredAt == Time.tick) {
                 addCustomersDelivered(group.size)
             }
 
-            eatDeliveredDishes(order)
+            order.dishes.forEach { dish ->
+                if (dish.status == DishStatus.SERVED) dish.updateEating()
+            }
+
             if (order.areAllDishesEaten()) {
                 DeliveryLogger.logDeliveryFinishedEating(group.id)
             }
         }
     }
 
-    // split out of processDeliveryEating to keep its cognitive complexity under the detekt threshold
-    private fun eatDeliveredDishes(order: Order) {
-        for (dish in order.dishes) {
-            if (dish.status == DishStatus.SERVED) dish.updateEating()
-        }
-    }
+    // HELPERS
+
+    private fun wasServed(dish: Dish): Boolean = dish.status == DishStatus.SERVED || dish.status == DishStatus.EATEN
 }

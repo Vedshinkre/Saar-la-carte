@@ -23,10 +23,7 @@ class Driver {
     var totalTripTicks: Tick = 0
     var ticksToDest: Tick = 0
 
-    /** the one-way distance of the current trip in km, used for the cumulative driving log */
-    var tripDistance: Int = 0
-
-    /** how far the driver has come on the outbound leg so far, in km (item 125) */
+    var tripDistance: Int = 0 // one way trip distance (for cumulative distance logs)
     var distanceDriven: Int = 0
     // remainingTicks field in class diagram was redundant, so not an attribute here
 
@@ -38,9 +35,7 @@ class Driver {
         val driverId = id ?: return
         // a trip of 0 ticks, customer is less than 5 km away, has no distance left to drive
         // driver is already there, so no distance is covered and the remaining-tick counter must not drop below 0
-        if (ticksToDest <= 0) {
-            return
-        }
+        if (ticksToDest <= 0) return
         ticksToDest -= 1
         // need to accumulated distance covered when logging (it's not only distance covered in that tick)
         distanceDriven = minOf(distanceDriven + Constants.DRIVER_SPEED.toInt(), tripDistance)
@@ -49,9 +44,7 @@ class Driver {
 
     /** drives a tick closer to the restaurant; the return trip is not logged per tick */
     fun driveTowardsRestaurant() {
-        if (ticksToDest <= 0) {
-            return
-        }
+        if (ticksToDest <= 0) return
         ticksToDest -= 1
     }
 
@@ -60,6 +53,7 @@ class Driver {
         val driverId = id ?: return
         val group = targetGroup ?: return
         val order = currentOrder ?: return
+
         DeliveryLogger.logDeliveryArrival(driverId, group.id, order.id)
     }
 

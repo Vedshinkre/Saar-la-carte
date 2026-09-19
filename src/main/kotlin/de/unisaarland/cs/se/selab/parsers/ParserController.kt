@@ -79,7 +79,9 @@ class ParserController {
     private fun validateNoDuplicateRecipeIngredients(recipes: JsonArray) {
         for (recipe in recipes) {
             val names =
-                recipe.jsonObject.getValue("ingredients").jsonArray.map { it.jsonObject.getValue("name").jsonPrimitive.content }
+                recipe.jsonObject.getValue("ingredients")
+                    .jsonArray
+                    .map { it.jsonObject.getValue("name").jsonPrimitive.content }
             require(names.size == names.toSet().size) { "A recipe lists the same ingredient more than once." }
         }
     }

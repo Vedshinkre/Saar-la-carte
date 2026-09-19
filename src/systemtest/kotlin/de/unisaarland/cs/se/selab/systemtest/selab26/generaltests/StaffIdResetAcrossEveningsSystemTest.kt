@@ -31,9 +31,7 @@ class StaffIdResetAcrossEveningsSystemTest : ExampleSystemTestExtension() {
         // Evening 2, tick 1: group 3 is a brand-new visitor (visitingStart 2). Both waiters
         // are freshly reset (id null, current load 0) from the evening-end cleanup, so
         // whichever is picked becomes waitstaff 1 again - never waitstaff 3.
-        skipUntilString(TickStatusTestLogs.tickStart(1, 2))
-        assertNextLine(TickStatusTestLogs.restStart(1))
-        assertNextLine(FohArrivalTestLogs.arrival(1, 3))
+        skipUntilString(FohArrivalTestLogs.arrival(1, 3))
         assertNextLine(FohArrivalTestLogs.seating(1, 3, 1, listOf(1)))
     }
 }

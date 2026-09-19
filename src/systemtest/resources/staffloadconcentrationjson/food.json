@@ -1,12 +1,21 @@
 {
   "ingredients": [
-    { "name": "Rice", "unit": "g", "packagingVolume": 1000, "bestBefore": 5 }
+    { "name": "beef", "unit": "g", "packagingVolume": 10000, "bestBefore": 5 },
+    { "name": "potato", "unit": "g", "packagingVolume": 10000, "bestBefore": 5 }
   ],
   "recipes": [
     {
-      "id": 1, "dishName": "Rice Bowl", "duration": 10, "basicDishFor": "EUROPEAN",
+      "id": 1, "dishName": "Steak", "duration": 2, "basicDishFor": "EUROPEAN",
       "cookType": ["TOURNANT"],
-      "ingredients": [{ "name": "Rice", "amount": 10 }]
+      "ingredients": [
+        { "name": "beef", "amount": 200 },
+        { "name": "potato", "amount": 200 }
+      ]
+    },
+    {
+      "id": 2, "dishName": "Fries", "duration": 2,
+      "cookType": ["TOURNANT"],
+      "ingredients": [{ "name": "potato", "amount": 200 }]
     }
   ]
 }

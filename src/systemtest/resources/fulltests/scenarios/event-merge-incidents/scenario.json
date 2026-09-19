@@ -1,0 +1,37 @@
+{
+  "customerGroups": [
+    {
+      "id": 1, "type": "REGULAR", "size": 10, "tableType": "COMMON",
+      "visitingTick": 1, "restaurant": 1, "visitingStart": 2, "visitingPeriod": 2,
+      "foodPreferences": [{"size": 10, "excludedIngredients": ["beans"]}]
+    },
+    {
+      "id": 2, "type": "REGULAR", "size": 4, "tableType": "COMMON",
+      "visitingTick": 2, "restaurant": 2, "visitingStart": 1, "visitingPeriod": 3,
+      "foodPreferences": [{"size": 4, "excludedIngredients": ["corn"]}]
+    },
+    {
+      "id": 3, "type": "EVENT", "size": 25, "tableType": "COMMON",
+      "visitingTick": 3, "restaurantTypes": ["EUROPEAN"], "eventEvening": 4,
+      "favoriteDishes": {"EUROPEAN": "bean stew"},
+      "foodPreferences": [{"size": 25, "favoriteDishes": ["corn cake"]}]
+    },
+    {
+      "id": 4, "type": "CASUAL", "size": 2, "tableType": "COMMON",
+      "visitingTick": 2, "restaurantTypes": ["EUROPEAN"], "visitingEvenings": [1],
+      "ratingLikelihood": "ALWAYS",
+      "foodPreferences": []
+    },
+    {
+      "id": 5, "type": "CASUAL", "size": 2, "tableType": "COMMON",
+      "visitingTick": 2, "restaurantTypes": ["EUROPEAN"], "visitingEvenings": [3],
+      "ratingLikelihood": "ALWAYS",
+      "foodPreferences": []
+    }
+  ],
+  "incidents": [
+    {"id": 1, "type": "UNAVAILABLE", "evening": 2, "ingredient": "salt",  "duration": 3},
+    {"id": 2, "type": "PACKAGING",   "evening": 3, "ingredient": "beans", "packagingVolume": 40},
+    {"id": 3, "type": "RECIPE",      "evening": 3, "ingredient": "beans", "adaptation": 25}
+  ]
+}

@@ -1,0 +1,607 @@
+[INFO] Initialization Info: src/systemtest/resources/fulltests/scenarios/delivery-handoff/food.json successfully parsed and validated.
+[INFO] Initialization Info: src/systemtest/resources/fulltests/scenarios/delivery-handoff/restaurants.json successfully parsed and validated.
+[INFO] Initialization Info: src/systemtest/resources/fulltests/scenarios/delivery-handoff/scenario.json successfully parsed and validated.
+[INFO] Simulation Info: Simulation started.
+[IMPORTANT] Preparation: Preparation for evening 1 starts.
+[DEBUG] Pantry (R 1): Procured 500 g of oats from the supplier.
+[DEBUG] Pantry (R 1): Procured 1000 g of rye from the supplier.
+[INFO] Pantry (R 1): Restocked ingredients.
+[IMPORTANT] Serving: Serving of evening 1 starts.
+[IMPORTANT] Simulation: Tick 1 (1) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[DEBUG] Kitchen Status (R 1): 0 cooks were active cooking 0 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 2 (1) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[DEBUG] Kitchen Status (R 1): 0 cooks were active cooking 0 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 3 (1) started.
+[DEBUG] Restaurant Decision: Group 4 decided on restaurant 1.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[INFO] Restaurant Arrival (R 1): Group 4 arrived at restaurant 1.
+[IMPORTANT] FOH Seating (R 1): Group 4 seated at table 3 by waitstaff 1.
+[IMPORTANT] FOH Ordering (R 1): Group 4 placed order 1 of rye roll:2 with waitstaff 1.
+[DEBUG] FOH Seating Status (R 1): 1 waitstaff seated 2 customers on 1 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 2 customers, 1 waitstaff took orders.
+[IMPORTANT] Kitchen Dish Assignment (R 1): Cook 1 of type SOUS starts cooking 2 meals of dish rye roll based on order 1 for orders 1.
+[DEBUG] Kitchen Status (R 1): 1 cooks were active cooking 2 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 4 (1) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[IMPORTANT] Kitchen Meal Cooked (R 1): Cook 1 finished cooking 2 meals of dish rye roll 1 ticks after ordering.
+[DEBUG] Kitchen Status (R 1): 1 cooks were active cooking 2 and finishing 2 meals. 2 meals can be served by the waitstaff.
+[IMPORTANT] FOH Serving (R 1): Waitstaff 1 serves rye roll:2 to table 3 1 ticks after ordering.
+[DEBUG] FOH Serving Status (R 1): 1 waitstaff served 2 meals.
+[DEBUG] FOH Eating Status (R 1): 2 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 5 (1) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[DEBUG] Kitchen Status (R 1): 0 cooks were active cooking 0 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[DEBUG] FOH Eating Status (R 1): 2 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 6 (1) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[DEBUG] Kitchen Status (R 1): 0 cooks were active cooking 0 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[INFO] FOH Finished Eating (R 1): 2 customers of group 4 have finished eating at table 3.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 2 customers have finished eating this tick.
+[IMPORTANT] FOH Escorting (R 1): Waitstaff 1 escorts 2 customers of group 4 from table 3 outside.
+[DEBUG] FOH Escorting Status (R 1): 1 waitstaff escorted 2 customers this tick.
+[INFO] Rating (R 1): Group 4 rates the restaurant 1 with POSITIVE rating, leading to 1 positive ratings and 0 negative ratings.
+[DEBUG] Rating Status (R 1): 1 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 7 (1) started.
+[DEBUG] Restaurant Decision: Group 1 decided on restaurant 1.
+[DEBUG] Restaurant Decision: Group 2 decided on restaurant 1.
+[DEBUG] Restaurant Decision: Group 3 decided on restaurant 1.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[INFO] Restaurant Arrival (R 1): Group 1 arrived at restaurant 1.
+[IMPORTANT] FOH Seating (R 1): Group 1 seated at table 1 by waitstaff 1.
+[IMPORTANT] FOH Ordering (R 1): Group 1 placed order 2 of rye roll:8 with waitstaff 1.
+[INFO] Restaurant Arrival (R 1): Group 2 arrived at restaurant 1.
+[IMPORTANT] FOH Seating (R 1): Group 2 seated at table 2 by waitstaff 2.
+[IMPORTANT] FOH Ordering (R 1): Group 2 placed order 3 of rye roll:7 with waitstaff 2.
+[INFO] Restaurant Arrival (R 1): Group 3 arrived at restaurant 1.
+[IMPORTANT] FOH Ordering (R 1): Group 3 placed order 4 of rye roll:10.
+[DEBUG] FOH Seating Status (R 1): 2 waitstaff seated 15 customers on 2 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 25 customers, 2 waitstaff took orders.
+[IMPORTANT] Kitchen Dish Assignment (R 1): Cook 1 of type SOUS starts cooking 25 meals of dish rye roll based on order 2 for orders 2,3,4.
+[DEBUG] Kitchen Status (R 1): 1 cooks were active cooking 25 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 8 (1) started.
+[DEBUG] Restaurant Decision: Group 5 decided on restaurant 1.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[INFO] Restaurant Arrival (R 1): Group 5 arrived at restaurant 1.
+[IMPORTANT] FOH Ordering (R 1): Group 5 placed order 5 of rye roll:4.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 4 customers, 0 waitstaff took orders.
+[IMPORTANT] Kitchen Meal Cooked (R 1): Cook 1 finished cooking 8 meals of dish rye roll 1 ticks after ordering.
+[IMPORTANT] Kitchen Meal Cooked (R 1): Cook 1 finished cooking 7 meals of dish rye roll 1 ticks after ordering.
+[IMPORTANT] Kitchen Meal Cooked (R 1): Cook 1 finished cooking 10 meals of dish rye roll 1 ticks after ordering.
+[DEBUG] Kitchen Status (R 1): 1 cooks were active cooking 25 and finishing 25 meals. 25 meals can be served by the waitstaff.
+[IMPORTANT] FOH Serving (R 1): Waitstaff 1 serves rye roll:8 to table 1 1 ticks after ordering.
+[IMPORTANT] FOH Serving (R 1): Waitstaff 2 serves rye roll:7 to table 2 1 ticks after ordering.
+[IMPORTANT] FOH Delivery (R 1): Waitstaff 1 serves rye roll:2 meals to driver 1 for order 4.
+[IMPORTANT] FOH Delivery (R 1): Waitstaff 2 serves rye roll:3 meals to driver 1 for order 4.
+[DEBUG] FOH Serving Status (R 1): 2 waitstaff served 20 meals.
+[DEBUG] FOH Eating Status (R 1): 15 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 9 (1) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[IMPORTANT] Kitchen Dish Assignment (R 1): Cook 1 of type SOUS starts cooking 4 meals of dish rye roll based on order 5 for orders 5.
+[DEBUG] Kitchen Status (R 1): 1 cooks were active cooking 4 and finishing 0 meals. 5 meals can be served by the waitstaff.
+[IMPORTANT] FOH Delivery (R 1): Waitstaff 1 serves rye roll:5 meals to driver 1 for order 4.
+[DEBUG] FOH Serving Status (R 1): 1 waitstaff served 5 meals.
+[INFO] Delivery Preparation (R 1): Driver 1 prepares driving order 4 to group 3, which will take 3 ticks.
+[DEBUG] FOH Eating Status (R 1): 15 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 10 (1) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[IMPORTANT] Kitchen Meal Cooked (R 1): Cook 1 finished cooking 4 meals of dish rye roll 2 ticks after ordering.
+[DEBUG] Kitchen Status (R 1): 1 cooks were active cooking 4 and finishing 4 meals. 4 meals can be served by the waitstaff.
+[IMPORTANT] FOH Delivery (R 1): Waitstaff 1 serves rye roll:4 meals to driver 2 for order 5.
+[DEBUG] FOH Serving Status (R 1): 1 waitstaff served 4 meals.
+[INFO] Delivery Preparation (R 1): Driver 2 prepares driving order 5 to group 5, which will take 1 ticks.
+[DEBUG] Delivery Driving (R 1): Driver 1 drove 5 km and needs 2 more ticks.
+[INFO] FOH Finished Eating (R 1): 8 customers of group 1 have finished eating at table 1.
+[INFO] FOH Finished Eating (R 1): 7 customers of group 2 have finished eating at table 2.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 15 customers have finished eating this tick.
+[IMPORTANT] FOH Escorting (R 1): Waitstaff 1 escorts 8 customers of group 1 from table 1 outside.
+[IMPORTANT] FOH Escorting (R 1): Waitstaff 2 escorts 7 customers of group 2 from table 2 outside.
+[DEBUG] FOH Escorting Status (R 1): 2 waitstaff escorted 15 customers this tick.
+[INFO] Rating (R 1): Group 1 rates the restaurant 1 with POSITIVE rating, leading to 2 positive ratings and 0 negative ratings.
+[INFO] Rating (R 1): Group 2 rates the restaurant 1 with POSITIVE rating, leading to 3 positive ratings and 0 negative ratings.
+[DEBUG] Rating Status (R 1): 2 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 11 (1) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[DEBUG] Kitchen Status (R 1): 0 cooks were active cooking 0 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[DEBUG] Delivery Driving (R 1): Driver 1 drove 10 km and needs 1 more ticks.
+[DEBUG] Delivery Driving (R 1): Driver 2 drove 5 km and needs 0 more ticks.
+[INFO] Delivery Arrival (R 1): Driver 2 arrived at group 5 with order 5.
+[IMPORTANT] Delivery Finished (R 1): Driver 2 gave delivery of order 5 to group 5.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 12 (1) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[DEBUG] Kitchen Status (R 1): 0 cooks were active cooking 0 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[DEBUG] Delivery Driving (R 1): Driver 1 drove 13 km and needs 0 more ticks.
+[INFO] Delivery Arrival (R 1): Driver 1 arrived at group 3 with order 4.
+[IMPORTANT] Delivery Finished (R 1): Driver 1 gave delivery of order 4 to group 3.
+[INFO] Delivery Returned (R 1): Driver 2 has returned.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 13 (1) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[DEBUG] Kitchen Status (R 1): 0 cooks were active cooking 0 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[INFO] Delivery Finished Eating (R 1): Group 5 has finished eating.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[INFO] Rating (R 1): Group 5 rates the restaurant 1 with POSITIVE rating, leading to 4 positive ratings and 0 negative ratings.
+[DEBUG] Rating Status (R 1): 1 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 14 (1) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[DEBUG] Kitchen Status (R 1): 0 cooks were active cooking 0 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[INFO] Delivery Finished Eating (R 1): Group 3 has finished eating.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[INFO] Rating (R 1): Group 3 rates the restaurant 1 with POSITIVE rating, leading to 5 positive ratings and 0 negative ratings.
+[DEBUG] Rating Status (R 1): 1 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 15 (1) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[DEBUG] Kitchen Status (R 1): 0 cooks were active cooking 0 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[INFO] Delivery Returned (R 1): Driver 1 has returned.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 16 (1) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[DEBUG] Kitchen Status (R 1): 0 cooks were active cooking 0 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 17 (1) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[DEBUG] Kitchen Status (R 1): 0 cooks were active cooking 0 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 18 (1) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[DEBUG] Kitchen Status (R 1): 0 cooks were active cooking 0 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 19 (1) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[DEBUG] Kitchen Status (R 1): 0 cooks were active cooking 0 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 20 (1) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[DEBUG] Kitchen Status (R 1): 0 cooks were active cooking 0 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 21 (1) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[DEBUG] Kitchen Status (R 1): 0 cooks were active cooking 0 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 22 (1) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[DEBUG] Kitchen Status (R 1): 0 cooks were active cooking 0 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 23 (1) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[DEBUG] Kitchen Status (R 1): 0 cooks were active cooking 0 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 24 (1) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[DEBUG] Kitchen Status (R 1): 0 cooks were active cooking 0 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Serving: Serving of evening 1 ends.
+[IMPORTANT] Preparation: Preparation for evening 2 starts.
+[DEBUG] Pantry (R 1): Removed 500 g of oats from the pantry.
+[DEBUG] Pantry (R 1): Procured 500 g of oats from the supplier.
+[INFO] Pantry (R 1): Restocked ingredients.
+[IMPORTANT] Serving: Serving of evening 2 starts.
+[IMPORTANT] Simulation: Tick 1 (2) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[DEBUG] Kitchen Status (R 1): 0 cooks were active cooking 0 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 2 (2) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[DEBUG] Kitchen Status (R 1): 0 cooks were active cooking 0 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 3 (2) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[DEBUG] Kitchen Status (R 1): 0 cooks were active cooking 0 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 4 (2) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[DEBUG] Kitchen Status (R 1): 0 cooks were active cooking 0 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 5 (2) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[DEBUG] Kitchen Status (R 1): 0 cooks were active cooking 0 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 6 (2) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[DEBUG] Kitchen Status (R 1): 0 cooks were active cooking 0 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 7 (2) started.
+[DEBUG] Restaurant Decision: Group 1 decided on restaurant 1.
+[DEBUG] Restaurant Decision: Group 2 decided on restaurant 1.
+[DEBUG] Restaurant Decision: Group 3 decided on restaurant 1.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[INFO] Restaurant Arrival (R 1): Group 1 arrived at restaurant 1.
+[IMPORTANT] FOH Seating (R 1): Group 1 seated at table 1 by waitstaff 1.
+[IMPORTANT] FOH Ordering (R 1): Group 1 placed order 6 of rye roll:8 with waitstaff 1.
+[INFO] Restaurant Arrival (R 1): Group 2 arrived at restaurant 1.
+[IMPORTANT] FOH Seating (R 1): Group 2 seated at table 2 by waitstaff 2.
+[IMPORTANT] FOH Ordering (R 1): Group 2 placed order 7 of rye roll:7 with waitstaff 2.
+[INFO] Restaurant Arrival (R 1): Group 3 arrived at restaurant 1.
+[IMPORTANT] FOH Ordering (R 1): Group 3 placed order 8 of rye roll:10.
+[DEBUG] FOH Seating Status (R 1): 2 waitstaff seated 15 customers on 2 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 25 customers, 2 waitstaff took orders.
+[IMPORTANT] Kitchen Dish Assignment (R 1): Cook 1 of type SOUS starts cooking 25 meals of dish rye roll based on order 6 for orders 6,7,8.
+[DEBUG] Kitchen Status (R 1): 1 cooks were active cooking 25 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 8 (2) started.
+[DEBUG] Restaurant Decision: Group 5 decided on restaurant 1.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[INFO] Restaurant Arrival (R 1): Group 5 arrived at restaurant 1.
+[IMPORTANT] FOH Ordering (R 1): Group 5 placed order 9 of rye roll:4.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 4 customers, 0 waitstaff took orders.
+[IMPORTANT] Kitchen Meal Cooked (R 1): Cook 1 finished cooking 8 meals of dish rye roll 1 ticks after ordering.
+[IMPORTANT] Kitchen Meal Cooked (R 1): Cook 1 finished cooking 7 meals of dish rye roll 1 ticks after ordering.
+[IMPORTANT] Kitchen Meal Cooked (R 1): Cook 1 finished cooking 10 meals of dish rye roll 1 ticks after ordering.
+[DEBUG] Kitchen Status (R 1): 1 cooks were active cooking 25 and finishing 25 meals. 25 meals can be served by the waitstaff.
+[IMPORTANT] FOH Serving (R 1): Waitstaff 1 serves rye roll:8 to table 1 1 ticks after ordering.
+[IMPORTANT] FOH Serving (R 1): Waitstaff 2 serves rye roll:7 to table 2 1 ticks after ordering.
+[IMPORTANT] FOH Delivery (R 1): Waitstaff 1 serves rye roll:2 meals to driver 1 for order 8.
+[IMPORTANT] FOH Delivery (R 1): Waitstaff 2 serves rye roll:3 meals to driver 1 for order 8.
+[DEBUG] FOH Serving Status (R 1): 2 waitstaff served 20 meals.
+[DEBUG] FOH Eating Status (R 1): 15 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 9 (2) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[IMPORTANT] Kitchen Dish Assignment (R 1): Cook 1 of type SOUS starts cooking 4 meals of dish rye roll based on order 9 for orders 9.
+[DEBUG] Kitchen Status (R 1): 1 cooks were active cooking 4 and finishing 0 meals. 5 meals can be served by the waitstaff.
+[IMPORTANT] FOH Delivery (R 1): Waitstaff 1 serves rye roll:5 meals to driver 1 for order 8.
+[DEBUG] FOH Serving Status (R 1): 1 waitstaff served 5 meals.
+[INFO] Delivery Preparation (R 1): Driver 1 prepares driving order 8 to group 3, which will take 3 ticks.
+[DEBUG] FOH Eating Status (R 1): 15 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 10 (2) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[IMPORTANT] Kitchen Meal Cooked (R 1): Cook 1 finished cooking 4 meals of dish rye roll 2 ticks after ordering.
+[DEBUG] Kitchen Status (R 1): 1 cooks were active cooking 4 and finishing 4 meals. 4 meals can be served by the waitstaff.
+[IMPORTANT] FOH Delivery (R 1): Waitstaff 1 serves rye roll:4 meals to driver 2 for order 9.
+[DEBUG] FOH Serving Status (R 1): 1 waitstaff served 4 meals.
+[INFO] Delivery Preparation (R 1): Driver 2 prepares driving order 9 to group 5, which will take 1 ticks.
+[DEBUG] Delivery Driving (R 1): Driver 1 drove 5 km and needs 2 more ticks.
+[INFO] FOH Finished Eating (R 1): 8 customers of group 1 have finished eating at table 1.
+[INFO] FOH Finished Eating (R 1): 7 customers of group 2 have finished eating at table 2.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 15 customers have finished eating this tick.
+[IMPORTANT] FOH Escorting (R 1): Waitstaff 1 escorts 8 customers of group 1 from table 1 outside.
+[IMPORTANT] FOH Escorting (R 1): Waitstaff 2 escorts 7 customers of group 2 from table 2 outside.
+[DEBUG] FOH Escorting Status (R 1): 2 waitstaff escorted 15 customers this tick.
+[INFO] Rating (R 1): Group 1 rates the restaurant 1 with POSITIVE rating, leading to 6 positive ratings and 0 negative ratings.
+[INFO] Rating (R 1): Group 2 rates the restaurant 1 with POSITIVE rating, leading to 7 positive ratings and 0 negative ratings.
+[DEBUG] Rating Status (R 1): 2 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 11 (2) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[DEBUG] Kitchen Status (R 1): 0 cooks were active cooking 0 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[DEBUG] Delivery Driving (R 1): Driver 1 drove 10 km and needs 1 more ticks.
+[DEBUG] Delivery Driving (R 1): Driver 2 drove 5 km and needs 0 more ticks.
+[INFO] Delivery Arrival (R 1): Driver 2 arrived at group 5 with order 9.
+[IMPORTANT] Delivery Finished (R 1): Driver 2 gave delivery of order 9 to group 5.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 12 (2) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[DEBUG] Kitchen Status (R 1): 0 cooks were active cooking 0 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[DEBUG] Delivery Driving (R 1): Driver 1 drove 13 km and needs 0 more ticks.
+[INFO] Delivery Arrival (R 1): Driver 1 arrived at group 3 with order 8.
+[IMPORTANT] Delivery Finished (R 1): Driver 1 gave delivery of order 8 to group 3.
+[INFO] Delivery Returned (R 1): Driver 2 has returned.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 13 (2) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[DEBUG] Kitchen Status (R 1): 0 cooks were active cooking 0 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[INFO] Delivery Finished Eating (R 1): Group 5 has finished eating.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[INFO] Rating (R 1): Group 5 rates the restaurant 1 with POSITIVE rating, leading to 8 positive ratings and 0 negative ratings.
+[DEBUG] Rating Status (R 1): 1 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 14 (2) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[DEBUG] Kitchen Status (R 1): 0 cooks were active cooking 0 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[INFO] Delivery Finished Eating (R 1): Group 3 has finished eating.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[INFO] Rating (R 1): Group 3 rates the restaurant 1 with POSITIVE rating, leading to 9 positive ratings and 0 negative ratings.
+[DEBUG] Rating Status (R 1): 1 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 15 (2) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[DEBUG] Kitchen Status (R 1): 0 cooks were active cooking 0 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[INFO] Delivery Returned (R 1): Driver 1 has returned.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 16 (2) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[DEBUG] Kitchen Status (R 1): 0 cooks were active cooking 0 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 17 (2) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[DEBUG] Kitchen Status (R 1): 0 cooks were active cooking 0 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 18 (2) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[DEBUG] Kitchen Status (R 1): 0 cooks were active cooking 0 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 19 (2) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[DEBUG] Kitchen Status (R 1): 0 cooks were active cooking 0 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 20 (2) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[DEBUG] Kitchen Status (R 1): 0 cooks were active cooking 0 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 21 (2) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[DEBUG] Kitchen Status (R 1): 0 cooks were active cooking 0 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 22 (2) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[DEBUG] Kitchen Status (R 1): 0 cooks were active cooking 0 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 23 (2) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[DEBUG] Kitchen Status (R 1): 0 cooks were active cooking 0 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Simulation: Tick 24 (2) started.
+[DEBUG] Restaurant Start (R 1): Restaurant 1 simulates a tick.
+[DEBUG] FOH Seating Status (R 1): 0 waitstaff seated 0 customers on 0 tables.
+[DEBUG] FOH Ordering Status (R 1): The restaurant received orders from 0 customers, 0 waitstaff took orders.
+[DEBUG] Kitchen Status (R 1): 0 cooks were active cooking 0 and finishing 0 meals. 0 meals can be served by the waitstaff.
+[DEBUG] FOH Serving Status (R 1): 0 waitstaff served 0 meals.
+[DEBUG] FOH Eating Status (R 1): 0 customers are eating and 0 customers have finished eating this tick.
+[DEBUG] FOH Escorting Status (R 1): 0 waitstaff escorted 0 customers this tick.
+[DEBUG] Rating Status (R 1): 0 groups performed ratings this tick.
+[DEBUG] Restaurant End (R 1): Restaurant 1 finished simulating the tick.
+[IMPORTANT] Serving: Serving of evening 2 ends.
+[IMPORTANT] Simulation Info: Simulation statistics are calculated.
+[IMPORTANT] Simulation Statistics: Restaurant 1 cooked 60 meals.
+[IMPORTANT] Simulation Statistics: Restaurant 1 served 32 customers.
+[IMPORTANT] Simulation Statistics: Restaurant 1 delivered meals to 28 customers.
+[IMPORTANT] Simulation Statistics: Restaurant 1 received 9 ratings.

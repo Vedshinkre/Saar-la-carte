@@ -1,0 +1,69 @@
+[INFO] Initialization Info: src/systemtest/resources/fulltests/scenarios/staff-and-tables/food.json successfully parsed and validated.
+[INFO] Initialization Info: src/systemtest/resources/fulltests/scenarios/staff-and-tables/restaurants.json successfully parsed and validated.
+[INFO] Initialization Info: src/systemtest/resources/fulltests/scenarios/staff-and-tables/scenario.json successfully parsed and validated.
+[INFO] Simulation Info: Simulation started.
+[IMPORTANT] Preparation: Preparation for evening 1 starts.
+[INFO] Pantry (R 1): Restocked ingredients.
+[IMPORTANT] Serving: Serving of evening 1 starts.
+[IMPORTANT] Simulation: Tick 1 (1) started.
+[IMPORTANT] Simulation: Tick 2 (1) started.
+[IMPORTANT] Simulation: Tick 3 (1) started.
+[INFO] Restaurant Arrival (R 1): Group 1 arrived at restaurant 1.
+[IMPORTANT] FOH Seating (R 1): Group 1 seated at table 2 by waitstaff 1.
+[IMPORTANT] FOH Ordering (R 1): Group 1 placed order 1 of bean stew:2,corn cake:2 with waitstaff 1.
+[INFO] Restaurant Arrival (R 1): Group 2 arrived at restaurant 1.
+[IMPORTANT] FOH Seating (R 1): Group 2 seated at table 3 by waitstaff 1.
+[IMPORTANT] FOH Ordering (R 1): Group 2 placed order 2 of bean stew:3 with waitstaff 1.
+[INFO] Restaurant Arrival (R 1): Group 3 arrived at restaurant 1.
+[IMPORTANT] FOH Seating (R 1): Group 3 seated at table 1 by waitstaff 2.
+[IMPORTANT] FOH Ordering (R 1): Group 3 placed order 3 of corn cake:6 with waitstaff 2.
+[IMPORTANT] Kitchen Dish Assignment (R 1): Cook 1 of type PASTRY starts cooking 5 meals of dish bean stew based on order 1 for orders 1,2.
+[IMPORTANT] Kitchen Dish Assignment (R 1): Cook 2 of type SOUS starts cooking 8 meals of dish corn cake based on order 1 for orders 1,3.
+[IMPORTANT] Simulation: Tick 4 (1) started.
+[IMPORTANT] Kitchen Meal Cooked (R 1): Cook 1 finished cooking 2 meals of dish bean stew 1 ticks after ordering.
+[IMPORTANT] Kitchen Meal Cooked (R 1): Cook 1 finished cooking 3 meals of dish bean stew 1 ticks after ordering.
+[IMPORTANT] Kitchen Meal Cooked (R 1): Cook 2 finished cooking 2 meals of dish corn cake 1 ticks after ordering.
+[IMPORTANT] Kitchen Meal Cooked (R 1): Cook 2 finished cooking 6 meals of dish corn cake 1 ticks after ordering.
+[IMPORTANT] FOH Serving (R 1): Waitstaff 1 serves bean stew:2,corn cake:2 to table 2 1 ticks after ordering.
+[IMPORTANT] FOH Serving (R 1): Waitstaff 1 serves bean stew:3 to table 3 1 ticks after ordering.
+[IMPORTANT] FOH Serving (R 1): Waitstaff 2 serves corn cake:6 to table 1 1 ticks after ordering.
+[IMPORTANT] Simulation: Tick 5 (1) started.
+[INFO] Restaurant Arrival (R 1): Group 4 arrived at restaurant 1.
+[INFO] FOH No Seating (R 1): Assigned waitstaff 1 but no table available, group 4 is sent away.
+[IMPORTANT] Simulation: Tick 6 (1) started.
+[INFO] FOH Finished Eating (R 1): 4 customers of group 1 have finished eating at table 2.
+[INFO] FOH Finished Eating (R 1): 3 customers of group 2 have finished eating at table 3.
+[INFO] FOH Finished Eating (R 1): 6 customers of group 3 have finished eating at table 1.
+[IMPORTANT] FOH Escorting (R 1): Waitstaff 1 escorts 4 customers of group 1 from table 2 outside.
+[IMPORTANT] FOH Escorting (R 1): Waitstaff 1 escorts 3 customers of group 2 from table 3 outside.
+[IMPORTANT] FOH Escorting (R 1): Waitstaff 2 escorts 6 customers of group 3 from table 1 outside.
+[INFO] Rating (R 1): Group 1 rates the restaurant 1 with POSITIVE rating, leading to 1 positive ratings and 0 negative ratings.
+[INFO] Rating (R 1): Group 2 rates the restaurant 1 with POSITIVE rating, leading to 2 positive ratings and 0 negative ratings.
+[INFO] Rating (R 1): Group 3 rates the restaurant 1 with POSITIVE rating, leading to 3 positive ratings and 0 negative ratings.
+[IMPORTANT] Simulation: Tick 7 (1) started.
+[INFO] Restaurant Arrival (R 1): Group 5 arrived at restaurant 1.
+[INFO] FOH No Seating (R 1): Assigned waitstaff 1 but no table available, group 5 is sent away.
+[INFO] Rating (R 1): Group 5 rates the restaurant 1 with NEGATIVE rating, leading to 3 positive ratings and 1 negative ratings.
+[IMPORTANT] Simulation: Tick 8 (1) started.
+[IMPORTANT] Simulation: Tick 9 (1) started.
+[IMPORTANT] Simulation: Tick 10 (1) started.
+[IMPORTANT] Simulation: Tick 11 (1) started.
+[IMPORTANT] Simulation: Tick 12 (1) started.
+[IMPORTANT] Simulation: Tick 13 (1) started.
+[IMPORTANT] Simulation: Tick 14 (1) started.
+[IMPORTANT] Simulation: Tick 15 (1) started.
+[IMPORTANT] Simulation: Tick 16 (1) started.
+[IMPORTANT] Simulation: Tick 17 (1) started.
+[IMPORTANT] Simulation: Tick 18 (1) started.
+[IMPORTANT] Simulation: Tick 19 (1) started.
+[IMPORTANT] Simulation: Tick 20 (1) started.
+[IMPORTANT] Simulation: Tick 21 (1) started.
+[IMPORTANT] Simulation: Tick 22 (1) started.
+[IMPORTANT] Simulation: Tick 23 (1) started.
+[IMPORTANT] Simulation: Tick 24 (1) started.
+[IMPORTANT] Serving: Serving of evening 1 ends.
+[IMPORTANT] Simulation Info: Simulation statistics are calculated.
+[IMPORTANT] Simulation Statistics: Restaurant 1 cooked 13 meals.
+[IMPORTANT] Simulation Statistics: Restaurant 1 served 13 customers.
+[IMPORTANT] Simulation Statistics: Restaurant 1 delivered meals to 0 customers.
+[IMPORTANT] Simulation Statistics: Restaurant 1 received 4 ratings.

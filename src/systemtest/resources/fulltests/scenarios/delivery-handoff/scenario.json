@@ -1,0 +1,38 @@
+{
+  "customerGroups": [
+    {
+      "id": 1, "type": "CASUAL", "size": 8, "tableType": "COMMON",
+      "visitingTick": 7, "restaurantTypes": ["EUROPEAN"], "visitingEvenings": [1, 2],
+      "ratingLikelihood": "ALWAYS",
+      "foodPreferences": [{"size": 8, "excludedIngredients": ["oats"]}]
+    },
+    {
+      "id": 2, "type": "CASUAL", "size": 7, "tableType": "COMMON",
+      "visitingTick": 7, "restaurantTypes": ["EUROPEAN"], "visitingEvenings": [1, 2],
+      "ratingLikelihood": "ALWAYS",
+      "foodPreferences": [{"size": 7, "excludedIngredients": ["oats"]}]
+    },
+    {
+      "id": 3, "type": "CASUAL", "size": 10,
+      "visitingTick": 13, "restaurantTypes": ["EUROPEAN"], "visitingEvenings": [1, 2],
+      "ratingLikelihood": "ALWAYS",
+      "deliveryDistance": 13,
+      "foodPreferences": [{"size": 10, "excludedIngredients": ["oats"]}]
+    },
+    {
+      "id": 4, "type": "CASUAL", "size": 2,
+      "visitingTick": 3, "restaurantTypes": ["EUROPEAN"], "visitingEvenings": [1],
+      "ratingLikelihood": "ALWAYS",
+      "deliveryDistance": 0,
+      "foodPreferences": [{"size": 2, "excludedIngredients": ["oats"]}]
+    },
+    {
+      "id": 5, "type": "CASUAL", "size": 4,
+      "visitingTick": 12, "restaurantTypes": ["EUROPEAN"], "visitingEvenings": [1, 2],
+      "ratingLikelihood": "ALWAYS",
+      "deliveryDistance": 5,
+      "foodPreferences": [{"size": 4, "excludedIngredients": ["oats"]}]
+    }
+  ],
+  "incidents": []
+}

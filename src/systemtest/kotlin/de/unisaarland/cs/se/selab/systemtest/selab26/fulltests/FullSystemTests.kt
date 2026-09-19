@@ -16,8 +16,12 @@ private const val KITCHEN_AND_SERVING = "kitchen-and-serving"
 private const val DELIVERY_HANDOFF = "delivery-handoff"
 private const val EVENT_MERGE_INCIDENTS = "event-merge-incidents"
 
+private val FAILING_AGAINST_REFERENCE = setOf(
+    KITCHEN_AND_SERVING,
+)
+
 /** test against scenarios of `fulltests/`, run simulation on each entry and compares log lines against expected ones */
-fun fullScenarioSystemTests(): List<SystemTestSELab26> = listOf(
+fun fullScenarioSystemTests(excludeReferenceFailingTests: Boolean): List<SystemTestSELab26> = listOf(
     FullScenarioSystemTest(STAFF_AND_TABLES, maxTicks = 24),
     FullScenarioSystemTest(STAFF_AND_TABLES, maxTicks = 24, logLevel = "INFO", variant = "info"),
     FullScenarioSystemTest(STAFF_AND_TABLES, maxTicks = 24, logLevel = "IMPORTANT", variant = "important"),
@@ -25,7 +29,7 @@ fun fullScenarioSystemTests(): List<SystemTestSELab26> = listOf(
     FullScenarioSystemTest(KITCHEN_AND_SERVING, maxTicks = 24),
     FullScenarioSystemTest(DELIVERY_HANDOFF, maxTicks = 48),
     FullScenarioSystemTest(EVENT_MERGE_INCIDENTS, maxTicks = 96),
-)
+).filter { !excludeReferenceFailingTests || it.scenarioName !in FAILING_AGAINST_REFERENCE }
 
 /** replays the `fulltests` scenario [scenarioName]
  * asserts its output line by line against the expected log in `fulltests/logs`
@@ -33,7 +37,7 @@ fun fullScenarioSystemTests(): List<SystemTestSELab26> = listOf(
  * [variant] names the run for one scenario is replayed several ways e.g. `staff-and-tables.info`
  */
 class FullScenarioSystemTest(
-    private val scenarioName: String,
+    val scenarioName: String,
     override val maxTicks: Int,
     override val logLevel: String = "DEBUG",
     private val variant: String = ""

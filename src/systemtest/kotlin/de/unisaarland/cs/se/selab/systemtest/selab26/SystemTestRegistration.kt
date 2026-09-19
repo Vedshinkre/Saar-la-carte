@@ -7,21 +7,28 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.customerparsertests.custome
 import de.unisaarland.cs.se.selab.systemtest.selab26.fulltests.fullScenarioSystemTests
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualAdHocTableMergingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualDeliveryEarlyDecisionTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualNoDecisionNoSpaceTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualTiebreakLowestIdTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CustomerBehaviourDecisionSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryCumulativeDistanceSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOrderSuccessTestA
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOrderSuccessTestB
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOutboundTripSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EatingFinishedAndEscortedSameTickTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventReservationConflictTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ExactStockoutTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.LateCasualNoWaiterSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.OneCookTwoOrdersTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.PantryExpirySystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RecipeChangeRoundingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RegularBeforeCasualServingTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RegularGradualCookServingTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SimulationLifecycleSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SingleOrCouple
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.StaffIdResetAcrossEveningsSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.StaffLoadBalancingFallbackSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.StaffLoadConcentrationSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.StaffMultiWaiterExhaustionSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.StatisticsOrderingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SupplierProcurementSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.UnavailabilityDurationExpirySystemTest
@@ -57,24 +64,6 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.RestaurantsS
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.RestaurantsTickNotIn1to24RejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.StaffIncidentUnknownRestaurantSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.ValidIncidentsAcceptedSystemTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.restaurantparsertests.RestaurantsDifferentNameSameIdTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.restaurantparsertests.RestaurantsMultipleExecCooksTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.restaurantparsertests.RestaurantsNoBasicDishOfItsTypeTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.restaurantparsertests.RestaurantsNoCookExistsTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.restaurantparsertests.RestaurantsNoDuplicateDishNameTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.restaurantparsertests.RestaurantsNoInvalidTableSize1Test
-import de.unisaarland.cs.se.selab.systemtest.selab26.restaurantparsertests.RestaurantsNoInvalidTableSizeTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.restaurantparsertests.RestaurantsNoMultipleHeadCooksEXECTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.restaurantparsertests.RestaurantsNoRecipeExistsTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.restaurantparsertests.RestaurantsNoTableExistsTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.restaurantparsertests.RestaurantsNoWaiterExistsTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.restaurantparsertests.RestaurantsNotUniqueTablesTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.restaurantparsertests.RestaurantsOpeningTickEndLessThanOpeningTickStartTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.restaurantparsertests.RestaurantsPositiveRatingsG0Test
-import de.unisaarland.cs.se.selab.systemtest.selab26.restaurantparsertests.RestaurantsPositiveRatingsNeg0Test
-import de.unisaarland.cs.se.selab.systemtest.selab26.restaurantparsertests.RestaurantsRecipesNotExistTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.restaurantparsertests.RestaurantsSameNameDifferentIdTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.restaurantparsertests.RestaurantsTickNotIn1to24Test
 
 /**
  * Used for test registration
@@ -93,9 +82,7 @@ object SystemTestRegistration {
         testSuite.registerTest(ExamplePreparationAndServingStartTest())
         testSuite.registerTest(ExampleEmptyTickOneCycleTest())
         testSuite.registerTest(EventReservationConflictTest())
-        testSuite.registerTest(WaitstaffExhaustionTest()) // testSuite.registerTest(StaffLoadConcentrationSystemTest())
-        // testSuite.registerTest(StaffMultiWaiterExhaustionSystemTest())
-        testSuite.registerTest(StaffLoadBalancingFallbackSystemTest())
+        testSuite.registerTest(WaitstaffExhaustionTest())
         testSuite.registerTest(CasualAdHocTableMergingSystemTest())
         testSuite.registerTest(RegularGradualCookServingTest())
         testSuite.registerTest(RegularBeforeCasualServingTest())
@@ -104,14 +91,7 @@ object SystemTestRegistration {
         testSuite.registerTest(CasualDeliveryEarlyDecisionTest())
         testSuite.registerTest(DeliveryOutboundTripSystemTest())
         testSuite.registerTest(DeliveryCumulativeDistanceSystemTest())
-        testSuite.registerTest(SingleOrCouple()) // testSuite.registerTest(AppendixScenarioTwoPreparationSystemTest())
-        // testSuite.registerTest(AppendixScenarioTwoTickStartSystemTest())
-        // testSuite.registerTest(AppendixScenarioTwoArrivalSystemTest())
-        // testSuite.registerTest(AppendixScenarioTwoKitchenSystemTest())
-        // testSuite.registerTest(AppendixScenarioTwoServiceSystemTest())
-        // testSuite.registerTest(AppendixScenarioTwoStatisticsSystemTest())
-        // testSuite.registerTest(RegularRetrySucceedsSystemTest())
-        // testSuite.registerTest(StaffIdResetAcrossEveningsSystemTest())
+        testSuite.registerTest(SingleOrCouple()) // testSuite.registerTest(RegularRetrySucceedsSystemTest())
         testSuite.registerTest(SimulationLifecycleSystemTest())
         testSuite.registerTest(StatisticsOrderingSystemTest())
         testSuite.registerTest(SupplierProcurementSystemTest())
@@ -120,27 +100,10 @@ object SystemTestRegistration {
         testSuite.registerTest(
             PantryExpirySystemTest()
         )
-        testSuite.registerTest(RestaurantsDifferentNameSameIdTest())
-        testSuite.registerTest(RestaurantsMultipleExecCooksTest())
-        testSuite.registerTest(RestaurantsNoBasicDishOfItsTypeTest())
-        testSuite.registerTest(RestaurantsNoCookExistsTest())
-        testSuite.registerTest(RestaurantsNoDuplicateDishNameTest())
-        testSuite.registerTest(RestaurantsNoInvalidTableSizeTest())
-        testSuite.registerTest(RestaurantsNoInvalidTableSize1Test())
-        testSuite.registerTest(RestaurantsNoMultipleHeadCooksEXECTest())
-        testSuite.registerTest(RestaurantsNoRecipeExistsTest())
-        testSuite.registerTest(RestaurantsNoTableExistsTest())
-        testSuite.registerTest(RestaurantsNotUniqueTablesTest())
-        testSuite.registerTest(RestaurantsNoWaiterExistsTest())
-        testSuite.registerTest(RestaurantsOpeningTickEndLessThanOpeningTickStartTest())
-        testSuite.registerTest(RestaurantsPositiveRatingsG0Test())
-        testSuite.registerTest(RestaurantsPositiveRatingsNeg0Test())
-        testSuite.registerTest(RestaurantsRecipesNotExistTest())
-        testSuite.registerTest(RestaurantsSameNameDifferentIdTest())
-        testSuite.registerTest(RestaurantsTickNotIn1to24Test())
-        registerParserControllerLogTests(testSuite)
+        testSuite.registerTest(LateCasualNoWaiterSystemTest())
+        registeratharvaRefrenceTests(testSuite)
         customerParserSystemTests().forEach { testSuite.registerTest(it) }
-        fullScenarioSystemTests().forEach { testSuite.registerTest(it) }
+        fullScenarioSystemTests(false).forEach { testSuite.registerTest(it) }
         testSuite.registerTest(DeliveryOrderSuccessTestA())
         testSuite.registerTest(DeliveryOrderSuccessTestB())
     }
@@ -153,8 +116,9 @@ object SystemTestRegistration {
      */
     fun registerSystemTestsMutantValidation(testSuite: SELab26TestSuite) {
         testSuite.registerTest(ExampleSystemTest())
-        registerParserControllerLogTests(testSuite)
+        registeratharvaMutantValidationTests(testSuite)
         customerParserSystemTests().forEach { testSuite.registerTest(it) }
+        fullScenarioSystemTests(true).forEach { testSuite.registerTest(it) }
     }
 
     /**
@@ -168,18 +132,22 @@ object SystemTestRegistration {
         testSuite.registerTest(ExactStockoutTest())
         testSuite.registerTest(OneCookTwoOrdersTest())
         testSuite.registerTest(PantryExpirySystemTest())
+        testSuite.registerTest(SingleOrCouple())
+        testSuite.registerTest(CustomerBehaviourDecisionSystemTest())
+        testSuite.registerTest(UnavailabilityDurationExpirySystemTest())
         testSuite.registerTest(SingleOrCouple()) // testSuite.registerTest(StaffLoadConcentrationSystemTest())
         // testSuite.registerTest(StaffMultiWaiterExhaustionSystemTest())
         testSuite.registerTest(
             StaffLoadBalancingFallbackSystemTest()
         )
+        fullScenarioSystemTests(true).forEach { testSuite.registerTest(it) }
     }
 
     /**
      * System-test port of ParserControllerLogTest.kt: exercises ParserController's
      * "Initialization Info" logs end to end through the real CLI/jar pipeline.
      */
-    private fun registerParserControllerLogTests(testSuite: SELab26TestSuite) {
+    private fun registeratharvaRefrenceTests(testSuite: SELab26TestSuite) {
         testSuite.registerTest(AllFilesValidSystemTest())
         testSuite.registerTest(CustomerGroupUnknownRestaurantSystemTest())
         testSuite.registerTest(StaffIncidentUnknownRestaurantSystemTest())
@@ -210,6 +178,23 @@ object SystemTestRegistration {
         testSuite.registerTest(FoodInvalidPackagingVolumeRejectedSystemTest())
         testSuite.registerTest(FoodRecipeDurationTooShortRejectedSystemTest())
         testSuite.registerTest(FoodRecipeMissingIngredientRefRejectedSystemTest())
+        testSuite.registerTest(FoodDuplicateRecipeIdRejectedSystemTest())
+        // testSuite.registerTest(AppendixScenarioTwoPreparationSystemTest())
+        // testSuite.registerTest(AppendixScenarioTwoTickStartSystemTest())
+        // testSuite.registerTest(AppendixScenarioTwoArrivalSystemTest())
+        // testSuite.registerTest(AppendixScenarioTwoKitchenSystemTest())
+        // testSuite.registerTest(AppendixScenarioTwoServiceSystemTest())
+        // testSuite.registerTest(AppendixScenarioTwoStatisticsSystemTest())
+        testSuite.registerTest(StaffLoadConcentrationSystemTest())
+        testSuite.registerTest(StaffMultiWaiterExhaustionSystemTest())
+        testSuite.registerTest(StaffIdResetAcrossEveningsSystemTest())
+        testSuite.registerTest(StaffLoadBalancingFallbackSystemTest())
+        testSuite.registerTest(RecipeChangeRoundingSystemTest())
+        testSuite.registerTest(CasualNoDecisionNoSpaceTest())
+        testSuite.registerTest(EatingFinishedAndEscortedSameTickTest())
+    }
+    private fun registeratharvaMutantValidationTests(testSuite: SELab26TestSuite) {
+        testSuite.registerTest(OverlappingUnavailabilityRejectedSystemTest())
         testSuite.registerTest(FoodDuplicateRecipeIdRejectedSystemTest())
     }
 }

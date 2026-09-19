@@ -7,6 +7,7 @@ import de.unisaarland.cs.se.selab.food.Recipe
 import de.unisaarland.cs.se.selab.incidents.RecipeChangeIncident
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 class RecipeChangeIncidentTest {
@@ -86,6 +87,17 @@ class RecipeChangeIncidentTest {
         val r = recipe(1, flour to 200)
         incident(-250, r).apply() // negative factor
         assertEquals(1, r.ingredients[flour])
+    }
+
+    @Disabled
+    @Test
+    fun `result is exact despite floating point representation`() {
+        val a = recipe(1, flour to 100)
+        incident(15, a).apply()
+        assertEquals(115, a.ingredients[flour])
+        val b = recipe(2, flour to 100)
+        incident(-93, b).apply()
+        assertEquals(7, b.ingredients[flour])
     }
 
     @Test

@@ -8,14 +8,14 @@
     },
     {
       "id": 2, "type": "CASUAL", "size": 2, "tableType": "COMMON",
-      "visitingTick": 2, "restaurantTypes": ["EUROPEAN"], "visitingEvenings": [1],
+      "visitingTick": 4, "restaurantTypes": ["EUROPEAN"], "visitingEvenings": [1],
       "ratingLikelihood": "ALWAYS",
       "foodPreferences": [{"size": 2, "excludedIngredients": ["nuts", "plums"]}]
     },
     {
       "id": 3, "type": "CASUAL", "size": 2, "tableType": "COMMON",
-      "visitingTick": 3, "restaurantTypes": ["EUROPEAN"], "visitingEvenings": [1],
-      "ratingLikelihood": "NEVER",
+      "visitingTick": 5, "restaurantTypes": ["EUROPEAN"], "visitingEvenings": [1],
+      "ratingLikelihood": "ALWAYS",
       "foodPreferences": [{"size": 2, "excludedIngredients": ["nuts", "plums"]}]
     },
     {
@@ -30,7 +30,7 @@
     {
       "id": 5, "type": "CASUAL", "size": 3, "tableType": "COMMON",
       "visitingTick": 6, "restaurantTypes": ["EUROPEAN"], "visitingEvenings": [1],
-      "ratingLikelihood": "ALWAYS",
+      "ratingLikelihood": "NEVER",
       "foodPreferences": [{"size": 3, "excludedIngredients": ["barley", "plums"]}]
     }
   ],

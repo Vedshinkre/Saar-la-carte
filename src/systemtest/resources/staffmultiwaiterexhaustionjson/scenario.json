@@ -1,19 +1,19 @@
 {
   "customerGroups": [
     {
-      "id": 1, "type": "REGULAR", "size": 6, "tableType": "COMMON",
-      "visitingTick": 1, "visitingStart": 1, "visitingPeriod": 1, "restaurant": 1,
-      "foodPreferences": []
+      "id": 1, "type": "CASUAL", "size": 6, "tableType": "COMMON",
+      "restaurantTypes": ["EUROPEAN"], "visitingEvenings": [1], "visitingTick": 1,
+      "ratingLikelihood": "NEVER", "foodPreferences": []
     },
     {
-      "id": 2, "type": "REGULAR", "size": 6, "tableType": "COMMON",
-      "visitingTick": 1, "visitingStart": 1, "visitingPeriod": 1, "restaurant": 1,
-      "foodPreferences": []
+      "id": 2, "type": "CASUAL", "size": 6, "tableType": "COMMON",
+      "restaurantTypes": ["EUROPEAN"], "visitingEvenings": [1], "visitingTick": 1,
+      "ratingLikelihood": "NEVER", "foodPreferences": []
     },
     {
-      "id": 3, "type": "REGULAR", "size": 6, "tableType": "COMMON",
-      "visitingTick": 1, "visitingStart": 1, "visitingPeriod": 1, "restaurant": 1,
-      "foodPreferences": []
+      "id": 3, "type": "CASUAL", "size": 6, "tableType": "COMMON",
+      "restaurantTypes": ["EUROPEAN"], "visitingEvenings": [1], "visitingTick": 1,
+      "ratingLikelihood": "NEVER", "foodPreferences": []
     }
   ],
   "incidents": []

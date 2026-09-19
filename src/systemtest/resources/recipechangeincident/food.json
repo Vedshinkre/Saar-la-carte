@@ -1,0 +1,35 @@
+{
+  "ingredients": [
+    {"name": "Flour", "unit": "g", "packagingVolume": 229, "bestBefore": 5},
+    {"name": "Rice", "unit": "g", "packagingVolume": 9, "bestBefore": 5},
+    {"name": "Salt", "unit": "g", "packagingVolume": 13, "bestBefore": 5},
+    {"name": "Sugar", "unit": "g", "packagingVolume": 150, "bestBefore": 5}
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "Rice Bread",
+      "duration": 10,
+      "basicDishFor": "EUROPEAN",
+      "cookType": ["TOURNANT", "SOUS"],
+      "ingredients": [
+        {"name": "Flour", "amount": 100},
+        {"name": "Rice", "amount": 3},
+        {"name": "Salt", "amount": 100},
+        {"name": "Sugar", "amount": 100}
+      ]
+    },
+    {
+      "id": 2,
+      "dishName": "Salted Rice Cake",
+      "duration": 20,
+      "cookType": ["ROAST", "EXEC"],
+      "ingredients": [
+        {"name": "Flour", "amount": 100},
+        {"name": "Rice", "amount": 3},
+        {"name": "Salt", "amount": 100},
+        {"name": "Sugar", "amount": 100}
+      ]
+    }
+  ]
+}

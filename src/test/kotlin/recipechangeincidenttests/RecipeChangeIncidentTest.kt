@@ -7,7 +7,6 @@ import de.unisaarland.cs.se.selab.food.Recipe
 import de.unisaarland.cs.se.selab.incidents.RecipeChangeIncident
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 class RecipeChangeIncidentTest {
@@ -89,7 +88,6 @@ class RecipeChangeIncidentTest {
         assertEquals(1, r.ingredients[flour])
     }
 
-    @Disabled
     @Test
     fun `result is exact despite floating point representation`() {
         val a = recipe(1, flour to 100)

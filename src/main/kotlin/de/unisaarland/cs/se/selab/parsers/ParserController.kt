@@ -8,9 +8,11 @@ import de.unisaarland.cs.se.selab.food.Stock
 import de.unisaarland.cs.se.selab.loggers.InitialAndPrepLogger
 import de.unisaarland.cs.se.selab.system.SimulationConfig
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import java.io.File
 import java.io.IOException
 
@@ -28,12 +30,11 @@ class ParserController {
         scenarioFilePath: String,
     ): SimulationConfig {
         val (ingredients, recipes) = processFile(
-            foodFilePath,
-            "classpath:/schema/food.schema"
+            foodFilePath, "classpath:/schema/food.schema"
         ) { json ->
+            validateNoDuplicateRecipeIngredients(json.getValue("recipes").jsonArray)
             foodParser.parse(
-                json.getValue("ingredients").jsonArray,
-                json.getValue("recipes").jsonArray
+                json.getValue("ingredients").jsonArray, json.getValue("recipes").jsonArray
             )
         } ?: return simConfig
 
@@ -43,9 +44,7 @@ class ParserController {
             restaurantsFilePath, "classpath:/schema/restaurants.schema"
         ) { json ->
             restaurantParser.parseRestaurants(
-                json.getValue("restaurants").jsonArray,
-                recipes,
-                stock
+                json.getValue("restaurants").jsonArray, recipes, stock
             )
         } ?: return simConfig
 
@@ -73,9 +72,26 @@ class ParserController {
         return simConfig
     }
 
+    /**
+     * a recipe may list each ingredient only once, the parsed recipe keeps just a map,
+     * so a duplicate would silently overwrite the earlier amount and has to be caught on the raw JSON
+     */
+    private fun validateNoDuplicateRecipeIngredients(recipes: JsonArray) {
+        for (recipe in recipes) {
+            val names =
+                recipe.jsonObject.getValue("ingredients")
+                    .jsonArray
+                    .map { it.jsonObject.getValue("name").jsonPrimitive.content }
+            require(names.size == names.toSet().size) { "A recipe lists the same ingredient more than once." }
+        }
+    }
+
     /** Schema-validates [filePath], runs [block] over JSON object, logging and recording file errors */
-    private inline fun <T> processFile(filePath: String, schemaPath: String, block: (JsonObject) -> T): T? {
-        // a file that cannot be read at all (missing, a directory, no permission) is an invalid
+    private inline fun <T> processFile(
+        filePath: String,
+        schemaPath: String,
+        block: (JsonObject) -> T
+    ): T? { // a file that cannot be read at all (missing, a directory, no permission) is an invalid
         // configuration file just like one that fails the schema, not a crash (item 20)
         val content = readConfigFile(filePath) ?: return null
         if (!isSchemaValid(content, filePath, schemaPath)) return null
@@ -86,19 +102,17 @@ class ParserController {
         } catch (_: IllegalArgumentException) {
             markFileInvalid(filePath)
             null
-        }
-        // NoSuchElementException isn't caught, it means we should fix the getValue, not that the file is invalid
+        } // NoSuchElementException isn't caught, it means we should fix the getValue, not that the file is invalid
         // only IllegalArgumentException is thrown intentionally, catching other errors will hide problems in parsers
     }
 
     /** the file's contents, or `null` (logged as invalid) if it cannot be read */
-    private fun readConfigFile(filePath: String): String? =
-        try {
-            File(filePath).readText()
-        } catch (_: IOException) {
-            markFileInvalid(filePath)
-            null
-        }
+    private fun readConfigFile(filePath: String): String? = try {
+        File(filePath).readText()
+    } catch (_: IOException) {
+        markFileInvalid(filePath)
+        null
+    }
 
     /** logs [filePath] as an invalid configuration file and records it in the config */
     private fun markFileInvalid(filePath: String) {
@@ -106,8 +120,11 @@ class ParserController {
         simConfig.wasInvalidFile = true
     }
 
-    private fun isSchemaValid(content: String, filePath: String, schemaPath: String): Boolean {
-        // malformed JSON is an invalid configuration file, not a crash either
+    private fun isSchemaValid(
+        content: String,
+        filePath: String,
+        schemaPath: String
+    ): Boolean { // malformed JSON is an invalid configuration file, not a crash either
         val jsonInstance = try {
             JsonParser(content).parse()
         } catch (_: JsonParseException) {

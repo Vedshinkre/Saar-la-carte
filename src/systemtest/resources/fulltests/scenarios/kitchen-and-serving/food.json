@@ -1,0 +1,12 @@
+{
+  "ingredients": [
+    {"name": "barley", "unit": "g", "packagingVolume": 250, "bestBefore": 5},
+    {"name": "nuts",   "unit": "g", "packagingVolume": 20,  "bestBefore": 5},
+    {"name": "plums",  "unit": "g", "packagingVolume": 150, "bestBefore": 5}
+  ],
+  "recipes": [
+    {"id": 1, "dishName": "barley broth", "duration": 35, "cookType": ["SOUS"],   "ingredients": [{"name": "barley", "amount": 10}], "basicDishFor": "EUROPEAN"},
+    {"id": 2, "dishName": "plum tart",    "duration": 20, "cookType": ["PASTRY"], "ingredients": [{"name": "plums",  "amount": 10}]},
+    {"id": 3, "dishName": "nut praline",  "duration": 20, "cookType": ["PASTRY"], "ingredients": [{"name": "nuts",   "amount": 10}]}
+  ]
+}

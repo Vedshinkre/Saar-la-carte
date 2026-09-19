@@ -4,6 +4,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExampleEmptyTick
 import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExamplePreparationAndServingStartTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExampleSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.customerparsertests.customerParserSystemTests
+import de.unisaarland.cs.se.selab.systemtest.selab26.fulltests.fullScenarioSystemTests
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.AppendixScenarioTwoArrivalSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.AppendixScenarioTwoKitchenSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.AppendixScenarioTwoPreparationSystemTest
@@ -149,6 +150,7 @@ object SystemTestRegistration {
         testSuite.registerTest(CookChangeNoOrderTest())
         registerParserControllerLogTests(testSuite)
         customerParserSystemTests().forEach { testSuite.registerTest(it) }
+        fullScenarioSystemTests().forEach { testSuite.registerTest(it) }
     }
 
     /**

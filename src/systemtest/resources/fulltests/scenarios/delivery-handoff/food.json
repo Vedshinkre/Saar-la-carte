@@ -1,0 +1,10 @@
+{
+  "ingredients": [
+    {"name": "oats", "unit": "g", "packagingVolume": 500,  "bestBefore": 1},
+    {"name": "rye",  "unit": "g", "packagingVolume": 1000, "bestBefore": 5}
+  ],
+  "recipes": [
+    {"id": 1, "dishName": "rye roll", "duration": 20, "cookType": ["SOUS"],   "ingredients": [{"name": "rye",  "amount": 10}], "basicDishFor": "EUROPEAN"},
+    {"id": 2, "dishName": "oat pie",  "duration": 40, "cookType": ["PASTRY"], "ingredients": [{"name": "oats", "amount": 10}]}
+  ]
+}

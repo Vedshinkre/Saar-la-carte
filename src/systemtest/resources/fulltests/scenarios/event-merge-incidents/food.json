@@ -1,0 +1,12 @@
+{
+  "ingredients": [
+    {"name": "beans", "unit": "g", "packagingVolume": 100, "bestBefore": 1},
+    {"name": "corn",  "unit": "g", "packagingVolume": 150, "bestBefore": 1},
+    {"name": "salt",  "unit": "g", "packagingVolume": 50,  "bestBefore": 1}
+  ],
+  "recipes": [
+    {"id": 1, "dishName": "bean stew",  "duration": 20, "cookType": ["SOUS"],   "ingredients": [{"name": "beans", "amount": 10}], "basicDishFor": "EUROPEAN"},
+    {"id": 2, "dishName": "corn cake",  "duration": 40, "cookType": ["PASTRY"], "ingredients": [{"name": "corn",  "amount": 10}]},
+    {"id": 3, "dishName": "salt bread", "duration": 20, "cookType": ["ROAST"],  "ingredients": [{"name": "salt",  "amount": 10}]}
+  ]
+}

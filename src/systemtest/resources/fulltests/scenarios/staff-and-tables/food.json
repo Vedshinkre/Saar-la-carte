@@ -1,0 +1,10 @@
+{
+  "ingredients": [
+    {"name": "beans", "unit": "g", "packagingVolume": 250, "bestBefore": 5},
+    {"name": "corn",  "unit": "g", "packagingVolume": 150, "bestBefore": 5}
+  ],
+  "recipes": [
+    {"id": 1, "dishName": "bean stew", "duration": 20, "cookType": ["SOUS", "PASTRY"], "ingredients": [{"name": "beans", "amount": 10}], "basicDishFor": "EUROPEAN"},
+    {"id": 2, "dishName": "corn cake", "duration": 20, "cookType": ["SOUS"], "ingredients": [{"name": "corn", "amount": 10}]}
+  ]
+}

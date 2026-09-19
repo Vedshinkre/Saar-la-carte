@@ -1,0 +1,44 @@
+{
+  "restaurants": [
+    {
+      "id": 1,
+      "name": "Grand Hall",
+      "type": "EUROPEAN",
+      "openingTickStart": 1,
+      "openingTickEnd": 8,
+      "deliveryDrivers": 0,
+      "event": true,
+      "positiveRatings": 5,
+      "negativeRatings": 2,
+      "recipes": [1, 2, 3],
+      "kitchenStaff": {"EXEC": 0, "SOUS": 1, "TOURNANT": 0, "SAUCE": 0, "FISH": 0, "ROAST": 0, "VEGETABLE": 0, "PASTRY": 1},
+      "waitstaff": 3,
+      "tables": [
+        {"id": 1, "type": "COMMON", "size": 8},
+        {"id": 2, "type": "COMMON", "size": 8},
+        {"id": 3, "type": "COMMON", "size": 6},
+        {"id": 4, "type": "COMMON", "size": 4},
+        {"id": 5, "type": "COMMON", "size": 2},
+        {"id": 6, "type": "COMMON", "size": 10}
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Side Street",
+      "type": "EUROPEAN",
+      "openingTickStart": 1,
+      "openingTickEnd": 8,
+      "deliveryDrivers": 0,
+      "event": false,
+      "positiveRatings": 4,
+      "negativeRatings": 1,
+      "recipes": [1, 2, 3],
+      "kitchenStaff": {"EXEC": 0, "SOUS": 1, "TOURNANT": 0, "SAUCE": 0, "FISH": 0, "ROAST": 0, "VEGETABLE": 0, "PASTRY": 0},
+      "waitstaff": 1,
+      "tables": [
+        {"id": 1, "type": "COMMON", "size": 4},
+        {"id": 2, "type": "COMMON", "size": 4}
+      ]
+    }
+  ]
+}

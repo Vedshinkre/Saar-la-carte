@@ -44,6 +44,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.FoodInvalidP
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.FoodRecipeDurationTooShortRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.FoodRecipeMissingIngredientRefRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.OverlappingUnavailabilityRejectedSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.RecipeDuplicateIngredientRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.RestaurantsDifferentNameSameIdRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.RestaurantsMultipleExecCooksRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.RestaurantsNoBasicDishOfItsTypeRejectedSystemTest
@@ -63,6 +64,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.RestaurantsR
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.RestaurantsSameNameDifferentIdRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.RestaurantsTickNotIn1to24RejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.StaffIncidentUnknownRestaurantSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.UnavailabilityDifferentIngredientsOverlapAcceptedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.ValidIncidentsAcceptedSystemTest
 
 /**
@@ -76,6 +78,8 @@ object SystemTestRegistration {
      * the same as their reference implementation)
      */
     fun registerSystemTestsForReferenceImplementation(testSuite: SELab26TestSuite) {
+        testSuite.registerTest(UnavailabilityDifferentIngredientsOverlapAcceptedSystemTest())
+        testSuite.registerTest(RecipeDuplicateIngredientRejectedSystemTest())
         testSuite.registerTest(ExampleSystemTest())
         testSuite.registerTest(ExactStockoutTest()) //   testSuite.registerTest(ExhaustiveSimpleScenarioTest())
         testSuite.registerTest(OneCookTwoOrdersTest())
@@ -96,7 +100,6 @@ object SystemTestRegistration {
         testSuite.registerTest(StatisticsOrderingSystemTest())
         testSuite.registerTest(SupplierProcurementSystemTest())
         testSuite.registerTest(UnavailableIncidentSupplierProcurementSystemTest())
-        testSuite.registerTest(UnavailabilityDurationExpirySystemTest())
         testSuite.registerTest(
             PantryExpirySystemTest()
         )
@@ -141,6 +144,7 @@ object SystemTestRegistration {
             StaffLoadBalancingFallbackSystemTest()
         )
         fullScenarioSystemTests(true).forEach { testSuite.registerTest(it) }
+        registeratharvaMutantSimulationTests(testSuite)
     }
 
     /**
@@ -154,6 +158,8 @@ object SystemTestRegistration {
         testSuite.registerTest(ValidIncidentsAcceptedSystemTest())
         testSuite.registerTest(DuplicateIncidentIdRejectedSystemTest())
         testSuite.registerTest(OverlappingUnavailabilityRejectedSystemTest())
+        testSuite.registerTest(UnavailabilityDifferentIngredientsOverlapAcceptedSystemTest())
+        testSuite.registerTest(RecipeDuplicateIngredientRejectedSystemTest())
 
         testSuite.registerTest(RestaurantsDifferentNameSameIdRejectedSystemTest())
         testSuite.registerTest(RestaurantsSameNameDifferentIdRejectedSystemTest())
@@ -179,22 +185,65 @@ object SystemTestRegistration {
         testSuite.registerTest(FoodRecipeDurationTooShortRejectedSystemTest())
         testSuite.registerTest(FoodRecipeMissingIngredientRefRejectedSystemTest())
         testSuite.registerTest(FoodDuplicateRecipeIdRejectedSystemTest())
-        // testSuite.registerTest(AppendixScenarioTwoPreparationSystemTest())
-        // testSuite.registerTest(AppendixScenarioTwoTickStartSystemTest())
-        // testSuite.registerTest(AppendixScenarioTwoArrivalSystemTest())
-        // testSuite.registerTest(AppendixScenarioTwoKitchenSystemTest())
-        // testSuite.registerTest(AppendixScenarioTwoServiceSystemTest())
-        // testSuite.registerTest(AppendixScenarioTwoStatisticsSystemTest())
         testSuite.registerTest(StaffLoadConcentrationSystemTest())
         testSuite.registerTest(StaffMultiWaiterExhaustionSystemTest())
         testSuite.registerTest(StaffIdResetAcrossEveningsSystemTest())
         testSuite.registerTest(StaffLoadBalancingFallbackSystemTest())
         testSuite.registerTest(RecipeChangeRoundingSystemTest())
-        testSuite.registerTest(CasualNoDecisionNoSpaceTest())
         testSuite.registerTest(EatingFinishedAndEscortedSameTickTest())
+        testSuite.registerTest(CasualNoDecisionNoSpaceTest())
     }
+
+    /*// testSuite.registerTest(AppendixScenarioTwoPreparationSystemTest())
+            // testSuite.registerTest(AppendixScenarioTwoTickStartSystemTest())
+            // testSuite.registerTest(AppendixScenarioTwoArrivalSystemTest())
+            // testSuite.registerTest(AppendixScenarioTwoKitchenSystemTest())
+            // testSuite.registerTest(AppendixScenarioTwoServiceSystemTest())
+            // testSuite.registerTest(AppendixScenarioTwoStatisticsSystemTest())*/
     private fun registeratharvaMutantValidationTests(testSuite: SELab26TestSuite) {
-        testSuite.registerTest(OverlappingUnavailabilityRejectedSystemTest())
         testSuite.registerTest(FoodDuplicateRecipeIdRejectedSystemTest())
+        testSuite.registerTest(AllFilesValidSystemTest())
+        testSuite.registerTest(CustomerGroupUnknownRestaurantSystemTest())
+        testSuite.registerTest(StaffIncidentUnknownRestaurantSystemTest())
+        testSuite.registerTest(ValidIncidentsAcceptedSystemTest())
+        testSuite.registerTest(DuplicateIncidentIdRejectedSystemTest())
+        testSuite.registerTest(OverlappingUnavailabilityRejectedSystemTest())
+        testSuite.registerTest(UnavailabilityDifferentIngredientsOverlapAcceptedSystemTest())
+        testSuite.registerTest(RecipeDuplicateIngredientRejectedSystemTest())
+
+        testSuite.registerTest(RestaurantsDifferentNameSameIdRejectedSystemTest())
+        testSuite.registerTest(RestaurantsSameNameDifferentIdRejectedSystemTest())
+        testSuite.registerTest(RestaurantsNotUniqueTablesRejectedSystemTest())
+        testSuite.registerTest(RestaurantsNoCookExistsRejectedSystemTest())
+        testSuite.registerTest(RestaurantsNoWaiterExistsRejectedSystemTest())
+        testSuite.registerTest(RestaurantsNoTableExistsRejectedSystemTest())
+        testSuite.registerTest(RestaurantsNoRecipieExistsRejectedSystemTest())
+        testSuite.registerTest(RestaurantsNoMultipleHeadCooksieEXECRejectedSystemTest())
+        testSuite.registerTest(RestaurantsMultipleExecCooksRejectedSystemTest())
+        testSuite.registerTest(RestaurantsNoInvalidTableSizeRejectedSystemTest())
+        testSuite.registerTest(RestaurantsNoInvalidTableSize1RejectedSystemTest())
+        testSuite.registerTest(RestaurantsOpeningTickEndLessThanOpeningTickStartRejectedSystemTest())
+        testSuite.registerTest(RestaurantsTickNotIn1to24RejectedSystemTest())
+        testSuite.registerTest(RestaurantsPositiveRatingsG0RejectedSystemTest())
+        testSuite.registerTest(RestaurantsPositiveRatingsNeg0RejectedSystemTest())
+        testSuite.registerTest(RestaurantsRecipiesNotExistRejectedSystemTest())
+        testSuite.registerTest(RestaurantsNoDupliacteDishNameRejectedSystemTest())
+        testSuite.registerTest(RestaurantsNoBasicDishOfItsTypeRejectedSystemTest())
+        testSuite.registerTest(FoodEmptyIngredientsRejectedSystemTest())
+        testSuite.registerTest(FoodDuplicateIngredientRejectedSystemTest())
+        testSuite.registerTest(FoodInvalidPackagingVolumeRejectedSystemTest())
+        testSuite.registerTest(FoodRecipeDurationTooShortRejectedSystemTest())
+        testSuite.registerTest(FoodRecipeMissingIngredientRefRejectedSystemTest())
+        testSuite.registerTest(FoodDuplicateRecipeIdRejectedSystemTest())
+    }
+
+    /*// testSuite.registerTest(StaffIdResetAcrossEveningsSystemTest())*/
+    private fun registeratharvaMutantSimulationTests(testSuite: SELab26TestSuite) {
+        testSuite.registerTest(StaffLoadConcentrationSystemTest())
+        testSuite.registerTest(StaffMultiWaiterExhaustionSystemTest())
+        testSuite.registerTest(StaffLoadBalancingFallbackSystemTest())
+        testSuite.registerTest(RecipeChangeRoundingSystemTest())
+        testSuite.registerTest(EatingFinishedAndEscortedSameTickTest())
+        testSuite.registerTest(CasualNoDecisionNoSpaceTest())
     }
 }

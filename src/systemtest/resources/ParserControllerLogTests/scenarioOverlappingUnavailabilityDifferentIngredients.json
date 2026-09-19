@@ -1,0 +1,19 @@
+{
+  "customerGroups": [],
+  "incidents": [
+    {
+      "id": 1,
+      "type": "UNAVAILABLE",
+      "evening": 1,
+      "ingredient": "rice",
+      "duration": 5
+    },
+    {
+      "id": 2,
+      "type": "UNAVAILABLE",
+      "evening": 2,
+      "ingredient": "soy",
+      "duration": 5
+    }
+  ]
+}

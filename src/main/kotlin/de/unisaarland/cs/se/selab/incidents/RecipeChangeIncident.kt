@@ -1,11 +1,11 @@
 package de.unisaarland.cs.se.selab.incidents
 
-import de.unisaarland.cs.se.selab.Constants.HUNDRED
 import de.unisaarland.cs.se.selab.Evening
 import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.food.Ingredient
 import de.unisaarland.cs.se.selab.food.Recipe
-import kotlin.math.floor
+
+private const val PERCENT = 100L
 
 /**
  * Incident that changes the amount of a specific ingredient
@@ -26,11 +26,11 @@ class RecipeChangeIncident(
      * in every recipe that uses it by [adaptation] percent)
      */
     override fun apply() {
-        val factor = 1.0 + adaptation / HUNDRED
+        val percentage = PERCENT + adaptation // pls pass
         for (recipe in recipes) {
             val currentAmount = recipe.ingredients[ingredient] ?: continue
-            val newAmount = maxOf(1, floor(currentAmount * factor).toInt())
-            recipe.ingredients[ingredient] = newAmount
+            val newAmount = Math.floorDiv(currentAmount * percentage, PERCENT).coerceIn(1L, Int.MAX_VALUE.toLong())
+            recipe.ingredients[ingredient] = newAmount.toInt()
         }
     }
 }

@@ -8,9 +8,11 @@ import de.unisaarland.cs.se.selab.food.Stock
 import de.unisaarland.cs.se.selab.loggers.InitialAndPrepLogger
 import de.unisaarland.cs.se.selab.system.SimulationConfig
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import java.io.File
 import java.io.IOException
 
@@ -31,6 +33,7 @@ class ParserController {
             foodFilePath,
             "classpath:/schema/food.schema"
         ) { json ->
+            validateNoDuplicateRecipeIngredients(json.getValue("recipes").jsonArray)
             foodParser.parse(
                 json.getValue("ingredients").jsonArray,
                 json.getValue("recipes").jsonArray
@@ -71,6 +74,18 @@ class ParserController {
         simConfig.customers = customers
 
         return simConfig
+    }
+
+    /**
+     * a recipe may list each ingredient only once, the parsed recipe keeps just a map,
+     * so a duplicate would silently overwrite the earlier amount and has to be caught on the raw JSON
+     */
+    private fun validateNoDuplicateRecipeIngredients(recipes: JsonArray) {
+        for (recipe in recipes) {
+            val names = recipe.jsonObject.getValue("ingredients").jsonArray
+                .map { it.jsonObject.getValue("name").jsonPrimitive.content }
+            require(names.size == names.toSet().size) { "A recipe lists the same ingredient more than once." }
+        }
     }
 
     /** Schema-validates [filePath], runs [block] over JSON object, logging and recording file errors */

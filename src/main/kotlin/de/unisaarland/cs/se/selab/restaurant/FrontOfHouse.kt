@@ -62,6 +62,11 @@ class FrontOfHouse(
     }
 
     private fun getAssignedTableId(group: CustomerGroup): Id? = customerToTable[group]?.minOfOrNull { it.id }
+    private val byDescendingLoadThenId: Comparator<Waiter> =
+        compareByDescending<Waiter> { it.currentLoad }.thenBy(nullsLast()) { it.id }
+
+    private val byAscendingLoadThenId: Comparator<Waiter> =
+        compareBy<Waiter> { it.currentLoad }.thenBy(nullsLast()) { it.id }
 
     // recruit waiters for an EVENT group, accumulates enough (ordered by asc id) to cover group's servable dishes.
     // shared by SEATING (SEAT), ORDERING (TAKE_ORDER) and SERVING (SERVE).
@@ -69,16 +74,16 @@ class FrontOfHouse(
         return when (actionType) {
             ActionType.SEAT -> waiters.filter {
                 it.getTickLoad(ActionType.SEAT) < Constants.ACTION_LIMIT
-            }.sortedByDescending { it.currentLoad }
+            }.sortedWith(byDescendingLoadThenId)
 
             ActionType.TAKE_ORDER -> waiters.filter {
                 it.getTickLoad(ActionType.TAKE_ORDER) < Constants.ACTION_LIMIT
-            }.sortedByDescending { it.currentLoad }
+            }.sortedWith(byDescendingLoadThenId)
 
             ActionType.SERVE -> recruitWaiterForServing(eventGroup)
             ActionType.ESCORT -> waiters.filter {
                 it.getTickLoad(ActionType.ESCORT) < Constants.ACTION_LIMIT
-            }.sortedBy { it.currentLoad }
+            }.sortedWith(byAscendingLoadThenId)
         }
     }
 
@@ -327,6 +332,7 @@ class FrontOfHouse(
             eventGroups.remove(group)
         }
     }
+
     private fun removeInHouseGroup(group: CustomerGroup) {
         inHouseGroupsToWaiter.remove(group)
     }

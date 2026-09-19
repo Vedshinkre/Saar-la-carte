@@ -73,7 +73,6 @@ class EscortingProcessor(
             group.id,
             getAssignedTableIds(group.id).min()
         )
-        escortingWaitstaffSet.add(waiterId)
         customerEscortingNumber += customersEscorted
     }
 
@@ -84,6 +83,7 @@ class EscortingProcessor(
             waiter.escortEventGroups(group)
             val customersEscorted = customersBefore - group.customersRemainingInRestaurant
             if (customersEscorted > 0) {
+                escortingWaitstaffSet.add(waiterId)
                 logEscortedBy(waiter.ensureId(getNextWaiterId), customersEscorted, group)
             }
 

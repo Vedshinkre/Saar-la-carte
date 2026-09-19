@@ -1,0 +1,37 @@
+{ "restaurants": [
+    {
+      "id": 1, "name": "Euro One", "type": "EUROPEAN", "openingTickStart": 1, "openingTickEnd": 24,
+      "deliveryDrivers": 0, "event": false, "positiveRatings": 0, "negativeRatings": 0,
+      "recipes": [1],
+      "kitchenStaff": { "EXEC": 0, "SOUS": 0, "TOURNANT": 1, "SAUCE": 0, "FISH": 0, "ROAST": 0, "VEGETABLE": 0, "PASTRY": 0 },
+      "waitstaff": 1,
+      "tables": [{ "id": 1, "type": "COMMON", "size": 4 }]
+    }
+,
+    {
+      "id": 2, "name": "Euro Two", "type": "EUROPEAN", "openingTickStart": 1, "openingTickEnd": 24,
+      "deliveryDrivers": 1, "event": false, "positiveRatings": 5, "negativeRatings": 1,
+      "recipes": [1],
+      "kitchenStaff": { "EXEC": 0, "SOUS": 0, "TOURNANT": 1, "SAUCE": 0, "FISH": 0, "ROAST": 0, "VEGETABLE": 0, "PASTRY": 0 },
+      "waitstaff": 1,
+      "tables": [{ "id": 1, "type": "COMMON", "size": 4 }]
+    }
+,
+    {
+      "id": 3, "name": "Asia Three", "type": "ASIAN", "openingTickStart": 1, "openingTickEnd": 24,
+      "deliveryDrivers": 0, "event": true, "positiveRatings": 2, "negativeRatings": 0,
+      "recipes": [2],
+      "kitchenStaff": { "EXEC": 0, "SOUS": 0, "TOURNANT": 1, "SAUCE": 0, "FISH": 0, "ROAST": 0, "VEGETABLE": 0, "PASTRY": 0 },
+      "waitstaff": 1,
+      "tables": [{ "id": 1, "type": "COMMON", "size": 4 }]
+    }
+,
+    {
+      "id": 4, "name": "Burger Four", "type": "AMERICAN", "openingTickStart": 1, "openingTickEnd": 6,
+      "deliveryDrivers": 0, "event": false, "positiveRatings": 0, "negativeRatings": 0,
+      "recipes": [3],
+      "kitchenStaff": { "EXEC": 0, "SOUS": 0, "TOURNANT": 1, "SAUCE": 0, "FISH": 0, "ROAST": 0, "VEGETABLE": 0, "PASTRY": 0 },
+      "waitstaff": 1,
+      "tables": [{ "id": 1, "type": "COMMON", "size": 4 }]
+    }
+] }

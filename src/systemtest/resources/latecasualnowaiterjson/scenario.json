@@ -1,0 +1,9 @@
+{
+  "customerGroups": [
+    { "id": 1, "type": "CASUAL", "size": 6, "tableType": "COMMON", "restaurantTypes": ["EUROPEAN"],
+      "visitingTick": 21, "visitingEvenings": [1], "ratingLikelihood": "ALWAYS", "foodPreferences": [] },
+    { "id": 2, "type": "CASUAL", "size": 6, "tableType": "COMMON", "restaurantTypes": ["EUROPEAN"],
+      "visitingTick": 21, "visitingEvenings": [1], "ratingLikelihood": "ALWAYS", "foodPreferences": [] }
+  ],
+  "incidents": []
+}

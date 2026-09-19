@@ -1,0 +1,40 @@
+{ "customerGroups": [
+    { "id": 1, "type": "EVENT", "size": 4, "tableType": "COMMON", "restaurantTypes": ["ASIAN"],
+      "visitingTick": 2, "eventEvening": 4, "favoriteDishes": { "ASIAN": "Peanut Noodles" },
+      "foodPreferences": [] },
+    { "id": 2, "type": "CASUAL", "size": 4, "tableType": "COMMON", "restaurantTypes": ["EUROPEAN"],
+      "visitingTick": 1, "visitingEvenings": [1], "ratingLikelihood": "NEVER",
+      "foodPreferences": [] }
+,
+    { "id": 3, "type": "CASUAL", "size": 4, "tableType": "COMMON", "restaurantTypes": ["EUROPEAN"],
+      "visitingTick": 1, "visitingEvenings": [1], "ratingLikelihood": "NEVER",
+      "foodPreferences": [] }
+,
+    { "id": 4, "type": "CASUAL", "size": 2, "tableType": "COMMON", "restaurantTypes": ["EUROPEAN"],
+      "visitingTick": 1, "visitingEvenings": [1], "ratingLikelihood": "NEVER",
+      "foodPreferences": [] }
+,
+    { "id": 5, "type": "CASUAL", "size": 2, "tableType": "COMMON", "restaurantTypes": ["ASIAN"],
+      "visitingTick": 1, "visitingEvenings": [1], "ratingLikelihood": "NEVER",
+      "foodPreferences": [] }
+,
+    { "id": 6, "type": "CASUAL", "size": 2, "tableType": "COMMON", "restaurantTypes": ["ASIAN"],
+      "visitingTick": 1, "visitingEvenings": [1], "ratingLikelihood": "NEVER",
+      "foodPreferences": [{ "size": 2, "excludedIngredients": ["Peanut"] }] }
+,
+    { "id": 7, "type": "CASUAL", "size": 2, "tableType": "COMMON", "restaurantTypes": ["AMERICAN"],
+      "visitingTick": 3, "visitingEvenings": [1], "ratingLikelihood": "NEVER",
+      "foodPreferences": [] }
+,
+    { "id": 8, "type": "CASUAL", "size": 2, "tableType": "COMMON", "restaurantTypes": ["AMERICAN"],
+      "visitingTick": 4, "visitingEvenings": [1], "ratingLikelihood": "NEVER",
+      "foodPreferences": [] }
+,
+    { "id": 9, "type": "CASUAL", "size": 2, "restaurantTypes": ["EUROPEAN"],
+      "visitingTick": 10, "visitingEvenings": [1], "deliveryDistance": 7, "ratingLikelihood": "NEVER",
+      "foodPreferences": [] }
+,
+    { "id": 10, "type": "CASUAL", "size": 2, "restaurantTypes": ["EUROPEAN"],
+      "visitingTick": 10, "visitingEvenings": [1], "deliveryDistance": 7, "ratingLikelihood": "NEVER",
+      "foodPreferences": [] }
+], "incidents": [] }

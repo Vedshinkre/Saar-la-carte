@@ -58,14 +58,7 @@ class CustomerParser {
             )
         }
         validateCustomerGroupUniquenessById(customerGroups)
-        return jsonArray.parseListOf { customerGroup ->
-            parseCustomer(
-                customerGroup.jsonObject,
-                recipes,
-                ingredients,
-                restaurantStats
-            )
-        }
+        return customerGroups
     }
 
     private fun validateCustomerGroupUniquenessById(customerGroups: List<CustomerGroup>) =

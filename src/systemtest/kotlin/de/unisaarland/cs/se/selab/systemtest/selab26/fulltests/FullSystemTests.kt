@@ -16,9 +16,7 @@ private const val KITCHEN_AND_SERVING = "kitchen-and-serving"
 private const val DELIVERY_HANDOFF = "delivery-handoff"
 private const val EVENT_MERGE_INCIDENTS = "event-merge-incidents"
 
-private val FAILING_AGAINST_REFERENCE = setOf(
-    KITCHEN_AND_SERVING,
-)
+private val FAILING_AGAINST_REFERENCE: Set<String> = setOf()
 
 /** test against scenarios of `fulltests/`, run simulation on each entry and compares log lines against expected ones */
 fun fullScenarioSystemTests(excludeReferenceFailingTests: Boolean): List<SystemTestSELab26> = listOf(

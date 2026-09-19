@@ -25,22 +25,25 @@ class AppendixScenarioTwoArrivalSystemTest : ExampleSystemTestExtension() {
     override suspend fun run() {
         // Skip past initialization, preparation, tick start, and restaurant decisions --
         // covered by earlier phases -- straight to restaurant 1's tick processing.
+        skipUntilString(TickStatusTestLogs.tickStart(1, 30))
         skipUntilString(TickStatusTestLogs.restStart(1))
 
-        // Only cc1 has visitingTick 1 -- cc2 and cc5 both wait until tick 6, so they don't
-        // arrive, seat, or order yet this tick.
+        // cc1 arrives in person at tick 1. cc2 is a delivery (visitingTick 6 - 3 cooking ticks -
+        // ceil(10 / 5) driving ticks = tick 1), so it orders now without arriving or being seated.
+        // cc5 found no restaurant. Orders 1 and 2 were placed on the earlier evenings 10 and 20.
         assertNextLine(FohArrivalTestLogs.arrival(1, 1))
         assertNextLine(FohArrivalTestLogs.seating(1, 1, 2, listOf(1)))
+        // The two customers excluding beef and potato can only eat chicken rice; the other six
+        // have no preferences and take the highest recipe id, potato soup.
         assertNextLine(
-            FohArrivalTestLogs.ordering(
-                1,
-                1,
-                2,
-                mapOf("beef pasta" to 2, "chicken rice" to 3, potatoSoup to 3),
-                1
-            )
+            FohArrivalTestLogs.ordering(1, 1, 3, mapOf("chicken rice" to 2, potatoSoup to 6), 1)
+        )
+        // Only 2000 g of potato was bought, so 200 g is left for cc2: no soup, so beef pasta
+        // (highest id still available) and then chicken rice.
+        assertNextLine(
+            FohArrivalTestLogs.ordering(1, 2, 4, mapOf("beef pasta" to 4, "chicken rice" to 1), null)
         )
         assertNextLine(FohArrivalTestLogs.seatingStatus(1, 1, 8, 1))
-        assertNextLine(FohArrivalTestLogs.orderingStatus(1, 0, 1))
+        assertNextLine(FohArrivalTestLogs.orderingStatus(1, 13, 1))
     }
 }

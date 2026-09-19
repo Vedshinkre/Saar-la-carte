@@ -24,10 +24,11 @@ class AppendixScenarioTwoServiceSystemTest : ExampleSystemTestExtension() {
     override suspend fun run() {
         // Skip past initialization, preparation, tick start, arrival, and kitchen cooking --
         // covered by earlier phases -- straight to FOH service.
-        skipUntilString(KitchenTestLogs.kitchenStatus(1, 1, 3, 3, 3))
+        skipUntilString(TickStatusTestLogs.tickStart(1, 30))
+        skipUntilString(KitchenTestLogs.kitchenStatus(1, 1, 6, 6, 6))
 
         // The dishes just finished cooking this same tick, so the waiter hasn't served them yet.
-        assertNextLine(FohServiceTestLogs.noServing(1, 1, 3, 2))
+        assertNextLine(FohServiceTestLogs.noServing(1, 1, 6, 2))
         assertNextLine(FohServiceTestLogs.servingStatus(1, 0, 0))
         assertNextLine(FohServiceTestLogs.eatingStatus(1, 0, 0))
         assertNextLine(FohServiceTestLogs.escortingStatus(1, 0, 0))

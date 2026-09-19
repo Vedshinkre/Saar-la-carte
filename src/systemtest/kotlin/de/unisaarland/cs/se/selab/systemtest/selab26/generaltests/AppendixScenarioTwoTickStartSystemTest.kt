@@ -23,6 +23,7 @@ class AppendixScenarioTwoTickStartSystemTest : ExampleSystemTestExtension() {
     override suspend fun run() {
         // Skip past initialization and preparation for evening 30 -- covered by
         // AppendixScenarioTwoPreparationSystemTest -- straight to the tick.
+        skipUntilString(InitialAndPrepTestLogs.prepStart(30))
         skipUntilString(InitialAndPrepTestLogs.pantryRestocked(1))
 
         assertNextLine(TickStatusTestLogs.servingStart(30))

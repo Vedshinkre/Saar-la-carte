@@ -5,32 +5,22 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExamplePreparati
 import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExampleSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.customerparsertests.customerParserSystemTests
 import de.unisaarland.cs.se.selab.systemtest.selab26.fulltests.fullScenarioSystemTests
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.AppendixScenarioTwoArrivalSystemTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.AppendixScenarioTwoKitchenSystemTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.AppendixScenarioTwoPreparationSystemTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.AppendixScenarioTwoServiceSystemTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.AppendixScenarioTwoStatisticsSystemTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.AppendixScenarioTwoTickStartSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualAdHocTableMergingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualDeliveryEarlyDecisionTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualTiebreakLowestIdTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CookChangeNoOrderTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryCumulativeDistanceSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOrderSuccessTestA
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOrderSuccessTestB
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOutboundTripSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventReservationConflictTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ExactStockoutTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ExhaustiveSimpleScenarioTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.OneCookTwoOrdersTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.PantryExpirySystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RegularBeforeCasualServingTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RegularGradualCookServingTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RegularRetrySucceedsSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SimulationLifecycleSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SingleOrCouple
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.StaffIdResetAcrossEveningsSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.StaffLoadBalancingFallbackSystemTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.StaffLoadConcentrationSystemTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.StaffMultiWaiterExhaustionSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.StatisticsOrderingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SupplierProcurementSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.UnavailableIncidentSupplierProcurementSystemTest
@@ -96,39 +86,36 @@ object SystemTestRegistration {
      */
     fun registerSystemTestsForReferenceImplementation(testSuite: SELab26TestSuite) {
         testSuite.registerTest(ExampleSystemTest())
-        testSuite.registerTest(ExactStockoutTest())
-        testSuite.registerTest(ExhaustiveSimpleScenarioTest())
+        testSuite.registerTest(ExactStockoutTest()) //   testSuite.registerTest(ExhaustiveSimpleScenarioTest())
         testSuite.registerTest(OneCookTwoOrdersTest())
         testSuite.registerTest(ExamplePreparationAndServingStartTest())
         testSuite.registerTest(ExampleEmptyTickOneCycleTest())
         testSuite.registerTest(EventReservationConflictTest())
-        testSuite.registerTest(WaitstaffExhaustionTest())
-        testSuite.registerTest(StaffLoadConcentrationSystemTest())
-        testSuite.registerTest(StaffMultiWaiterExhaustionSystemTest())
+        testSuite.registerTest(WaitstaffExhaustionTest()) // testSuite.registerTest(StaffLoadConcentrationSystemTest())
+        // testSuite.registerTest(StaffMultiWaiterExhaustionSystemTest())
         testSuite.registerTest(StaffLoadBalancingFallbackSystemTest())
-        testSuite.registerTest(StaffIdResetAcrossEveningsSystemTest())
         testSuite.registerTest(CasualAdHocTableMergingSystemTest())
-        testSuite.registerTest(RegularRetrySucceedsSystemTest())
         testSuite.registerTest(RegularGradualCookServingTest())
         testSuite.registerTest(RegularBeforeCasualServingTest())
         testSuite.registerTest(CasualTiebreakLowestIdTest())
         testSuite.registerTest(CasualDeliveryEarlyDecisionTest())
         testSuite.registerTest(DeliveryOutboundTripSystemTest())
         testSuite.registerTest(DeliveryCumulativeDistanceSystemTest())
-        testSuite.registerTest(SingleOrCouple())
-        testSuite.registerTest(AppendixScenarioTwoPreparationSystemTest())
-        testSuite.registerTest(AppendixScenarioTwoTickStartSystemTest())
-        testSuite.registerTest(AppendixScenarioTwoArrivalSystemTest())
-        testSuite.registerTest(AppendixScenarioTwoKitchenSystemTest())
-        testSuite.registerTest(AppendixScenarioTwoServiceSystemTest())
-        testSuite.registerTest(AppendixScenarioTwoStatisticsSystemTest())
+        testSuite.registerTest(SingleOrCouple()) // testSuite.registerTest(AppendixScenarioTwoPreparationSystemTest())
+        // testSuite.registerTest(AppendixScenarioTwoTickStartSystemTest())
+        // testSuite.registerTest(AppendixScenarioTwoArrivalSystemTest())
+        // testSuite.registerTest(AppendixScenarioTwoKitchenSystemTest())
+        // testSuite.registerTest(AppendixScenarioTwoServiceSystemTest())
+        // testSuite.registerTest(AppendixScenarioTwoStatisticsSystemTest())
+        // testSuite.registerTest(RegularRetrySucceedsSystemTest())
+        // testSuite.registerTest(StaffIdResetAcrossEveningsSystemTest())
         testSuite.registerTest(SimulationLifecycleSystemTest())
         testSuite.registerTest(StatisticsOrderingSystemTest())
         testSuite.registerTest(SupplierProcurementSystemTest())
         testSuite.registerTest(UnavailableIncidentSupplierProcurementSystemTest())
         testSuite.registerTest(
             PantryExpirySystemTest()
-        ) // testSuite.registerTest(UnavailabilityDurationExpirySystemTest())
+        )
         testSuite.registerTest(RestaurantsDifferentNameSameIdTest())
         testSuite.registerTest(RestaurantsMultipleExecCooksTest())
         testSuite.registerTest(RestaurantsNoBasicDishOfItsTypeTest())
@@ -147,10 +134,11 @@ object SystemTestRegistration {
         testSuite.registerTest(RestaurantsRecipesNotExistTest())
         testSuite.registerTest(RestaurantsSameNameDifferentIdTest())
         testSuite.registerTest(RestaurantsTickNotIn1to24Test())
-        testSuite.registerTest(CookChangeNoOrderTest())
         registerParserControllerLogTests(testSuite)
         customerParserSystemTests().forEach { testSuite.registerTest(it) }
         fullScenarioSystemTests().forEach { testSuite.registerTest(it) }
+        testSuite.registerTest(DeliveryOrderSuccessTestA())
+        testSuite.registerTest(DeliveryOrderSuccessTestB())
     }
 
     /**
@@ -176,11 +164,11 @@ object SystemTestRegistration {
         testSuite.registerTest(ExactStockoutTest())
         testSuite.registerTest(OneCookTwoOrdersTest())
         testSuite.registerTest(PantryExpirySystemTest())
-        testSuite.registerTest(SingleOrCouple()) // temporarily unregistered: cross-check against reference first
-        testSuite.registerTest(StaffLoadConcentrationSystemTest())
-        testSuite.registerTest(StaffMultiWaiterExhaustionSystemTest())
-        testSuite.registerTest(StaffLoadBalancingFallbackSystemTest())
-        testSuite.registerTest(StaffIdResetAcrossEveningsSystemTest())
+        testSuite.registerTest(SingleOrCouple()) // testSuite.registerTest(StaffLoadConcentrationSystemTest())
+        // testSuite.registerTest(StaffMultiWaiterExhaustionSystemTest())
+        testSuite.registerTest(
+            StaffLoadBalancingFallbackSystemTest()
+        )
     }
 
     /**

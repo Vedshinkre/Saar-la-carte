@@ -4,14 +4,17 @@ import de.unisaarland.cs.se.selab.Time
 import de.unisaarland.cs.se.selab.customer.CasualGroup
 import de.unisaarland.cs.se.selab.customer.RegularGroup
 import de.unisaarland.cs.se.selab.enums.LogLevel
+import de.unisaarland.cs.se.selab.enums.RatingLikelihood
 import de.unisaarland.cs.se.selab.enums.RestaurantType
 import de.unisaarland.cs.se.selab.enums.TableType
+import de.unisaarland.cs.se.selab.incidents.Incident
 import de.unisaarland.cs.se.selab.loggers.Logger
 import de.unisaarland.cs.se.selab.restaurant.BrowsingService
 import de.unisaarland.cs.se.selab.restaurant.Restaurant
 import de.unisaarland.cs.se.selab.restaurant.RestaurantStats
 import de.unisaarland.cs.se.selab.system.Simulation
 import de.unisaarland.cs.se.selab.system.SimulationConfig
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
@@ -170,5 +173,53 @@ class SimulationCoverageTest {
 
         // Verifies the simulation ran and calculated stats
         assertContains(output.toString(), "[IMPORTANT] Simulation Info: Simulation statistics are calculated.")
+    }
+
+    @Test
+    fun `simulation initialization with config collections`() {
+        val mockRestaurant = mock<Restaurant> {
+            on { getRestaurantStats() } doReturn RestaurantStats(
+                restaurantId = 1,
+                restaurantType = RestaurantType.ASIAN,
+                openingTickStart = 1,
+                openingTickEnd = 24,
+                event = false,
+                positiveRatings = 0,
+                negativeRatings = 0,
+                menu = emptyList()
+            )
+        }
+        val mockIncident = mock<Incident> {
+            on { id } doReturn 1
+            on { evening } doReturn 1
+            on { type } doReturn "STAFF"
+        }
+
+        val casualGroup = CasualGroup(
+            id = 1,
+            size = 2,
+            tableType = TableType.COMMON,
+            visitingAt = 5,
+            foodPreferences = emptyList(),
+            restaurantTypes = listOf(RestaurantType.ASIAN),
+            visitingEvenings = listOf(1),
+            deliveryDistance = 0,
+            ratingLikelihood = RatingLikelihood.NEVER
+        )
+
+        val populatedConfig = SimulationConfig().apply {
+            restaurants = listOf(mockRestaurant)
+            incidents = listOf(mockIncident)
+            customers = listOf(casualGroup)
+        }
+
+        val simulation = Simulation(populatedConfig)
+        Time.maxTicks = 0
+        simulation.runSimulation()
+
+        assertEquals(1, simulation.restaurants.size)
+        assertEquals(1, simulation.incidents.size)
+        assertEquals(1, simulation.customers.size)
+        assertEquals(0, Time.getMaxTicks())
     }
 }

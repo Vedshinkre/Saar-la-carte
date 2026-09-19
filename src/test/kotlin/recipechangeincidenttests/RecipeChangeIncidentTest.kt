@@ -89,6 +89,16 @@ class RecipeChangeIncidentTest {
     }
 
     @Test
+    fun `result is exact despite floating point representation`() {
+        val a = recipe(1, flour to 100)
+        incident(15, a).apply() // 1.15 * 100 is 114.99999999999999 in doubles
+        assertEquals(115, a.ingredients[flour])
+        val b = recipe(2, flour to 100)
+        incident(-93, b).apply() // 100 * 0.07 is 6.999999999999999 in doubles
+        assertEquals(7, b.ingredients[flour])
+    }
+
+    @Test
     fun `large increase`() {
         val r = recipe(1, flour to 10)
         incident(1000, r).apply()

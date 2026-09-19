@@ -52,19 +52,16 @@ class WaiterIdEventGroupTest {
 
     @Disabled
     @Test
-    fun `a failed EVENT seating still numbers the waiters that seated part of the group`() {
+    fun `a failed EVENT seating does NOT assign IDs to waiters who attempted seating`() {
         val waiters = waiters(2)
         val foh = frontOfHouse(tables(1, size = 25), waiters)
         val group = eventGroup(id = 1, size = 25)
         foh.reserveTables(group)
-
         foh.processArrival(group, menu)
-
         assertEquals(1, log.lines("FOH No Seating").size, "sanity check: the seating really failed")
-        assertEquals(listOf(1, 2), assignedIds(waiters))
+        assertTrue(assignedIds(waiters).all { it == null }, "Waiters must remain unassigned after a failed seating")
     }
 
-    @Disabled
     @Test
     fun `a failed EVENT seating still counts the partial SEATING actions towards the tick load`() {
         val waiters = waiters(2)
@@ -78,7 +75,6 @@ class WaiterIdEventGroupTest {
         assertEquals(listOf(0, 0), waiters.map { it.currentLoad })
     }
 
-    @Disabled
     @Test
     fun `after a failed EVENT seating the exhausted waiters are not free for a CASUAL group in that tick`() {
         val waiters = waiters(2)
@@ -94,7 +90,6 @@ class WaiterIdEventGroupTest {
         assertEquals(0, log.lines("FOH Seating (R").size, "both waiters already used up their SEATING actions")
     }
 
-    @Disabled
     @Test
     fun `ESCORTING an EVENT group only gives ids to the waiters that escort`() {
         val waiters = waiters(3)
@@ -126,7 +121,6 @@ class WaiterIdEventGroupTest {
         assertEquals(listOf(1, 2), assignedIds(waiters), "the third waiter should not have been needed")
     }
 
-    @Disabled
     @Test
     fun `EVENT seating prefers the lowest id when waiters are tied on current load`() {
         val restaurant = FohStaffFixtures.primed(assigned = 1, total = 2, log)
@@ -139,7 +133,6 @@ class WaiterIdEventGroupTest {
         assertNull(restaurant.waiters.first().id, "the waiter that never acted must lose the tie")
     }
 
-    @Disabled
     @Test
     fun `EVENT escorting prefers the lowest id when waiters are tied on current load`() {
         val restaurant = FohStaffFixtures.primed(assigned = 2, total = 3, log)

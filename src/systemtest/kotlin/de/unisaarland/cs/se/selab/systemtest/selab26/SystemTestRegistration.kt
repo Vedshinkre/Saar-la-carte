@@ -18,6 +18,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ExactStockoutT
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.LateCasualNoWaiterSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.OneCookTwoOrdersTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.PantryExpirySystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RecipeChangeRoundingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RegularBeforeCasualServingTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RegularGradualCookServingTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SimulationLifecycleSystemTest
@@ -186,6 +187,7 @@ object SystemTestRegistration {
         testSuite.registerTest(StaffMultiWaiterExhaustionSystemTest())
         testSuite.registerTest(StaffIdResetAcrossEveningsSystemTest())
         testSuite.registerTest(StaffLoadBalancingFallbackSystemTest())
+        testSuite.registerTest(RecipeChangeRoundingSystemTest())
     }
     private fun registeratharvaMutantValidationTests(testSuite: SELab26TestSuite) {
         testSuite.registerTest(OverlappingUnavailabilityRejectedSystemTest())

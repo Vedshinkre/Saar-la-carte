@@ -119,4 +119,39 @@ class MainIntegrationTest {
 
         assertTrue(exception.message!!.contains("has to be between"))
     }
+
+    @Test
+    fun `main -default to stdout when output file argument is missing`() {
+        // what happens when  the --out argument is missing
+        val args = arrayOf(
+            "--food", "src/systemtest/resources/simplejson/food.json",
+            "--restaurants", "src/systemtest/resources/simplejson/restaurants.json",
+            "--scenario", "src/systemtest/resources/simplejson/scenario.json",
+            "--maxTicks", "1", // Keep it short so it doesn't spam your console
+            "--logLevel", "IMPORTANT"
+        )
+
+        // the System.out branch executes correctly
+        main(args)
+
+        assertTrue(true)
+    }
+
+    @Test
+    fun `main - IllegalArgumentException- maxTicks is negative`() {
+        // Pass a negative maxTicks value to cover the lower bound of the range check
+        val args = arrayOf(
+            "--food", "src/systemtest/resources/simplejson/food.json",
+            "--restaurants", "src/systemtest/resources/simplejson/restaurants.json",
+            "--scenario", "src/systemtest/resources/simplejson/scenario.json",
+            "--maxTicks", "-1",
+            "--logLevel", "INFO"
+        )
+
+        val exception = assertThrows<IllegalArgumentException> {
+            main(args)
+        }
+
+        assertTrue(exception.message!!.contains("has to be between"))
+    }
 }

@@ -71,7 +71,8 @@ class RestaurantParserDuplicateAndExecTest {
         assertInvalidRestaurants("restaurantsDuplicateTableIds.json")
     } // Ansh Fix Head Cooks
 
-    @Disabled
+    // At most one EXEC cook is now enforced only by restaurant.schema. Remove this
+    @Disabled("Enforced by schema, not the parser")
     @Test
     fun `restaurantsMultipleExecCooks should fail`() {
         assertInvalidRestaurants("restaurantsMultipleExecCooks.json")

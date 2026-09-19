@@ -34,8 +34,7 @@ class EscortingProcessor(
      * and logs the escorting results.
      */
 
-    fun processEscorting() {
-        // the counters describe *this* tick only, so they start over on every call
+    fun processEscorting() { // the counters describe *this* tick only, so they start over on every call
         customerEscortingNumber = 0
         escortingWaitstaffSet.clear()
         val groupsToBeEscorted =
@@ -63,6 +62,7 @@ class EscortingProcessor(
             customerEscortingNumber
         )
     }
+
     private fun logEscortedBy(waiterId: Id, customersEscorted: Int, group: CustomerGroup) {
         if (customersEscorted <= 0) {
             return
@@ -76,21 +76,17 @@ class EscortingProcessor(
         escortingWaitstaffSet.add(waiterId)
         customerEscortingNumber += customersEscorted
     }
+
     private fun escortEventGroup(waiters: List<Waiter>, group: EventGroup) {
         waiters.forEach { waiter ->
             val waiterId = waiter.ensureId(getNextWaiterId)
             val customersBefore = group.customersRemainingInRestaurant
             waiter.escortEventGroups(group)
             val customersEscorted = customersBefore - group.customersRemainingInRestaurant
-            if (customersEscorted <= 0) {
-                return@forEach
+            if (customersEscorted > 0) {
+                logEscortedBy(waiter.ensureId(getNextWaiterId), customersEscorted, group)
             }
-            logFohEscorting(
-                waiterId,
-                customersEscorted,
-                group.id,
-                getAssignedTableIds(group.id).min()
-            )
+
             escortingWaitstaffSet.add(waiterId)
             customerEscortingNumber += customersEscorted
         }

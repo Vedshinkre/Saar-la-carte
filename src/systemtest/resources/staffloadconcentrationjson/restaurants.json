@@ -2,7 +2,7 @@
   "restaurants": [
     {
       "id": 1,
-      "name": "Bistro",
+      "name": "Bistro Saar",
       "type": "EUROPEAN",
       "openingTickStart": 1,
       "openingTickEnd": 24,
@@ -10,7 +10,7 @@
       "event": false,
       "positiveRatings": 0,
       "negativeRatings": 0,
-      "recipes": [1],
+      "recipes": [1, 2],
       "kitchenStaff": {
         "EXEC": 0,
         "SOUS": 0,

@@ -98,7 +98,7 @@ class FrontOfHouse(
             waiterToCookedDishes[targetWaiter] = res
         }
         val sortedWaiterToCookedDishes: MutableMap<Waiter, Int> =
-            waiterToCookedDishes.entries.sortedBy { it.key.id }.sortedByDescending { it.value }
+            waiterToCookedDishes.entries.sortedBy { it.key.id ?: Int.MAX_VALUE }.sortedByDescending { it.value }
                 .associate { it.key to it.value }.toMutableMap()
         val sortedWaiters = sortedWaiterToCookedDishes.keys.toList()
         val result = mutableListOf<Waiter>()

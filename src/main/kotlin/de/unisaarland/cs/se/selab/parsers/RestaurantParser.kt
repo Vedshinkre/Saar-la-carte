@@ -71,10 +71,10 @@ class RestaurantParser {
         // require(id >= 0) { "Restaurant ID must be non-negative" }
         // require(name.isNotEmpty()) { "Restaurant name must not be empty" }
         require(checkUniquenessOfRestaurant(id, name)) { "Restaurant IDs and names must be unique" }
-        require(
-            checkRestaurantHasAtLeastOneRecipe(jsonObject)
-        ) { "Restaurant must define at least one recipe" }
-
+        // require(
+        //     checkRestaurantHasAtLeastOneRecipe(jsonObject)
+        // ) { "Restaurant must define at least one recipe" }
+        // https://forum.se.cs.uni-saarland.de:51443/t/basic-dish-per-restaurant-type-validation/202/5
         tableIds.clear()
 
         val typeStr = "type"
@@ -93,8 +93,9 @@ class RestaurantParser {
         require(
             checkRestaurantRecipesExist(recipeIds, recipes.map { it.id })
         ) { "Restaurant $id references a recipe that does not exist" }
-        // already checked via checkRestaurantHasAtLeastOneRecipe above
-        // require(recipeIds.isNotEmpty()) { "Restaurant $id has no recipes" }
+        // recipes may be empty: a restaurant's basic dishes are auto-offered from its type's
+        // default recipes, which already satisfy "at least one recipe per restaurant"
+        // (forum: "Basic dish per restaurant type validation", staff correction, Sep 18 2026)
         require(checkUniqueDishNamesInRestaurant(recipeIds, recipes)) { "R $id dup dish name" }
 
         val kitchenStaff = parseKitchenStaff(jsonObject.getValue("kitchenStaff").jsonObject)
@@ -182,12 +183,9 @@ class RestaurantParser {
         return true
     }
 
-    private fun checkRestaurantHasAtLeastOneRecipe(jsonObject: JsonObject): Boolean {
-        // tables.isNotEmpty() and waitstaff > 0 are already enforced by restaurant.schema
-        // (tables minItems: 1, waitstaff exclusiveMinimum: 0). Only "at least one recipe" is
-        // not expressible in the per-restaurant schema (recipes array has no minItems), must be kept
-        return jsonObject.getValue("recipes").jsonArray.isNotEmpty()
-    }
+    // private fun checkRestaurantHasAtLeastOneRecipe(jsonObject: JsonObject): Boolean {
+    //     return jsonObject.getValue("recipes").jsonArray.isNotEmpty()
+    // }
 
     private fun checkRestaurantRecipesExist(recipeIdsInRestaurant: List<Int>, recipeIds: List<Int>): Boolean {
         // uniqueness of recipe ids within a restaurant is already enforced by restaurant.schema

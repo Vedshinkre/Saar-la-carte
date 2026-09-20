@@ -1,0 +1,7 @@
+{
+  "customerGroups": [],
+  "incidents": [
+    {"id": 1, "type": "RECIPE", "evening": 1, "ingredient": "cocoa", "adaptation": 10},
+    {"id": 2, "type": "RECIPE", "evening": 2, "ingredient": "cocoa", "adaptation": 10}
+  ]
+}

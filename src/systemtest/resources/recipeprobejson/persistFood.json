@@ -1,0 +1,9 @@
+{
+  "ingredients": [
+    {"name": "cocoa", "unit": "g", "packagingVolume": 1, "bestBefore": 5}
+  ],
+  "recipes": [
+    {"id": 1, "dishName": "Cocoa Cake", "duration": 10, "basicDishFor": "EUROPEAN",
+     "cookType": ["TOURNANT"], "ingredients": [{"name": "cocoa", "amount": 100}]}
+  ]
+}

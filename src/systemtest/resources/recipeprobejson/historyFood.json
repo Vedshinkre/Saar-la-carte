@@ -1,0 +1,9 @@
+{
+  "ingredients": [
+    {"name": "rice", "unit": "g", "packagingVolume": 1, "bestBefore": 9}
+  ],
+  "recipes": [
+    {"id": 1, "dishName": "Rice Bowl", "duration": 10, "basicDishFor": "EUROPEAN",
+     "cookType": ["TOURNANT"], "ingredients": [{"name": "rice", "amount": 10}]}
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "ingredients": [
+    {"name": "barley", "unit": "g", "packagingVolume": 1, "bestBefore": 9},
+    {"name": "sesame", "unit": "g", "packagingVolume": 1, "bestBefore": 9}
+  ],
+  "recipes": [
+    {"id": 1, "dishName": "Barley Bowl", "duration": 10, "basicDishFor": "EUROPEAN",
+     "cookType": ["TOURNANT"], "ingredients": [{"name": "barley", "amount": 10}]}
+  ]
+}

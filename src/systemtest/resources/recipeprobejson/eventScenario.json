@@ -1,0 +1,10 @@
+{
+  "customerGroups": [
+    {"id": 1, "type": "EVENT", "size": 4, "tableType": "COMMON", "visitingTick": 5,
+     "restaurantTypes": ["EUROPEAN"], "eventEvening": 4,
+     "favoriteDishes": {"EUROPEAN": "Truffle Pasta"}, "foodPreferences": []}
+  ],
+  "incidents": [
+    {"id": 1, "type": "RECIPE", "evening": 4, "ingredient": "truffle", "adaptation": 50}
+  ]
+}

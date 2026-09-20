@@ -27,30 +27,69 @@ private const val STEW = "Lentil Stew"
  *
  * EVENT 2 (5 customers), tick 3: 3 customers favor Lentil Stew, but eat Tomato Soup. The other 2
  * exclude everything but Almond Tart, which nobody can cook: they leave without ordering.
+ *
+ * The scenario is checked in independent chunks, so that a failure points at a single rule.
  */
-class EventOrderingSystemTest : ExampleSystemTestExtension() {
-    override val name = "EventOrderingSystemTest"
-    override val description = "EVENT customers order the event favorite dish before their own preferences"
+abstract class EventOrderingScenario : ExampleSystemTestExtension() {
     override val restaurants = "eventtests/ordering/restaurants.json"
     override val scenario = "eventtests/ordering/scenario.json"
     override val food = "eventtests/ordering/food.json"
     override val logLevel = "DEBUG"
     override val maxTicks = 80
 
-    override suspend fun run() {
-        skipUntilString(TickStatusTestLogs.tickStart(2, 4))
+    protected suspend fun skipToTick(tick: Int) {
+        skipUntilString(TickStatusTestLogs.tickStart(tick, 4))
         skipUntilString(TickStatusTestLogs.restStart(1))
+    }
+}
+
+/** EVENT 1: the event dish wins, own preferences only apply to customers who cannot eat it. */
+class EventOrderingFavoriteDishBeforePreferencesSystemTest : EventOrderingScenario() {
+    override val name = "EventOrderingFavoriteDishBeforePreferencesSystemTest"
+    override val description = "EVENT customers order the event favorite dish before their own preferences"
+
+    override suspend fun run() {
+        skipToTick(2)
         assertNextLine(FohArrivalTestLogs.arrival(1, 1))
         assertNextLine(FohArrivalTestLogs.seating(1, 1, 1, listOf(1)))
         assertNextLine(FohArrivalTestLogs.ordering(1, 1, 1, mapOf(SOUP to 4, CURRY to 2, STEW to 2), 1))
+    }
+}
+
+/** EVENT 1: all 8 customers ordered, so the statuses of the tick report 8 customers and one waiter. */
+class EventOrderingEventOneStatusSystemTest : EventOrderingScenario() {
+    override val name = "EventOrderingEventOneStatusSystemTest"
+    override val description = "The seating and ordering status count all customers of the EVENT group"
+
+    override suspend fun run() {
+        skipToTick(2)
+        skipUntilString(FohArrivalTestLogs.ordering(1, 1, 1, mapOf(SOUP to 4, CURRY to 2, STEW to 2), 1))
         assertNextLine(FohArrivalTestLogs.seatingStatus(1, 1, 8, 1))
         assertNextLine(FohArrivalTestLogs.orderingStatus(1, 8, 1))
+    }
+}
 
-        skipUntilString(TickStatusTestLogs.tickStart(3, 4))
-        skipUntilString(TickStatusTestLogs.restStart(1))
+/** EVENT 2: the favorite dish is ordered although the customers prefer another dish. */
+class EventOrderingEventDishOverFavoriteSystemTest : EventOrderingScenario() {
+    override val name = "EventOrderingEventDishOverFavoriteSystemTest"
+    override val description = "EVENT customers eat the event dish although it is not their own favorite"
+
+    override suspend fun run() {
+        skipToTick(3)
         assertNextLine(FohArrivalTestLogs.arrival(1, 2))
         assertNextLine(FohArrivalTestLogs.seating(1, 2, 2, listOf(1)))
         assertNextLine(FohArrivalTestLogs.ordering(1, 2, 2, mapOf(SOUP to 3), 1))
+    }
+}
+
+/** EVENT 2: customers who can only eat an unavailable dish leave without ordering. */
+class EventOrderingUnavailableDishNoOrderSystemTest : EventOrderingScenario() {
+    override val name = "EventOrderingUnavailableDishNoOrderSystemTest"
+    override val description = "EVENT customers who find no available dish they eat leave without ordering"
+
+    override suspend fun run() {
+        skipToTick(3)
+        skipUntilString(FohArrivalTestLogs.ordering(1, 2, 2, mapOf(SOUP to 3), 1))
         assertNextLine(FohArrivalTestLogs.noOrdering(1, 2, 2))
         assertNextLine(FohArrivalTestLogs.seatingStatus(1, 1, 5, 1))
         assertNextLine(FohArrivalTestLogs.orderingStatus(1, 3, 1))

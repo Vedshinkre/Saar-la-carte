@@ -23,15 +23,21 @@ private const val STEW = "Slow Stew"
  * - REGULAR groups are served first: waiter 1 serves all 10 stews and uses up his SERVING capacity.
  *   Only waiter 2 has capacity left (10), the event table needs 15, so it is not served in tick 3
  * - in tick 4 the meals are served one by one: as much as possible, 10 by waiter 1 and 5 by waiter 2
+ *
+ * The scenario is checked in independent chunks, so that a failure points at a single rule.
  */
-class EventServingCapacityWaitSystemTest : ExampleSystemTestExtension() {
-    override val name = "EventServingCapacityWaitSystemTest"
-    override val description = "An EVENT table waits a tick if the waitstaff's SERVING capacity is insufficient"
+abstract class EventServingCapacityWaitScenario : ExampleSystemTestExtension() {
     override val restaurants = "eventtests/servingwait/restaurants.json"
     override val scenario = "eventtests/servingwait/scenario.json"
     override val food = "eventtests/servingwait/food.json"
     override val logLevel = "DEBUG"
     override val maxTicks = 80
+}
+
+/** The REGULAR group (tick 1) and the EVENT group (tick 3) are seated as described above. */
+class EventServingWaitSeatingSystemTest : EventServingCapacityWaitScenario() {
+    override val name = "EventServingWaitSeatingSystemTest"
+    override val description = "Setup of the EVENT serving capacity scenario: who seats REGULAR and EVENT"
 
     override suspend fun run() {
         skipUntilString(TickStatusTestLogs.tickStart(1, 4))
@@ -39,14 +45,30 @@ class EventServingCapacityWaitSystemTest : ExampleSystemTestExtension() {
 
         skipUntilString(TickStatusTestLogs.tickStart(3, 4))
         skipUntilString(FohArrivalTestLogs.seating(1, 1, 2, listOf(1, 2)))
+    }
+}
+
+/** REGULAR is served before EVENT and uses up the SERVING capacity of waiter 1. */
+class EventServingWaitRegularServedFirstSystemTest : EventServingCapacityWaitScenario() {
+    override val name = "EventServingWaitRegularServedFirstSystemTest"
+    override val description = "The REGULAR table is served before the EVENT table and uses up waiter 1"
+
+    override suspend fun run() {
+        skipUntilString(TickStatusTestLogs.tickStart(3, 4))
+        skipUntilString(FohServiceTestLogs.serving(1, 1, mapOf(STEW to 10), 1, 2))
+    }
+}
+
+/** The EVENT table needs 15 but only 10 capacity is left, so the manager waits. */
+class EventServingWaitEventNotServedSystemTest : EventServingCapacityWaitScenario() {
+    override val name = "EventServingWaitEventNotServedSystemTest"
+    override val description = "An EVENT table waits a tick if the waitstaff's SERVING capacity is insufficient"
+
+    override suspend fun run() {
+        skipUntilString(TickStatusTestLogs.tickStart(3, 4))
         skipUntilString(FohServiceTestLogs.serving(1, 1, mapOf(STEW to 10), 1, 2))
         assertEventNotServed(15, 2)
         assertNextLine(FohServiceTestLogs.servingStatus(1, 1, 10))
-
-        skipUntilString(TickStatusTestLogs.tickStart(4, 4))
-        skipUntilString(FohServiceTestLogs.serving(1, 1, mapOf(SOUP to 10), 2, 1))
-        assertNextLine(FohServiceTestLogs.serving(1, 2, mapOf(SOUP to 5), 2, 1))
-        assertNextLine(FohServiceTestLogs.servingStatus(1, 2, 15))
     }
 
     /**
@@ -60,5 +82,18 @@ class EventServingCapacityWaitSystemTest : ExampleSystemTestExtension() {
         if (!line.startsWith(prefix) || !line.endsWith(suffix)) {
             throw SystemTestAssertionError("Expected '$prefix<id>$suffix' but got '$line'")
         }
+    }
+}
+
+/** One tick later the EVENT meals are served one by one: 10 by waiter 1 and 5 by waiter 2. */
+class EventServingWaitOneByOneSystemTest : EventServingCapacityWaitScenario() {
+    override val name = "EventServingWaitOneByOneSystemTest"
+    override val description = "After waiting a tick the EVENT meals are served one by one by several waiters"
+
+    override suspend fun run() {
+        skipUntilString(TickStatusTestLogs.tickStart(4, 4))
+        skipUntilString(FohServiceTestLogs.serving(1, 1, mapOf(SOUP to 10), 2, 1))
+        assertNextLine(FohServiceTestLogs.serving(1, 2, mapOf(SOUP to 5), 2, 1))
+        assertNextLine(FohServiceTestLogs.servingStatus(1, 2, 15))
     }
 }

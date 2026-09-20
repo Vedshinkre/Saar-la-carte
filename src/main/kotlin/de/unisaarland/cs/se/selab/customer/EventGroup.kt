@@ -61,7 +61,7 @@ class EventGroup(
     /**
      * takes the order of a customer group
      */
-    fun placeOrder(waiters: MutableList<Waiter>, menu: List<Recipe>, countertop: Countertop): Boolean {
+    override fun placeOrder(waiters: List<Waiter>, menu: List<Recipe>, countertop: Countertop): Boolean {
         val listOfDishes = mutableListOf<Dish>()
         val waiterRota = WaiterRota(waiters)
         for (foodPreference in orderingSequence()) {

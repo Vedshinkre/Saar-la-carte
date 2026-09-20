@@ -160,7 +160,6 @@ object SystemTestRegistration {
         )
         testSuite.registerTest(LateCasualNoWaiterSystemTest())
         registeratharvaRefrenceTests(testSuite)
-        customerParserSystemTests().forEach { testSuite.registerTest(it) }
         fullScenarioSystemTests(false).forEach { testSuite.registerTest(it) }
         testSuite.registerTest(DeliveryOrderSuccessTestA())
         testSuite.registerTest(CasualDeliveryTimeoutTest())

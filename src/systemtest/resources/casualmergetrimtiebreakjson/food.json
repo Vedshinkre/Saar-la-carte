@@ -1,0 +1,12 @@
+{
+  "ingredients": [
+    { "name": "Corn", "unit": "g", "packagingVolume": 500, "bestBefore": 4 }
+  ],
+  "recipes": [
+    {
+      "id": 1, "dishName": "Corn Stew", "duration": 8, "basicDishFor": "AMERICAN",
+      "cookType": ["EXEC"],
+      "ingredients": [{ "name": "Corn", "amount": 40 }]
+    }
+  ]
+}

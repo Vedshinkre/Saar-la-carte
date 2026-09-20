@@ -7,6 +7,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.customerparsertests.custome
 import de.unisaarland.cs.se.selab.systemtest.selab26.fulltests.fullScenarioSystemTests
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualAdHocTableMergingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualDeliveryEarlyDecisionTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualMergeTrimTieBreakSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualNoDecisionNoSpaceTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualTiebreakLowestIdTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CustomerBehaviourDecisionSystemTest
@@ -188,6 +189,7 @@ object SystemTestRegistration {
         testSuite.registerTest(RecipeChangeRoundingSystemTest())
         testSuite.registerTest(EatingFinishedAndEscortedSameTickTest())
         testSuite.registerTest(CasualNoDecisionNoSpaceTest())
+        testSuite.registerTest(CasualMergeTrimTieBreakSystemTest())
     }
 
     /*// testSuite.registerTest(AppendixScenarioTwoPreparationSystemTest())

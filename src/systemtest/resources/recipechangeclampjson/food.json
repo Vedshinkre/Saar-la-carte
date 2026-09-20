@@ -1,0 +1,23 @@
+{
+  "ingredients": [
+    {"name": "Barley", "unit": "g", "packagingVolume": 1, "bestBefore": 5},
+    {"name": "Cocoa", "unit": "g", "packagingVolume": 1, "bestBefore": 5},
+    {"name": "Durum", "unit": "g", "packagingVolume": 1, "bestBefore": 5},
+    {"name": "Emmer", "unit": "g", "packagingVolume": 1, "bestBefore": 5}
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "Grain Bowl",
+      "duration": 10,
+      "basicDishFor": "EUROPEAN",
+      "cookType": ["TOURNANT"],
+      "ingredients": [
+        {"name": "Barley", "amount": 1},
+        {"name": "Cocoa", "amount": 4},
+        {"name": "Durum", "amount": 100},
+        {"name": "Emmer", "amount": 100}
+      ]
+    }
+  ]
+}

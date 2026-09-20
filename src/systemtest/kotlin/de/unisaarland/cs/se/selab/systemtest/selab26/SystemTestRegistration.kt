@@ -26,6 +26,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.LateCasualNoWa
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.OneCookTwoOrdersTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.PantryExpirySystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.PartialServiceSuccessTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RecipeChangeAcrossRestaurantsTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RecipeChangeRoundingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RegularBeforeCasualServingTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RegularGradualCookServingTest
@@ -119,6 +120,7 @@ object SystemTestRegistration {
         testSuite.registerTest(CasualDeliveryTimeoutTest())
         testSuite.registerTest(PartialServiceSuccessTest())
         testSuite.registerTest(CookChangeNoOrderTest())
+        testSuite.registerTest(RecipeChangeAcrossRestaurantsTest())
     }
 
     /**

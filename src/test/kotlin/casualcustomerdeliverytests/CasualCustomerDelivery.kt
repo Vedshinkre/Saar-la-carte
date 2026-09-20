@@ -233,4 +233,91 @@ class CasualCustomerDelivery {
             browsingService.getEligibleRestaurants(group)
         }
     }
+
+    @Test
+    fun `getEligibleRestaurants - casual delivery - rejects restaurant with an empty menu`() {
+        // Restaurant with good ratings but zero recipes
+        val emptyRest = createRestaurant(
+            id = 1,
+            positive = 10,
+            negative = 0,
+            drivers = 1,
+            menuList = emptyList()
+        )
+
+        val browsingService = BrowsingService(listOf(emptyRest))
+
+        // Group with at least one food preference
+        val pref = mock<FoodPreference> {
+            whenever(it.excludedIngredients).thenReturn(emptyList())
+        }
+        val group = createMockDeliveryGroup(foodPrefs = listOf(pref))
+
+        val selectedId = browsingService.getEligibleRestaurants(group)
+
+        // Must return null because the empty menu immediately fails the matchPreference check
+        assertEquals(null, selectedId)
+    }
+
+    @Test
+    fun `decideDish - delivery group excludes all available recipes returns null`() {
+        val mushroom = mock<Ingredient> { whenever(it.name).thenReturn("Mushroom") }
+        val mushroomSoup = mock<Recipe> {
+            whenever(it.ingredients).thenReturn(mutableMapOf(mushroom to 10))
+        }
+
+        // Delivery customer excludes Mushrooms
+        val pref = FoodPreference(
+            excludedIngredients = listOf(mushroom),
+            preferredIngredients = emptyList(),
+            favouriteDishes = emptyList()
+        )
+
+        // The menu only has Mushroom Soup, so menu become empty becomes empty
+        val dish = pref.decideDish(listOf(mushroomSoup), "", RestaurantType.EUROPEAN)
+
+        assertEquals(null, dish)
+    }
+
+    @Test
+    fun `decideDish - delivery group - matches favourite dish`() {
+        val pizzaRecipe = mock<Recipe> {
+            whenever(it.name).thenReturn("Pizza")
+            whenever(it.ingredients).thenReturn(mutableMapOf())
+        }
+        val saladRecipe = mock<Recipe> {
+            whenever(it.name).thenReturn("Salad")
+            whenever(it.ingredients).thenReturn(mutableMapOf())
+        }
+
+        // Delivery customer specifically wants Pizza
+        val pref = FoodPreference(
+            excludedIngredients = emptyList(),
+            preferredIngredients = emptyList(),
+            favouriteDishes = listOf("Pizza")
+        )
+
+        val dish = pref.decideDish(listOf(saladRecipe, pizzaRecipe), "", RestaurantType.EUROPEAN)
+
+        // should select pizza over salad
+        assertEquals("Pizza", dish?.recipe?.name)
+    }
+
+    @Test
+    fun `isVisitingThisTick - delivery distance with exact multiple `() {
+        // To arrive at visitingTick 12, the group must order at tick 7 (12 - 2 - 3).
+        val group = createGroup(visitingAt = 12, deliveryDistance = 10, RatingLikelihood.NEVER)
+
+        // Tick 6: Too early
+        Time.tick = 6
+        assertFalse(group.isVisitingThisTick())
+
+        // Tick 7: The exact tick the order should be placed
+        Time.tick = 7
+        assertTrue(group.isVisitingThisTick())
+
+        // Tick 8: Too late
+        Time.tick = 8
+        assertFalse(group.isVisitingThisTick())
+    }
 }

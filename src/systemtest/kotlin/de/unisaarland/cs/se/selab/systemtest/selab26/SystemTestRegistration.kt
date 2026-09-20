@@ -7,6 +7,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.customerparsertests.custome
 import de.unisaarland.cs.se.selab.systemtest.selab26.fulltests.fullScenarioSystemTests
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualAdHocTableMergingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualDeliveryEarlyDecisionTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualDeliveryTimeoutTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualMergeTrimTieBreakSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualNoDecisionNoSpaceTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualTableExclusionSystemTest
@@ -15,7 +16,6 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualTiebreak
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CustomerBehaviourDecisionSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryCumulativeDistanceSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOrderSuccessTestA
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOrderSuccessTestB
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOutboundTripSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EatingFinishedAndEscortedSameTickTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventReservationConflictTest
@@ -114,7 +114,7 @@ object SystemTestRegistration {
         customerParserSystemTests().forEach { testSuite.registerTest(it) }
         fullScenarioSystemTests(false).forEach { testSuite.registerTest(it) }
         testSuite.registerTest(DeliveryOrderSuccessTestA())
-        testSuite.registerTest(DeliveryOrderSuccessTestB())
+        testSuite.registerTest(CasualDeliveryTimeoutTest())
     }
 
     /**
@@ -141,7 +141,7 @@ object SystemTestRegistration {
         testSuite.registerTest(ExactStockoutTest())
         testSuite.registerTest(OneCookTwoOrdersTest())
         testSuite.registerTest(PantryExpirySystemTest())
-        testSuite.registerTest(SingleOrCouple())
+        testSuite.registerTest(DeliveryOrderSuccessTestA())
         testSuite.registerTest(CustomerBehaviourDecisionSystemTest())
         testSuite.registerTest(UnavailabilityDurationExpirySystemTest())
         testSuite.registerTest(SingleOrCouple()) // testSuite.registerTest(StaffLoadConcentrationSystemTest())

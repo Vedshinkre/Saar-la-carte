@@ -13,6 +13,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualNoDecisi
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualTableExclusionSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualTableNoLiftSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualTiebreakLowestIdTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CookChangeNoOrderTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CustomerBehaviourDecisionSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryCumulativeDistanceSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOrderSuccessTestA
@@ -117,6 +118,7 @@ object SystemTestRegistration {
         testSuite.registerTest(DeliveryOrderSuccessTestA())
         testSuite.registerTest(CasualDeliveryTimeoutTest())
         testSuite.registerTest(PartialServiceSuccessTest())
+        testSuite.registerTest(CookChangeNoOrderTest())
     }
 
     /**

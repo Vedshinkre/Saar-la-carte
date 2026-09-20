@@ -4,8 +4,11 @@ import de.unisaarland.cs.se.selab.Evening
 import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.food.Ingredient
 import de.unisaarland.cs.se.selab.food.Recipe
+import java.util.Collections
+import java.util.IdentityHashMap
+import kotlin.math.max
 
-private const val PERCENT = 100L
+private const val PERCENT = 100
 
 /**
  * Incident that changes the amount of a specific ingredient
@@ -23,14 +26,17 @@ class RecipeChangeIncident(
 
     /**
      * applies the recipe change incident (adapts the amount of [ingredient]
-     * in every recipe that uses it by [adaptation] percent)
+     * in every recipe that uses it by [adaptation] percent). A menu copy of a recipe shares the
+     * ingredient map of the original, so each map is only changed once.
      */
     override fun apply() {
-        val percentage = PERCENT + adaptation // pls pass
+        val percentage = PERCENT + adaptation
+        val changedIngredientMaps = Collections.newSetFromMap(IdentityHashMap<MutableMap<Ingredient, Int>, Boolean>())
         for (recipe in recipes) {
+            if (!changedIngredientMaps.add(recipe.ingredients)) continue
             val currentAmount = recipe.ingredients[ingredient] ?: continue
-            val newAmount = Math.floorDiv(currentAmount * percentage, PERCENT).coerceIn(1L, Int.MAX_VALUE.toLong())
-            recipe.ingredients[ingredient] = newAmount.toInt()
+            val newAmount = max(Math.floorDiv(currentAmount * percentage, PERCENT), 1)
+            recipe.ingredients[ingredient] = newAmount
         }
     }
 }

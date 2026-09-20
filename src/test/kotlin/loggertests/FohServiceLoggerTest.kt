@@ -46,7 +46,6 @@ class FohServiceLoggerTest {
     }
 
     private val loggedLine: String get() = output.toString().lines().single { it.isNotBlank() }
-    private fun List<Id>.toSortedString() = this.sorted().joinToString(separator = ",")
     private fun Map<String, Int>.toSortedString() =
         this.toList().sortedBy { it.first }.joinToString(separator = ",") { "${it.first}:${it.second}" }
 

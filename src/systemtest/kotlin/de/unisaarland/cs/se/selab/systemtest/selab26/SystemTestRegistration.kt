@@ -9,6 +9,8 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualAdHocTab
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualDeliveryEarlyDecisionTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualMergeTrimTieBreakSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualNoDecisionNoSpaceTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualTableExclusionSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualTableNoLiftSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualTiebreakLowestIdTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CustomerBehaviourDecisionSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryCumulativeDistanceSystemTest
@@ -17,6 +19,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOrderS
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOutboundTripSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EatingFinishedAndEscortedSameTickTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventReservationConflictTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventTableMergingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ExactStockoutTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.LateCasualNoWaiterSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.OneCookTwoOrdersTest
@@ -32,6 +35,11 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.StaffLoadConce
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.StaffMultiWaiterExhaustionSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.StatisticsOrderingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SupplierProcurementSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.TableMergingLifecycleSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.TableReservationConflictsSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.TableReservationMergeSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.TableReservationSingleTableSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.TableTypeRestrictionsSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.UnavailabilityDurationExpirySystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.UnavailableIncidentSupplierProcurementSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.WaitstaffExhaustionTest
@@ -190,6 +198,22 @@ object SystemTestRegistration {
         testSuite.registerTest(EatingFinishedAndEscortedSameTickTest())
         testSuite.registerTest(CasualNoDecisionNoSpaceTest())
         testSuite.registerTest(CasualMergeTrimTieBreakSystemTest())
+        registerTableMergingTests(testSuite)
+    }
+
+    /**
+     * Table merging rules of the front of house (spec 2.2): reservation steps 1-6, table types,
+     * ad-hoc CASUAL tables and the life cycle of merged tables.
+     */
+    private fun registerTableMergingTests(testSuite: SELab26TestSuite) {
+        testSuite.registerTest(TableReservationSingleTableSystemTest())
+        testSuite.registerTest(TableReservationMergeSystemTest())
+        testSuite.registerTest(TableTypeRestrictionsSystemTest())
+        testSuite.registerTest(TableReservationConflictsSystemTest())
+        testSuite.registerTest(EventTableMergingSystemTest())
+        testSuite.registerTest(CasualTableNoLiftSystemTest())
+        testSuite.registerTest(CasualTableExclusionSystemTest())
+        testSuite.registerTest(TableMergingLifecycleSystemTest())
     }
 
     /*// testSuite.registerTest(AppendixScenarioTwoPreparationSystemTest())

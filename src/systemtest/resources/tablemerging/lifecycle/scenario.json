@@ -1,0 +1,62 @@
+{
+  "customerGroups": [
+    {
+      "id": 1,
+      "type": "REGULAR",
+      "size": 4,
+      "visitingTick": 2,
+      "visitingStart": 1,
+      "visitingPeriod": 1,
+      "restaurant": 1,
+      "foodPreferences": [],
+      "tableType": "COMMON"
+    },
+    {
+      "id": 2,
+      "type": "CASUAL",
+      "size": 4,
+      "tableType": "COMMON",
+      "restaurantTypes": [
+        "EUROPEAN"
+      ],
+      "visitingTick": 2,
+      "visitingEvenings": [
+        1,
+        2
+      ],
+      "ratingLikelihood": "NEVER",
+      "foodPreferences": []
+    },
+    {
+      "id": 3,
+      "type": "CASUAL",
+      "size": 2,
+      "tableType": "COMMON",
+      "restaurantTypes": [
+        "EUROPEAN"
+      ],
+      "visitingTick": 14,
+      "visitingEvenings": [
+        1
+      ],
+      "ratingLikelihood": "NEVER",
+      "foodPreferences": []
+    },
+    {
+      "id": 4,
+      "type": "CASUAL",
+      "size": 2,
+      "tableType": "COMMON",
+      "restaurantTypes": [
+        "EUROPEAN"
+      ],
+      "visitingTick": 14,
+      "visitingEvenings": [
+        1
+      ],
+      "ratingLikelihood": "NEVER",
+      "foodPreferences": []
+    }
+  ],
+  "incidents": []
+}

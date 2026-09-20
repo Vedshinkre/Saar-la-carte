@@ -1,0 +1,95 @@
+{
+  "customerGroups": [
+    {
+      "id": 1,
+      "type": "CASUAL",
+      "size": 1,
+      "tableType": "COMMON",
+      "restaurantTypes": [
+        "EUROPEAN"
+      ],
+      "visitingTick": 2,
+      "visitingEvenings": [
+        1
+      ],
+      "ratingLikelihood": "NEVER",
+      "foodPreferences": []
+    },
+    {
+      "id": 2,
+      "type": "CASUAL",
+      "size": 4,
+      "tableType": "BAR",
+      "restaurantTypes": [
+        "ASIAN"
+      ],
+      "visitingTick": 2,
+      "visitingEvenings": [
+        1
+      ],
+      "ratingLikelihood": "NEVER",
+      "foodPreferences": []
+    },
+    {
+      "id": 3,
+      "type": "CASUAL",
+      "size": 5,
+      "tableType": "COMMON",
+      "restaurantTypes": [
+        "AMERICAN"
+      ],
+      "visitingTick": 2,
+      "visitingEvenings": [
+        1
+      ],
+      "ratingLikelihood": "NEVER",
+      "foodPreferences": []
+    },
+    {
+      "id": 4,
+      "type": "CASUAL",
+      "size": 10,
+      "tableType": "COMMON",
+      "restaurantTypes": [
+        "AFRICAN"
+      ],
+      "visitingTick": 2,
+      "visitingEvenings": [
+        1
+      ],
+      "ratingLikelihood": "NEVER",
+      "foodPreferences": []
+    },
+    {
+      "id": 5,
+      "type": "CASUAL",
+      "size": 2,
+      "tableType": "COMMON",
+      "restaurantTypes": [
+        "EUROPEAN"
+      ],
+      "visitingTick": 4,
+      "visitingEvenings": [
+        1
+      ],
+      "ratingLikelihood": "NEVER",
+      "foodPreferences": []
+    },
+    {
+      "id": 7,
+      "type": "CASUAL",
+      "size": 3,
+      "tableType": "COMMON",
+      "restaurantTypes": [
+        "ASIAN"
+      ],
+      "visitingTick": 5,
+      "visitingEvenings": [
+        1
+      ],
+      "ratingLikelihood": "NEVER",
+      "foodPreferences": []
+    }
+  ],
+  "incidents": []
+}

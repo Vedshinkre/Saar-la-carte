@@ -1,0 +1,72 @@
+{
+  "ingredients": [
+    {
+      "name": "Tomato",
+      "unit": "g",
+      "packagingVolume": 1000,
+      "bestBefore": 3
+    }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "Tomato Soup",
+      "duration": 10,
+      "basicDishFor": "EUROPEAN",
+      "cookType": [
+        "EXEC"
+      ],
+      "ingredients": [
+        {
+          "name": "Tomato",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "dishName": "Rice Bowl",
+      "duration": 10,
+      "basicDishFor": "ASIAN",
+      "cookType": [
+        "EXEC"
+      ],
+      "ingredients": [
+        {
+          "name": "Tomato",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "dishName": "Corn Stew",
+      "duration": 10,
+      "basicDishFor": "AMERICAN",
+      "cookType": [
+        "EXEC"
+      ],
+      "ingredients": [
+        {
+          "name": "Tomato",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "dishName": "Berbere Stew",
+      "duration": 10,
+      "basicDishFor": "AFRICAN",
+      "cookType": [
+        "EXEC"
+      ],
+      "ingredients": [
+        {
+          "name": "Tomato",
+          "amount": 1
+        }
+      ]
+    }
+  ]
+}

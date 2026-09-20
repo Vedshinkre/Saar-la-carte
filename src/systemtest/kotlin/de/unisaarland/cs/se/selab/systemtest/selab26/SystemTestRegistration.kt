@@ -77,9 +77,9 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ExactStockoutT
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.LateCasualNoWaiterSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.OneCookTwoOrdersTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.PantryExpirySystemTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RecipeChangeMinimumAmountSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.PartialServiceSuccessTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RecipeChangeAcrossRestaurantsTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RecipeChangeMinimumAmountSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RecipeChangeRoundingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RegularBeforeCasualServingTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RegularGradualCookServingTest

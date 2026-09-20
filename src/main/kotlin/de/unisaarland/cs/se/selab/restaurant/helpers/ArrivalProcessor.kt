@@ -96,7 +96,6 @@ class ArrivalProcessor(
 
         if (eventGroupSize != 0) {
             FohReceptionLogger.logFohNoSeatingNoWaitstaff(eventGroup.id)
-            customerToTable.remove(eventGroup)
             turnedAwayGroups.addLast(eventGroup)
             eventGroup.experience = ExperienceType.NEGATIVE
         } else {

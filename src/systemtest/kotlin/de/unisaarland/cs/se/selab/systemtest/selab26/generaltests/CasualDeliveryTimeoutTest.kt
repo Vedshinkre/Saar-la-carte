@@ -39,8 +39,15 @@ class CasualDeliveryTimeoutTest : ExampleSystemTestExtension() {
         assertNextLine(FohArrivalTestLogs.ordering(1, 1, 1, mapOf("potato fries" to 1), 1))
 
         // Group 2 (Delivery) places their order early (no waitstaff ID for delivery orders)
-        assertNextLine("[IMPORTANT] FOH Ordering (R 1): Group 2 placed order 2 of baked potato:1.")
-
+        assertNextLine(
+            FohArrivalTestLogs.ordering(
+                restId = 1,
+                groupId = 2,
+                orderId = 2,
+                dishes = mapOf("baked potato" to 1),
+                waitstaffId = null
+            )
+        )
         assertNextLine(FohArrivalTestLogs.seatingStatus(1, 1, 1, 1))
         assertNextLine(FohArrivalTestLogs.orderingStatus(1, 2, 1))
 

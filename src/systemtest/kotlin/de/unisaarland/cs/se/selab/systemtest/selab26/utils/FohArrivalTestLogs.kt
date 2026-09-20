@@ -24,12 +24,18 @@ object FohArrivalTestLogs {
 
     fun ordering(restId: Int, groupId: Int, orderId: Int, dishes: Map<String, Int>, waitstaffId: Int?) =
         if (waitstaffId != null) {
-            "[IMPORTANT] FOH Ordering (R $restId): Group $groupId placed order $orderId of " +
-                "${TestLogFormatter.formatMap(dishes)} with waitstaff $waitstaffId."
+            "${orderPlaced(restId, groupId, orderId, dishes)} with waitstaff $waitstaffId."
         } else {
-            "[IMPORTANT] FOH Ordering (R $restId): Group $groupId placed order $orderId of " +
-                "${TestLogFormatter.formatMap(dishes)}."
+            "${orderPlaced(restId, groupId, orderId, dishes)}."
         }
+
+    /** an EVENT group is served by several waiters, all of them are named in the ordering log */
+    fun ordering(restId: Int, groupId: Int, orderId: Int, dishes: Map<String, Int>, waitstaffIds: List<Int>) =
+        "${orderPlaced(restId, groupId, orderId, dishes)} with waitstaff ${TestLogFormatter.formatIds(waitstaffIds)}."
+
+    private fun orderPlaced(restId: Int, groupId: Int, orderId: Int, dishes: Map<String, Int>) =
+        "[IMPORTANT] FOH Ordering (R $restId): Group $groupId placed order $orderId of " +
+            TestLogFormatter.formatMap(dishes)
 
     fun noOrdering(restId: Int, groupId: Int, customers: Int) =
         "[IMPORTANT] FOH No Ordering (R $restId): Group $groupId could not place an order for " +

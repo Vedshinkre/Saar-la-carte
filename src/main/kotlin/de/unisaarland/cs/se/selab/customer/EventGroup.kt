@@ -67,8 +67,7 @@ class EventGroup(
         for (foodPreference in orderingSequence()) {
             val availableDishes = countertop.getAvailableRecipes(menu)
             val eventFavoriteDish = requireNotNull(eventDishes[currentRestaurantType])
-            val customerDish =
-                foodPreference.decideDish(availableDishes, eventFavoriteDish, countertop.restaurantType)
+            val customerDish = foodPreference.decideDish(availableDishes, eventFavoriteDish, countertop.restaurantType)
             if (customerDish != null) {
                 val currentWaiter = waiterRota.next()
                 if (currentWaiter != null) {

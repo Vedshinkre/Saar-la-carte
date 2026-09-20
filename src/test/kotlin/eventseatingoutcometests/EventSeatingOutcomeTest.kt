@@ -16,7 +16,6 @@ import eventseatingoutcometests.EventSeatingFixtures.reserve
 import eventseatingoutcometests.EventSeatingFixtures.table
 import eventseatingoutcometests.EventSeatingFixtures.waiter
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -167,7 +166,6 @@ class EventSeatingOutcomeTest {
         assertTrue(log().contains("FOH Seating Status (R 1): 2 waitstaff seated 12 customers on 1 tables."))
     }
 
-    @Disabled
     @Test
     fun `a merged table of an event counts only once in the seating status`() {
         val tableOne = table(1, 2)

@@ -1,0 +1,46 @@
+{
+  "restaurants": [
+    {
+      "id": 1,
+      "name": "Event House Europe",
+      "type": "EUROPEAN",
+      "openingTickStart": 1,
+      "openingTickEnd": 24,
+      "deliveryDrivers": 0,
+      "event": true,
+      "positiveRatings": 0,
+      "negativeRatings": 0,
+      "recipes": [1],
+      "kitchenStaff": {
+        "EXEC": 0, "SOUS": 0, "TOURNANT": 1, "SAUCE": 0,
+        "FISH": 0, "ROAST": 0, "VEGETABLE": 0, "PASTRY": 0
+      },
+      "waitstaff": 2,
+      "tables": [
+        { "id": 1, "type": "COMMON", "size": 20 },
+        { "id": 2, "type": "COMMON", "size": 3 }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Event House Asia",
+      "type": "ASIAN",
+      "openingTickStart": 1,
+      "openingTickEnd": 24,
+      "deliveryDrivers": 0,
+      "event": true,
+      "positiveRatings": 0,
+      "negativeRatings": 0,
+      "recipes": [2],
+      "kitchenStaff": {
+        "EXEC": 0, "SOUS": 0, "TOURNANT": 1, "SAUCE": 0,
+        "FISH": 0, "ROAST": 0, "VEGETABLE": 0, "PASTRY": 0
+      },
+      "waitstaff": 2,
+      "tables": [
+        { "id": 1, "type": "COMMON", "size": 21 },
+        { "id": 2, "type": "COMMON", "size": 3 }
+      ]
+    }
+  ]
+}

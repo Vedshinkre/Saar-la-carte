@@ -1,0 +1,87 @@
+{
+  "customerGroups": [
+    {
+      "id": 1,
+      "type": "EVENT",
+      "size": 8,
+      "tableType": "COMMON",
+      "restaurantTypes": [
+        "EUROPEAN"
+      ],
+      "visitingTick": 2,
+      "eventEvening": 4,
+      "favoriteDishes": {
+        "EUROPEAN": "Tomato Soup"
+      },
+      "foodPreferences": [
+        {
+          "size": 2,
+          "favoriteDishes": [
+            "Chicken Curry"
+          ]
+        },
+        {
+          "size": 2,
+          "preferredIngredients": [
+            "Lentil"
+          ]
+        },
+        {
+          "size": 1,
+          "excludedIngredients": [
+            "Tomato"
+          ],
+          "favoriteDishes": [
+            "Lentil Stew"
+          ]
+        },
+        {
+          "size": 2,
+          "excludedIngredients": [
+            "Tomato"
+          ],
+          "preferredIngredients": [
+            "Chicken"
+          ]
+        },
+        {
+          "size": 1,
+          "excludedIngredients": [
+            "Tomato"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "EVENT",
+      "size": 5,
+      "tableType": "COMMON",
+      "restaurantTypes": [
+        "EUROPEAN"
+      ],
+      "visitingTick": 3,
+      "eventEvening": 4,
+      "favoriteDishes": {
+        "EUROPEAN": "Tomato Soup"
+      },
+      "foodPreferences": [
+        {
+          "size": 3,
+          "favoriteDishes": [
+            "Lentil Stew"
+          ]
+        },
+        {
+          "size": 2,
+          "excludedIngredients": [
+            "Tomato",
+            "Chicken",
+            "Lentil"
+          ]
+        }
+      ]
+    }
+  ],
+  "incidents": []
+}

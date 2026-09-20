@@ -5,7 +5,6 @@ import de.unisaarland.cs.se.selab.enums.LogLevel
 import de.unisaarland.cs.se.selab.loggers.Logger
 import de.unisaarland.cs.se.selab.loggers.TickStatusLogger
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -94,7 +93,6 @@ class TickStatusLoggerTest {
         assertEquals(emptyList<String>(), loggedLines())
     }
 
-    @Disabled
     @Test
     fun `IMPORTANT-level logs survive even at IMPORTANT log level`() {
         Logger.setup(LogLevel.IMPORTANT)

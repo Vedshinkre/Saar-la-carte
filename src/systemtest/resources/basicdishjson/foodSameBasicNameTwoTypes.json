@@ -1,0 +1,23 @@
+{
+  "ingredients": [
+    {"name": "Flour", "unit": "g", "packagingVolume": 1, "bestBefore": 5}
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "Rice Bread",
+      "duration": 10,
+      "basicDishFor": "EUROPEAN",
+      "cookType": ["TOURNANT"],
+      "ingredients": [{"name": "Flour", "amount": 100}]
+    },
+    {
+      "id": 2,
+      "dishName": "Rice Bread",
+      "duration": 10,
+      "basicDishFor": "ASIAN",
+      "cookType": ["TOURNANT"],
+      "ingredients": [{"name": "Flour", "amount": 200}]
+    }
+  ]
+}

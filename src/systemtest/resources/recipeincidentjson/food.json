@@ -1,0 +1,41 @@
+{
+  "ingredients": [
+    {
+      "name": "chicken",
+      "unit": "g",
+      "packagingVolume": 10,
+      "bestBefore": 5
+    }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "chicken rice",
+      "duration": 20,
+      "basicDishFor": "ASIAN",
+      "cookType": [
+        "TOURNANT"
+      ],
+      "ingredients": [
+        {
+          "name": "chicken",
+          "amount": 100
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "dishName": "chicken rice",
+      "duration": 20,
+      "cookType": [
+        "TOURNANT"
+      ],
+      "ingredients": [
+        {
+          "name": "chicken",
+          "amount": 200
+        }
+      ]
+    }
+  ]
+}

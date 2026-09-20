@@ -4,6 +4,11 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExampleEmptyTick
 import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExamplePreparationAndServingStartTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExampleSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.customerparsertests.customerParserSystemTests
+import de.unisaarland.cs.se.selab.systemtest.selab26.eventtests.EventArrivalSeatingSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.eventtests.EventEscortingSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.eventtests.EventOrderingSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.eventtests.EventServingCapacityWaitSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.eventtests.EventServingWaiterPrioritySystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.fulltests.fullScenarioSystemTests
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualAdHocTableMergingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualDeliveryEarlyDecisionTest
@@ -21,6 +26,10 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOrderS
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOutboundTripSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EatingFinishedAndEscortedSameTickTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventReservationConflictTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventSeatingCapacityBoundarySystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventSeatingLoadPrioritySystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventSeatingSharedCapacitySystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventSeatingSpecExampleSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventTableMergingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ExactStockoutTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.LateCasualNoWaiterSystemTest
@@ -197,6 +206,10 @@ object SystemTestRegistration {
         testSuite.registerTest(FoodRecipeDurationTooShortRejectedSystemTest())
         testSuite.registerTest(FoodRecipeMissingIngredientRefRejectedSystemTest())
         testSuite.registerTest(FoodDuplicateRecipeIdRejectedSystemTest())
+        testSuite.registerTest(EventSeatingSpecExampleSystemTest())
+        testSuite.registerTest(EventSeatingLoadPrioritySystemTest())
+        testSuite.registerTest(EventSeatingCapacityBoundarySystemTest())
+        testSuite.registerTest(EventSeatingSharedCapacitySystemTest())
         testSuite.registerTest(StaffLoadConcentrationSystemTest())
         testSuite.registerTest(StaffMultiWaiterExhaustionSystemTest())
         testSuite.registerTest(StaffIdResetAcrossEveningsSystemTest()) // doesnt pass on refrence
@@ -206,6 +219,19 @@ object SystemTestRegistration {
         testSuite.registerTest(CasualNoDecisionNoSpaceTest()) // doesnt pass on refrence
         testSuite.registerTest(CasualMergeTrimTieBreakSystemTest())
         registerTableMergingTests(testSuite)
+        registerEventTests(testSuite)
+    }
+
+    /**
+     * Front of house rules for EVENT groups (spec 2.2): seating by several waiters, ordering,
+     * serving and escorting.
+     */
+    private fun registerEventTests(testSuite: SELab26TestSuite) {
+        testSuite.registerTest(EventArrivalSeatingSystemTest())
+        testSuite.registerTest(EventOrderingSystemTest())
+        testSuite.registerTest(EventServingCapacityWaitSystemTest())
+        testSuite.registerTest(EventServingWaiterPrioritySystemTest())
+        testSuite.registerTest(EventEscortingSystemTest())
     }
 
     /**

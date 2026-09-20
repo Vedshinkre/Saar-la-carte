@@ -1,0 +1,25 @@
+{
+  "customerGroups": [
+    {
+      "id": 1, "type": "EVENT", "size": 20, "tableType": "COMMON",
+      "restaurantTypes": ["EUROPEAN"], "visitingTick": 2, "eventEvening": 4,
+      "favoriteDishes": { "EUROPEAN": "Rice Bowl" }, "foodPreferences": []
+    },
+    {
+      "id": 2, "type": "EVENT", "size": 21, "tableType": "COMMON",
+      "restaurantTypes": ["ASIAN"], "visitingTick": 2, "eventEvening": 4,
+      "favoriteDishes": { "ASIAN": "Noodle Bowl" }, "foodPreferences": []
+    },
+    {
+      "id": 3, "type": "CASUAL", "size": 3, "tableType": "COMMON",
+      "restaurantTypes": ["EUROPEAN"], "visitingEvenings": [4], "visitingTick": 2,
+      "ratingLikelihood": "NEVER", "foodPreferences": []
+    },
+    {
+      "id": 4, "type": "CASUAL", "size": 3, "tableType": "COMMON",
+      "restaurantTypes": ["ASIAN"], "visitingEvenings": [4], "visitingTick": 2,
+      "ratingLikelihood": "NEVER", "foodPreferences": []
+    }
+  ],
+  "incidents": []
+}

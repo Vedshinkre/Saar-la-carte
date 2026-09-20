@@ -1,0 +1,30 @@
+{
+  "customerGroups": [
+    {
+      "id": 1, "type": "EVENT", "size": 15, "tableType": "COMMON",
+      "restaurantTypes": ["EUROPEAN"], "visitingTick": 3, "eventEvening": 4,
+      "favoriteDishes": { "EUROPEAN": "Rice Bowl" }, "foodPreferences": []
+    },
+    {
+      "id": 2, "type": "REGULAR", "size": 6, "tableType": "COMMON",
+      "visitingTick": 3, "visitingStart": 4, "visitingPeriod": 1, "restaurant": 1,
+      "foodPreferences": []
+    },
+    {
+      "id": 3, "type": "CASUAL", "size": 8, "tableType": "COMMON",
+      "restaurantTypes": ["EUROPEAN"], "visitingEvenings": [4], "visitingTick": 1,
+      "ratingLikelihood": "NEVER", "foodPreferences": []
+    },
+    {
+      "id": 4, "type": "CASUAL", "size": 5, "tableType": "COMMON",
+      "restaurantTypes": ["EUROPEAN"], "visitingEvenings": [4], "visitingTick": 1,
+      "ratingLikelihood": "NEVER", "foodPreferences": []
+    },
+    {
+      "id": 5, "type": "CASUAL", "size": 7, "tableType": "COMMON",
+      "restaurantTypes": ["EUROPEAN"], "visitingEvenings": [4], "visitingTick": 2,
+      "ratingLikelihood": "NEVER", "foodPreferences": []
+    }
+  ],
+  "incidents": []
+}

@@ -1,0 +1,20 @@
+{
+  "customerGroups": [
+    {
+      "id": 1, "type": "EVENT", "size": 12, "tableType": "COMMON",
+      "restaurantTypes": ["EUROPEAN"], "visitingTick": 2, "eventEvening": 4,
+      "favoriteDishes": { "EUROPEAN": "Rice Bowl" }, "foodPreferences": []
+    },
+    {
+      "id": 2, "type": "EVENT", "size": 8, "tableType": "COMMON",
+      "restaurantTypes": ["EUROPEAN"], "visitingTick": 2, "eventEvening": 4,
+      "favoriteDishes": { "EUROPEAN": "Rice Bowl" }, "foodPreferences": []
+    },
+    {
+      "id": 3, "type": "EVENT", "size": 4, "tableType": "COMMON",
+      "restaurantTypes": ["EUROPEAN"], "visitingTick": 2, "eventEvening": 4,
+      "favoriteDishes": { "EUROPEAN": "Rice Bowl" }, "foodPreferences": []
+    }
+  ],
+  "incidents": []
+}

@@ -35,8 +35,9 @@ class RecipeChangeIncident(
         for (recipe in recipes) {
             if (!changedIngredientMaps.add(recipe.ingredients)) continue
             val currentAmount = recipe.ingredients[ingredient] ?: continue
-            val newAmount = max(Math.floorDiv(currentAmount * percentage, PERCENT), 1)
-            recipe.ingredients[ingredient] = newAmount
+            // Long arithmetic: a big amount times a big percentage overflows Int before the division
+            val scaled = Math.floorDiv(currentAmount.toLong() * percentage, PERCENT.toLong())
+            recipe.ingredients[ingredient] = max(scaled, 1L).coerceAtMost(Int.MAX_VALUE.toLong()).toInt()
         }
     }
 }

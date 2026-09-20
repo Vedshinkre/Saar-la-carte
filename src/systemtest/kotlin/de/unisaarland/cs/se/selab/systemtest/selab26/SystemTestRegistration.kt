@@ -130,6 +130,16 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.RestaurantsT
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.StaffIncidentUnknownRestaurantSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.UnavailabilityDifferentIngredientsOverlapAcceptedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.ValidIncidentsAcceptedSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.recipeincidenttests.RecipeChangeEventPlanningSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.recipeincidenttests.RecipeChangeIncidentOrderSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.recipeincidenttests.RecipeChangeLaterEveningSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.recipeincidenttests.RecipeChangeOrderHistorySystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.recipeincidenttests.RecipeChangePersistsAcrossEveningsSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.recipeincidenttests.RecipeChangeScopeSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.recipeincidenttests.RecipeChangeThreeVisitHistorySystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.RegularPlanningFailedOrderSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.RegularPlanningTwoGroupsSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.RegularPlanningVisitingPeriodSystemTest
 
 /**
  * Used for test registration
@@ -170,6 +180,8 @@ object SystemTestRegistration {
         testSuite.registerTest(CorrectPartialServing1())
         testSuite.registerTest(RecipeChangeMinimumAmountSystemTest())
         testSuite.registerTest(RegularRetrySucceedsSystemTest())
+        registerRecipeChangeProbes(testSuite)
+        registerRegularPlanningProbes(testSuite)
     }
 
     /**
@@ -389,6 +401,31 @@ object SystemTestRegistration {
      * Simulation tests that are confirmed to pass against the reference implementation, so they are
      * run against the simulation mutants instead of being re-checked against the reference.
      */
+    /**
+     * Probes for the RECIPE incident, one specification statement each, so that a failure against
+     * the reference implementation names the rule we read wrongly. Not registered for the mutants
+     * until the reference run confirms them.
+     */
+    /**
+     * Probes for the ingredient planning of known REGULAR groups, the area the LoyaltyV component
+     * test covers. Not registered for the mutants until the reference run confirms them.
+     */
+    private fun registerRegularPlanningProbes(testSuite: SELab26TestSuite) {
+        testSuite.registerTest(RegularPlanningTwoGroupsSystemTest())
+        testSuite.registerTest(RegularPlanningVisitingPeriodSystemTest())
+        testSuite.registerTest(RegularPlanningFailedOrderSystemTest())
+    }
+
+    private fun registerRecipeChangeProbes(testSuite: SELab26TestSuite) {
+        testSuite.registerTest(RecipeChangeIncidentOrderSystemTest())
+        testSuite.registerTest(RecipeChangePersistsAcrossEveningsSystemTest())
+        testSuite.registerTest(RecipeChangeLaterEveningSystemTest())
+        testSuite.registerTest(RecipeChangeScopeSystemTest())
+        testSuite.registerTest(RecipeChangeOrderHistorySystemTest())
+        testSuite.registerTest(RecipeChangeThreeVisitHistorySystemTest())
+        testSuite.registerTest(RecipeChangeEventPlanningSystemTest())
+    }
+
     private fun registerVladSimulationMutantTests(testSuite: SELab26TestSuite) {
         testSuite.registerTest(CasualAdHocTableMergingSystemTest())
         testSuite.registerTest(RegularGradualCookServingTest())

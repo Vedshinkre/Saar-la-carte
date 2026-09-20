@@ -28,103 +28,144 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
     private fun getEligibleRestaurantsForCasuals(group: CasualGroup): Int? {
         if (!group.wantsDelivery) {
             return getEligibleRestaurantForDineIn(group)
-        } else {
-            val deliveryRests = mutableListOf<RestaurantStats>()
-
-            restaurantStats.filter { it.restaurantType in group.restaurantTypes }.forEach { stats ->
-                if (stats.isOpen()) {
-                    deliveryRests.add(stats)
-                }
-            }
-            val availableDriversAndDietaryCheck =
-                deliveryRests.filter { it.availableDrivers > 0 }.filter { isDietaryCompatible(it, group) }
-            val res = availableDriversAndDietaryCheck.maxWithOrNull(
-                compareBy<RestaurantStats> {
-                    it.positiveRatings - it.negativeRatings
-                }.thenByDescending { it.restaurantId }
-            )
-            if (res != null) {
-                res.availableDrivers = res.availableDrivers - 1
-                return res.restaurantId
-            }
-            return null
         }
+        val openRestaurants = collectOpenRestaurants(group)
+
+        val deliveryCandidates = mutableListOf<RestaurantStats>()
+        for (stats in openRestaurants) {
+            if (stats.availableDrivers > 0) {
+                deliveryCandidates.add(stats)
+            }
+        }
+
+        val dietaryCandidates = filterDietaryCompatible(deliveryCandidates, group)
+        val best = pickBestRestaurant(dietaryCandidates)
+        if (best != null) {
+            best.availableDrivers = best.availableDrivers - 1
+            return best.restaurantId
+        }
+        return null
     }
 
     private fun getEligibleRestaurantForDineIn(group: CasualGroup): Int? {
-        val list = mutableListOf<RestaurantStats>()
+        val openRestaurants = collectOpenRestaurants(group)
 
-        restaurantStats.filter { it.restaurantType in group.restaurantTypes }.forEach { stats ->
-            if (stats.isOpen()) {
-                list.add(stats)
+        val seatCandidates = mutableListOf<RestaurantStats>()
+        for (stats in openRestaurants) {
+            val numberOfAvailableSeats = stats.availableSeats[group.tableType]
+            if (numberOfAvailableSeats != null && numberOfAvailableSeats >= group.size) {
+                seatCandidates.add(stats)
             }
         }
-        val llist = mutableListOf<RestaurantStats>()
-        list.forEach { stats ->
 
-            val numberOfAvailabeSeats = stats.availableSeats[group.tableType]
-            if (numberOfAvailabeSeats != null) {
-                if (numberOfAvailabeSeats >= group.size) {
-                    llist.add(stats)
-                }
-            }
+        val dietaryCandidates = filterDietaryCompatible(seatCandidates, group)
+        val best = pickBestRestaurant(dietaryCandidates)
+        if (best != null) {
+            val remainingSeats = best.availableSeats[group.tableType] ?: 0
+            best.availableSeats[group.tableType] = remainingSeats - group.size
+            return best.restaurantId
         }
-        val dietaryCompatibleList = llist.filter { isDietaryCompatible(it, group) }
-        val res = dietaryCompatibleList.maxWithOrNull(
-            compareBy<RestaurantStats> {
-                it.positiveRatings - it.negativeRatings
-            }.thenByDescending { it.restaurantId }
-        )
-        if (res != null) {
-            res.availableSeats[group.tableType] = res.availableSeats[group.tableType]!! - group.size
-            return res.restaurantId
-        } else {
-            return null
-        }
+        return null
     }
 
     private fun getELigibleRestaurantsForEvent(group: EventGroup): Int? {
-        val eventRests = mutableListOf<RestaurantStats>()
-        val result = mutableListOf<RestaurantStats>()
-        restaurantStats.filter { it.restaurantType in group.restaurantTypes }.filter { it.event }.forEach { stats ->
-            if (stats.isOpenAt(group.visitingAt)) {
-                eventRests.add(stats)
+        val eventRestaurants = mutableListOf<RestaurantStats>()
+        for (stats in restaurantStats) {
+            if (stats.restaurantType in group.restaurantTypes && stats.event && stats.isOpenAt(group.visitingAt)) {
+                eventRestaurants.add(stats)
             }
-        }
-        eventRests.forEach {
-            if ((it.availableEventSeats[group.tableType] ?: 0) >= group.size) {
-                result.add(it)
-            }
-        }
-        val dietaryChecked = result.filter { isDietaryCompatible(it, group) }
-        val res = dietaryChecked.maxWithOrNull(
-            compareBy<RestaurantStats> {
-                it.positiveRatings - it.negativeRatings
-            }.thenByDescending { it.restaurantId }
-        )
-        if (res != null) {
-            res.availableEventSeats[group.tableType] = res.availableEventSeats[group.tableType]!! - group.size
-            return res.restaurantId
         }
 
+        val seatCandidates = mutableListOf<RestaurantStats>()
+        for (stats in eventRestaurants) {
+            val numberOfAvailableSeats = stats.availableEventSeats[group.tableType] ?: 0
+            if (numberOfAvailableSeats >= group.size) {
+                seatCandidates.add(stats)
+            }
+        }
+
+        val dietaryCandidates = filterDietaryCompatible(seatCandidates, group)
+        val best = pickBestRestaurant(dietaryCandidates)
+        if (best != null) {
+            val remainingSeats = best.availableEventSeats[group.tableType] ?: 0
+            best.availableEventSeats[group.tableType] = remainingSeats - group.size
+            return best.restaurantId
+        }
         return null
+    }
+
+    private fun collectOpenRestaurants(group: CasualGroup): List<RestaurantStats> {
+        val openRestaurants = mutableListOf<RestaurantStats>()
+        for (stats in restaurantStats) {
+            if (stats.restaurantType in group.restaurantTypes && stats.isOpen()) {
+                openRestaurants.add(stats)
+            }
+        }
+        return openRestaurants
+    }
+
+    private fun filterDietaryCompatible(
+        candidates: List<RestaurantStats>,
+        group: CustomerGroup
+    ): List<RestaurantStats> {
+        val compatible = mutableListOf<RestaurantStats>()
+        for (stats in candidates) {
+            if (isDietaryCompatible(stats, group)) {
+                compatible.add(stats)
+            }
+        }
+        return compatible
+    }
+
+    /**
+     * Best restaurant = highest (positive - negative) ratings; ties go to the smaller restaurant id.
+     */
+    private fun pickBestRestaurant(candidates: List<RestaurantStats>): RestaurantStats? {
+        var best: RestaurantStats? = null
+        for (candidate in candidates) {
+            if (best == null || isBetter(candidate, best)) {
+                best = candidate
+            }
+        }
+        return best
+    }
+
+    private fun isBetter(candidate: RestaurantStats, best: RestaurantStats): Boolean {
+        val candidateScore = candidate.positiveRatings - candidate.negativeRatings
+        val bestScore = best.positiveRatings - best.negativeRatings
+        if (candidateScore != bestScore) {
+            return candidateScore > bestScore
+        }
+        return candidate.restaurantId < best.restaurantId
     }
 
     private fun matchPreference(menu: List<Recipe>, fp: FoodPreference): Boolean {
         if (menu.isEmpty()) return false
 
-        val excludedNames: Set<Ingredient> = fp.excludedIngredients.toSet()
+        val excludedIngredients: Set<Ingredient> = fp.excludedIngredients.toSet()
+        if (excludedIngredients.isEmpty()) return true
 
-        return excludedNames.isEmpty() || menu.any { recipe ->
-            recipe.ingredients.keys.none { ingredient ->
-                ingredient in excludedNames
+        for (recipe in menu) {
+            var containsExcluded = false
+            for (ingredient in recipe.ingredients.keys) {
+                if (ingredient in excludedIngredients) {
+                    containsExcluded = true
+                    break
+                }
+            }
+            if (!containsExcluded) {
+                return true
             }
         }
+        return false
     }
 
     private fun isDietaryCompatible(r: RestaurantStats, group: CustomerGroup): Boolean {
-        return group.foodPreferences.all {
-            matchPreference(r.menu, it)
+        for (preference in group.foodPreferences) {
+            if (!matchPreference(r.menu, preference)) {
+                return false
+            }
         }
+        return true
     }
 }

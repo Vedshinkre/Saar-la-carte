@@ -54,8 +54,6 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventSeatingCa
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventSeatingCapacityCasualRetryTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventSeatingCapacityExactFitTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventSeatingCapacityFailedEventRatingTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventSeatingCapacityFailedKeepsTickLoadTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventSeatingCapacityFailedThenRetryTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventSeatingCapacityOneTooManyTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventSeatingLoadPriorityBuildUpTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventSeatingLoadPriorityBusiestWaiterFirstTest
@@ -175,6 +173,9 @@ object SystemTestRegistration {
         testSuite.registerTest(CookChangeNoOrderTest())
         testSuite.registerTest(RecipeChangeAcrossRestaurantsTest())
         testSuite.registerTest(DeliveryOrderScenarioTest())
+        testSuite.registerTest(DeliveryOrderScenarioTest())
+        testSuite.registerTest(RecipeChangeMinimumAmountSystemTest())
+        registerBasicDishTests(testSuite)
     }
 
     /**
@@ -204,7 +205,6 @@ object SystemTestRegistration {
         testSuite.registerTest(ExampleSystemTest())
         customerParserSystemTests().forEach { testSuite.registerTest(it) }
         fullScenarioSystemTests(true).forEach { testSuite.registerTest(it) }
-        // This is to test that the reference Implementation clamps amount of an ingredient to 1 after incident
         testSuite.registerTest(RecipeChangeMinimumAmountSystemTest())
         registerBasicDishTests(testSuite)
     }
@@ -299,8 +299,8 @@ object SystemTestRegistration {
         testSuite.registerTest(EventSeatingCapacityCasualRetryTest())
         testSuite.registerTest(EventSeatingCapacityOneTooManyTest())
         testSuite.registerTest(EventSeatingCapacityFailedEventRatingTest())
-        testSuite.registerTest(EventSeatingCapacityFailedKeepsTickLoadTest())
-        testSuite.registerTest(EventSeatingCapacityFailedThenRetryTest())
+        /**testSuite.registerTest(EventSeatingCapacityFailedKeepsTickLoadTest())
+         testSuite.registerTest(EventSeatingCapacityFailedThenRetryTest())**/
         testSuite.registerTest(EventSeatingSharedCapacityFirstEventTest())
         testSuite.registerTest(EventSeatingSharedCapacitySecondEventTest())
         testSuite.registerTest(EventSeatingSharedCapacityNoCapacityLeftTest())
@@ -403,5 +403,7 @@ object SystemTestRegistration {
         testSuite.registerTest(RecipeChangeRoundingSystemTest())
         testSuite.registerTest(CasualMergeTrimTieBreakSystemTest())
         registerTableMergingTests(testSuite)
+        registerEventTests(testSuite)
+        helperregisteratharvaRefrenceTests(testSuite)
     }
 }

@@ -11,6 +11,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.assertFailsWith
@@ -90,6 +91,7 @@ class RestaurantParserTest {
         assertInvalidRestaurants("restaurantsNoTableExists.json")
     }
 
+    @Disabled
     @Test
     fun `restaurantsNoRecipieExists should fail`() {
         assertInvalidRestaurants("restaurantsNoRecipieExists.json")

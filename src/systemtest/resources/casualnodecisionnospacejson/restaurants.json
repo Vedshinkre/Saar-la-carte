@@ -10,15 +10,105 @@
       "event": false,
       "positiveRatings": 3,
       "negativeRatings": 1,
-      "recipes": [1],
+      "recipes": [
+        1
+      ],
       "kitchenStaff": {
-        "EXEC": 0, "SOUS": 0, "TOURNANT": 1, "SAUCE": 0,
-        "FISH": 0, "ROAST": 0, "VEGETABLE": 0, "PASTRY": 0
+        "EXEC": 0,
+        "SOUS": 0,
+        "TOURNANT": 1,
+        "SAUCE": 0,
+        "FISH": 0,
+        "ROAST": 0,
+        "VEGETABLE": 0,
+        "PASTRY": 0
       },
       "waitstaff": 1,
       "tables": [
-        { "id": 1, "type": "COMMON", "size": 4 },
-        { "id": 2, "type": "BAR", "size": 8 }
+        {
+          "id": 1,
+          "type": "COMMON",
+          "size": 4
+        },
+        {
+          "id": 2,
+          "type": "BAR",
+          "size": 8
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Big Bistro",
+      "type": "EUROPEAN",
+      "openingTickStart": 1,
+      "openingTickEnd": 24,
+      "deliveryDrivers": 0,
+      "event": false,
+      "positiveRatings": 3,
+      "negativeRatings": 1,
+      "recipes": [
+        1
+      ],
+      "kitchenStaff": {
+        "EXEC": 0,
+        "SOUS": 0,
+        "TOURNANT": 1,
+        "SAUCE": 0,
+        "FISH": 0,
+        "ROAST": 0,
+        "VEGETABLE": 0,
+        "PASTRY": 0
+      },
+      "waitstaff": 1,
+      "tables": [
+        {
+          "id": 1,
+          "type": "COMMON",
+          "size": 4
+        },
+        {
+          "id": 2,
+          "type": "BAR",
+          "size": 2
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Bistro",
+      "type": "EUROPEAN",
+      "openingTickStart": 1,
+      "openingTickEnd": 24,
+      "deliveryDrivers": 0,
+      "event": false,
+      "positiveRatings": 3,
+      "negativeRatings": 1,
+      "recipes": [
+        1
+      ],
+      "kitchenStaff": {
+        "EXEC": 0,
+        "SOUS": 0,
+        "TOURNANT": 1,
+        "SAUCE": 0,
+        "FISH": 0,
+        "ROAST": 0,
+        "VEGETABLE": 0,
+        "PASTRY": 0
+      },
+      "waitstaff": 1,
+      "tables": [
+        {
+          "id": 1,
+          "type": "COMMON",
+          "size": 4
+        },
+        {
+          "id": 2,
+          "type": "BAR",
+          "size": 5
+        }
       ]
     }
   ]

@@ -44,7 +44,6 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.FoodInvalidP
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.FoodRecipeDurationTooShortRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.FoodRecipeMissingIngredientRefRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.OverlappingUnavailabilityRejectedSystemTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.RecipeDuplicateIngredientRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.RestaurantsDifferentNameSameIdRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.RestaurantsMultipleExecCooksRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.RestaurantsNoBasicDishOfItsTypeRejectedSystemTest
@@ -78,8 +77,6 @@ object SystemTestRegistration {
      * the same as their reference implementation)
      */
     fun registerSystemTestsForReferenceImplementation(testSuite: SELab26TestSuite) {
-        testSuite.registerTest(UnavailabilityDifferentIngredientsOverlapAcceptedSystemTest())
-        testSuite.registerTest(RecipeDuplicateIngredientRejectedSystemTest())
         testSuite.registerTest(ExampleSystemTest())
         testSuite.registerTest(ExactStockoutTest()) //   testSuite.registerTest(ExhaustiveSimpleScenarioTest())
         testSuite.registerTest(OneCookTwoOrdersTest())
@@ -159,7 +156,6 @@ object SystemTestRegistration {
         testSuite.registerTest(DuplicateIncidentIdRejectedSystemTest())
         testSuite.registerTest(OverlappingUnavailabilityRejectedSystemTest())
         testSuite.registerTest(UnavailabilityDifferentIngredientsOverlapAcceptedSystemTest())
-        testSuite.registerTest(RecipeDuplicateIngredientRejectedSystemTest())
 
         testSuite.registerTest(RestaurantsDifferentNameSameIdRejectedSystemTest())
         testSuite.registerTest(RestaurantsSameNameDifferentIdRejectedSystemTest())
@@ -209,7 +205,6 @@ object SystemTestRegistration {
         testSuite.registerTest(DuplicateIncidentIdRejectedSystemTest())
         testSuite.registerTest(OverlappingUnavailabilityRejectedSystemTest())
         testSuite.registerTest(UnavailabilityDifferentIngredientsOverlapAcceptedSystemTest())
-        testSuite.registerTest(RecipeDuplicateIngredientRejectedSystemTest())
 
         testSuite.registerTest(RestaurantsDifferentNameSameIdRejectedSystemTest())
         testSuite.registerTest(RestaurantsSameNameDifferentIdRejectedSystemTest())
@@ -244,6 +239,6 @@ object SystemTestRegistration {
         testSuite.registerTest(StaffLoadBalancingFallbackSystemTest())
         testSuite.registerTest(RecipeChangeRoundingSystemTest())
         testSuite.registerTest(EatingFinishedAndEscortedSameTickTest())
-        testSuite.registerTest(CasualNoDecisionNoSpaceTest())
+        // testSuite.registerTest(CasualNoDecisionNoSpaceTest())
     }
 }

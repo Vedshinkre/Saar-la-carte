@@ -115,7 +115,8 @@ class IncidentParser {
                 ingredientName = json.requiredString(INGREDIENT),
                 adaptation = json.requiredInt(ADAPTATION),
                 ingredients = ingredients,
-                recipes = recipes
+                recipes = recipes,
+                restaurants = restaurants
             )
 
             "PACKAGING" -> parsePackagingChangeIncident(
@@ -183,16 +184,23 @@ class IncidentParser {
         ingredientName: String,
         adaptation: Int,
         ingredients: List<Ingredient>,
-        recipes: List<Recipe>
+        recipes: List<Recipe>,
+        restaurants: List<Restaurant>
     ): RecipeChangeIncident {
         val ingredient = ingredients.requiredIngredient(ingredientName)
+
+        // Gather the global recipes AND all custom recipes sitting in restaurant menus,
+        // then remove duplicates.
+        val allActiveRecipes = (
+            recipes + restaurants.flatMap { it.getRestaurantStats().menu }
+            ).distinct()
 
         return RecipeChangeIncident(
             id = id,
             evening = evening,
             ingredient = ingredient,
             adaptation = adaptation,
-            recipes = recipes
+            recipes = allActiveRecipes
         )
     }
 

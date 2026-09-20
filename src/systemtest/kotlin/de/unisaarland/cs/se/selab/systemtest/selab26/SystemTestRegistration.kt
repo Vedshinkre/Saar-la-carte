@@ -130,8 +130,8 @@ object SystemTestRegistration {
      * Everything after 'Simulation start' works correctly
      */
     fun registerSystemTestsMutantValidation(testSuite: SELab26TestSuite) {
-        testSuite.registerTest(ExampleSystemTest())
         registeratharvaMutantValidationTests(testSuite)
+        testSuite.registerTest(ExampleSystemTest())
         customerParserSystemTests().forEach { testSuite.registerTest(it) }
         fullScenarioSystemTests(true).forEach { testSuite.registerTest(it) }
     }
@@ -142,7 +142,7 @@ object SystemTestRegistration {
      */
     fun registerSystemTestsMutantSimulation(testSuite: SELab26TestSuite) {
         testSuite.registerTest(ExampleSystemTest())
-
+        registeratharvaMutantSimulationTests(testSuite)
         testSuite.registerTest(EventReservationConflictTest())
         testSuite.registerTest(ExactStockoutTest())
         testSuite.registerTest(OneCookTwoOrdersTest())
@@ -156,7 +156,6 @@ object SystemTestRegistration {
             StaffLoadBalancingFallbackSystemTest()
         )
         fullScenarioSystemTests(true).forEach { testSuite.registerTest(it) }
-        registeratharvaMutantSimulationTests(testSuite)
     }
 
     /**
@@ -198,11 +197,11 @@ object SystemTestRegistration {
         testSuite.registerTest(FoodDuplicateRecipeIdRejectedSystemTest())
         testSuite.registerTest(StaffLoadConcentrationSystemTest())
         testSuite.registerTest(StaffMultiWaiterExhaustionSystemTest())
-        testSuite.registerTest(StaffIdResetAcrossEveningsSystemTest())
+        testSuite.registerTest(StaffIdResetAcrossEveningsSystemTest()) // doesnt pass on refrence
         testSuite.registerTest(StaffLoadBalancingFallbackSystemTest())
         testSuite.registerTest(RecipeChangeRoundingSystemTest())
         testSuite.registerTest(EatingFinishedAndEscortedSameTickTest())
-        testSuite.registerTest(CasualNoDecisionNoSpaceTest())
+        testSuite.registerTest(CasualNoDecisionNoSpaceTest()) // doesnt pass on refrence
         testSuite.registerTest(CasualMergeTrimTieBreakSystemTest())
         registerTableMergingTests(testSuite)
     }
@@ -271,6 +270,9 @@ object SystemTestRegistration {
         testSuite.registerTest(StaffLoadBalancingFallbackSystemTest())
         testSuite.registerTest(RecipeChangeRoundingSystemTest())
         testSuite.registerTest(EatingFinishedAndEscortedSameTickTest())
-        // testSuite.registerTest(CasualNoDecisionNoSpaceTest())
+        testSuite.registerTest(CasualMergeTrimTieBreakSystemTest())
+        testSuite.registerTest(RecipeChangeRoundingSystemTest())
+        testSuite.registerTest(CasualMergeTrimTieBreakSystemTest())
+        registerTableMergingTests(testSuite)
     }
 }

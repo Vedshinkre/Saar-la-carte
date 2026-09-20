@@ -104,9 +104,6 @@ class DuplicateNonBasicDishNameAcceptedSystemTest : BasicDishValidationSystemTes
  * A restaurant with an empty `recipes` array. Forum topic 202 carries a tutor correction saying
  * the list may be empty, because the restaurant offers the basic dishes of its type anyway and
  * those satisfy "per restaurant there must exist at least one recipe".
- *
- * This probe is not about the shared ingredient map; it is here because it is the same corner of
- * the specification and costs one run to settle.
  */
 class EmptyRestaurantRecipesAcceptedSystemTest : BasicDishValidationSystemTest() {
     override val name = "EmptyRestaurantRecipesAcceptedSystemTest"

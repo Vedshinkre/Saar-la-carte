@@ -175,9 +175,6 @@ object SystemTestRegistration {
         testSuite.registerTest(CookChangeNoOrderTest())
         testSuite.registerTest(RecipeChangeAcrossRestaurantsTest())
         testSuite.registerTest(DeliveryOrderScenarioTest())
-        // This is to test that the reference Implementation clamps amount of an ingredient to 1 after incident
-        testSuite.registerTest(RecipeChangeMinimumAmountSystemTest())
-        registerBasicDishTests(testSuite)
     }
 
     /**
@@ -207,6 +204,9 @@ object SystemTestRegistration {
         testSuite.registerTest(ExampleSystemTest())
         customerParserSystemTests().forEach { testSuite.registerTest(it) }
         fullScenarioSystemTests(true).forEach { testSuite.registerTest(it) }
+        // This is to test that the reference Implementation clamps amount of an ingredient to 1 after incident
+        testSuite.registerTest(RecipeChangeMinimumAmountSystemTest())
+        registerBasicDishTests(testSuite)
     }
 
     /**

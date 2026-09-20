@@ -229,6 +229,7 @@ object SystemTestRegistration {
             StaffLoadBalancingFallbackSystemTest()
         )
         fullScenarioSystemTests(true).forEach { testSuite.registerTest(it) }
+        testSuite.registerTest(CookChangeNoOrderTest())
     }
 
     /**

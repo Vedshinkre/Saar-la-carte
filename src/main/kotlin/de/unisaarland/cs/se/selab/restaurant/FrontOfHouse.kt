@@ -346,7 +346,10 @@ class FrontOfHouse(
             driver.ticksToDest = 0
             driver.tripDistance = 0
             driver.distanceDriven = 0
+            driver.id = null
+            // DOIT: set the driver id to null
         }
+        // DOIT: call resetDriverIdCounter on serving so I can start assigning IDs from 1 again next evening
     }
 
     private fun removeProcessedGroup(group: CustomerGroup) {
@@ -365,10 +368,8 @@ class FrontOfHouse(
         inHouseGroupsToWaiter.remove(group)
     }
 
-    /**
-     * Needed to set drivers in restaurant Stats
-     */
     fun getAvailableDrivers(): Int {
+        // DOIT: check the delivery groups with an order and subtract that count from idle drivers so we get available
         return drivers.size
     }
 

@@ -130,6 +130,7 @@ class Restaurant(
             simulateOpeningHoursTick(isBeforeClosing = tick <= restaurantStats.openingTickEnd)
         }
         refreshAvailableSeats()
+        // DOTO: refreshAvailableDrivers()
         if (tick == Constants.TICK_PER_EVENING) {
             endEvening()
         }

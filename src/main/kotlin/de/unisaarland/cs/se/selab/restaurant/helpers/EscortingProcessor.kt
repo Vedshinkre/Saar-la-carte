@@ -59,10 +59,20 @@ class EscortingProcessor(
         )
     }
 
+    /** the waiter that is assigned to the group escorts as many of its customers as possible */
     private fun escortAssignedGroup(group: CustomerGroup) {
         val waiter = getAssignedWaiter(group.id)
+        escortWith(waiter, group) { waiter.escort(group) }
+    }
+
+    /**
+     * Runs the given escort action and logs it if it actually removed customers.
+     * The number of escorted customers is the difference of the remaining customers
+     * before and after the action.
+     */
+    private fun escortWith(waiter: Waiter, group: CustomerGroup, escortAction: () -> Unit) {
         val customersBefore = group.customersRemainingInRestaurant
-        waiter.escort(group)
+        escortAction()
         val customersEscorted = customersBefore - group.customersRemainingInRestaurant
         if (customersEscorted > 0) {
             // the id is handed out at the moment of the waiter's first real action
@@ -84,15 +94,10 @@ class EscortingProcessor(
         customerEscortingNumber += customersEscorted
     }
 
+    /** every recruited waiter takes as many customers of the event group as its capacity allows */
     private fun escortEventGroup(waiters: List<Waiter>, group: EventGroup) {
         waiters.forEach { waiter ->
-            val customersBefore = group.customersRemainingInRestaurant
-            waiter.escortEventGroups(group)
-            val customersEscorted = customersBefore - group.customersRemainingInRestaurant
-            if (customersEscorted > 0) {
-                // the id is handed out at the moment of the waiter's first real action
-                logEscortedBy(waiter.ensureId(getNextWaiterId), customersEscorted, group)
-            }
+            escortWith(waiter, group) { waiter.escortEventGroups(group) }
         }
     }
 

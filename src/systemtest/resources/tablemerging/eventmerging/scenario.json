@@ -1,0 +1,76 @@
+{
+  "customerGroups": [
+    {
+      "id": 1,
+      "type": "EVENT",
+      "size": 20,
+      "tableType": "COMMON",
+      "restaurantTypes": [
+        "EUROPEAN"
+      ],
+      "visitingTick": 2,
+      "eventEvening": 4,
+      "favoriteDishes": {
+        "EUROPEAN": "Tomato Soup"
+      },
+      "foodPreferences": []
+    },
+    {
+      "id": 2,
+      "type": "EVENT",
+      "size": 12,
+      "tableType": "COMMON",
+      "restaurantTypes": [
+        "ASIAN"
+      ],
+      "visitingTick": 2,
+      "eventEvening": 4,
+      "favoriteDishes": {
+        "ASIAN": "Rice Bowl"
+      },
+      "foodPreferences": []
+    },
+    {
+      "id": 3,
+      "type": "EVENT",
+      "size": 40,
+      "tableType": "COMMON",
+      "restaurantTypes": [
+        "AMERICAN"
+      ],
+      "visitingTick": 2,
+      "eventEvening": 4,
+      "favoriteDishes": {
+        "AMERICAN": "Corn Stew"
+      },
+      "foodPreferences": []
+    },
+    {
+      "id": 20,
+      "type": "EVENT",
+      "size": 6,
+      "tableType": "COMMON",
+      "restaurantTypes": [
+        "AFRICAN"
+      ],
+      "visitingTick": 2,
+      "eventEvening": 4,
+      "favoriteDishes": {
+        "AFRICAN": "Berbere Stew"
+      },
+      "foodPreferences": []
+    },
+    {
+      "id": 4,
+      "type": "REGULAR",
+      "size": 6,
+      "visitingTick": 3,
+      "visitingStart": 4,
+      "visitingPeriod": 1,
+      "restaurant": 4,
+      "foodPreferences": [],
+      "tableType": "COMMON"
+    }
+  ],
+  "incidents": []
+}

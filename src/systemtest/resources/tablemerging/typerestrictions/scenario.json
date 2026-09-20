@@ -1,0 +1,70 @@
+{
+  "customerGroups": [
+    {
+      "id": 1,
+      "type": "REGULAR",
+      "size": 4,
+      "visitingTick": 2,
+      "visitingStart": 1,
+      "visitingPeriod": 1,
+      "restaurant": 1,
+      "foodPreferences": [],
+      "tableType": "BAR"
+    },
+    {
+      "id": 2,
+      "type": "REGULAR",
+      "size": 3,
+      "visitingTick": 2,
+      "visitingStart": 1,
+      "visitingPeriod": 1,
+      "restaurant": 2,
+      "foodPreferences": [],
+      "tableType": "BAR"
+    },
+    {
+      "id": 3,
+      "type": "REGULAR",
+      "size": 4,
+      "visitingTick": 2,
+      "visitingStart": 1,
+      "visitingPeriod": 1,
+      "restaurant": 3,
+      "foodPreferences": [],
+      "tableType": "COMMON"
+    },
+    {
+      "id": 4,
+      "type": "REGULAR",
+      "size": 4,
+      "visitingTick": 2,
+      "visitingStart": 1,
+      "visitingPeriod": 1,
+      "restaurant": 4,
+      "foodPreferences": [],
+      "tableType": "SEPARATED"
+    },
+    {
+      "id": 5,
+      "type": "REGULAR",
+      "size": 4,
+      "visitingTick": 2,
+      "visitingStart": 1,
+      "visitingPeriod": 1,
+      "restaurant": 5,
+      "foodPreferences": [],
+      "tableType": "COMMON"
+    },
+    {
+      "id": 6,
+      "type": "REGULAR",
+      "size": 4,
+      "visitingTick": 2,
+      "visitingStart": 1,
+      "visitingPeriod": 1,
+      "restaurant": 6,
+      "foodPreferences": []
+    }
+  ],
+  "incidents": []
+}

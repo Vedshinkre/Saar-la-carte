@@ -28,6 +28,25 @@ private const val REGULAR_PRIORITY = 0
 private const val EVENT_PRIORITY = 1
 private const val CASUAL_PRIORITY = 2
 
+private fun countServableDishes(group: CustomerGroup): Int {
+    return group.currentOrder?.getServableDishes()?.size ?: 0
+}
+
+// waiters with the most servable dishes first, ties broken by ascending id (waiters without id come last)
+private fun sortWaitersByServableDishes(waiterToCookedDishes: Map<Waiter, Int>): List<Waiter> {
+    val entries = mutableListOf<Map.Entry<Waiter, Int>>()
+    for (entry in waiterToCookedDishes.entries) {
+        entries.add(entry)
+    }
+    val byDishesThenId = compareByDescending<Map.Entry<Waiter, Int>> { it.value }
+        .thenBy { it.key.id ?: Int.MAX_VALUE }
+    val sortedWaiters = mutableListOf<Waiter>()
+    for (entry in entries.sortedWith(byDishesThenId)) {
+        sortedWaiters.add(entry.key)
+    }
+    return sortedWaiters
+}
+
 /** front of house */
 class FrontOfHouse(
     private val tables: List<Table>,
@@ -68,44 +87,53 @@ class FrontOfHouse(
     private val byAscendingLoadThenId: Comparator<Waiter> =
         compareBy<Waiter> { it.currentLoad }.thenBy(nullsLast()) { it.id }
 
-    // recruit waiters for an EVENT group, accumulates enough (ordered by asc id) to cover group's servable dishes.
+    // recruits waiters for an EVENT group: picks eligible waiters in priority order until their free capacity
+    // covers the servable dishes of the group (for SERVE), or returns all eligible waiters in order (other actions).
     // shared by SEATING (SEAT), ORDERING (TAKE_ORDER) and SERVING (SERVE).
     private fun recruitWaitersForEventGroup(actionType: ActionType, eventGroup: EventGroup): List<Waiter> {
         return when (actionType) {
-            ActionType.SEAT -> waiters.filter {
-                it.getTickLoad(ActionType.SEAT) < Constants.ACTION_LIMIT
-            }.sortedWith(byDescendingLoadThenId)
-
-            ActionType.TAKE_ORDER -> waiters.filter {
-                it.getTickLoad(ActionType.TAKE_ORDER) < Constants.ACTION_LIMIT
-            }.sortedWith(byDescendingLoadThenId)
-
+            ActionType.SEAT -> recruitWaitersOrderedBy(actionType, byDescendingLoadThenId)
+            ActionType.TAKE_ORDER -> recruitWaitersOrderedBy(actionType, byDescendingLoadThenId)
             ActionType.SERVE -> recruitWaiterForServing(eventGroup)
-            ActionType.ESCORT -> waiters.filter {
-                it.getTickLoad(ActionType.ESCORT) < Constants.ACTION_LIMIT
-            }.sortedWith(byAscendingLoadThenId)
+            ActionType.ESCORT -> recruitWaitersOrderedBy(actionType, byAscendingLoadThenId)
         }
     }
 
-    private fun recruitWaiterForServing(customerGroup: EventGroup): List<Waiter> {
-        val required = customerGroup.currentOrder?.getServableDishes()?.size ?: 0
-        val eligible = waiters.filter { it.getTickLoad(ActionType.SERVE) < Constants.ACTION_LIMIT }
-        val waiterToCookedDishes: MutableMap<Waiter, Int> = mutableMapOf()
-        eligible.forEach { targetWaiter ->
-            var res = 0
-            val customerGroups = inHouseGroupsToWaiter.filterValues {
-                it == targetWaiter
-            }.keys
-            customerGroups.forEach {
-                val num = it.currentOrder?.getServableDishes()?.size ?: 0
-                res += num
+    // every waiter that can still take on an action of the given type this tick, ordered by the given comparator
+    private fun recruitWaitersOrderedBy(actionType: ActionType, order: Comparator<Waiter>): List<Waiter> {
+        val eligibleWaiters = filterWaitersWithFreeCapacity(actionType)
+        return eligibleWaiters.sortedWith(order)
+    }
+
+    private fun filterWaitersWithFreeCapacity(actionType: ActionType): List<Waiter> {
+        val eligibleWaiters = mutableListOf<Waiter>()
+        for (waiter in waiters) {
+            if (waiter.getTickLoad(actionType) < Constants.ACTION_LIMIT) {
+                eligibleWaiters.add(waiter)
             }
-            waiterToCookedDishes[targetWaiter] = res
         }
-        val sortedWaiterToCookedDishes: MutableMap<Waiter, Int> =
-            waiterToCookedDishes.entries.sortedBy { it.key.id ?: Int.MAX_VALUE }.sortedByDescending { it.value }
-                .associate { it.key to it.value }.toMutableMap()
-        val sortedWaiters = sortedWaiterToCookedDishes.keys.toList()
+        return eligibleWaiters
+    }
+
+    // total number of servable dishes over all in-house groups that are assigned to the given waiter
+    private fun countServableDishesOfWaiter(targetWaiter: Waiter): Int {
+        var servableDishes = 0
+        for ((group, assignedWaiter) in inHouseGroupsToWaiter) {
+            if (assignedWaiter == targetWaiter) {
+                servableDishes += countServableDishes(group)
+            }
+        }
+        return servableDishes
+    }
+
+    private fun recruitWaiterForServing(customerGroup: EventGroup): List<Waiter> {
+        val required = countServableDishes(customerGroup)
+        val eligible = filterWaitersWithFreeCapacity(ActionType.SERVE)
+        val waiterToCookedDishes: MutableMap<Waiter, Int> = mutableMapOf()
+        for (targetWaiter in eligible) {
+            waiterToCookedDishes[targetWaiter] = countServableDishesOfWaiter(targetWaiter)
+        }
+        val sortedWaiters = sortWaitersByServableDishes(waiterToCookedDishes)
         val result = mutableListOf<Waiter>()
         var recruitedCapacity = 0
         for (waiter in sortedWaiters) {

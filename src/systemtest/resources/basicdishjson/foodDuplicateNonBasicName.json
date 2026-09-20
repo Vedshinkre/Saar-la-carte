@@ -1,0 +1,29 @@
+{
+  "ingredients": [
+    {"name": "Flour", "unit": "g", "packagingVolume": 1, "bestBefore": 5}
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "Rice Bread",
+      "duration": 10,
+      "basicDishFor": "EUROPEAN",
+      "cookType": ["TOURNANT"],
+      "ingredients": [{"name": "Flour", "amount": 100}]
+    },
+    {
+      "id": 2,
+      "dishName": "Side Salad",
+      "duration": 10,
+      "cookType": ["TOURNANT"],
+      "ingredients": [{"name": "Flour", "amount": 200}]
+    },
+    {
+      "id": 3,
+      "dishName": "Side Salad",
+      "duration": 12,
+      "cookType": ["TOURNANT"],
+      "ingredients": [{"name": "Flour", "amount": 300}]
+    }
+  ]
+}

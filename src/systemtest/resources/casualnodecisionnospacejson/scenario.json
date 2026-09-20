@@ -3,8 +3,8 @@
     {
       "id": 1,
       "type": "CASUAL",
-      "size": 5,
-      "tableType": "COMMON",
+      "size": 9,
+      "tableType": "BAR",
       "restaurantTypes": [
         "EUROPEAN"
       ],

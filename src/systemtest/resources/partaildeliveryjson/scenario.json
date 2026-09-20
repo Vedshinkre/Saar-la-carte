@@ -3,74 +3,26 @@
     {
       "id": 1,
       "type": "CASUAL",
-      "size": 2,
+      "size": 3,
       "tableType": "COMMON",
-      "restaurantTypes": [
-        "EUROPEAN"
-      ],
-      "visitingEvenings": [
-        1
-      ],
+      "restaurantTypes": ["EUROPEAN"],
+      "visitingEvenings": [1],
       "visitingTick": 1,
       "foodPreferences": [
         {
-          "size": 2,
-          "favoriteDishes": [
-            "blocker"
-          ]
-        }
-      ],
-      "ratingLikelihood": "NEVER"
-    },
-    {
-      "id": 2,
-      "type": "CASUAL",
-      "size": 2,
-      "tableType": "COMMON",
-      "restaurantTypes": [
-        "EUROPEAN"
-      ],
-      "visitingEvenings": [
-        1
-      ],
-      "visitingTick": 2,
-      "foodPreferences": [
-        {
           "size": 1,
-          "favoriteDishes": [
-            "fast"
-          ]
+          "favoriteDishes": ["mealA"]
         },
         {
           "size": 1,
-          "favoriteDishes": [
-            "slow"
-          ]
+          "favoriteDishes": ["mealB"]
+        },
+        {
+          "size": 1,
+          "favoriteDishes": ["mealC"]
         }
       ],
       "ratingLikelihood": "ALWAYS"
-    },
-    {
-      "id": 3,
-      "type": "CASUAL",
-      "size": 2,
-      "tableType": "COMMON",
-      "restaurantTypes": [
-        "EUROPEAN"
-      ],
-      "visitingEvenings": [
-        1
-      ],
-      "visitingTick": 2,
-      "foodPreferences": [
-        {
-          "size": 2,
-          "favoriteDishes": [
-            "blocker"
-          ]
-        }
-      ],
-      "ratingLikelihood": "NEVER"
     }
   ],
   "incidents": []

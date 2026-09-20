@@ -43,6 +43,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualTableExc
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualTableNoLiftSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualTiebreakLowestIdTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CookChangeNoOrderTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CorrectPartialServing1
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CustomerBehaviourDecisionSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryCumulativeDistanceSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOrderScenarioTest
@@ -173,7 +174,7 @@ object SystemTestRegistration {
         testSuite.registerTest(CookChangeNoOrderTest())
         testSuite.registerTest(RecipeChangeAcrossRestaurantsTest())
         testSuite.registerTest(DeliveryOrderScenarioTest())
-        testSuite.registerTest(DeliveryOrderScenarioTest())
+        testSuite.registerTest(CorrectPartialServing1())
         testSuite.registerTest(RecipeChangeMinimumAmountSystemTest())
         registerBasicDishTests(testSuite)
     }

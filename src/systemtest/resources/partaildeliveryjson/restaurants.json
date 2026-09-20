@@ -2,7 +2,7 @@
   "restaurants": [
     {
       "id": 1,
-      "name": "Timeout Tavern",
+      "name": "kill me",
       "type": "EUROPEAN",
       "openingTickStart": 1,
       "openingTickEnd": 24,
@@ -10,11 +10,7 @@
       "deliveryDrivers": 0,
       "positiveRatings": 5,
       "negativeRatings": 0,
-      "recipes": [
-        1,
-        2,
-        3
-      ],
+      "recipes": [1, 2, 3],
       "kitchenStaff": {
         "EXEC": 0,
         "SOUS": 0,
@@ -27,21 +23,8 @@
       },
       "waitstaff": 1,
       "tables": [
-        {
-          "id": 1,
-          "type": "COMMON",
-          "size": 2
-        },
-        {
-          "id": 2,
-          "type": "COMMON",
-          "size": 2
-        },
-        {
-          "id": 3,
-          "type": "COMMON",
-          "size": 2
-        }
+        { "id": 1, "type": "COMMON", "size": 3 },
+        { "id": 2, "type": "COMMON", "size": 2 }
       ]
     }
   ]

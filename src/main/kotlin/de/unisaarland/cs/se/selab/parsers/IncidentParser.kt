@@ -41,18 +41,21 @@ class IncidentParser {
         recipes: List<Recipe>,
         restaurants: List<Restaurant>
     ): List<Incident> {
-        val incidents = incidentArray.map { element ->
+        val incidents = mutableListOf<Incident>()
+        for (element in incidentArray) {
             val json = element as? JsonObject ?: throw IllegalArgumentException(
                 "Invalid incident: expected a JSON object, got: $element"
             )
 
             try {
-                parseIncident(
-                    json = json,
-                    restaurants = restaurants,
-                    ingredients = ingredients,
-                    stock = stock,
-                    recipes = recipes
+                incidents.add(
+                    parseIncident(
+                        json = json,
+                        restaurants = restaurants,
+                        ingredients = ingredients,
+                        stock = stock,
+                        recipes = recipes
+                    )
                 )
             } catch (exception: IllegalArgumentException) {
                 throw IllegalArgumentException(
@@ -81,7 +84,12 @@ class IncidentParser {
      * cross validation: unavailability incidents for the same ingredient must not overlap
      */
     private fun validateNoOverlappingUnavailability(incidents: List<Incident>) {
-        val unavailabilities = incidents.filterIsInstance<UnavailabilityIncident>()
+        val unavailabilities = mutableListOf<UnavailabilityIncident>()
+        for (incident in incidents) {
+            if (incident is UnavailabilityIncident) {
+                unavailabilities.add(incident)
+            }
+        }
 
         for (i in unavailabilities.indices) {
             for (j in i + 1 until unavailabilities.size) {
@@ -189,11 +197,7 @@ class IncidentParser {
     ): RecipeChangeIncident {
         val ingredient = ingredients.requiredIngredient(ingredientName)
 
-        // Gather the global recipes AND all custom recipes sitting in restaurant menus,
-        // then remove duplicates.
-        val allActiveRecipes = (
-            recipes + restaurants.flatMap { it.getRestaurantStats().menu }
-            ).distinct()
+        val allActiveRecipes = collectAllActiveRecipes(recipes, restaurants)
 
         return RecipeChangeIncident(
             id = id,
@@ -202,6 +206,27 @@ class IncidentParser {
             adaptation = adaptation,
             recipes = allActiveRecipes
         )
+    }
+
+    /**
+     * Gathers the global recipes AND all custom recipes sitting in restaurant menus,
+     * so a recipe change also reaches customized restaurant recipes. Duplicates are removed
+     * while keeping the first occurrence (global recipes first).
+     */
+    private fun collectAllActiveRecipes(
+        recipes: List<Recipe>,
+        restaurants: List<Restaurant>
+    ): List<Recipe> {
+        val activeRecipes = LinkedHashSet<Recipe>()
+        for (recipe in recipes) {
+            activeRecipes.add(recipe)
+        }
+        for (restaurant in restaurants) {
+            for (menuRecipe in restaurant.getRestaurantStats().menu) {
+                activeRecipes.add(menuRecipe)
+            }
+        }
+        return activeRecipes.toList()
     }
 
     private fun parseStaffIncident(
@@ -213,11 +238,7 @@ class IncidentParser {
         val staffType = json.requiredEnum<StaffType>(STAFF_TYPE)
         val restaurantId = json.requiredInt(RESTAURANT_ID)
 
-        val restaurant = restaurants.firstOrNull { currentRestaurant ->
-            currentRestaurant.getRestaurantStats().restaurantId == restaurantId
-        } ?: throw IllegalArgumentException(
-            "Restaurant with ID '$restaurantId' does not exist."
-        )
+        val restaurant = findRestaurant(restaurants, restaurantId)
 
         val cookType: CookType? = if (staffType == StaffType.COOK) {
             json.requiredEnum<CookType>(COOK_TYPE)
@@ -235,14 +256,24 @@ class IncidentParser {
         )
     }
 
+    private fun findRestaurant(restaurants: List<Restaurant>, restaurantId: Int): Restaurant {
+        for (currentRestaurant in restaurants) {
+            if (currentRestaurant.getRestaurantStats().restaurantId == restaurantId) {
+                return currentRestaurant
+            }
+        }
+        throw IllegalArgumentException("Restaurant with ID '$restaurantId' does not exist.")
+    }
+
     private fun List<Ingredient>.requiredIngredient(
         ingredientName: String
     ): Ingredient {
-        return firstOrNull { ingredient ->
-            ingredient.name == ingredientName
-        } ?: throw IllegalArgumentException(
-            "Ingredient '$ingredientName' does not exist."
-        )
+        for (ingredient in this) {
+            if (ingredient.name == ingredientName) {
+                return ingredient
+            }
+        }
+        throw IllegalArgumentException("Ingredient '$ingredientName' does not exist.")
     }
 
     private fun JsonObject.requiredString(key: String): String {

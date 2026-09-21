@@ -1,10 +1,12 @@
 package de.unisaarland.cs.se.selab.customer
 
+import de.unisaarland.cs.se.selab.Constants
 import de.unisaarland.cs.se.selab.Evening
 import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.Tick
 import de.unisaarland.cs.se.selab.Time
 import de.unisaarland.cs.se.selab.actors.Waiter
+import de.unisaarland.cs.se.selab.enums.ActionType
 import de.unisaarland.cs.se.selab.enums.ExperienceType
 import de.unisaarland.cs.se.selab.enums.RestaurantType
 import de.unisaarland.cs.se.selab.enums.TableType
@@ -61,15 +63,18 @@ class EventGroup(
     /**
      * takes the order of a customer group
      */
-    override fun placeOrder(waiters: List<Waiter>, menu: List<Recipe>, countertop: Countertop): Boolean {
+    fun placeOrder(waitersToTakeOrder: MutableMap<Waiter, Int>, menu: List<Recipe>, countertop: Countertop): Boolean {
         val listOfDishes = mutableListOf<Dish>()
-        val waiterRota = WaiterRota(waiters)
+
         for (foodPreference in orderingSequence()) {
             val availableDishes = countertop.getAvailableRecipes(menu)
             val eventFavoriteDish = eventDishes[currentRestaurantType] ?: "No Dish"
             val customerDish = foodPreference.decideDish(availableDishes, eventFavoriteDish, countertop.restaurantType)
             if (customerDish != null) {
-                val currentWaiter = waiterRota.next()
+                val currentWaiter = waitersToTakeOrder.keys.firstOrNull { waiter ->
+                    waiter.getTickLoad(ActionType.TAKE_ORDER) < Constants.ACTION_LIMIT
+                }
+
                 if (currentWaiter != null) {
                     registerDish(currentWaiter, customerDish, countertop)
                 }

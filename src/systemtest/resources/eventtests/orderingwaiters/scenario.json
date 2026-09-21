@@ -1,0 +1,64 @@
+{
+  "customerGroups": [
+    {
+      "id": 1,
+      "type": "EVENT",
+      "size": 15,
+      "tableType": "COMMON",
+      "restaurantTypes": [
+        "EUROPEAN"
+      ],
+      "visitingTick": 2,
+      "eventEvening": 4,
+      "favoriteDishes": {
+        "EUROPEAN": "Tomato Soup"
+      },
+      "foodPreferences": [
+        {
+          "size": 12,
+          "excludedIngredients": [
+            "Salt",
+            "Pepper",
+            "Sugar",
+            "Pecan"
+          ]
+        },
+        {
+          "size": 3,
+          "excludedIngredients": [
+            "Tomato",
+            "Chicken",
+            "Lentil"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "REGULAR",
+      "size": 8,
+      "tableType": "COMMON",
+      "visitingTick": 2,
+      "visitingStart": 4,
+      "visitingPeriod": 10,
+      "restaurant": 1,
+      "foodPreferences": [
+        {
+          "size": 3,
+          "favoriteDishes": [
+            "Tomato Soup"
+          ]
+        },
+        {
+          "size": 5,
+          "excludedIngredients": [
+            "Tomato",
+            "Chicken",
+            "Lentil"
+          ]
+        }
+      ]
+    }
+  ],
+  "incidents": []
+}

@@ -81,6 +81,7 @@ class ArrivalProcessor(
     fun processArrival(eventGroup: EventGroup, menu: List<Recipe>): Boolean {
         val recruitedWaiters: List<Waiter> = recruitWaitersForEventGroup(ActionType.SEAT, eventGroup)
         val consumedWaiters: MutableList<Waiter> = mutableListOf()
+        val waitersToTakeOrder: MutableMap<Waiter, Int> = linkedMapOf()
         var eventGroupSize: Int = eventGroup.size
         for (waiter in recruitedWaiters) {
             if (eventGroupSize <= 0) {
@@ -91,8 +92,12 @@ class ArrivalProcessor(
             val seatingLoad: Int = min(remainingSeatingLoad, eventGroupSize)
             waiter.tickLoads[ActionType.SEAT] = waiter.tickLoads[ActionType.SEAT]!! + seatingLoad
             eventGroupSize -= seatingLoad
+            waitersToTakeOrder[waiter] = seatingLoad
             consumedWaiters.addLast(waiter)
         }
+        val orderLoadBefore: MutableMap<Waiter, Int> = waitersToTakeOrder.keys.associateWith { waiter ->
+            waiter.getTickLoad(ActionType.TAKE_ORDER)
+        }.toMutableMap()
 
         if (eventGroupSize != 0) {
             FohReceptionLogger.logFohNoSeatingNoWaitstaff(eventGroup.id)
@@ -100,21 +105,18 @@ class ArrivalProcessor(
             eventGroup.experience = ExperienceType.NEGATIVE
         } else {
             successfulSeating(eventGroup, consumedWaiters)
-            if (eventGroup.placeOrder(consumedWaiters, menu, countertop)) {
+            if (eventGroup.placeOrder(waitersToTakeOrder, menu, countertop)) {
                 val currentOrder = eventGroup.currentOrder
-                val waitStaffId = consumedWaiters.mapNotNull { it.id }
+                val orderLoadAfter: MutableMap<Waiter, Int> = waitersToTakeOrder.keys.associateWith { waiter ->
+                    waiter.getTickLoad(ActionType.TAKE_ORDER)
+                }.toMutableMap()
+                val changedWaiter: List<Waiter> = orderLoadAfter.filter { (waiter, newLoad) ->
+                    orderLoadBefore[waiter] != newLoad
+                }.keys.toList().sortedBy { it.id }
                 if (currentOrder != null) {
-                    FohReceptionLogger.logFohOrdering(
-                        eventGroup.id,
-                        currentOrder.id,
-                        currentOrder.dishNameToAmount(),
-                        waitStaffId
-                    )
+                    orderSuccess(eventGroup, changedWaiter)
                 }
-
                 eventGroups.add(eventGroup)
-                customersOrdered.add(eventGroup)
-                waitersOrdered.addAll(consumedWaiters)
             } else {
                 turnedAwayGroups.addLast(eventGroup)
                 eventGroup.experience = ExperienceType.NEGATIVE

@@ -122,7 +122,7 @@ class Order(val dishes: List<Dish>) {
      */
     fun areAllDishesEaten(): Boolean {
         for (dish in dishes) {
-            if (dish.status != DishStatus.EATEN || dish.status != DishStatus.ABORTED) {
+            if (dish.status != DishStatus.EATEN && dish.status != DishStatus.ABORTED) {
                 return false
             }
         }

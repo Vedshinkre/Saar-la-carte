@@ -395,4 +395,8 @@ class FrontOfHouse(
         }
         return result
     }
+
+    /** Returns the number of reserved seats for customer group. */
+    fun getReservedSeats(customerGroup: CustomerGroup): Int =
+        customerToTable[customerGroup]?.sumOf { it.size } ?: 0
 }

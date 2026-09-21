@@ -296,6 +296,7 @@ class ArrivalProcessor(
         numberOfCustomersSeated += customerGroup.size
         waitersThatSeated.addAll(waiters)
         tablesSeatedOn.add(mergeTable)
+        if (customerGroup is RegularGroup) { customerGroup.hasVisited = true }
 
         FohReceptionLogger.logFohSeating(customerGroup.id, mergeTable.id, waiters.map { it.id!! })
     }

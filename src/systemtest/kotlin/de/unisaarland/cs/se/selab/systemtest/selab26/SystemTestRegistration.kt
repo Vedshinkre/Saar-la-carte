@@ -99,6 +99,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.TableTypeRestr
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.UnavailabilityDurationExpirySystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.UnavailableIncidentSupplierProcurementSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.WaitstaffExhaustionTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.packagingchangeincidentsystemtests.PackagingChangeIncidentSystemTests
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.AllFilesValidSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.CustomerGroupUnknownRestaurantSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.DuplicateIncidentIdRejectedSystemTest
@@ -162,6 +163,7 @@ object SystemTestRegistration {
      * the same as their reference implementation)
      */
     fun registerSystemTestsForReferenceImplementation(testSuite: SELab26TestSuite) {
+        testSuite.registerTest(PackagingChangeIncidentSystemTests())
         testSuite.registerTest(ExampleSystemTest())
         testSuite.registerTest(ExactStockoutTest()) //   testSuite.registerTest(ExhaustiveSimpleScenarioTest())
         testSuite.registerTest(OneCookTwoOrdersTest())

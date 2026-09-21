@@ -1,0 +1,19 @@
+{
+  "customerGroups": [],
+  "incidents": [
+    {
+      "id": 1,
+      "type": "PACKAGING",
+      "evening": 1,
+      "ingredient": "Chicken",
+      "packagingVolume": 2000
+    },
+    {
+      "id": 2,
+      "type": "PACKAGING",
+      "evening": 2,
+      "ingredient": "Potato",
+      "packagingVolume": 140
+    }
+  ]
+}

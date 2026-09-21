@@ -1,0 +1,44 @@
+{
+  "ingredients": [
+    {
+      "name": "Chicken",
+      "unit": "g",
+      "packagingVolume": 1000,
+      "bestBefore": 1
+    },
+    {
+      "name": "Potato",
+      "unit": "g",
+      "packagingVolume": 1000,
+      "bestBefore": 1
+    }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "Roast Chicken",
+      "duration": 25,
+      "basicDishFor": "ASIAN",
+      "cookType": ["ROAST"],
+      "ingredients": [
+        {
+          "name": "Chicken",
+          "amount": 1000
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "dishName": "Potato Soup",
+      "duration": 10,
+      "basicDishFor": "EUROPEAN",
+      "cookType": ["EXEC", "SOUS", "TOURNANT", "VEGETABLE"],
+      "ingredients": [
+        {
+          "name": "Potato",
+          "amount": 300
+        }
+      ]
+    }
+  ]
+}

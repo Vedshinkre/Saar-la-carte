@@ -93,7 +93,9 @@ class Restaurant(
             val orderHistory = regularGroup.orderHistory
             collectiveOrderHistory.addAll(orderHistory)
         }
-        val freeSeats = frontOfHouse.getFreeSeats().values.sum()
+        val regularSeatsWithNoHistory = comingRegulars.filter{ it.orderHistory.isEmpty()}
+            .sumOf { frontOfHouse.getReservedSeats() }
+        val freeSeats = frontOfHouse.getFreeSeats().values.sum() + regularSeatsWithNoHistory
         val eventDishes = mutableListOf<Pair<Recipe, Int>>()/*
 
              */

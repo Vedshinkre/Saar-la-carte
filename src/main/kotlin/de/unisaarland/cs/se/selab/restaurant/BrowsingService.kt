@@ -105,7 +105,8 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
     }
 
     private fun filterDietaryCompatible(
-        candidates: List<RestaurantStats>, group: CustomerGroup
+        candidates: List<RestaurantStats>,
+        group: CustomerGroup
     ): List<RestaurantStats> {
         val compatible = mutableListOf<RestaurantStats>()
         for (stats in candidates) {

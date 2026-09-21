@@ -1,0 +1,29 @@
+Category,Author,Commits,Added,Removed,Net,Surviving,Survival
+main,Ansh,57,4407,3734,673,951,21.6%
+main,Atharva,99,3143,2134,1009,1049,33.4%
+main,Skerdi,56,2789,1228,1561,1355,48.6%
+main,Deniz,39,2749,1555,1194,1084,39.4%
+main,Vlad Marciu,143,2505,1177,1328,1350,53.9%
+main,Ved,60,2165,697,1468,1386,64.0%
+test,Atharva,36,8109,3857,4252,4415,54.4%
+test,Vlad Marciu,32,5243,185,5058,5042,96.2%
+test,Ved,32,3801,852,2949,2788,73.3%
+test,Ansh,9,2829,35,2794,2814,99.5%
+test,Skerdi,16,2554,332,2222,2204,86.3%
+test,Deniz,2,614,1,613,613,99.8%
+systemtest,Atharva,34,12472,3052,9420,9461,75.9%
+systemtest,Ved,56,4662,701,3961,3933,84.4%
+systemtest,Vlad Marciu,17,3847,55,3792,3788,98.5%
+systemtest,Ansh,6,3283,157,3126,3126,95.2%
+systemtest,Skerdi,17,746,24,722,713,95.6%
+systemtest (non-json),Atharva,31,4494,1381,3113,3154,70.2%
+systemtest (non-json),Ansh,5,2944,147,2797,2797,95.0%
+systemtest (non-json),Ved,51,2041,310,1731,1704,83.5%
+systemtest (non-json),Vlad Marciu,17,1581,55,1526,1522,96.3%
+systemtest (non-json),Skerdi,14,372,23,349,339,91.1%
+total (whole repo),Atharva,138,23724,9043,14681,14925,62.9%
+total (whole repo),Vlad Marciu,188,11631,1452,10179,10181,87.5%
+total (whole repo),Ved,142,10628,2250,8378,8107,76.3%
+total (whole repo),Ansh,70,10519,3926,6593,6891,65.5%
+total (whole repo),Skerdi,80,6090,1584,4506,4273,70.2%
+total (whole repo),Deniz,41,3363,1556,1807,1697,50.5%

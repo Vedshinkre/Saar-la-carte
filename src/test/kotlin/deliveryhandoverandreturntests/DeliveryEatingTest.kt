@@ -18,12 +18,14 @@ class DeliveryEatingTest {
         fx = DeliveryFixtures()
     }
 
+    private val delivered = mutableListOf<Int>()
+
     private fun eating(vararg groups: CasualGroup) = EatingProcessor(
         deliveryGroups = groups.toList(),
         getInHouseGroups = { emptyList() },
         getServingPriority = { 2 },
         getAssignedTableId = { null },
-        addCustomersDelivered = { },
+        addCustomersDelivered = { delivered += it },
     )
 
     /** a group whose served order the driver hands over in the current tick */
@@ -96,15 +98,31 @@ class DeliveryEatingTest {
     }
 
     @Test
-    fun `delivered groups do not show up in the in-restaurant finished eating log`() {
-        val group = handedOver(1)
-        val processor = eating(group)
+    fun `delivered customers are counted once in the tick of the hand-over`() {
+        val processor = eating(handedOver(1, dishCount = 3))
 
-        repeat(3) {
+        repeat(6) {
             processor.processEating()
             Time.tick += 1
         }
 
-        assertTrue(fx.logLinesContaining("FOH Finished Eating").isEmpty())
+        assertEquals(listOf(3), delivered)
+    }
+
+    @Test
+    fun `groups handed over in different ticks are counted separately`() {
+        val first = handedOver(1, dishCount = 2)
+        val processor = eating(first)
+        processor.processEating()
+        Time.tick += 1
+        val second = handedOver(2, dishCount = 1)
+        val both = eating(first, second)
+
+        repeat(6) {
+            both.processEating()
+            Time.tick += 1
+        }
+
+        assertEquals(listOf(2, 1), delivered)
     }
 }

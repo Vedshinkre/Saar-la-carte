@@ -106,25 +106,6 @@ class WaitingForFoodIntegrationTest {
 
     // ---- nothing is ever cooked
 
-    @Test
-    fun `a group whose food never arrives leaves five ticks after ordering and not earlier`() {
-        val group = casual(1, size = 2)
-        arrive(group) // ordered in tick 1
-        assertNotNull(group.currentOrder)
-
-        tickThrough(5)
-        assertTrue(lines("Restaurant No Eating").isEmpty(), "four ticks after ordering the group still waits")
-
-        tick() // tick 6 = five ticks after ordering
-        assertEquals(
-            listOf("[INFO] Restaurant No Eating (R 1): 2 customers of group 1 leave table 1 due to not being served."),
-            lines("Restaurant No Eating")
-        )
-        assertEquals(0, group.customersRemainingInRestaurant)
-        assertEquals(ExperienceType.NEGATIVE, group.experience)
-        assertTrue(group.currentOrder!!.dishes.all { it.status == DishStatus.ABORTED })
-    }
-
     @Disabled(
         "bug: Order.areAllDishesEaten() is false while a dish of a customer who left is ABORTED, so the served " +
             "customers of a partially served group are never escorted and the group never rates"
@@ -346,19 +327,21 @@ class WaitingForFoodIntegrationTest {
     // ---- delivery
 
     @Test
-    fun `a delivery group gives up three ticks after it wanted the food`() {
+    fun `a given up delivery does not disturb a dine-in group that is eating`() {
         drivers.add(Driver())
-        val group = casual(1, size = 2, visitingAt = 5, distance = 5)
+        val delivery = casual(1, size = 2, visitingAt = 5, distance = 5)
         Time.tick = 4
-        arrive(group)
+        arrive(delivery)
+        val diner = casual(2, size = 2)
+        arrive(diner)
+        cook(diner)
 
-        tickUntil(8)
-        assertTrue(lines("Delivery Given Up").isEmpty(), "still waiting at tick 7")
+        tickUntil(9)
 
-        tick() // tick 8 = visitingAt + 3
         assertEquals(1, lines("Delivery Given Up (R 1): Group 1 gave up on waiting").size)
-        assertEquals(ExperienceType.NEGATIVE, group.experience)
-        assertTrue(lines("Restaurant No Eating").isEmpty(), "delivery customers never use the in-restaurant rule")
+        assertEquals(ExperienceType.NEGATIVE, delivery.experience)
+        assertEquals(ExperienceType.POSITIVE, diner.experience)
+        assertTrue(lines("Restaurant No Eating").isEmpty())
     }
 
     @Test

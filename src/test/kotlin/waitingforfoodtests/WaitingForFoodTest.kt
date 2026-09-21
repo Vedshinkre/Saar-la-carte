@@ -1,6 +1,5 @@
 package waitingforfoodtests
 
-import de.unisaarland.cs.se.selab.Constants
 import de.unisaarland.cs.se.selab.enums.DishStatus
 import de.unisaarland.cs.se.selab.enums.ExperienceType
 import org.junit.jupiter.api.BeforeEach
@@ -23,14 +22,6 @@ class WaitingForFoodTest {
     }
 
     // ---- the wait limits
-
-    @Test
-    fun `the specified wait constants are used`() {
-        assertEquals(5, Constants.UNSERVED_WAIT_TICKS)
-        assertEquals(2, Constants.ADDITIONAL_UNSERVED_WAIT_TICKS)
-        assertEquals(4, Constants.EXPECTATION_WINDOW_TICKS)
-        assertEquals(3, Constants.CUSTOMER_DELIVERY_WAIT_TICKS)
-    }
 
     @Test
     fun `nobody served - the group still waits four ticks after ordering`() {

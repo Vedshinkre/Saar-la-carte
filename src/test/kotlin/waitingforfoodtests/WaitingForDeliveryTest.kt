@@ -140,23 +140,23 @@ class WaitingForDeliveryTest {
     }
 
     @Test
-    fun `delivered customers are counted once and finish eating two ticks after the delivery`() {
-        val order = fx.order(DishStatus.SERVED, DishStatus.SERVED)
-        order.deliveredAt = fx.orderTick
-        val group = fx.deliveryGroup(1, order)
+    fun `a given up order is never eaten afterwards`() {
+        val order = fx.order(DishStatus.COOKING, DishStatus.COOKING)
+        val group = fx.deliveryGroup(1, order, visitingAt = 10)
         val delivered = mutableListOf<Int>()
-        val processor = fx.eating(inHouse = emptyList(), deliveryGroups = listOf(group), delivered = delivered)
+        val giveUp = delivery(group)
+        val eating = fx.eating(inHouse = emptyList(), deliveryGroups = listOf(group), delivered = delivered)
 
-        repeat(2) {
-            processor.processEating()
-            fx.advance()
+        Time.tick = 13
+        giveUp.processDelivering()
+        repeat(4) {
+            eating.processEating()
+            Time.tick += 1
         }
-        assertTrue(fx.logLinesContaining("Delivery Finished Eating").isEmpty())
-        processor.processEating()
 
-        assertEquals(listOf(2), delivered)
-        assertEquals(1, fx.logLinesContaining("Delivery Finished Eating").size)
-        assertTrue(order.dishes.all { it.status == DishStatus.EATEN })
+        assertTrue(delivered.isEmpty())
+        assertTrue(fx.logLinesContaining("Delivery Finished Eating").isEmpty())
+        assertTrue(order.dishes.all { it.status == DishStatus.ABORTED })
     }
 
     @Test

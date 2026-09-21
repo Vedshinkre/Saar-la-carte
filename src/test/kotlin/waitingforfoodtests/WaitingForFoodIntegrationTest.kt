@@ -2,6 +2,7 @@ package waitingforfoodtests
 
 import de.unisaarland.cs.se.selab.Time
 import de.unisaarland.cs.se.selab.actors.Driver
+import de.unisaarland.cs.se.selab.actors.Waiter
 import de.unisaarland.cs.se.selab.customer.CasualGroup
 import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.enums.DishStatus
@@ -15,6 +16,7 @@ import de.unisaarland.cs.se.selab.loggers.Logger
 import de.unisaarland.cs.se.selab.restaurant.FrontOfHouse
 import eventorderingtests.EventOrderingFixtures
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -32,6 +34,7 @@ class WaitingForFoodIntegrationTest {
     private val orderQueue = ArrayDeque<Order>()
     private val drivers = mutableListOf<Driver>()
     private lateinit var foh: FrontOfHouse
+    private lateinit var waiter: Waiter
 
     @BeforeEach
     fun setup() {
@@ -46,12 +49,16 @@ class WaitingForFoodIntegrationTest {
         foh = frontOfHouse(tableSizes = listOf(2, 2), waiterCount = 1)
     }
 
-    private fun frontOfHouse(tableSizes: List<Int>, waiterCount: Int) = FrontOfHouse(
-        tables = tableSizes.mapIndexed { index, size -> EventOrderingFixtures.table(index + 1, size) },
-        waiters = List(waiterCount) { EventOrderingFixtures.waiter() },
-        drivers = drivers,
-        countertop = EventOrderingFixtures.countertop(orderQueue)
-    )
+    private fun frontOfHouse(tableSizes: List<Int>, waiterCount: Int): FrontOfHouse {
+        val waiters = List(waiterCount) { EventOrderingFixtures.waiter() }
+        waiter = waiters.first()
+        return FrontOfHouse(
+            tables = tableSizes.mapIndexed { index, size -> EventOrderingFixtures.table(index + 1, size) },
+            waiters = waiters,
+            drivers = drivers,
+            countertop = EventOrderingFixtures.countertop(orderQueue)
+        )
+    }
 
     private fun lines(): List<String> = output.toString().lines().filter { it.isNotBlank() }
 
@@ -116,6 +123,55 @@ class WaitingForFoodIntegrationTest {
         assertEquals(0, group.customersRemainingInRestaurant)
         assertEquals(ExperienceType.NEGATIVE, group.experience)
         assertTrue(group.currentOrder!!.dishes.all { it.status == DishStatus.ABORTED })
+    }
+
+    @Disabled(
+        "bug: Order.areAllDishesEaten() is false while a dish of a customer who left is ABORTED, so the served " +
+            "customers of a partially served group are never escorted and the group never rates"
+    )
+    @Test
+    fun `the served customers are escorted after the unserved ones left`() {
+        val group = casual(1, size = 2)
+        arrive(group)
+        cook(group, 0)
+        group.currentOrder!!.firstDishCookedAt = 1
+
+        tickThrough(9) // the served customer finished eating in tick 5, the other one left in tick 8
+
+        assertEquals(0, group.customersRemainingInRestaurant, "the customer who was served is escorted out")
+        assertTrue(lines("FOH Escorting (R 1)").isNotEmpty(), lines().joinToString(" | "))
+    }
+
+    @Disabled(
+        "bug: EatingProcessor.handleLeavingCustomers lowers the customers of the group but never the current load " +
+            "of the waiter (spec adjustment 5: customers that leave are no longer waited on)"
+    )
+    @Test
+    fun `the waiter of a group that walked out unserved no longer waits on its customers`() {
+        val group = casual(1, size = 2)
+        arrive(group)
+        assertEquals(2, waiter.currentLoad)
+
+        tickThrough(6)
+
+        assertEquals(0, group.customersRemainingInRestaurant)
+        assertEquals(0, waiter.currentLoad, "customers that left are no longer waited on (spec adjustment 5)")
+    }
+
+    @Disabled(
+        "bug: EatingProcessor.handleLeavingCustomers lowers the customers of the group but never the current load " +
+            "of the waiter (spec adjustment 5: customers that leave are no longer waited on)"
+    )
+    @Test
+    fun `the waiter only keeps the customers that are still there when part of the group leaves`() {
+        val group = casual(1, size = 2)
+        arrive(group)
+        cook(group, 0)
+        group.currentOrder!!.firstDishCookedAt = 1
+
+        tickThrough(9) // one customer is served, eats and is escorted, the other one leaves in tick 8
+
+        assertEquals(0, waiter.currentLoad, "one customer left unserved, the other was escorted")
     }
 
     @Test

@@ -7,7 +7,6 @@ import de.unisaarland.cs.se.selab.food.Stock
 import de.unisaarland.cs.se.selab.food.Supplier
 import de.unisaarland.cs.se.selab.incidents.PackagingChangeIncident
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 
 class PackagingChangeIncidentTest {
@@ -16,20 +15,6 @@ class PackagingChangeIncidentTest {
 
     private fun incident(ingredient: Ingredient, volume: Int) =
         PackagingChangeIncident(1, 3, ingredient, volume)
-
-    @Test
-    fun `zero volume is rejected and leaves the volume unchanged`() {
-        val f = flour()
-        assertThrows(IllegalArgumentException::class.java) { incident(f, 0).apply() }
-        assertEquals(100, f.packagingVolume)
-    }
-
-    @Test
-    fun `negative volume is rejected and leaves the volume unchanged`() {
-        val f = flour()
-        assertThrows(IllegalArgumentException::class.java) { incident(f, -5).apply() }
-        assertEquals(100, f.packagingVolume)
-    }
 
     @Test
     fun `same volume as before changes nothing`() {

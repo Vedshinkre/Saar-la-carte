@@ -1,10 +1,17 @@
 package parsertests
 
+import de.unisaarland.cs.se.selab.enums.LogLevel
 import de.unisaarland.cs.se.selab.enums.MeasurementUnit
 import de.unisaarland.cs.se.selab.enums.RestaurantType
+import de.unisaarland.cs.se.selab.loggers.Logger
 import de.unisaarland.cs.se.selab.parsers.ParserController
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
+import java.io.PrintWriter
+import java.io.StringWriter
+import java.nio.file.Path
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -24,6 +31,17 @@ private const val SCENARIO_VALID = FIXTURES + "scenarioValid.json"
  * accept/reject outcomes.
  */
 class FoodParserIntegrationTest {
+    @TempDir
+    lateinit var tempDir: Path
+
+    private lateinit var output: StringWriter
+
+    @BeforeEach
+    fun setUp() {
+        output = StringWriter()
+        Logger.setup(PrintWriter(output))
+        Logger.setup(LogLevel.DEBUG)
+    }
 
     private fun parse(food: String) =
         ParserController().parseFiles(food, RESTAURANTS_VALID, SCENARIO_VALID)
@@ -57,7 +75,6 @@ class FoodParserIntegrationTest {
         assertEquals(RestaurantType.EUROPEAN, onionSoup.basicDishFor)
     }
 
-    @Disabled
     @Test
     fun `schema rejects an ingredient with an unrecognized unit before the parser ever runs`() {
         val result = parse(FIXTURES + "foodSchemaInvalidUnit.json")
@@ -67,7 +84,6 @@ class FoodParserIntegrationTest {
         assertTrue(result.recipes.isEmpty())
     }
 
-    @Disabled
     @Test
     fun `two basic recipes sharing a dish name are parsed by the schema but rejected by the parser`() {
         val result = parse(FIXTURES + "foodDuplicateDishNameMixedBasic.json")
@@ -75,5 +91,29 @@ class FoodParserIntegrationTest {
         assertTrue(result.wasInvalidFile)
         assertTrue(result.ingredients.isEmpty())
         assertTrue(result.recipes.isEmpty())
+    }
+
+    @Test
+    fun `a food file that is not valid JSON is an invalid file and stops the parsing`() {
+        val food = tempDir.resolve("food.json").toFile().also { it.writeText("{ \"ingredients\": [ ") }
+
+        val result = parse(food.path)
+
+        assertTrue(result.wasInvalidFile)
+        assertTrue(result.ingredients.isEmpty())
+        assertEquals(
+            listOf("[IMPORTANT] Initialization Info: ${food.path} is invalid."),
+            output.toString().lines().filter { it.isNotBlank() }
+        )
+    }
+
+    @Test
+    fun `a food file that does not exist is an invalid file`() {
+        val missing = tempDir.resolve("missing.json").toString()
+
+        val result = parse(missing)
+
+        assertTrue(result.wasInvalidFile)
+        assertTrue(output.toString().contains("$missing is invalid."))
     }
 }

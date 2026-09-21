@@ -1,0 +1,19 @@
+{
+  "ingredients": [
+    { "name": "Chicken", "unit": "g", "packagingVolume": 1000, "bestBefore": 5 }
+  ],
+  "recipes": [
+    {
+      "id": 1, "dishName": "Slow Roast", "duration": 40, "basicDishFor": "EUROPEAN", "cookType": ["ROAST"],
+      "ingredients": [{ "name": "Chicken", "amount": 20 }]
+    },
+    {
+      "id": 2, "dishName": "Long Stew", "duration": 40, "cookType": ["ROAST"],
+      "ingredients": [{ "name": "Chicken", "amount": 20 }]
+    },
+    {
+      "id": 3, "dishName": "Deep Pot", "duration": 40, "cookType": ["ROAST"],
+      "ingredients": [{ "name": "Chicken", "amount": 20 }]
+    }
+  ]
+}

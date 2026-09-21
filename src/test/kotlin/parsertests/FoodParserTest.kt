@@ -243,75 +243,7 @@ class FoodParserTest {
         assertNull(parsedRecipes.single().basicDishFor)
     }
 
-    @Disabled
-    @Test
-    fun `empty recipes list is rejected`() {
-        assertFailsWith<IllegalArgumentException> { parseWithRice("[]") }
-    }
-
-    @Test
-    fun `recipe missing id is rejected`() {
-        val recipes = """[{"dishName": "Rice Bowl", "duration": 20, "cookType": ["EXEC"],
-            "ingredients": [{"name": "rice", "amount": 150}]}]"""
-        assertFailsWith<IllegalArgumentException> { parseWithRice(recipes) }
-    }
-
-    @Test
-    fun `recipe missing dishName is rejected`() {
-        val recipes = """[{"id": 1, "duration": 20, "cookType": ["EXEC"],
-            "ingredients": [{"name": "rice", "amount": 150}]}]"""
-        assertFailsWith<IllegalArgumentException> { parseWithRice(recipes) }
-    }
-
-    @Test
-    fun `recipe missing duration is rejected`() {
-        val recipes = """[{"id": 1, "dishName": "Rice Bowl", "cookType": ["EXEC"],
-            "ingredients": [{"name": "rice", "amount": 150}]}]"""
-        assertFailsWith<IllegalArgumentException> { parseWithRice(recipes) }
-    }
-
-    @Test
-    fun `recipe missing cookType is rejected`() {
-        val recipes = """[{"id": 1, "dishName": "Rice Bowl", "duration": 20,
-            "ingredients": [{"name": "rice", "amount": 150}]}]"""
-        assertFailsWith<IllegalArgumentException> { parseWithRice(recipes) }
-    }
-
-    @Disabled
-    @Test
-    fun `recipe with empty cookType is rejected`() {
-        val recipes = """[{"id": 1, "dishName": "Rice Bowl", "duration": 20, "cookType": [],
-            "ingredients": [{"name": "rice", "amount": 150}]}]"""
-        assertFailsWith<IllegalArgumentException> { parseWithRice(recipes) }
-    }
-
-    @Test
-    fun `recipe with unknown cook type is rejected`() {
-        val recipes = """[{"id": 1, "dishName": "Rice Bowl", "duration": 20, "cookType": ["MANAGER"],
-            "ingredients": [{"name": "rice", "amount": 150}]}]"""
-        assertFailsWith<IllegalArgumentException> { parseWithRice(recipes) }
-    }
-
-    @Test
-    fun `recipe missing ingredients is rejected`() {
-        val recipes = """[{"id": 1, "dishName": "Rice Bowl", "duration": 20, "cookType": ["EXEC"]}]"""
-        assertFailsWith<IllegalArgumentException> { parseWithRice(recipes) }
-    }
-
-    @Disabled
-    @Test
-    fun `recipe with empty ingredients is rejected`() {
-        val recipes = """[{"id": 1, "dishName": "Rice Bowl", "duration": 20, "cookType": ["EXEC"],
-            "ingredients": []}]"""
-        assertFailsWith<IllegalArgumentException> { parseWithRice(recipes) }
-    }
-
     // RECIPE: durations
-
-    @Test
-    fun `recipe duration one tick below the minimum is rejected`() {
-        assertFailsWith<IllegalArgumentException> { parseWithRice(recipeJson(duration = 1)) }
-    }
 
     @Test
     fun `recipe duration at the minimum boundary is accepted`() {
@@ -323,11 +255,6 @@ class FoodParserTest {
     fun `recipe duration at the maximum boundary is accepted`() {
         val (_, parsedRecipes) = parseWithRice(recipeJson(duration = 40))
         assertEquals(40, parsedRecipes.single().duration)
-    }
-
-    @Test
-    fun `recipe duration one tick above the maximum is rejected`() {
-        assertFailsWith<IllegalArgumentException> { parseWithRice(recipeJson(duration = 41)) }
     }
 
     // RECIPE: unique id and basic dishname

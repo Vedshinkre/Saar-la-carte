@@ -1,4 +1,4 @@
-package recipechangeincidenttests
+package recipechangeincidenttest
 
 import de.unisaarland.cs.se.selab.enums.CookType
 import de.unisaarland.cs.se.selab.enums.MeasurementUnit

@@ -1,4 +1,4 @@
-package recipechangeincidenttset
+package recipechangeincidenttest
 
 import de.unisaarland.cs.se.selab.Time
 import de.unisaarland.cs.se.selab.enums.CookType

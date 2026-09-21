@@ -113,6 +113,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.I
 import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentZeroPackagingVolumeRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.CanvisitA
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.CanvisitB
+import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.CorrectPartialServing2
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.SomeDeliveryTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.ExtendedPatienceEndsSevenTicksAfterOrderingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.ExtendedPatienceEndsSixTicksAfterOrderingSystemTest
@@ -233,6 +234,7 @@ object SystemTestRegistration {
         testSuite.registerTest(PackagingChangeIncidentSystemTests())
         testSuite.registerTest(IncidentZeroPackagingVolumeRejectedSystemTest())
         testSuite.registerTest(IncidentNegativePackagingVolumeRejectedSystemTest())
+        testSuite.registerTest(CorrectPartialServing2())
     }
 
     /** AB tests for the two tick windows fo the serving phase */

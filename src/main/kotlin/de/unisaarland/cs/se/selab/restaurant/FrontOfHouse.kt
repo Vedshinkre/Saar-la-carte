@@ -369,6 +369,9 @@ class FrontOfHouse(
         inHouseGroupsToWaiter.remove(group)
     }
 
+    /**
+     * Beep beep I'm a document PLEASE change me
+     */
     fun getAvailableDrivers(): Int {
         // DOIT: check the delivery groups with an order and subtract that count from idle drivers so we get available
         return drivers.size

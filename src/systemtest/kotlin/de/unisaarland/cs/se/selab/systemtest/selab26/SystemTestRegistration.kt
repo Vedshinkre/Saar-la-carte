@@ -274,7 +274,7 @@ object SystemTestRegistration {
         testSuite.registerTest(SupplierProcurementSystemTest())
         testSuite.registerTest(UnavailableIncidentSupplierProcurementSystemTest())
         testSuite.registerTest(LateCasualNoWaiterSystemTest())
-        testSuite.registerTest(SingleOrCouple()) // testSuite.registerTest(StaffLoadConcentrationSystemTest())
+        testSuite.registerTest(CorrectPartialServing1()) // testSuite.registerTest(StaffLoadConcentrationSystemTest())
         // testSuite.registerTest(StaffMultiWaiterExhaustionSystemTest())
         testSuite.registerTest(
             StaffLoadBalancingFallbackSystemTest()

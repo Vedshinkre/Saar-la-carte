@@ -4,6 +4,7 @@ import de.unisaarland.cs.se.selab.Time
 import de.unisaarland.cs.se.selab.actors.Cook
 import de.unisaarland.cs.se.selab.actors.Waiter
 import de.unisaarland.cs.se.selab.customer.CasualGroup
+import de.unisaarland.cs.se.selab.customer.EventGroup
 import de.unisaarland.cs.se.selab.customer.FoodPreference
 import de.unisaarland.cs.se.selab.customer.RegularGroup
 import de.unisaarland.cs.se.selab.enums.CookType
@@ -24,11 +25,15 @@ import de.unisaarland.cs.se.selab.restaurant.Countertop
 import de.unisaarland.cs.se.selab.restaurant.FrontOfHouse
 import de.unisaarland.cs.se.selab.restaurant.Pantry
 import de.unisaarland.cs.se.selab.restaurant.Table
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.io.PrintWriter
+import java.io.StringWriter
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
@@ -40,12 +45,23 @@ import kotlin.test.assertTrue
  */
 class SeatingIntegrationTest {
 
+    private lateinit var output: StringWriter
+
     @BeforeEach
     fun setup() {
+        output = StringWriter()
+        Logger.setup(PrintWriter(output))
         Logger.setup(LogLevel.DEBUG)
         Logger.restaurantID = 1
         Time.tick = 1
     }
+
+    @AfterEach
+    fun tearDown() {
+        Logger.setup(PrintWriter(System.out))
+    }
+
+    private fun lines(): List<String> = output.toString().lines().filter { it.isNotBlank() }
 
     private val flour = Ingredient("flour", MeasurementUnit.G, bestBefore = 5, initialPackagingVolume = 1000)
     private val breadRecipe = Recipe(
@@ -96,6 +112,17 @@ class SeatingIntegrationTest {
         restaurantId = 1
     )
 
+    private fun eventGroup(id: Int, size: Int, visitingAt: Int): EventGroup = EventGroup(
+        id = id,
+        size = size,
+        tableType = TableType.COMMON,
+        visitingAt = visitingAt,
+        foodPreferences = foodPreferences(size),
+        restaurantTypes = listOf(RestaurantType.EUROPEAN),
+        eventEvening = 1,
+        eventDishes = mapOf(RestaurantType.EUROPEAN to "Bread")
+    ).also { it.currentRestaurantType = RestaurantType.EUROPEAN }
+
     @Test
     fun `a CASUAL group with a real order gets an ad-hoc table and the pipeline succeeds end to end`() {
         val table = Table(id = 1, size = 4, tableType = TableType.COMMON)
@@ -143,5 +170,45 @@ class SeatingIntegrationTest {
         assertFalse(removedFromQueue, "group two should stay in the queue for a retry, not be dropped")
         assertEquals(ExperienceType.NEUTRAL, groupTwo.experience)
         assertEquals(TableStatus.RESERVED, tableTwo.status)
+    }
+
+    @Test
+    fun `a REGULAR and an EVENT group seated in the same tick hand out ids lazily without corrupting each other`() {
+        // waiter A is already a little busier than B and C, so it deterministically wins the
+        // REGULAR group's assignment (rule 2: most customers below a load of 10).
+        val waiterA = Waiter().also { it.currentLoad = 2 }
+        val waiterB = Waiter()
+        val waiterC = Waiter()
+        val regularTable = Table(id = 1, size = 4, tableType = TableType.COMMON)
+        val eventTable = Table(id = 2, size = 8, tableType = TableType.COMMON)
+        val foh = frontOfHouse(listOf(regularTable, eventTable), listOf(waiterA, waiterB, waiterC))
+        val regular = regularGroup(id = 1, size = 4, visitingAt = 5)
+        val event = eventGroup(id = 2, size = 8, visitingAt = 5)
+        foh.reserveTables(regular)
+        foh.reserveTables(event)
+        Time.tick = 5
+
+        foh.processArrival(regular, menu)
+        foh.processArrival(event, menu)
+
+        // ids are handed out lazily, in the order waiters first actually act
+        assertEquals(1, waiterA.id, "A acted first, for the REGULAR group")
+        assertEquals(2, waiterB.id, "B acted next, recruited for the remainder of the EVENT group")
+        assertNull(waiterC.id, "C was never needed by either group")
+
+        // the REGULAR group's own assignment must survive the EVENT recruitment untouched
+        assertTrue(
+            lines().any { it.contains("FOH Ordering (R 1): Group 1") && it.endsWith("with waitstaff 1.") },
+            lines().toString()
+        )
+        assertEquals(6, waiterA.currentLoad, "A's currentLoad only reflects the REGULAR group (2 + 4)")
+        assertEquals(0, waiterB.currentLoad, "EVENT groups do not count towards currentLoad")
+
+        // the EVENT group was seated using exactly A and B, not C
+        assertTrue(
+            lines().single { it.contains("FOH Seating (R") && it.contains("Group 2 ") }
+                .endsWith("by waitstaff 1,2."),
+            lines().toString()
+        )
     }
 }

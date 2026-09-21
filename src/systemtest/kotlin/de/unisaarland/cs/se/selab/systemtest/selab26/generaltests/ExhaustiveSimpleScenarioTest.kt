@@ -3,7 +3,9 @@ package de.unisaarland.cs.se.selab.systemtest.selab26.generaltests
 import de.unisaarland.cs.se.selab.systemtest.selab26.utils.ExampleSystemTestExtension
 import de.unisaarland.cs.se.selab.systemtest.selab26.utils.FohArrivalTestLogs
 import de.unisaarland.cs.se.selab.systemtest.selab26.utils.FohServiceTestLogs
+import de.unisaarland.cs.se.selab.systemtest.selab26.utils.InitialAndPrepTestLogs
 import de.unisaarland.cs.se.selab.systemtest.selab26.utils.KitchenTestLogs
+import de.unisaarland.cs.se.selab.systemtest.selab26.utils.StatisticsTestLogs
 import de.unisaarland.cs.se.selab.systemtest.selab26.utils.TickStatusTestLogs
 
 private const val GRILLED_CHICKEN = "Grilled Chicken"
@@ -12,16 +14,8 @@ private const val TOMATO_SOUP = "Tomato Soup"
 /**
  * System test that exhaustively verifies a complete restaurant simulation up to Tick 5.
  *
- * This test validates the initial configuration parsing and the
- * evening preparation phase, followed by a step-by-step verification of the serving phase:
- *
- * - **Tick 1:** Event group reservation and restaurant decision.
- * - **Tick 2:** Casual group arrival, waitstaff seating, order placement, and kitchen assignment.
- *   The pantry only holds enough chicken for 2 portions, so of the 4 customers (no preferences,
- *   highest recipe id first) 2 get Grilled Chicken and the other 2 fall back to Tomato Soup.
- * - **Tick 3:** Kitchen cooking completion and waitstaff serving operations.
- * - **Tick 4:** Customer eating phase duration.
- * - **Tick 5:** Meal completion, escorting customers outside, and collecting experience ratings.
+ * This test validates the initial configuration parsing, the evening preparation phase,
+ * a step-by-step verification of the serving phase, and the final simulation statistics.
  */
 class ExhaustiveSimpleScenarioTest : ExampleSystemTestExtension() {
     override val name = "ExhaustiveScenarioTest"
@@ -33,21 +27,35 @@ class ExhaustiveSimpleScenarioTest : ExampleSystemTestExtension() {
     override val maxTicks = 5
 
     override suspend fun run() {
+        assertInitializationAndPrep()
         assertTick1()
         assertTick2()
         assertTick3()
         assertTick4()
         assertTick5()
+        assertFinalStatistics()
+    }
+
+    private suspend fun assertInitializationAndPrep() {
+        //  Preparation Phase
+        skipUntilString(InitialAndPrepTestLogs.prepStart(1))
+
+        // Note: Ingredients are procured in alphabetical order! (Chicken before Tomato)
+        assertNextLine(InitialAndPrepTestLogs.pantryProcured(1, 500, "g", "Chicken"))
+        assertNextLine(InitialAndPrepTestLogs.pantryProcured(1, 100, "g", "Tomato"))
+
+        assertNextLine(InitialAndPrepTestLogs.pantryRestocked(1))
+
+        // 3. Serving Phase Start
+        assertNextLine(TickStatusTestLogs.servingStart(1))
     }
 
     private suspend fun assertTick1() {
-        skipUntilString(TickStatusTestLogs.tickStart(1, 1))
+        assertNextLine(TickStatusTestLogs.tickStart(1, 1))
 
-        // decision and start logs
         assertNextLine(TickStatusTestLogs.restDecision(1, 1))
         assertNextLine(TickStatusTestLogs.restStart(1))
 
-        // Empty Statuses
         assertNextLine(FohArrivalTestLogs.seatingStatus(1, 0, 0, 0))
         assertNextLine(FohArrivalTestLogs.orderingStatus(1, 0, 0))
         assertNextLine(KitchenTestLogs.kitchenStatus(1, 0, 0, 0, 0))
@@ -63,9 +71,9 @@ class ExhaustiveSimpleScenarioTest : ExampleSystemTestExtension() {
         assertNextLine(TickStatusTestLogs.tickStart(2, 1))
         assertNextLine(TickStatusTestLogs.restDecision(2, 1))
         assertNextLine(TickStatusTestLogs.restStart(1))
+
         assertNextLine(FohArrivalTestLogs.arrival(1, 2))
         assertNextLine(FohArrivalTestLogs.seating(1, 2, 1, listOf(1)))
-
         assertNextLine(
             FohArrivalTestLogs.ordering(
                 restId = 1,
@@ -102,9 +110,9 @@ class ExhaustiveSimpleScenarioTest : ExampleSystemTestExtension() {
             )
         )
 
-        // The soup (duration 10) is done within the tick it was started; the chicken is not.
         assertNextLine(KitchenTestLogs.kitchenCooked(1, 1, 2, TOMATO_SOUP, 0))
         assertNextLine(KitchenTestLogs.kitchenStatus(1, 2, 4, 2, 2))
+
         assertNextLine(FohServiceTestLogs.noServing(1, 1, 2, 1))
         assertNextLine(FohServiceTestLogs.servingStatus(1, 0, 0))
         assertNextLine(FohServiceTestLogs.eatingStatus(1, 0, 0))
@@ -162,6 +170,7 @@ class ExhaustiveSimpleScenarioTest : ExampleSystemTestExtension() {
 
         assertNextLine(FohServiceTestLogs.finishedEating(1, 4, 2, 1))
         assertNextLine(FohServiceTestLogs.eatingStatus(1, 0, 4))
+
         assertNextLine(FohServiceTestLogs.escorting(1, 1, 4, 2, 1))
         assertNextLine(FohServiceTestLogs.escortingStatus(1, 1, 4))
 
@@ -177,5 +186,17 @@ class ExhaustiveSimpleScenarioTest : ExampleSystemTestExtension() {
 
         assertNextLine(FohServiceTestLogs.ratingStatus(1, 1))
         assertNextLine(TickStatusTestLogs.restEnd(1))
+    }
+
+    private suspend fun assertFinalStatistics() {
+        // Because maxTicks = 5, the serving phase ends immediately after Tick 5 completes.
+        assertNextLine(TickStatusTestLogs.servingEnd(1))
+
+        // Final Global Statistics
+        assertNextLine(StatisticsTestLogs.STATS_CALCULATED)
+        assertNextLine(StatisticsTestLogs.statsCooked(1, 4))
+        assertNextLine(StatisticsTestLogs.statsServed(1, 4))
+        assertNextLine(StatisticsTestLogs.statsDelivered(1, 0))
+        assertNextLine(StatisticsTestLogs.statsReceived(1, 1))
     }
 }

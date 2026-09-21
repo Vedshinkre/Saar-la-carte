@@ -140,6 +140,11 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.recipeincidenttests.RecipeC
 import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.RegularPlanningFailedOrderSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.RegularPlanningTwoGroupsSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.RegularPlanningVisitingPeriodSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.staffchangetests.DriverAvailabilityAbProbeSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.staffchangetests.StaffChangeClampThenHireSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.staffchangetests.StaffChangeNoCookStillProcuresSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.staffchangetests.StaffChangeNoWaitstaffSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.staffchangetests.StaffChangeOnlyNamedRestaurantSystemTest
 
 /**
  * Used for test registration
@@ -182,6 +187,7 @@ object SystemTestRegistration {
         testSuite.registerTest(RegularRetrySucceedsSystemTest())
         registerRecipeChangeProbes(testSuite)
         registerRegularPlanningProbes(testSuite)
+        registerStaffChangeProbes(testSuite)
     }
 
     /**
@@ -414,6 +420,18 @@ object SystemTestRegistration {
         testSuite.registerTest(RegularPlanningTwoGroupsSystemTest())
         testSuite.registerTest(RegularPlanningVisitingPeriodSystemTest())
         testSuite.registerTest(RegularPlanningFailedOrderSystemTest())
+    }
+
+    /**
+     * Probes for the STAFF change incident, the area the KitchenConfidential and MilkShake
+     * component tests cover. Not registered for the mutants until the reference run confirms them.
+     */
+    private fun registerStaffChangeProbes(testSuite: SELab26TestSuite) {
+        testSuite.registerTest(StaffChangeNoCookStillProcuresSystemTest())
+        testSuite.registerTest(StaffChangeClampThenHireSystemTest())
+        testSuite.registerTest(StaffChangeNoWaitstaffSystemTest())
+        testSuite.registerTest(StaffChangeOnlyNamedRestaurantSystemTest())
+        testSuite.registerTest(DriverAvailabilityAbProbeSystemTest())
     }
 
     private fun registerRecipeChangeProbes(testSuite: SELab26TestSuite) {

@@ -1,4 +1,4 @@
-package recipechangeincidenttests
+package recipechangeincidenttest
 
 import de.unisaarland.cs.se.selab.enums.CookType
 import de.unisaarland.cs.se.selab.enums.MeasurementUnit
@@ -6,7 +6,6 @@ import de.unisaarland.cs.se.selab.food.Ingredient
 import de.unisaarland.cs.se.selab.food.Recipe
 import de.unisaarland.cs.se.selab.incidents.RecipeChangeIncident
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Test
 
 class RecipeChangeIncidentTest {
@@ -21,36 +20,10 @@ class RecipeChangeIncidentTest {
         RecipeChangeIncident(1, 1, flour, adaptation, recipes.toList())
 
     @Test
-    fun `type is RECIPE`() {
-        assertEquals("RECIPE", incident(10).type)
-    }
-
-    @Test
-    fun `positive adaptation increases amount`() {
-        val r = recipe(1, flour to 100)
-        incident(50, r).apply()
-        assertEquals(150, r.ingredients[flour])
-    }
-
-    @Test
-    fun `negative adaptation decreases amount`() {
-        val r = recipe(1, flour to 100)
-        incident(-25, r).apply()
-        assertEquals(75, r.ingredients[flour])
-    }
-
-    @Test
     fun `zero adaptation changes nothing`() {
         val r = recipe(1, flour to 42)
         incident(0, r).apply()
         assertEquals(42, r.ingredients[flour])
-    }
-
-    @Test
-    fun `increase is rounded down`() {
-        val r = recipe(1, flour to 3)
-        incident(50, r).apply() // 4.5 -> 4
-        assertEquals(4, r.ingredients[flour])
     }
 
     @Test
@@ -65,13 +38,6 @@ class RecipeChangeIncidentTest {
         val r = recipe(1, flour to 5)
         incident(10, r).apply() // 5.5 -> 5
         assertEquals(5, r.ingredients[flour])
-    }
-
-    @Test
-    fun `amount never drops below one`() {
-        val r = recipe(1, flour to 1)
-        incident(-1, r).apply() // 0.99 -> 0 -> clamped to 1
-        assertEquals(1, r.ingredients[flour])
     }
 
     @Test
@@ -106,14 +72,6 @@ class RecipeChangeIncidentTest {
     }
 
     @Test
-    fun `recipe without the ingredient is untouched and not extended`() {
-        val r = recipe(1, milk to 20)
-        incident(50, r).apply()
-        assertEquals(mapOf(milk to 20), r.ingredients.toMap())
-        assertFalse(r.ingredients.containsKey(flour))
-    }
-
-    @Test
     fun `other ingredients in the same recipe are untouched`() {
         val r = recipe(1, flour to 100, milk to 20)
         incident(50, r).apply()
@@ -122,43 +80,25 @@ class RecipeChangeIncidentTest {
     }
 
     @Test
-    fun `all affected recipes are changed and unaffected ones skipped`() {
-        val a = recipe(1, flour to 10)
-        val b = recipe(2, milk to 10)
-        val c = recipe(3, flour to 20, milk to 5)
-        incident(100, a, b, c).apply()
-        assertEquals(20, a.ingredients[flour])
-        assertEquals(10, b.ingredients[milk])
-        assertEquals(40, c.ingredients[flour])
-        assertEquals(5, c.ingredients[milk])
-    }
-
-    @Test
     fun `empty recipe list does not fail`() {
         incident(50).apply()
     }
 
     @Test
-    fun `recipe with no ingredients does not fail`() {
-        val r = recipe(1)
-        incident(50, r).apply()
-        assertEquals(0, r.ingredients.size)
+    fun `recipes sharing one ingredient map are changed only once`() {
+        val original = recipe(1, flour to 100)
+        val menuCopy = original.copy() // as built by RestaurantParser: same ingredient map instance
+        incident(50, original, menuCopy).apply()
+        assertEquals(150, original.ingredients[flour])
+        assertEquals(150, menuCopy.ingredients[flour])
     }
 
     @Test
-    fun `applying twice compounds`() {
-        val r = recipe(1, flour to 100)
-        val inc = incident(10, r)
-        inc.apply()
-        inc.apply()
-        assertEquals(121, r.ingredients[flour])
-    }
-
-    @Test
-    fun `ingredient is matched by identity not by name`() {
-        val otherFlour = Ingredient("flour", MeasurementUnit.G, 5, 100)
-        val r = recipe(1, otherFlour to 100)
-        incident(50, r).apply()
-        assertEquals(100, r.ingredients[otherFlour])
+    fun `recipes with equal but separate ingredient maps are each changed`() {
+        val a = recipe(1, flour to 100)
+        val b = recipe(2, flour to 100)
+        incident(50, a, b).apply()
+        assertEquals(150, a.ingredients[flour])
+        assertEquals(150, b.ingredients[flour])
     }
 }

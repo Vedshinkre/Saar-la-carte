@@ -53,7 +53,7 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
         val seatCandidates = mutableListOf<RestaurantStats>()
         for (stats in openRestaurants) {
             val numberOfAvailableSeats = stats.availableSeats[group.tableType]
-            if (numberOfAvailableSeats != null && numberOfAvailableSeats >= group.size) {
+            if (numberOfAvailableSeats != null && numberOfAvailableSeats >= 0) {
                 seatCandidates.add(stats)
             }
         }

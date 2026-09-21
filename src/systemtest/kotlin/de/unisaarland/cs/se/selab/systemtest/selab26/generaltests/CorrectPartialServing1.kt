@@ -20,9 +20,9 @@ private const val MEAL_C = "mealC"
 class CorrectPartialServing1 : ExampleSystemTestExtension() {
     override val name = "CorrectPartialServing1"
     override val description = "3-person group receives partial food, extends patience, but times out on late meals"
-    override val restaurants = "partialthreejson/restaurants.json"
-    override val scenario = "partialthreejson/scenario.json"
-    override val food = "partialthreejson/food.json"
+    override val restaurants = "partaildeliveryjson/restaurants.json"
+    override val scenario = "partaildeliveryjson/scenario.json"
+    override val food = "partaildeliveryjson/food.json"
     override val logLevel = "DEBUG"
     override val maxTicks = 10
 

@@ -348,9 +348,8 @@ class FrontOfHouse(
             driver.tripDistance = 0
             driver.distanceDriven = 0
             driver.id = null
-            // DOIT: set the driver id to null
         }
-        // DOIT: call resetDriverIdCounter on serving so I can start assigning IDs from 1 again next evening
+        serving.resetDriverIdCounter()
     }
 
     private fun removeProcessedGroup(group: CustomerGroup) {

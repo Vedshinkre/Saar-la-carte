@@ -63,7 +63,7 @@ class StaffChangeIncidentTest {
         // Originally 2, added 3 = 5 total
         assertEquals(5, staff.cooks.size)
         // Verify the newly added cook is of the correct type
-        val tournantCount = staff.cooks.count { it.type == CookType.SOUS}
+        val tournantCount = staff.cooks.count { it.type == CookType.SOUS }
         assertEquals(3, tournantCount)
     }
 
@@ -78,7 +78,7 @@ class StaffChangeIncidentTest {
         // Originally 2, added 1 = 3 total
         assertEquals(3, staff.cooks.size)
         // Verify the newly added cook is of the correct type
-        val tournantCount = staff.cooks.count { it.type == CookType.EXEC}
+        val tournantCount = staff.cooks.count { it.type == CookType.EXEC }
         assertEquals(1, tournantCount)
     }
 
@@ -93,7 +93,7 @@ class StaffChangeIncidentTest {
         // Originally 2, added 4 = 6 total
         assertEquals(6, staff.cooks.size)
         // Verify the newly added cook is of the correct type
-        val tournantCount = staff.cooks.count { it.type == CookType.SAUCE}
+        val tournantCount = staff.cooks.count { it.type == CookType.SAUCE }
         assertEquals(4, tournantCount)
     }
 
@@ -108,9 +108,10 @@ class StaffChangeIncidentTest {
         // Originally 2, added 2 = 4 total
         assertEquals(4, staff.cooks.size)
         // Verify the newly added cook is of the correct type
-        val tournantCount = staff.cooks.count { it.type == CookType.SAUCE}
+        val tournantCount = staff.cooks.count { it.type == CookType.SAUCE }
         assertEquals(2, tournantCount)
     }
+
     @Test
     fun `apply - Add Cooks - Increases Cook List-ROAST`() {
         val staff = createDummyStaff()
@@ -122,7 +123,7 @@ class StaffChangeIncidentTest {
         // Originally 2, added =1 = 2 total
         assertEquals(3, staff.cooks.size)
         // Verify the newly added cook is of the correct type
-        val tournantCount = staff.cooks.count { it.type == CookType.ROAST}
+        val tournantCount = staff.cooks.count { it.type == CookType.ROAST }
         assertEquals(2, tournantCount)
     }
 
@@ -137,7 +138,7 @@ class StaffChangeIncidentTest {
         // Originally 2, added =1 = 2 total
         assertEquals(3, staff.cooks.size)
         // Verify the newly added cook is of the correct type
-        val tournantCount = staff.cooks.count { it.type == CookType.VEGETABLE}
+        val tournantCount = staff.cooks.count { it.type == CookType.VEGETABLE }
         assertEquals(1, tournantCount)
     }
 

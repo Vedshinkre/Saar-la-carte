@@ -276,10 +276,7 @@ class FrontOfHouse(
      * @param negativeRatings current number of negative ratings
      * @return updated positive and negative rating counts
      */
-    fun processRatings(
-        positiveRatings: Int,
-        negativeRatings: Int
-    ): Pair<Int, Int> = rating.processRatings(positiveRatings, negativeRatings)
+
 
     /** Clears the load of waiters */
     fun clearActionLoads() {

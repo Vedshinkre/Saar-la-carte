@@ -278,7 +278,7 @@ class FrontOfHouse(
      */
     fun processRatings(
         positiveRatings: Int,
-        negativeRatings: Int
+        negativeRatings: Int,
     ): Pair<Int, Int> = rating.processRatings(positiveRatings, negativeRatings)
 
     /** Clears the load of waiters */
@@ -348,9 +348,8 @@ class FrontOfHouse(
             driver.tripDistance = 0
             driver.distanceDriven = 0
             driver.id = null
-            // DOIT: set the driver id to null
         }
-        // DOIT: call resetDriverIdCounter on serving so I can start assigning IDs from 1 again next evening
+        serving.resetDriverIdCounter()
     }
 
     private fun removeProcessedGroup(group: CustomerGroup) {
@@ -373,8 +372,11 @@ class FrontOfHouse(
      * Beep beep I'm a document PLEASE change me
      */
     fun getAvailableDrivers(): Int {
-        // DOIT: check the delivery groups with an order and subtract that count from idle drivers so we get available
-        return drivers.size
+        val promised = deliveryGroups.count { group ->
+            val order = group.currentOrder
+            order != null && order.deliveredAt == null && drivers.none { it.targetGroup === group }
+        }
+        return (drivers.count { it.state == DriverState.IDLE } - promised).coerceAtLeast(0)
     }
 
     /**

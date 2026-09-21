@@ -223,10 +223,7 @@ class Restaurant(
             val processedGroups: MutableList<CustomerGroup> = mutableListOf()
             for (customerGroup in customerQueue.sortedWith(arrivalOrder)) {
                 if (Time.tick < customerGroup.visitingAt && !customerGroup.isVisitingThisTick()) { continue }
-
-                if (customerGroup.isVisitingThisTick()) {
-                    FohReceptionLogger.logRestaurantArrival(customerGroup.id)
-                }
+                logArrivalIfInHouse(customerGroup)
 
                 if (frontOfHouse.processArrival(customerGroup, restaurantStats.menu)) {
                     processedGroups.add(customerGroup)
@@ -238,6 +235,14 @@ class Restaurant(
             customerQueue.clear()
         }
         frontOfHouse.logAndResetSeatingOrderingTickStatus()
+    }
+
+    private fun logArrivalIfInHouse(customerGroup: CustomerGroup) {
+        val wantsDelivery = customerGroup is CasualGroup && customerGroup.wantsDelivery
+
+        if (customerGroup.isVisitingThisTick() && !wantsDelivery) {
+            FohReceptionLogger.logRestaurantArrival(customerGroup.id)
+        }
     }
 
     /** returns whether a driver is available */

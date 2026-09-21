@@ -66,15 +66,14 @@ class EventGroup(
         val waiterRota = WaiterRota(waiters)
         for (foodPreference in orderingSequence()) {
             val availableDishes = countertop.getAvailableRecipes(menu)
-            val eventFavoriteDish = requireNotNull(eventDishes[currentRestaurantType])
+            val eventFavoriteDish = eventDishes[currentRestaurantType] ?: "No Dish"
             val customerDish = foodPreference.decideDish(availableDishes, eventFavoriteDish, countertop.restaurantType)
             if (customerDish != null) {
                 val currentWaiter = waiterRota.next()
                 if (currentWaiter != null) {
                     registerDish(currentWaiter, customerDish, countertop)
-                } else {
-                    registerDish(customerDish, countertop = countertop)
                 }
+
                 listOfDishes.add(customerDish)
             }
         }

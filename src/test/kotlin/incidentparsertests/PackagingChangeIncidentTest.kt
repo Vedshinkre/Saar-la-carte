@@ -68,6 +68,7 @@ class PackagingChangeIncidentTest {
         val jsonArray = buildJsonArray {
             addJsonObject {
                 put("id", 1)
+                put("type", "PACKAGING")
                 put("evening", 1)
                 put("ingredient", "chicken")
                 put("packagingVolume", 1)
@@ -83,6 +84,7 @@ class PackagingChangeIncidentTest {
         val jsonArray = buildJsonArray {
             addJsonObject {
                 put("id", 1)
+                put("type", "PACKAGING")
                 put("evening", 1)
                 put("ingredient", "potato")
                 put("packagingVolume", 1)
@@ -98,6 +100,7 @@ class PackagingChangeIncidentTest {
         val jsonArray = buildJsonArray {
             addJsonObject {
                 put("id", 1)
+                put("type", "PACKAGING")
                 put("evening", 1)
                 put("ingredient", "")
                 put("packagingVolume", 1)

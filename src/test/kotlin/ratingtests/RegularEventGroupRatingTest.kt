@@ -369,4 +369,53 @@ class RegularEventGroupRatingTest {
         assertEquals(10, updatedPositive, "Positive ratings should remain unchanged")
         assertEquals(6, updatedNegative, "Negative ratings should increase by exactly 1")
     }
+
+    @Test
+    fun `RegularGroup gets negative experience and rating when food arrives too late or not at all`() {
+        val regularGroup = createRegularGroup(4, TableType.COMMON)
+        val initialPositive = 10
+        val initialNegative = 5
+
+        // Simulate the specification rule: food arrives too late or not at all
+        // leading to a negative experience
+        regularGroup.experience = ExperienceType.NEGATIVE
+
+        val processor = createProcessor()
+        val (updatedPositive, updatedNegative) = processor.rate(
+            group = regularGroup,
+            positiveRatings = initialPositive,
+            negativeRatings = initialNegative,
+            closing = false
+        )
+
+        // Assertions
+        assertEquals(ExperienceType.NEGATIVE, regularGroup.experience, "Experience must be negative due to food delay")
+        assertEquals(RatingType.NEGATIVE, regularGroup.determineRating(), "Group must generate a negative rating")
+        assertEquals(10, updatedPositive, "Positive ratings should remain unchanged")
+        assertEquals(6, updatedNegative, "Negative ratings should increase by 1")
+    }
+
+    @Test
+    fun `EventGroup gets negative rating due to delivery or service timeout`() {
+        val eventGroup = createEventGroup(4, TableType.COMMON)
+        val initialPositive = 20
+        val initialNegative = 2
+
+        // Simulate a timeout where the event group experiences a delay
+        eventGroup.experience = ExperienceType.NEGATIVE
+
+        val processor = createProcessor()
+        val (updatedPositive, updatedNegative) = processor.rate(
+            group = eventGroup,
+            positiveRatings = initialPositive,
+            negativeRatings = initialNegative,
+            closing = false
+        )
+
+        // Assertions
+        assertEquals(ExperienceType.NEGATIVE, eventGroup.experience)
+        assertEquals(RatingType.NEGATIVE, eventGroup.determineRating())
+        assertEquals(20, updatedPositive)
+        assertEquals(3, updatedNegative, "Negative ratings should increase due to timeout")
+    }
 }

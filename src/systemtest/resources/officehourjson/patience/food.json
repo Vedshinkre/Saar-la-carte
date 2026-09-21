@@ -1,0 +1,41 @@
+{
+  "ingredients": [
+    {
+      "name": "rice",
+      "unit": "g",
+      "packagingVolume": 1000,
+      "bestBefore": 5
+    }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "Slow Bowl",
+      "duration": 40,
+      "basicDishFor": "EUROPEAN",
+      "cookType": [
+        "TOURNANT"
+      ],
+      "ingredients": [
+        {
+          "name": "rice",
+          "amount": 10
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "dishName": "Blocked Bowl",
+      "duration": 40,
+      "cookType": [
+        "TOURNANT"
+      ],
+      "ingredients": [
+        {
+          "name": "rice",
+          "amount": 10
+        }
+      ]
+    }
+  ]
+}

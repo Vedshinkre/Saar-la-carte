@@ -118,11 +118,11 @@ class Order(val dishes: List<Dish>) {
     }
 
     /**
-     * returns true if all the dishes in this order have been eaten
+     * returns true if all the dishes in this order have been eaten or aborted
      */
     fun areAllDishesEaten(): Boolean {
         for (dish in dishes) {
-            if (dish.status != DishStatus.EATEN) {
+            if (dish.status != DishStatus.EATEN || dish.status != DishStatus.ABORTED) {
                 return false
             }
         }

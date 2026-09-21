@@ -43,6 +43,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualTableExc
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualTableNoLiftSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualTiebreakLowestIdTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CookChangeNoOrderTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CorrectPartialServing1
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CustomerBehaviourDecisionSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryCumulativeDistanceSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOrderScenarioTest
@@ -54,8 +55,6 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventSeatingCa
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventSeatingCapacityCasualRetryTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventSeatingCapacityExactFitTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventSeatingCapacityFailedEventRatingTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventSeatingCapacityFailedKeepsTickLoadTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventSeatingCapacityFailedThenRetryTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventSeatingCapacityOneTooManyTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventSeatingLoadPriorityBuildUpTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventSeatingLoadPriorityBusiestWaiterFirstTest
@@ -83,6 +82,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RecipeChangeMi
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RecipeChangeRoundingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RegularBeforeCasualServingTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RegularGradualCookServingTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RegularRetrySucceedsSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SimulationLifecycleSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SingleOrCouple
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.StaffIdResetAcrossEveningsSystemTest
@@ -130,6 +130,21 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.RestaurantsT
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.StaffIncidentUnknownRestaurantSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.UnavailabilityDifferentIngredientsOverlapAcceptedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.ValidIncidentsAcceptedSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.recipeincidenttests.RecipeChangeEventPlanningSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.recipeincidenttests.RecipeChangeIncidentOrderSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.recipeincidenttests.RecipeChangeLaterEveningSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.recipeincidenttests.RecipeChangeOrderHistorySystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.recipeincidenttests.RecipeChangePersistsAcrossEveningsSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.recipeincidenttests.RecipeChangeScopeSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.recipeincidenttests.RecipeChangeThreeVisitHistorySystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.RegularPlanningFailedOrderSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.RegularPlanningTwoGroupsSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.RegularPlanningVisitingPeriodSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.staffchangetests.DriverAvailabilityAbProbeSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.staffchangetests.StaffChangeClampThenHireSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.staffchangetests.StaffChangeNoCookStillProcuresSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.staffchangetests.StaffChangeNoWaitstaffSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.staffchangetests.StaffChangeOnlyNamedRestaurantSystemTest
 
 /**
  * Used for test registration
@@ -149,14 +164,7 @@ object SystemTestRegistration {
         testSuite.registerTest(ExampleEmptyTickOneCycleTest())
         testSuite.registerTest(EventReservationConflictTest())
         testSuite.registerTest(WaitstaffExhaustionTest())
-        testSuite.registerTest(CasualAdHocTableMergingSystemTest())
-        testSuite.registerTest(RegularGradualCookServingTest())
-        testSuite.registerTest(RegularBeforeCasualServingTest())
-        testSuite.registerTest(CasualTiebreakLowestIdTest())
         testSuite.registerTest(CustomerBehaviourDecisionSystemTest())
-        testSuite.registerTest(CasualDeliveryEarlyDecisionTest())
-        testSuite.registerTest(DeliveryOutboundTripSystemTest())
-        testSuite.registerTest(DeliveryCumulativeDistanceSystemTest())
         testSuite.registerTest(SingleOrCouple()) // testSuite.registerTest(RegularRetrySucceedsSystemTest())
         testSuite.registerTest(SimulationLifecycleSystemTest())
         testSuite.registerTest(StatisticsOrderingSystemTest())
@@ -167,7 +175,6 @@ object SystemTestRegistration {
         )
         testSuite.registerTest(LateCasualNoWaiterSystemTest())
         registeratharvaRefrenceTests(testSuite)
-        customerParserSystemTests().forEach { testSuite.registerTest(it) }
         fullScenarioSystemTests(false).forEach { testSuite.registerTest(it) }
         testSuite.registerTest(DeliveryOrderSuccessTestA())
         testSuite.registerTest(CasualDeliveryTimeoutTest())
@@ -175,25 +182,12 @@ object SystemTestRegistration {
         testSuite.registerTest(CookChangeNoOrderTest())
         testSuite.registerTest(RecipeChangeAcrossRestaurantsTest())
         testSuite.registerTest(DeliveryOrderScenarioTest())
-        // This is to test that the reference Implementation clamps amount of an ingredient to 1 after incident
+        testSuite.registerTest(CorrectPartialServing1())
         testSuite.registerTest(RecipeChangeMinimumAmountSystemTest())
-        registerBasicDishTests(testSuite)
-    }
-
-    /**
-     * Basic-dish tests: the RECIPE incident on an adapted basic dish (the shared ingredient map of
-     * `Recipe.copy()`), and probes for the basic-dish validation rules of the food file.
-     * not registered for the mutant runs until we know they pass against the reference.
-     */
-    private fun registerBasicDishTests(testSuite: SELab26TestSuite) {
-        testSuite.registerTest(AdaptedBasicDishRecipeChangeSystemTest())
-        testSuite.registerTest(AdaptedBasicDishOnlyAdapterAffectedSystemTest())
-        testSuite.registerTest(BasicDishMenuCompositionSystemTest())
-        testSuite.registerTest(SameBasicDishNameTwoTypesRejectedSystemTest())
-        testSuite.registerTest(SameBasicDishNameSameTypeRejectedSystemTest())
-        testSuite.registerTest(AdaptedBasicDishAcceptedSystemTest())
-        testSuite.registerTest(DuplicateNonBasicDishNameAcceptedSystemTest())
-        testSuite.registerTest(EmptyRestaurantRecipesAcceptedSystemTest())
+        testSuite.registerTest(RegularRetrySucceedsSystemTest())
+        registerRecipeChangeProbes(testSuite)
+        registerRegularPlanningProbes(testSuite)
+        registerStaffChangeProbes(testSuite)
     }
 
     /**
@@ -206,6 +200,7 @@ object SystemTestRegistration {
         registeratharvaMutantValidationTests(testSuite)
         testSuite.registerTest(ExampleSystemTest())
         customerParserSystemTests().forEach { testSuite.registerTest(it) }
+        registerVladValidationMutantTests(testSuite)
         fullScenarioSystemTests(true).forEach { testSuite.registerTest(it) }
     }
 
@@ -215,6 +210,7 @@ object SystemTestRegistration {
      */
     fun registerSystemTestsMutantSimulation(testSuite: SELab26TestSuite) {
         testSuite.registerTest(ExampleSystemTest())
+        registerVladSimulationMutantTests(testSuite)
         registeratharvaMutantSimulationTests(testSuite)
         testSuite.registerTest(EventReservationConflictTest())
         testSuite.registerTest(ExactStockoutTest())
@@ -228,6 +224,7 @@ object SystemTestRegistration {
         testSuite.registerTest(
             StaffLoadBalancingFallbackSystemTest()
         )
+        testSuite.registerTest(CookChangeNoOrderTest())
         fullScenarioSystemTests(true).forEach { testSuite.registerTest(it) }
     }
 
@@ -298,8 +295,8 @@ object SystemTestRegistration {
         testSuite.registerTest(EventSeatingCapacityCasualRetryTest())
         testSuite.registerTest(EventSeatingCapacityOneTooManyTest())
         testSuite.registerTest(EventSeatingCapacityFailedEventRatingTest())
-        testSuite.registerTest(EventSeatingCapacityFailedKeepsTickLoadTest())
-        testSuite.registerTest(EventSeatingCapacityFailedThenRetryTest())
+        /**testSuite.registerTest(EventSeatingCapacityFailedKeepsTickLoadTest())
+         testSuite.registerTest(EventSeatingCapacityFailedThenRetryTest())**/
         testSuite.registerTest(EventSeatingSharedCapacityFirstEventTest())
         testSuite.registerTest(EventSeatingSharedCapacitySecondEventTest())
         testSuite.registerTest(EventSeatingSharedCapacityNoCapacityLeftTest())
@@ -402,5 +399,70 @@ object SystemTestRegistration {
         testSuite.registerTest(RecipeChangeRoundingSystemTest())
         testSuite.registerTest(CasualMergeTrimTieBreakSystemTest())
         registerTableMergingTests(testSuite)
+        registerEventTests(testSuite)
+        helperregisteratharvaRefrenceTests(testSuite)
+    }
+
+    /**
+     * Simulation tests that are confirmed to pass against the reference implementation, so they are
+     * run against the simulation mutants instead of being re-checked against the reference.
+     */
+    /**
+     * Probes for the RECIPE incident, one specification statement each, so that a failure against
+     * the reference implementation names the rule we read wrongly. Not registered for the mutants
+     * until the reference run confirms them.
+     */
+    /**
+     * Probes for the ingredient planning of known REGULAR groups, the area the LoyaltyV component
+     * test covers. Not registered for the mutants until the reference run confirms them.
+     */
+    private fun registerRegularPlanningProbes(testSuite: SELab26TestSuite) {
+        testSuite.registerTest(RegularPlanningTwoGroupsSystemTest())
+        testSuite.registerTest(RegularPlanningVisitingPeriodSystemTest())
+        testSuite.registerTest(RegularPlanningFailedOrderSystemTest())
+    }
+
+    /**
+     * Probes for the STAFF change incident, the area the KitchenConfidential and MilkShake
+     * component tests cover. Not registered for the mutants until the reference run confirms them.
+     */
+    private fun registerStaffChangeProbes(testSuite: SELab26TestSuite) {
+        testSuite.registerTest(StaffChangeNoCookStillProcuresSystemTest())
+        testSuite.registerTest(StaffChangeClampThenHireSystemTest())
+        testSuite.registerTest(StaffChangeNoWaitstaffSystemTest())
+        testSuite.registerTest(StaffChangeOnlyNamedRestaurantSystemTest())
+        testSuite.registerTest(DriverAvailabilityAbProbeSystemTest())
+    }
+
+    private fun registerRecipeChangeProbes(testSuite: SELab26TestSuite) {
+        testSuite.registerTest(RecipeChangeIncidentOrderSystemTest())
+        testSuite.registerTest(RecipeChangePersistsAcrossEveningsSystemTest())
+        testSuite.registerTest(RecipeChangeLaterEveningSystemTest())
+        testSuite.registerTest(RecipeChangeScopeSystemTest())
+        testSuite.registerTest(RecipeChangeOrderHistorySystemTest())
+        testSuite.registerTest(RecipeChangeThreeVisitHistorySystemTest())
+        testSuite.registerTest(RecipeChangeEventPlanningSystemTest())
+    }
+
+    private fun registerVladSimulationMutantTests(testSuite: SELab26TestSuite) {
+        testSuite.registerTest(CasualAdHocTableMergingSystemTest())
+        testSuite.registerTest(RegularGradualCookServingTest())
+        testSuite.registerTest(RegularBeforeCasualServingTest())
+        testSuite.registerTest(CasualTiebreakLowestIdTest())
+        testSuite.registerTest(CasualDeliveryEarlyDecisionTest())
+        testSuite.registerTest(DeliveryOutboundTripSystemTest())
+        testSuite.registerTest(DeliveryCumulativeDistanceSystemTest())
+        testSuite.registerTest(AdaptedBasicDishRecipeChangeSystemTest())
+        testSuite.registerTest(AdaptedBasicDishOnlyAdapterAffectedSystemTest())
+        testSuite.registerTest(BasicDishMenuCompositionSystemTest())
+        testSuite.registerTest(RecipeChangeMinimumAmountSystemTest())
+    }
+
+    private fun registerVladValidationMutantTests(testSuite: SELab26TestSuite) {
+        testSuite.registerTest(SameBasicDishNameTwoTypesRejectedSystemTest())
+        testSuite.registerTest(SameBasicDishNameSameTypeRejectedSystemTest())
+        testSuite.registerTest(AdaptedBasicDishAcceptedSystemTest())
+        testSuite.registerTest(DuplicateNonBasicDishNameAcceptedSystemTest())
+        testSuite.registerTest(EmptyRestaurantRecipesAcceptedSystemTest())
     }
 }

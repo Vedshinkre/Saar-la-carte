@@ -1,0 +1,9 @@
+{
+  "ingredients": [
+    {"name": "spelt", "unit": "g", "packagingVolume": 1, "bestBefore": 9}
+  ],
+  "recipes": [
+    {"id": 1, "dishName": "Spelt Bowl", "duration": 10, "basicDishFor": "EUROPEAN",
+     "cookType": ["TOURNANT"], "ingredients": [{"name": "spelt", "amount": 5}]}
+  ]
+}

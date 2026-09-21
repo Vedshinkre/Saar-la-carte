@@ -1,0 +1,9 @@
+{
+  "ingredients": [
+    {"name": "cumin", "unit": "g", "packagingVolume": 1, "bestBefore": 5}
+  ],
+  "recipes": [
+    {"id": 1, "dishName": "Spice Bowl", "duration": 10, "basicDishFor": "EUROPEAN",
+     "cookType": ["TOURNANT"], "ingredients": [{"name": "cumin", "amount": 7}]}
+  ]
+}

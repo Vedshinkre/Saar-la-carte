@@ -48,6 +48,7 @@ class DeliveryProcessor(
     }
 
     /** whether any driver is currently free to take on a new delivery */
+    // DOTO This function is not used actually. It doesn't need to exist
     fun isDriverAvailable(): Boolean = drivers.any { it.state == DriverState.IDLE }
 
     /** computes the trip length and sends the driver off in the next tick */

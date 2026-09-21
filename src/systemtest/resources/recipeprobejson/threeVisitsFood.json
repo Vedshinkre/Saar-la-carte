@@ -1,0 +1,9 @@
+{
+  "ingredients": [
+    {"name": "quinoa", "unit": "g", "packagingVolume": 1, "bestBefore": 9}
+  ],
+  "recipes": [
+    {"id": 1, "dishName": "Quinoa Bowl", "duration": 10, "basicDishFor": "EUROPEAN",
+     "cookType": ["TOURNANT"], "ingredients": [{"name": "quinoa", "amount": 10}]}
+  ]
+}

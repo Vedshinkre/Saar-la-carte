@@ -1,0 +1,9 @@
+{
+  "ingredients": [
+    {"name": "truffle", "unit": "g", "packagingVolume": 1, "bestBefore": 9}
+  ],
+  "recipes": [
+    {"id": 1, "dishName": "Truffle Pasta", "duration": 10, "basicDishFor": "EUROPEAN",
+     "cookType": ["TOURNANT"], "ingredients": [{"name": "truffle", "amount": 10}]}
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "ingredients": [
+    {"name": "millet", "unit": "g", "packagingVolume": 1, "bestBefore": 9}
+  ],
+  "recipes": [
+    {"id": 1, "dishName": "Millet Bowl", "duration": 10, "basicDishFor": "EUROPEAN",
+     "cookType": ["TOURNANT"], "ingredients": [{"name": "millet", "amount": 10}]}
+  ]
+}

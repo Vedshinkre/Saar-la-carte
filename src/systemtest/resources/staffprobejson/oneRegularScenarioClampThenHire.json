@@ -1,0 +1,12 @@
+{
+  "customerGroups": [
+    {"id": 1, "type": "REGULAR", "size": 2, "tableType": "COMMON", "visitingTick": 1,
+     "visitingStart": 1, "visitingPeriod": 1, "restaurant": 1, "foodPreferences": []}
+  ],
+  "incidents": [
+    {"id": 1, "type": "STAFF", "evening": 2, "restaurant": 1, "staffType": "COOK",
+     "cookType": "TOURNANT", "number": -2},
+    {"id": 2, "type": "STAFF", "evening": 2, "restaurant": 1, "staffType": "COOK",
+     "cookType": "TOURNANT", "number": 1}
+  ]
+}

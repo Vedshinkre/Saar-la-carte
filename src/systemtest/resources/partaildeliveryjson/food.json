@@ -4,14 +4,14 @@
       "name": "chicken",
       "unit": "g",
       "packagingVolume": 1000,
-      "bestBefore": 5
+      "bestBefore": 15
     }
   ],
   "recipes": [
     {
       "id": 1,
-      "dishName": "fast",
-      "duration": 10,
+      "dishName": "mealA",
+      "duration": 30,
       "basicDishFor": "EUROPEAN",
       "cookType": [
         "TOURNANT"
@@ -25,7 +25,7 @@
     },
     {
       "id": 2,
-      "dishName": "blocker",
+      "dishName": "mealB",
       "duration": 40,
       "basicDishFor": "EUROPEAN",
       "cookType": [
@@ -40,8 +40,9 @@
     },
     {
       "id": 3,
-      "dishName": "slow",
+      "dishName": "mealC",
       "duration": 40,
+      "basicDishFor": "EUROPEAN",
       "cookType": [
         "TOURNANT"
       ],

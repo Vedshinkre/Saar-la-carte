@@ -1,0 +1,9 @@
+{
+  "ingredients": [
+    {"name": "basil", "unit": "g", "packagingVolume": 1, "bestBefore": 5}
+  ],
+  "recipes": [
+    {"id": 1, "dishName": "Basil Pesto", "duration": 10, "basicDishFor": "EUROPEAN",
+     "cookType": ["TOURNANT"], "ingredients": [{"name": "basil", "amount": 100}]}
+  ]
+}

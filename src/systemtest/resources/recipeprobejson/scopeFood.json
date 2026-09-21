@@ -1,0 +1,14 @@
+{
+  "ingredients": [
+    {"name": "alpha", "unit": "g", "packagingVolume": 1, "bestBefore": 5},
+    {"name": "beta", "unit": "g", "packagingVolume": 1, "bestBefore": 5}
+  ],
+  "recipes": [
+    {"id": 1, "dishName": "Alpha Big", "duration": 10, "basicDishFor": "EUROPEAN",
+     "cookType": ["TOURNANT"], "ingredients": [{"name": "alpha", "amount": 40}]},
+    {"id": 2, "dishName": "Alpha Small", "duration": 10,
+     "cookType": ["TOURNANT"], "ingredients": [{"name": "alpha", "amount": 7}]},
+    {"id": 3, "dishName": "Beta Only", "duration": 10,
+     "cookType": ["TOURNANT"], "ingredients": [{"name": "beta", "amount": 100}]}
+  ]
+}

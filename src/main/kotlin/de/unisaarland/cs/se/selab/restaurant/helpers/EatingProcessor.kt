@@ -134,9 +134,9 @@ class EatingProcessor(
             val order = group.currentOrder
             if (order == null || order.deliveredAt == null || order.areAllDishesEaten()) continue
 
-            // for statistics, runs exactly once per order (when driver hands over the order)
+            // for statistics, runs exactly once per order (when driver hands over the order).
             if (order.deliveredAt == Time.tick) {
-                addCustomersDelivered(group.size)
+                addCustomersDelivered(order.dishes.size) // order.dishes.size <= group.size
             }
 
             order.dishes.forEach { dish ->

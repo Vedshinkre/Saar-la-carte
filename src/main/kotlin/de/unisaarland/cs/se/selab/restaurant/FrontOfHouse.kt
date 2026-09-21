@@ -246,6 +246,7 @@ class FrontOfHouse(
     fun processDelivering() = delivering.processDelivering()
 
     /** whether any driver is currently free to take on a new delivery */
+    // DOTO this function doesn't need to exist
     fun isDriverAvailable(): Boolean = delivering.isDriverAvailable()
 
     /** process eating */
@@ -346,7 +347,10 @@ class FrontOfHouse(
             driver.ticksToDest = 0
             driver.tripDistance = 0
             driver.distanceDriven = 0
+            driver.id = null
+            // DOIT: set the driver id to null
         }
+        // DOIT: call resetDriverIdCounter on serving so I can start assigning IDs from 1 again next evening
     }
 
     private fun removeProcessedGroup(group: CustomerGroup) {
@@ -366,9 +370,10 @@ class FrontOfHouse(
     }
 
     /**
-     * Needed to set drivers in restaurant Stats
+     * Beep beep I'm a document PLEASE change me
      */
     fun getAvailableDrivers(): Int {
+        // DOIT: check the delivery groups with an order and subtract that count from idle drivers so we get available
         return drivers.size
     }
 

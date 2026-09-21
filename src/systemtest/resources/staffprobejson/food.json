@@ -1,0 +1,9 @@
+{
+  "ingredients": [
+    {"name": "lentil", "unit": "g", "packagingVolume": 1, "bestBefore": 9}
+  ],
+  "recipes": [
+    {"id": 1, "dishName": "Lentil Stew", "duration": 10, "basicDishFor": "EUROPEAN",
+     "cookType": ["TOURNANT"], "ingredients": [{"name": "lentil", "amount": 10}]}
+  ]
+}

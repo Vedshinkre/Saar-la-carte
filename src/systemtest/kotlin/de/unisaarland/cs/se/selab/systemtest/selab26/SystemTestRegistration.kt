@@ -110,6 +110,8 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.WaiterLoadRele
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.WaitingForFoodSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.WaitstaffExhaustionTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentNegativePackagingVolumeRejectedSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentNonUniqueIdsRejectedSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentZeroAdaptationRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentZeroPackagingVolumeRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.CanvisitA
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.CanvisitB
@@ -234,6 +236,8 @@ object SystemTestRegistration {
         testSuite.registerTest(PackagingChangeIncidentSystemTests())
         testSuite.registerTest(IncidentZeroPackagingVolumeRejectedSystemTest())
         testSuite.registerTest(IncidentNegativePackagingVolumeRejectedSystemTest())
+        testSuite.registerTest(IncidentZeroAdaptationRejectedSystemTest())
+        testSuite.registerTest(IncidentNonUniqueIdsRejectedSystemTest())
         testSuite.registerTest(CorrectPartialServing2())
     }
 

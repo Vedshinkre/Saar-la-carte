@@ -200,8 +200,8 @@ object SystemTestRegistration {
         registeratharvaMutantValidationTests(testSuite)
         testSuite.registerTest(ExampleSystemTest())
         customerParserSystemTests().forEach { testSuite.registerTest(it) }
-        fullScenarioSystemTests(true).forEach { testSuite.registerTest(it) }
         registerVladValidationMutantTests(testSuite)
+        fullScenarioSystemTests(true).forEach { testSuite.registerTest(it) }
     }
 
     /**
@@ -224,8 +224,8 @@ object SystemTestRegistration {
         testSuite.registerTest(
             StaffLoadBalancingFallbackSystemTest()
         )
-        fullScenarioSystemTests(true).forEach { testSuite.registerTest(it) }
         testSuite.registerTest(CookChangeNoOrderTest())
+        fullScenarioSystemTests(true).forEach { testSuite.registerTest(it) }
     }
 
     /**

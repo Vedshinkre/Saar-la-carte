@@ -319,6 +319,30 @@ class CustomerParserTypeSpecificTest {
     }
 
     @Test
+    fun `REGULAR group is validated against the opening hours of its own restaurant`() {
+        val lateRestaurant = RestaurantStats(
+            restaurantId = 2,
+            restaurantType = RestaurantType.ASIAN,
+            openingTickStart = 10,
+            openingTickEnd = 20,
+            event = false,
+            positiveRatings = 0,
+            negativeRatings = 0,
+            menu = recipes
+        )
+        val stats = listOf(restaurant1, lateRestaurant)
+        val accepted = regularGroup(id = 1, restaurantId = 2, visitingAt = 10)
+        val rejected = regularGroup(id = 2, restaurantId = 2, visitingAt = 6)
+
+        val group = parser.parseCustomers(JsonArray(listOf(accepted)), recipes, ingredients, stats).single()
+
+        assertEquals(2, (group as RegularGroup).restaurantId)
+        assertThrows<IllegalArgumentException> {
+            parser.parseCustomers(JsonArray(listOf(rejected)), recipes, ingredients, stats)
+        }
+    }
+
+    @Test
     fun `REGULAR unknown restaurant id is rejected`() {
         assertThrows<IllegalArgumentException> {
             parse(regularGroup(id = 1, restaurantId = 99))

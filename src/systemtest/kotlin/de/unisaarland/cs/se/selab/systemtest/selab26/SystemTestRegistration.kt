@@ -100,6 +100,8 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.Unavailability
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.UnavailableIncidentSupplierProcurementSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.WaitingForFoodSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.WaitstaffExhaustionTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentNegativePackagingVolumeRejectedSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentZeroPackagingVolumeRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.CanvisitA
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.CanvisitB
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.SomeDeliveryTest
@@ -169,7 +171,6 @@ object SystemTestRegistration {
      * the same as their reference implementation)
      */
     fun registerSystemTestsForReferenceImplementation(testSuite: SELab26TestSuite) {
-        testSuite.registerTest(PackagingChangeIncidentSystemTests())
         testSuite.registerTest(ExampleSystemTest())
         testSuite.registerTest(ExactStockoutTest()) //   testSuite.registerTest(ExhaustiveSimpleScenarioTest())
         testSuite.registerTest(OneCookTwoOrdersTest())
@@ -204,6 +205,9 @@ object SystemTestRegistration {
         testSuite.registerTest(SomeDeliveryTest())
         testSuite.registerTest(CanvisitA())
         testSuite.registerTest(CanvisitB())
+        testSuite.registerTest(PackagingChangeIncidentSystemTests())
+        testSuite.registerTest(IncidentZeroPackagingVolumeRejectedSystemTest())
+        testSuite.registerTest(IncidentNegativePackagingVolumeRejectedSystemTest())
     }
 
     /**

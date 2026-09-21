@@ -144,6 +144,8 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.Regula
 import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.RegularPlanningVisitingPeriodSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.RegularReservationEstimateSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.RegularReservedTableIsTheExactFitSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.RegularSeatedWithoutOrderKeepsCountingSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.RegularSeatedWithoutOrderStopsCountingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.staffchangetests.StaffChangeClampThenHireSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.staffchangetests.StaffChangeNoCookStillProcuresSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.staffchangetests.StaffChangeNoWaitstaffSystemTest
@@ -426,6 +428,8 @@ object SystemTestRegistration {
         testSuite.registerTest(CasualConsumptionCarryOverSystemTest())
         testSuite.registerTest(RegularFirstVisitCountsReservedSeatsSystemTest())
         testSuite.registerTest(RegularReservedTableIsTheExactFitSystemTest())
+        testSuite.registerTest(RegularSeatedWithoutOrderStopsCountingSystemTest())
+        testSuite.registerTest(RegularSeatedWithoutOrderKeepsCountingSystemTest())
     }
 
     /**

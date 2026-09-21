@@ -8,13 +8,11 @@ import de.unisaarland.cs.se.selab.enums.CookType
 import de.unisaarland.cs.se.selab.enums.MeasurementUnit
 import de.unisaarland.cs.se.selab.enums.RatingLikelihood
 import de.unisaarland.cs.se.selab.enums.RestaurantType
-import de.unisaarland.cs.se.selab.enums.TableType
 import de.unisaarland.cs.se.selab.food.Ingredient
 import de.unisaarland.cs.se.selab.food.Recipe
 import de.unisaarland.cs.se.selab.parsers.CustomerParser
 import de.unisaarland.cs.se.selab.restaurant.RestaurantStats
 import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonObjectBuilder
 import kotlinx.serialization.json.add
@@ -31,26 +29,11 @@ import kotlin.test.assertTrue
 /**
  * Unit tests for the fields specific to each customer group type (REGULAR, CASUAL, EVENT) and
  * the extra validation rules [de.unisaarland.cs.se.selab.parsers.CustomerParser] performs for
- * each of them. These tests bypass the JSON schema, so they only target rules enforced by the
- * parser itself.
+ * each of them. The JSON schema already enforces enums and required fields, so these tests only
+ * target the rules that only the parser enforces.
  */
 class CustomerParserTypeSpecificTest {
     private val parser = CustomerParser()
-
-    /**
-     * Builds a string with the same `hashCode()` as [value] but that is not equal to it, by
-     * shifting the weight of the last two characters (`char[n-2] * 31 + char[n-1]` is invariant
-     * under `char[n-2] -= 1, char[n-1] += 31`). The parser dispatches on these string constants
-     * via a compiled hashCode+equals switch, and the "same hash bucket, but equals() is false"
-     * path is otherwise unreachable through any semantically distinct input string.
-     */
-    private fun hashCollisionOf(value: String): String {
-        val chars = value.toCharArray()
-        val last = chars.size - 1
-        chars[last - 1] = chars[last - 1] - 1
-        chars[last] = chars[last] + 31
-        return String(chars)
-    }
 
     private val rice = Ingredient("rice", MeasurementUnit.G, bestBefore = 3, initialPackagingVolume = 1000)
     private val ingredients = listOf(rice)
@@ -173,112 +156,6 @@ class CustomerParserTypeSpecificTest {
     // ---- REGULAR ----
 
     @Test
-    fun `hashCollisionOf produces a distinct string with the same hashCode`() {
-        for (value in listOf("REGULAR", "CASUAL", "EVENT", "COMMON", "BAR", "SEPARATED", "SOME", "NEVER", "ALWAYS")) {
-            val collision = hashCollisionOf(value)
-            assertEquals(value.hashCode(), collision.hashCode())
-            assertTrue(value != collision)
-        }
-    }
-
-    @Test
-    fun `group type colliding with REGULAR's hashCode is rejected`() {
-        assertThrows<IllegalArgumentException> {
-            parse(regularGroup(id = 1) { put("type", hashCollisionOf("REGULAR")) })
-        }
-    }
-
-    @Test
-    fun `group type colliding with CASUAL's hashCode is rejected`() {
-        assertThrows<IllegalArgumentException> {
-            parse(casualGroup(id = 1) { put("type", hashCollisionOf("CASUAL")) })
-        }
-    }
-
-    @Test
-    fun `group type colliding with EVENT's hashCode is rejected`() {
-        assertThrows<IllegalArgumentException> {
-            parse(eventGroup(id = 1) { put("type", hashCollisionOf("EVENT")) })
-        }
-    }
-
-    @Test
-    fun `tableType colliding with COMMON's hashCode is rejected to the COMMON default`() {
-        val group = parse(regularGroup(id = 1) { put("tableType", hashCollisionOf("COMMON")) }).single()
-
-        assertEquals(TableType.COMMON, group.tableType)
-    }
-
-    @Test
-    fun `tableType colliding with BAR's hashCode falls back to COMMON`() {
-        val group = parse(regularGroup(id = 1) { put("tableType", hashCollisionOf("BAR")) }).single()
-
-        assertEquals(TableType.COMMON, group.tableType)
-    }
-
-    @Test
-    fun `tableType colliding with SEPARATED's hashCode falls back to COMMON`() {
-        val group = parse(regularGroup(id = 1) { put("tableType", hashCollisionOf("SEPARATED")) }).single()
-
-        assertEquals(TableType.COMMON, group.tableType)
-    }
-
-    @Test
-    fun `ratingLikelihood colliding with SOME's hashCode is rejected`() {
-        assertThrows<IllegalArgumentException> {
-            parse(casualGroup(id = 1, ratingLikelihood = hashCollisionOf("SOME")))
-        }
-    }
-
-    @Test
-    fun `ratingLikelihood colliding with NEVER's hashCode is rejected`() {
-        assertThrows<IllegalArgumentException> {
-            parse(casualGroup(id = 1, ratingLikelihood = hashCollisionOf("NEVER")))
-        }
-    }
-
-    @Test
-    fun `ratingLikelihood colliding with ALWAYS's hashCode is rejected`() {
-        assertThrows<IllegalArgumentException> {
-            parse(casualGroup(id = 1, ratingLikelihood = hashCollisionOf("ALWAYS")))
-        }
-    }
-
-    @Test
-    fun `lowercase group type is rejected`() {
-        // The JSON schema normally rejects this before the parser ever sees it; this test
-        // bypasses the schema to exercise the parser's own type-dispatch default branch.
-        assertThrows<IllegalArgumentException> {
-            parse(regularGroup(id = 1) { put("type", "regular") })
-        }
-    }
-
-    @Test
-    fun `empty group type is rejected`() {
-        assertThrows<IllegalArgumentException> {
-            parse(regularGroup(id = 1) { put("type", "") })
-        }
-    }
-
-    @Test
-    fun `explicit JSON null tableType defaults to COMMON at the parser level`() {
-        val group = parse(regularGroup(id = 1) { put("tableType", JsonNull) }).single()
-
-        assertTrue(group is RegularGroup)
-        assertEquals(TableType.COMMON, group.tableType)
-    }
-
-    @Test
-    fun `unrecognized tableType string defaults to COMMON at the parser level`() {
-        // The JSON schema normally rejects this before the parser ever sees it; this test
-        // bypasses the schema to exercise the parser's own default branch directly.
-        val group = parse(regularGroup(id = 1) { put("tableType", "ROOFTOP") }).single()
-
-        assertTrue(group is RegularGroup)
-        assertEquals(TableType.COMMON, group.tableType)
-    }
-
-    @Test
     fun `REGULAR fields are parsed onto the group`() {
         val group = parse(regularGroup(id = 1, restaurantId = 1, visitingStart = 2, visitingPeriod = 3)).single()
 
@@ -315,6 +192,30 @@ class CustomerParserTypeSpecificTest {
         val bufferedTick = restaurant1.openingTickEnd - Constants.REGULAR_VISITING_TICK_BUFFER + 1
         assertThrows<IllegalArgumentException> {
             parse(regularGroup(id = 1, visitingAt = bufferedTick))
+        }
+    }
+
+    @Test
+    fun `REGULAR group is validated against the opening hours of its own restaurant`() {
+        val lateRestaurant = RestaurantStats(
+            restaurantId = 2,
+            restaurantType = RestaurantType.ASIAN,
+            openingTickStart = 10,
+            openingTickEnd = 20,
+            event = false,
+            positiveRatings = 0,
+            negativeRatings = 0,
+            menu = recipes
+        )
+        val stats = listOf(restaurant1, lateRestaurant)
+        val accepted = regularGroup(id = 1, restaurantId = 2, visitingAt = 10)
+        val rejected = regularGroup(id = 2, restaurantId = 2, visitingAt = 6)
+
+        val group = parser.parseCustomers(JsonArray(listOf(accepted)), recipes, ingredients, stats).single()
+
+        assertEquals(2, (group as RegularGroup).restaurantId)
+        assertThrows<IllegalArgumentException> {
+            parser.parseCustomers(JsonArray(listOf(rejected)), recipes, ingredients, stats)
         }
     }
 
@@ -359,27 +260,6 @@ class CustomerParserTypeSpecificTest {
     }
 
     @Test
-    fun `CASUAL unknown ratingLikelihood is rejected`() {
-        assertThrows<IllegalArgumentException> {
-            parse(casualGroup(id = 1, ratingLikelihood = "MAYBE"))
-        }
-    }
-
-    @Test
-    fun `CASUAL lowercase ratingLikelihood is rejected`() {
-        assertThrows<IllegalArgumentException> {
-            parse(casualGroup(id = 1, ratingLikelihood = "some"))
-        }
-    }
-
-    @Test
-    fun `CASUAL empty ratingLikelihood is rejected`() {
-        assertThrows<IllegalArgumentException> {
-            parse(casualGroup(id = 1, ratingLikelihood = ""))
-        }
-    }
-
-    @Test
     fun `CASUAL restaurantType AFRICAN is parsed`() {
         val group = parse(casualGroup(id = 1, restaurantTypes = listOf("AFRICAN"))).single() as CasualGroup
 
@@ -391,13 +271,6 @@ class CustomerParserTypeSpecificTest {
         val group = parse(casualGroup(id = 1, restaurantTypes = listOf("AMERICAN"))).single() as CasualGroup
 
         assertEquals(listOf(RestaurantType.AMERICAN), group.restaurantTypes)
-    }
-
-    @Test
-    fun `CASUAL unknown restaurantType is rejected`() {
-        assertThrows<IllegalArgumentException> {
-            parse(casualGroup(id = 1, restaurantTypes = listOf("MEXICAN")))
-        }
     }
 
     @Test
@@ -547,18 +420,5 @@ class CustomerParserTypeSpecificTest {
 
         assertEquals(listOf(RestaurantType.AMERICAN), group.restaurantTypes)
         assertEquals("American Burger", group.eventDishes[RestaurantType.AMERICAN])
-    }
-
-    @Test
-    fun `EVENT unknown restaurantType is rejected`() {
-        assertThrows<IllegalArgumentException> {
-            parse(
-                eventGroup(
-                    id = 1,
-                    restaurantTypes = listOf("MEXICAN"),
-                    favoriteDishes = mapOf("MEXICAN" to "Rice Bowl")
-                )
-            )
-        }
     }
 }

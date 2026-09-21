@@ -52,15 +52,13 @@ class CorrectPartialServing1 : ExampleSystemTestExtension() {
             FohServiceTestLogs.serving(restId = 1, waitstaffId = 1, dishes = mapOf(MEAL_A to 1), tableId = 1, ticks = 4)
         )
 
-        //  TICK 7: Second Meal Cooked & Served (mealB)
+        //  TICK 7: Second Meal Cooked & Served (mealB) + Timeout
         skipUntilString(TickStatusTestLogs.tickStart(7, 1))
         skipUntilString(KitchenTestLogs.kitchenCooked(restId = 1, cookId = 1, meals = 1, dishName = MEAL_B, ticks = 6))
         skipUntilString(
             FohServiceTestLogs.serving(restId = 1, waitstaffId = 1, dishes = mapOf(MEAL_B to 1), tableId = 1, ticks = 6)
         )
-
-        //  TICK 8: Timeout for the remaining 1 unserved customer
-        skipUntilString(TickStatusTestLogs.tickStart(8, 1))
+        // The third customer times out in Tick 7
         skipUntilString(FohServiceTestLogs.noEating(restId = 1, customers = 1, groupId = 1, tableId = 1))
     }
 }

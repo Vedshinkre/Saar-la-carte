@@ -59,11 +59,11 @@ class StaffChangeNoCookStillProcuresSystemTest : StaffChangeSystemTest() {
     }
 
     private companion object {
-        /** 3 meals estimated for the 30 unreserved seats */
-        const val FIRST_EVENING = 30
+        /** 4 meals: the 30 free seats plus the group's 2 reserved seats, which have no history yet */
+        const val FIRST_EVENING = 40
 
-        /** 30 estimated plus 20 of history, minus the 10 left over from evening 1 */
-        const val SECOND_EVENING = 40
+        /** 30 estimated plus 20 of history, minus the 20 left over from evening 1 */
+        const val SECOND_EVENING = 30
     }
 }
 
@@ -125,8 +125,8 @@ class StaffChangeNoWaitstaffSystemTest : StaffChangeSystemTest() {
     }
 
     private companion object {
-        /** the reservation still happens, so the plan is the same 30 estimated plus 20 of history */
-        const val SECOND_EVENING = 40
+        /** the reservation still happens, so the plan is 30 estimated plus 20 of history, minus 20 */
+        const val SECOND_EVENING = 30
     }
 }
 

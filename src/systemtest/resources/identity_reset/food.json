@@ -1,0 +1,25 @@
+{
+  "ingredients": [
+    {
+      "name": "apple",
+      "unit": "X",
+      "packagingVolume": 10,
+      "bestBefore": 10
+    }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "apple snack",
+      "duration": 10,
+      "basicDishFor": "EUROPEAN",
+      "cookType": ["EXEC"],
+      "ingredients": [
+        {
+          "name": "apple",
+          "amount": 1
+        }
+      ]
+    }
+  ]
+}

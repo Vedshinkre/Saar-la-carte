@@ -91,7 +91,14 @@ class RestaurantParserTest {
         assertInvalidRestaurants("restaurantsNoTableExists.json")
     }
 
-    @Disabled
+    // NOT A BUG - wrong layer and a stale premise. restaurantsNoRecipieExists.json has no "event"
+    // key, so restaurant.schema rejects the file long before RestaurantParser sees it; driving the
+    // parser directly makes it throw NoSuchElementException("Key event is missing in the map")
+    // instead of the IllegalArgumentException this test expects.
+    // An empty "recipes" list is legal in itself - EmptyRestaurantRecipesAcceptedSystemTest passes
+    // against the reference - so the fixture only fails because its EUROPEAN type has no basic dish.
+    // Do not add "event" to the fixture: RestaurantsNoRecipieExistsRejectedSystemTest shares it.
+    @Disabled("fixture is rejected by restaurant.schema, so the parser never reaches its own check")
     @Test
     fun `restaurantsNoRecipieExists should fail`() {
         assertInvalidRestaurants("restaurantsNoRecipieExists.json")

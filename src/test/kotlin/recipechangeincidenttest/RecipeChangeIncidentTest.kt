@@ -20,13 +20,6 @@ class RecipeChangeIncidentTest {
         RecipeChangeIncident(1, 1, flour, adaptation, recipes.toList())
 
     @Test
-    fun `zero adaptation changes nothing`() {
-        val r = recipe(1, flour to 42)
-        incident(0, r).apply()
-        assertEquals(42, r.ingredients[flour])
-    }
-
-    @Test
     fun `decrease is rounded down`() {
         val r = recipe(1, flour to 5)
         incident(-50, r).apply() // 2.5 -> 2

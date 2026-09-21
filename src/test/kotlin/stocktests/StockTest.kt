@@ -7,9 +7,11 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
+import kotlin.test.assertNull
+import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
-/** Unit tests for [Stock.setIngredientToAvailable]. */
+/** Unit tests for [Stock]: availability of ingredients and lookup by name. */
 class StockTest {
 
     private fun ingredient(name: String) = Ingredient(name, MeasurementUnit.G, 3, 500)
@@ -49,5 +51,41 @@ class StockTest {
             "Cannot make ingredient 'saffron' available because it does not exist in stock.",
             ex.message
         )
+    }
+
+    @Test
+    fun `getIngredient finds the stored ingredient by name`() {
+        val rice = ingredient("rice")
+        val stock = Stock(listOf(rice))
+
+        assertSame(rice, stock.getIngredient(ingredient("rice")))
+    }
+
+    @Test
+    fun `getIngredient is null for an ingredient that is not in stock`() {
+        val stock = Stock(listOf(ingredient("rice")))
+
+        assertNull(stock.getIngredient(ingredient("saffron")))
+    }
+
+    @Test
+    fun `an ingredient that is not in stock is not available`() {
+        val stock = Stock(listOf(ingredient("rice")))
+
+        assertFalse(stock.isIngredientAvailable(ingredient("saffron")))
+    }
+
+    @Test
+    fun `an unavailable ingredient becomes available after its last evening`() {
+        val rice = ingredient("rice")
+        val stock = Stock(listOf(rice))
+        stock.setIngredientToUnavailable(rice, 2)
+
+        stock.applyUnavailableDurations()
+        assertFalse(stock.isIngredientAvailable(rice))
+        stock.applyUnavailableDurations()
+        assertTrue(stock.isIngredientAvailable(rice))
+        stock.applyUnavailableDurations()
+        assertTrue(stock.isIngredientAvailable(rice), "the duration never drops below zero")
     }
 }

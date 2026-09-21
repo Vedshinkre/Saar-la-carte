@@ -53,27 +53,6 @@ abstract class RegularKnownVisitSystemTest : ExampleSystemTestExtension() {
 }
 
 /**
- * Reading A, the one we implement: "visited" means seated. After the group has been seated once it
- * counts as a known regular, so from evening 2 on it is planned for by its order history alone.
- * That history is empty, so nothing at all is planned for its table and only the 30 seats of the
- * other table are guessed for: 3 meals, 300 g.
- */
-class RegularSeatedWithoutOrderStopsCountingSystemTest : RegularKnownVisitSystemTest() {
-    override val name = "RegularSeatedWithoutOrderStopsCountingSystemTest"
-    override val description = "Reading A: being seated once makes a REGULAR known, even without an order"
-
-    override suspend fun run() {
-        assertSharedFirstEvening()
-        assertSecondEveningPlans(HISTORY_ONLY)
-    }
-
-    private companion object {
-        /** 3 meals of 100 g for the 30 seats of the other table, nothing for the empty history */
-        const val HISTORY_ONLY = 300
-    }
-}
-
-/**
  * Reading B: "visited" means having placed an order. A group that was seated but never ordered is
  * still unknown, so its 2 reserved seats keep counting towards the guess until it manages to order
  * for the first time: 32 seats, 4 meals, 400 g again on evening 2.

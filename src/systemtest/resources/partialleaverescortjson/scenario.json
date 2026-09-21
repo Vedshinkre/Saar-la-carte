@@ -1,0 +1,14 @@
+{
+  "customerGroups": [
+    {
+      "id": 1, "type": "CASUAL", "size": 3, "tableType": "COMMON", "restaurantTypes": ["EUROPEAN"],
+      "visitingTick": 1, "visitingEvenings": [1], "ratingLikelihood": "ALWAYS",
+      "foodPreferences": [
+        { "size": 1, "favoriteDishes": ["Slow Roast"] },
+        { "size": 1, "favoriteDishes": ["Long Stew"] },
+        { "size": 1, "favoriteDishes": ["Deep Pot"] }
+      ]
+    }
+  ],
+  "incidents": []
+}

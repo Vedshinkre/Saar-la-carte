@@ -4,7 +4,6 @@ import de.unisaarland.cs.se.selab.customer.CasualGroup
 import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.customer.EventGroup
 import de.unisaarland.cs.se.selab.customer.FoodPreference
-import de.unisaarland.cs.se.selab.food.Ingredient
 import de.unisaarland.cs.se.selab.food.Recipe
 
 /**
@@ -53,7 +52,7 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
         val seatCandidates = mutableListOf<RestaurantStats>()
         for (stats in openRestaurants) {
             val numberOfAvailableSeats = stats.availableSeats[group.tableType]
-            if (numberOfAvailableSeats != null && numberOfAvailableSeats >= 0) {
+            if (numberOfAvailableSeats != null && numberOfAvailableSeats >= group.size) {
                 seatCandidates.add(stats)
             }
         }
@@ -71,7 +70,10 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
     private fun getELigibleRestaurantsForEvent(group: EventGroup): Int? {
         val eventRestaurants = mutableListOf<RestaurantStats>()
         for (stats in restaurantStats) {
-            if (stats.restaurantType in group.restaurantTypes && stats.event && stats.isOpenAt(group.visitingAt)) {
+            if (stats.restaurantType in group.restaurantTypes && stats.event && stats.isOpenAt(
+                    group.visitingAt, group.eventEvening
+                )
+            ) {
                 eventRestaurants.add(stats)
             }
         }
@@ -142,22 +144,11 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
     private fun matchPreference(menu: List<Recipe>, fp: FoodPreference): Boolean {
         if (menu.isEmpty()) return false
 
-        val excludedIngredients: Set<Ingredient> = fp.excludedIngredients.toSet()
-        if (excludedIngredients.isEmpty()) return true
+        val excludedNames: Set<String> = fp.excludedIngredients.map { it.name }.toSet()
 
-        for (recipe in menu) {
-            var containsExcluded = false
-            for (ingredient in recipe.ingredients.keys) {
-                if (ingredient in excludedIngredients) {
-                    containsExcluded = true
-                    break
-                }
-            }
-            if (!containsExcluded) {
-                return true
-            }
+        return excludedNames.isEmpty() || menu.any { recipe ->
+            recipe.ingredients.keys.none { ingredient -> ingredient.name in excludedNames }
         }
-        return false
     }
 
     private fun isDietaryCompatible(r: RestaurantStats, group: CustomerGroup): Boolean {

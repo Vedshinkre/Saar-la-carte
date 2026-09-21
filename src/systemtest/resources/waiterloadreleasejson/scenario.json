@@ -1,0 +1,20 @@
+{
+  "customerGroups": [
+    {
+      "id": 1, "type": "CASUAL", "size": 2, "tableType": "COMMON", "restaurantTypes": ["EUROPEAN"],
+      "visitingTick": 1, "visitingEvenings": [1], "ratingLikelihood": "ALWAYS",
+      "foodPreferences": [{ "size": 2, "favoriteDishes": ["Long Stew"] }]
+    },
+    {
+      "id": 2, "type": "CASUAL", "size": 10, "tableType": "COMMON", "restaurantTypes": ["EUROPEAN"],
+      "visitingTick": 2, "visitingEvenings": [1], "ratingLikelihood": "ALWAYS",
+      "foodPreferences": [{ "size": 10, "favoriteDishes": ["Slow Roast"] }]
+    },
+    {
+      "id": 3, "type": "CASUAL", "size": 2, "tableType": "COMMON", "restaurantTypes": ["EUROPEAN"],
+      "visitingTick": 8, "visitingEvenings": [1], "ratingLikelihood": "ALWAYS",
+      "foodPreferences": []
+    }
+  ],
+  "incidents": []
+}

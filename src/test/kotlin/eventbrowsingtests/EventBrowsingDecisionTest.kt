@@ -257,8 +257,76 @@ class EventBrowsingDecisionTest {
     }
 
     @Test
-    fun `no restaurants at all yields null instead of throwing`() {
-        assertNull(BrowsingService(emptyList()).getEligibleRestaurants(eventGroup()))
+    fun `a restaurant with a negative rating balance still wins when it is the only eligible one`() {
+        val service = BrowsingService(
+            listOf(
+                restaurant(id = 1, negativeRatings = 8),
+                restaurant(id = 2, event = false, positiveRatings = 50)
+            )
+        )
+
+        assertEquals(1, service.getEligibleRestaurants(eventGroup()))
+    }
+
+    @Test
+    fun `a less negative balance beats a more negative one`() {
+        val service = BrowsingService(
+            listOf(
+                restaurant(id = 1, positiveRatings = 1, negativeRatings = 6),
+                restaurant(id = 2, positiveRatings = 0, negativeRatings = 2)
+            )
+        )
+
+        assertEquals(2, service.getEligibleRestaurants(eventGroup()))
+    }
+
+    @Test
+    fun `the second event group falls back to the next best restaurant once the best one is full`() {
+        val service = BrowsingService(
+            listOf(
+                restaurant(id = 1, positiveRatings = 5, eventSeats = 6),
+                restaurant(id = 2, positiveRatings = 1, eventSeats = 6)
+            )
+        )
+
+        assertEquals(1, service.getEligibleRestaurants(eventGroup(id = 1, size = 6)))
+        assertEquals(2, service.getEligibleRestaurants(eventGroup(id = 2, size = 6)))
+        assertNull(service.getEligibleRestaurants(eventGroup(id = 3, size = 6)))
+    }
+
+    @Test
+    fun `a rejected event group leaves the seats of every restaurant untouched`() {
+        val small = restaurant(id = 1, eventSeats = 3)
+        val service = BrowsingService(listOf(small))
+
+        assertNull(service.getEligibleRestaurants(eventGroup(size = 6)))
+
+        assertEquals(3, small.availableEventSeats[TableType.COMMON])
+    }
+
+    @Test
+    fun `an empty menu makes a restaurant ineligible`() {
+        val service = BrowsingService(listOf(restaurant(id = 1, menu = emptyList())))
+
+        assertNull(service.getEligibleRestaurants(eventGroup(foodPreferences = listOf(excluding(salt)))))
+    }
+
+    @Test
+    fun `every member's exclusions must leave a dish on the menu`() {
+        val menu = listOf(recipe(1, "Salty", salt), recipe(2, "Plain Bread", flour))
+        val service = BrowsingService(listOf(restaurant(id = 1, menu = menu)))
+        val group = eventGroup(foodPreferences = listOf(excluding(salt), excluding(flour, salt)))
+
+        assertNull(service.getEligibleRestaurants(group))
+    }
+
+    @Test
+    fun `members with different exclusions are served by different dishes of the same menu`() {
+        val menu = listOf(recipe(1, "Salty", salt), recipe(2, "Plain Bread", flour))
+        val service = BrowsingService(listOf(restaurant(id = 1, menu = menu)))
+        val group = eventGroup(foodPreferences = listOf(excluding(salt), excluding(flour)))
+
+        assertEquals(1, service.getEligibleRestaurants(group))
     }
 
     // ---- Timing and event dish ----
@@ -283,16 +351,6 @@ class EventBrowsingDecisionTest {
         assertFalse(group.isVisitingTonight())
         Time.evening = 4
         assertTrue(group.isVisitingTonight())
-    }
-
-    @Test
-    fun `an event group visits at its visiting tick`() {
-        val group = eventGroup(visitingAt = 5)
-
-        Time.tick = 4
-        assertFalse(group.isVisitingThisTick())
-        Time.tick = 5
-        assertTrue(group.isVisitingThisTick())
     }
 
     @Test

@@ -99,6 +99,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.TableTypeRestr
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.UnavailabilityDurationExpirySystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.UnavailableIncidentSupplierProcurementSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.WaitstaffExhaustionTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.SomeDeliveryTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.packagingchangeincidentsystemtests.PackagingChangeIncidentSystemTests
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.AllFilesValidSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.CustomerGroupUnknownRestaurantSystemTest
@@ -194,6 +195,7 @@ object SystemTestRegistration {
         registerRecipeChangeProbes(testSuite)
         registerRegularPlanningProbes(testSuite)
         registerStaffChangeProbes(testSuite)
+        testSuite.registerTest(SomeDeliveryTest())
     }
 
     /**
@@ -216,10 +218,10 @@ object SystemTestRegistration {
      */
     fun registerSystemTestsMutantSimulation(testSuite: SELab26TestSuite) {
         testSuite.registerTest(ExampleSystemTest())
-        registeratharvaMutantSimulationTests(testSuite)
         testSuite.registerTest(EventReservationConflictTest())
         testSuite.registerTest(ExactStockoutTest())
         testSuite.registerTest(OneCookTwoOrdersTest())
+        registeratharvaMutantSimulationTests(testSuite)
         testSuite.registerTest(PantryExpirySystemTest())
         testSuite.registerTest(DeliveryOrderSuccessTestA())
         testSuite.registerTest(CustomerBehaviourDecisionSystemTest())

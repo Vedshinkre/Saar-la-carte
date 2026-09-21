@@ -181,6 +181,7 @@ class FrontOfHouse(
         getServingPriority = { group -> getServingPriority(group) },
         getAssignedTableId = { group -> getAssignedTableId(group) },
         addCustomersDelivered = { count -> numberOfCustomersDelivered += count },
+        releaseWaiterLoad = { group, customers -> inHouseGroupsToWaiter[group]?.addToCurrentLoad(-customers) },
     )
 
     private val escorting = EscortingProcessor(

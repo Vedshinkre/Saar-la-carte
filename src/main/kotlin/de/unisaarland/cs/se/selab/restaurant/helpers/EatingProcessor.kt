@@ -28,6 +28,8 @@ class EatingProcessor(
     private val getServingPriority: (CustomerGroup) -> Int,
     private val getAssignedTableId: (CustomerGroup) -> Id?,
     private val addCustomersDelivered: (Int) -> Unit,
+    /** a waiter also stops waiting on customers that left without being ESCORTED */
+    private val releaseWaiterLoad: (CustomerGroup, Int) -> Unit = { _, _ -> },
 ) {
     /** main eating function: makes customers that waited too long leave and customers eating progress eating */
     fun processEating() {
@@ -70,11 +72,13 @@ class EatingProcessor(
         val ticksSinceOrder = Time.tick - order.orderedAt
 
         val noDishServed = !(order.dishes.any { wasServed(it) })
+        // potential off by one error fix based on OH feedback
+        val basePatience = Constants.UNSERVED_WAIT_TICKS - 1
         val unservedCustomersLeave = if (noDishServed) {
-            ticksSinceOrder >= Constants.UNSERVED_WAIT_TICKS
+            ticksSinceOrder >= basePatience
         } else {
             // wait another 2 ticks if someone in the group was served
-            ticksSinceOrder >= Constants.UNSERVED_WAIT_TICKS + Constants.ADDITIONAL_UNSERVED_WAIT_TICKS
+            ticksSinceOrder >= basePatience + Constants.ADDITIONAL_UNSERVED_WAIT_TICKS
         }
 
         if (!unservedCustomersLeave) return
@@ -89,6 +93,7 @@ class EatingProcessor(
             unservedDishes.size
         }
         group.customersRemainingInRestaurant -= leavingCustomers
+        releaseWaiterLoad(group, leavingCustomers)
         group.experience = ExperienceType.NEGATIVE
         FohServiceLogger.logRestaurantNoEating(leavingCustomers, group.id, tableId)
     }
@@ -109,7 +114,8 @@ class EatingProcessor(
         // experience is negative as soon as food arrives too late or not at all for at least one customer
         if (group.experience == ExperienceType.NEGATIVE) return
 
-        group.experience = if (Time.tick - order.orderedAt <= Constants.EXPECTATION_WINDOW_TICKS) {
+        // the 4 tick expectation window might be counted inclusively, changed <= to <
+        group.experience = if (Time.tick - order.orderedAt < Constants.EXPECTATION_WINDOW_TICKS) {
             ExperienceType.POSITIVE
         } else {
             ExperienceType.NEUTRAL

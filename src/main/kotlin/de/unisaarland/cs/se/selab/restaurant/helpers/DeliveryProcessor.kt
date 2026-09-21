@@ -75,6 +75,7 @@ class DeliveryProcessor(
 
         for ((group, order) in rejecting) {
             order.dishes.forEach { if (it.status != DishStatus.EATEN) it.status = DishStatus.ABORTED }
+            order.deliveryGivenUp = true
             group.experience = ExperienceType.NEGATIVE
             DeliveryLogger.logDeliveryGivenUp(group.id, order.id)
         }
@@ -84,8 +85,9 @@ class DeliveryProcessor(
         if (order.deliveredAt != null) {
             return false
         }
-        // already rejected, or aborted for another reason: a delivery is only given up once
-        if (order.dishes.any { it.status == DishStatus.ABORTED }) {
+        // a delivery is only given up once, but a group whose meals were aborted for another
+        // reason (never cooked, kitchen closed) is still waiting and still gives up
+        if (order.deliveryGivenUp) {
             return false
         }
         return Time.tick >= group.visitingAt + Constants.CUSTOMER_DELIVERY_WAIT_TICKS

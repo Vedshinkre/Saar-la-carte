@@ -17,7 +17,6 @@ import eventorderingtests.EventOrderingFixtures.regularGroup
 import eventorderingtests.EventOrderingFixtures.table
 import eventorderingtests.EventOrderingFixtures.waiter
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -52,7 +51,6 @@ class EventOrderingIntegrationTest {
     private fun arrive(foh: FrontOfHouse, vararg groups: CustomerGroup) =
         groups.forEach { foh.processArrival(it, menu) }
 
-    @Disabled("Check why it fails")
     @Test
     fun `an event's order reaches the kitchen queue with the dishes its customers chose`() {
         val foh = foh(listOf(table(1, FOUR)), waiterCount = 1)
@@ -65,7 +63,6 @@ class EventOrderingIntegrationTest {
         assertEquals(List(FOUR) { "Rice" }, orderQueue.single().dishes.map { it.recipe.name })
     }
 
-    @Disabled("Check why it fails")
     @Test
     fun `two events in one tick get consecutive order ids in group order`() {
         val foh = foh(listOf(table(1, FOUR), table(2, FOUR)), waiterCount = 2)
@@ -81,7 +78,6 @@ class EventOrderingIntegrationTest {
         assertTrue(log.contains("FOH Ordering (R 1): Group 2 placed order 2 of "), log)
     }
 
-    @Disabled("Check why it fails")
     @Test
     fun `two events in one tick share waiters and their TAKE_ORDER tick loads add up`() {
         val waiters = List(2) { waiter() }
@@ -98,7 +94,6 @@ class EventOrderingIntegrationTest {
         assertEquals(waiters.last().getTickLoad(ActionType.TAKE_ORDER), 2)
     }
 
-    @Disabled("Look into why this fails")
     @Test
     fun `an event that partly fails to order logs the leavers and keeps the rest with a smaller order`() {
         val foh = foh(listOf(table(1, SIX)), waiterCount = 1)

@@ -118,16 +118,10 @@ class ArrivalProcessor(
                 }
                 eventGroups.add(eventGroup)
             } else {
+                orderSuccess(eventGroup, emptyList())
                 turnedAwayGroups.addLast(eventGroup)
                 eventGroup.experience = ExperienceType.NEGATIVE
             }
-        }
-        val customersWhoLeftAfterOrdering = eventGroup.getCustomersWhoLeft()
-        if (customersWhoLeftAfterOrdering > 0) {
-            FohReceptionLogger.logFohNoOrdering(
-                eventGroup.id,
-                customersWhoLeftAfterOrdering
-            )
         }
         return true
     }
@@ -191,18 +185,18 @@ class ArrivalProcessor(
 
         return false
     }
+
     private fun orderSuccess(customerGroup: CustomerGroup, orderWaiters: List<Waiter?>) {
         val currentOrder = customerGroup.currentOrder
         if (currentOrder != null) {
             if (customerGroup is EventGroup) {
                 val orderWaitersNotNull = orderWaiters.requireNoNulls()
-                logPlaceOrderEventGroup(customerGroup, orderWaitersNotNull)
+                logPlaceOrderEventGroup(customerGroup, currentOrder, orderWaitersNotNull)
             } else {
                 val assignedWaiter = orderWaiters.firstOrNull()
                 logPlacedOrder(customerGroup, currentOrder, assignedWaiter)
             }
-        }
-        // item 104: the group reports the customers who found no dish whether or not the rest of
+        } // item 104: the group reports the customers who found no dish whether or not the rest of
         // the group managed to order, so this line also fires when nobody in the group could order
         val customersWhoLeftAfterOrdering = customerGroup.getCustomersWhoLeft()
         if (customersWhoLeftAfterOrdering > 0) {
@@ -213,15 +207,19 @@ class ArrivalProcessor(
         }
     }
 
-    private fun logPlaceOrderEventGroup(customerGroup: CustomerGroup, eventWaiters: List<Waiter>) {
+    private fun logPlaceOrderEventGroup(customerGroup: CustomerGroup, currentOrder: Order, eventWaiters: List<Waiter>) {
+        FohReceptionLogger.logFohOrdering(
+            customerGroup.id,
+            currentOrder.id,
+            currentOrder.dishNameToAmount(),
+            eventWaiters.mapNotNull { it.id }.sorted()
+        )
         waitersOrdered.addAll(eventWaiters)
         customersOrdered.add(customerGroup)
     }
 
     private fun logPlacedOrder(customerGroup: CustomerGroup, currentOrder: Order, assignedWaiter: Waiter?) {
         if (customerGroup is RegularGroup) {
-            // the streak is only broken once the group is actually served (see EatingProcessor),
-            // otherwise two consecutive "nobody was served" evenings could never add up to two failures
             customerGroup.addOrderToHistory(currentOrder)
         }
         if (assignedWaiter != null) {
@@ -240,8 +238,7 @@ class ArrivalProcessor(
                 currentOrder.dishNameToAmount(),
                 null
             )
-        }
-        // counted for the ordering status whether they ate in or ordered a delivery
+        } // counted for the ordering status whether they ate in or ordered a delivery
         customersOrdered.add(customerGroup)
     }
 
@@ -253,8 +250,7 @@ class ArrivalProcessor(
         numberOfCustomersSeated = 0
         waitersThatSeated.clear()
 
-        val numberOfCustomersOrdered = customersOrdered.sumOf {
-                customerGroup ->
+        val numberOfCustomersOrdered = customersOrdered.sumOf { customerGroup ->
             customerGroup.customersRemainingInRestaurant
         }
         val numberOfWaitersOrdered = waitersOrdered.size
@@ -364,7 +360,9 @@ class ArrivalProcessor(
     }
 
     private fun mergeTables(customerGroup: CustomerGroup, tables: List<Table>, threeQuarters: Boolean): List<Table>? {
-        if (customerGroup.tableType == TableType.BAR) { return null }
+        if (customerGroup.tableType == TableType.BAR) {
+            return null
+        }
         val acc: MutableList<Table> = mutableListOf()
         var mergeSize = 0
 

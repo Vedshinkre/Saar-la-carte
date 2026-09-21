@@ -67,20 +67,19 @@ class EventGroup(
         val listOfDishes = mutableListOf<Dish>()
 
         for (foodPreference in orderingSequence()) {
+            val currentWaiter = waitersToTakeOrder.filter { it.value > 0 }.keys.firstOrNull { waiter ->
+                waiter.getTickLoad(ActionType.TAKE_ORDER) < Constants.ACTION_LIMIT
+            }
+            if (currentWaiter == null) {
+                break
+            }
+
             val availableDishes = countertop.getAvailableRecipes(menu)
             val eventFavoriteDish = eventDishes[currentRestaurantType] ?: "No Dish"
             val customerDish = foodPreference.decideDish(availableDishes, eventFavoriteDish, countertop.restaurantType)
+            waitersToTakeOrder[currentWaiter] = waitersToTakeOrder.getValue(currentWaiter) - 1
             if (customerDish != null) {
-                val currentWaiter = waitersToTakeOrder.keys.firstOrNull { waiter ->
-                    waiter.getTickLoad(ActionType.TAKE_ORDER) < Constants.ACTION_LIMIT
-                }
-
-                if (currentWaiter != null) {
-                    registerDish(currentWaiter, customerDish, countertop)
-                } else {
-                    break
-                }
-
+                registerDish(currentWaiter, customerDish, countertop)
                 listOfDishes.add(customerDish)
             }
         }

@@ -88,8 +88,13 @@ class StatisticsDeliveredAndRatedTest {
     @Test
     fun `deliveries handed over in the same tick add up their group sizes`() {
         val groups = listOf(deliveryGroup(id = 1, size = 2), deliveryGroup(id = 2, size = THREE))
-        groups.forEach { it.currentOrder = order(DishStatus.SERVED).apply { deliveredAt = HAND_OVER_TICK } }
-        // DOIT: use dishes.size for the order constructed above not the constant 2, a size 3 group gets 2 dish order
+        groups.forEach {
+            it.currentOrder = order(
+                DishStatus.SERVED,
+                dishes = it.size
+            ).apply { deliveredAt = HAND_OVER_TICK }
+        }
+
         Time.tick = HAND_OVER_TICK
         eatingProcessor(groups) { delivered += it }.processEating()
 

@@ -246,6 +246,7 @@ class FrontOfHouse(
     fun processDelivering() = delivering.processDelivering()
 
     /** whether any driver is currently free to take on a new delivery */
+    // DOTO this function doesn't need to exist
     fun isDriverAvailable(): Boolean = delivering.isDriverAvailable()
 
     /** process eating */

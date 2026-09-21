@@ -1,4 +1,6 @@
 .gradle
+stats.csv
+scripts/
 .claude/
 build/
 libs/

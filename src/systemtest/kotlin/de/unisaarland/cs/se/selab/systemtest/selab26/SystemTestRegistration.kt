@@ -109,6 +109,16 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.I
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.CanvisitA
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.CanvisitB
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.SomeDeliveryTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.ExtendedPatienceEndsSevenTicksAfterOrderingSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.ExtendedPatienceEndsSixTicksAfterOrderingSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.MergedTableIsUsedForServingSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.MergedTablesAreLoggedSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.NoReservationIsLoggedSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.NoReservationRatesInTheFirstTickSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.PartialServingWaitsForOneTickSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.PartialServingWaitsForTwoTicksSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.PatienceEndsFiveTicksAfterOrderingSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.PatienceEndsFourTicksAfterOrderingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.packagingchangeincidentsystemtests.PackagingChangeIncidentSystemTests
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.AllFilesValidSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.CustomerGroupUnknownRestaurantSystemTest
@@ -118,6 +128,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.FoodDuplicat
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.FoodEmptyIngredientsRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.FoodInvalidPackagingVolumeRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.FoodRecipeDurationTooShortRejectedSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.FoodRecipeIngredientUnknownKeyRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.FoodRecipeMissingIngredientRefRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.OverlappingUnavailabilityRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.RestaurantsDifferentNameSameIdRejectedSystemTest
@@ -208,6 +219,7 @@ object SystemTestRegistration {
         registerRecipeChangeProbes(testSuite)
         registerRegularPlanningProbes(testSuite)
         registerStaffChangeProbes(testSuite)
+        registerOfficeHourProbes(testSuite)
         testSuite.registerTest(SomeDeliveryTest())
         testSuite.registerTest(CanvisitA())
         testSuite.registerTest(CanvisitB())
@@ -470,6 +482,27 @@ object SystemTestRegistration {
     private fun registerStaffChangeProbes(testSuite: SELab26TestSuite) {
         testSuite.registerTest(StaffChangeNoCookStillProcuresSystemTest())
         testSuite.registerTest(StaffChangeNoWaitstaffSystemTest())
+    }
+
+    /**
+     * Probes written after the office hour, one specification statement each, so that a failure
+     * against the reference implementation names the rule we read wrongly. The four patience and
+     * partial serving tests come in pairs that state the two competing readings of the same rule,
+     * so exactly one test of each pair can pass. Not registered for the mutants until the reference
+     * run confirms them.
+     */
+    private fun registerOfficeHourProbes(testSuite: SELab26TestSuite) {
+        testSuite.registerTest(FoodRecipeIngredientUnknownKeyRejectedSystemTest())
+        testSuite.registerTest(NoReservationIsLoggedSystemTest())
+        testSuite.registerTest(NoReservationRatesInTheFirstTickSystemTest())
+        testSuite.registerTest(MergedTablesAreLoggedSystemTest())
+        testSuite.registerTest(MergedTableIsUsedForServingSystemTest())
+        testSuite.registerTest(PatienceEndsFiveTicksAfterOrderingSystemTest())
+        testSuite.registerTest(PatienceEndsFourTicksAfterOrderingSystemTest())
+        testSuite.registerTest(PartialServingWaitsForTwoTicksSystemTest())
+        testSuite.registerTest(PartialServingWaitsForOneTickSystemTest())
+        testSuite.registerTest(ExtendedPatienceEndsSevenTicksAfterOrderingSystemTest())
+        testSuite.registerTest(ExtendedPatienceEndsSixTicksAfterOrderingSystemTest())
     }
 
     private fun registerRecipeChangeProbes(testSuite: SELab26TestSuite) {

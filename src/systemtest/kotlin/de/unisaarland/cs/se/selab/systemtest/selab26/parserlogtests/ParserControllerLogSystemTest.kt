@@ -353,6 +353,18 @@ class FoodRecipeMissingIngredientRefRejectedSystemTest : FoodFixtureRejectedSyst
 )
 
 /**
+ * An ingredient entry of a recipe only knows "name" and "amount". A file that adds any other key
+ * there, for example the "unit" the ingredient already declares at the top level, has to be
+ * rejected by the schema. This is the one nested object of our schemas that does not set
+ * "additionalProperties": false, so the test is a probe for how strict the reference really is.
+ */
+class FoodRecipeIngredientUnknownKeyRejectedSystemTest : FoodFixtureRejectedSystemTest(
+    "foodRecipeIngredientUnknownKey.json",
+    name = "foodRecipeIngredientUnknownKey Is Rejected System Test",
+    description = "An unknown key inside a recipe ingredient is rejected."
+)
+
+/**
  * A duplicate recipe id is rejected.
  */
 class FoodDuplicateRecipeIdRejectedSystemTest : FoodFixtureRejectedSystemTest(

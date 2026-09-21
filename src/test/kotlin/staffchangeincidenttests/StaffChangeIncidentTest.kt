@@ -40,7 +40,7 @@ class StaffChangeIncidentTest {
     @Test
     fun `apply - Add Cooks - Increases Cook List-TOURNANT`() {
         val staff = createDummyStaff()
-        // Add 2 TOURNANT cooks
+
         val incident = createIncident(2, StaffType.COOK, CookType.TOURNANT, staff)
 
         incident.apply()
@@ -55,7 +55,7 @@ class StaffChangeIncidentTest {
     @Test
     fun `apply - Add Cooks - Increases Cook List-SOUS`() {
         val staff = createDummyStaff()
-        // Add 2 TOURNANT cooks
+
         val incident = createIncident(3, StaffType.COOK, CookType.SOUS, staff)
 
         incident.apply()
@@ -70,7 +70,7 @@ class StaffChangeIncidentTest {
     @Test
     fun `apply - Add Cooks - Increases Cook List-EXEC`() {
         val staff = createDummyStaff()
-        // Add 2 TOURNANT cooks
+
         val incident = createIncident(1, StaffType.COOK, CookType.EXEC, staff)
 
         incident.apply()
@@ -85,7 +85,7 @@ class StaffChangeIncidentTest {
     @Test
     fun `apply - Add Cooks - Increases Cook List-SAUCE`() {
         val staff = createDummyStaff()
-        // Add 2 TOURNANT cooks
+
         val incident = createIncident(4, StaffType.COOK, CookType.SAUCE, staff)
 
         incident.apply()
@@ -100,7 +100,7 @@ class StaffChangeIncidentTest {
     @Test
     fun `apply - Add Cooks - Increases Cook List-FISH`() {
         val staff = createDummyStaff()
-        // Add 2 TOURNANT cooks
+
         val incident = createIncident(2, StaffType.COOK, CookType.FISH, staff)
 
         incident.apply()
@@ -115,7 +115,7 @@ class StaffChangeIncidentTest {
     @Test
     fun `apply - Add Cooks - Increases Cook List-ROAST`() {
         val staff = createDummyStaff()
-        // Add 2 TOURNANT cooks
+
         val incident = createIncident(1, StaffType.COOK, CookType.ROAST, staff)
 
         incident.apply()
@@ -130,7 +130,7 @@ class StaffChangeIncidentTest {
     @Test
     fun `apply - Add Cooks - Increases Cook List-VEETABLE`() {
         val staff = createDummyStaff()
-        // Add 2 TOURNANT cooks
+
         val incident = createIncident(1, StaffType.COOK, CookType.VEGETABLE, staff)
 
         incident.apply()
@@ -143,7 +143,22 @@ class StaffChangeIncidentTest {
     }
 
     @Test
-    fun `apply - Remove Cooks - Decreases Cook List`() {
+    fun `apply - Add Cooks - Increases Cook List-PASTRY`() {
+        val staff = createDummyStaff()
+
+        val incident = createIncident(1, StaffType.COOK, CookType.PASTRY, staff)
+
+        incident.apply()
+
+        // Originally 2, added =1 = 2 total
+        assertEquals(3, staff.cooks.size)
+        // Verify the newly added cook is of the correct type
+        val tournantCount = staff.cooks.count { it.type == CookType.PASTRY }
+        assertEquals(1, tournantCount)
+    }
+
+    @Test
+    fun `apply - Remove Cooks - Decreases Cook List- TOURNANT`() {
         val staff = createDummyStaff()
         // Remove 1 TOURNANT cook
         val incident = createIncident(-1, StaffType.COOK, CookType.TOURNANT, staff)
@@ -155,6 +170,96 @@ class StaffChangeIncidentTest {
         // Verify that no tournant COOK IS LEFT
         val tournantCount = staff.cooks.count { it.type == CookType.TOURNANT }
         assertEquals(0, tournantCount)
+    }
+
+    @Test
+    fun `apply - Remove Cooks - Decreases Cook List- SOUS`() {
+        val staff = createDummyStaff()
+        staff.cooks.addLast(Cook(CookType.SOUS))
+        staff.cooks.addLast(Cook(CookType.SOUS))
+
+        // Remove 1 Sous cook
+        val incident = createIncident(-1, StaffType.COOK, CookType.SOUS, staff)
+
+        incident.apply()
+
+        // Originally 4, removed 1 = 3 total
+        assertEquals(3, staff.cooks.size)
+        // Verify that no tournant COOK IS LEFT
+        val tournantCount = staff.cooks.count { it.type == CookType.SOUS }
+        assertEquals(1, tournantCount)
+    }
+
+    @Test
+    fun `apply - Remove Cooks - Decreases Cook List- SAUCE`() {
+        val staff = createDummyStaff()
+        staff.cooks.addLast(Cook(CookType.SAUCE))
+        staff.cooks.addLast(Cook(CookType.SAUCE))
+
+        // Remove 1 SAUCE cook
+        val incident = createIncident(-1, StaffType.COOK, CookType.SAUCE, staff)
+
+        incident.apply()
+
+        // Originally 4, removed 1 = 3 total
+        assertEquals(3, staff.cooks.size)
+        // Verify that no tournant COOK IS LEFT
+        val tournantCount = staff.cooks.count { it.type == CookType.SAUCE }
+        assertEquals(1, tournantCount)
+    }
+
+    @Test
+    fun `apply - Remove Cooks - Decreases Cook List- FISH`() {
+        val staff = createDummyStaff()
+        staff.cooks.addLast(Cook(CookType.FISH))
+        staff.cooks.addLast(Cook(CookType.FISH))
+
+        // Remove 1 FISH cook
+        val incident = createIncident(-1, StaffType.COOK, CookType.FISH, staff)
+
+        incident.apply()
+
+        // Originally 4, removed 1 = 3 total
+        assertEquals(3, staff.cooks.size)
+        // Verify that no tournant COOK IS LEFT
+        val tournantCount = staff.cooks.count { it.type == CookType.FISH }
+        assertEquals(1, tournantCount)
+    }
+
+    @Test
+    fun `apply - Remove Cooks - Decreases Cook List- VEGETABLE`() {
+        val staff = createDummyStaff()
+        staff.cooks.addLast(Cook(CookType.VEGETABLE))
+        staff.cooks.addLast(Cook(CookType.VEGETABLE))
+
+        // Remove 1 VEGETABLE cook
+        val incident = createIncident(-1, StaffType.COOK, CookType.VEGETABLE, staff)
+
+        incident.apply()
+
+        // Originally 4, removed 1 = 3 total
+        assertEquals(3, staff.cooks.size)
+        // Verify that no tournant COOK IS LEFT
+        val tournantCount = staff.cooks.count { it.type == CookType.VEGETABLE }
+        assertEquals(1, tournantCount)
+    }
+
+    @Test
+    fun `apply - Remove Cooks - Decreases Cook List- PASTRY`() {
+        val staff = createDummyStaff()
+        staff.cooks.addLast(Cook(CookType.PASTRY))
+        staff.cooks.addLast(Cook(CookType.PASTRY))
+
+        // Remove 1 PASTRY cook
+        val incident = createIncident(-1, StaffType.COOK, CookType.PASTRY, staff)
+
+        incident.apply()
+
+        // Originally 4, removed 1 = 3 total
+        assertEquals(3, staff.cooks.size)
+        // Verify that no tournant COOK IS LEFT
+        val tournantCount = staff.cooks.count { it.type == CookType.PASTRY }
+        assertEquals(1, tournantCount)
     }
 
     @Test

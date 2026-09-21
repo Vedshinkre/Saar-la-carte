@@ -52,11 +52,11 @@ class RegularPlanningTwoGroupsSystemTest : RegularPlanningSystemTest() {
     private companion object {
         const val SPELT = "spelt"
 
-        /** the estimate alone: 6 meals of 5 g */
-        const val FIRST_EVENING = 30
+        /** 7 meals of 5 g: the 60 free seats plus the two groups' 4 reserved seats */
+        const val FIRST_EVENING = 35
 
-        /** 30 estimated plus 20 for the two groups' visit, minus the 10 left over */
-        const val SECOND_EVENING = 40
+        /** 30 estimated plus 20 for the two groups' visit, minus the 15 left over */
+        const val SECOND_EVENING = 35
     }
 }
 
@@ -95,11 +95,11 @@ class RegularPlanningVisitingPeriodSystemTest : RegularPlanningSystemTest() {
     private companion object {
         const val MILLET = "millet"
 
-        /** 3 meals estimated for the 30 unreserved seats */
-        const val FIRST_EVENING = 30
+        /** 4 meals: the 30 free seats plus the group's 2 reserved seats, which have no history yet */
+        const val FIRST_EVENING = 40
 
-        /** nobody reserves, so 4 meals are estimated for all 32 seats, minus the 10 left over */
-        const val SECOND_EVENING = 30
+        /** nobody reserves, so 4 meals are estimated for all 32 seats, minus the 20 left over */
+        const val SECOND_EVENING = 20
 
         /** 30 estimated plus 20 for the one visit in the history, minus the 40 left over */
         const val THIRD_EVENING = 10
@@ -111,14 +111,15 @@ class RegularPlanningVisitingPeriodSystemTest : RegularPlanningSystemTest() {
  * can order. A visit without an order leaves nothing in the order history, so the next evening
  * plans the estimate alone.
  *
- * Barley is 10 g and the estimate is 3 meals. Evening 1 buys 30 and none of it is reserved, because
- * the order fails. Evening 2 therefore still only requires those 30, which are already in the
+ * Barley is 10 g. The group keeps its empty history, so its 2 reserved seats keep counting and all
+ * 32 seats are estimated for every evening: 4 meals, 40 g. Evening 1 buys all of it and none is
+ * reserved, because the order fails. Evening 2 requires the same 40, which are already in the
  * pantry, so nothing at all is procured and the Restocked line follows the preparation line
- * directly. A phantom history entry of 2 meals would buy 20 there.
+ * directly. A phantom history entry of 2 meals would drop the requirement to 3 meals plus history.
  *
  * The group also fails on evening 2, which is its second failed attempt, so it stops visiting
- * (specification page 20 and forum topic 299). Evening 3 has no reservation, so all 32 seats are
- * estimated for: 4 meals, 40 required, 10 bought on top of the 30 in the pantry.
+ * (specification page 20 and forum topic 299). Evening 3 estimates the same 32 seats, now all free,
+ * so again nothing has to be bought.
  */
 class RegularPlanningFailedOrderSystemTest : RegularPlanningSystemTest() {
     override val name = "RegularPlanningFailedOrderSystemTest"
@@ -138,19 +139,16 @@ class RegularPlanningFailedOrderSystemTest : RegularPlanningSystemTest() {
         assertNextLine(InitialAndPrepTestLogs.pantryRestocked(1))
         skipUntilString(noOrdering(1))
 
-        // after the second failed attempt the group stops visiting, so nothing is reserved
+        // after the second failed attempt the group stops visiting, but the seat count is unchanged
         skipUntilString(InitialAndPrepTestLogs.prepStart(3))
-        assertNextLine(InitialAndPrepTestLogs.pantryProcured(1, THIRD_EVENING, UNIT, BARLEY))
+        assertNextLine(InitialAndPrepTestLogs.pantryRestocked(1))
     }
 
     private companion object {
         const val BARLEY = "barley"
 
-        /** 3 meals estimated for the 30 unreserved seats */
-        const val FIRST_EVENING = 30
-
-        /** 4 meals for all 32 seats once the group stopped visiting, minus the 30 left over */
-        const val THIRD_EVENING = 10
+        /** 4 meals for all 32 seats: the group's reserved seats have no history behind them yet */
+        const val FIRST_EVENING = 40
 
         fun noOrdering(groupId: Int) =
             "[IMPORTANT] FOH No Ordering (R 1): Group $groupId could not place an order for 2 customers,"

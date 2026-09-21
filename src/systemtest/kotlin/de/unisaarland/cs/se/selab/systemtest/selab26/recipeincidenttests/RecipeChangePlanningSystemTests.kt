@@ -53,11 +53,11 @@ class RecipeChangeOrderHistorySystemTest : RecipeChangePlanningSystemTest() {
     }
 
     private companion object {
-        /** the estimate alone: 3 meals of 10 g */
-        const val FIRST_EVENING = 30
+        /** the estimate alone: 4 meals of 10 g, the group's 2 reserved seats included */
+        const val FIRST_EVENING = 40
 
-        /** 3 * 15 estimated plus 2 * 15 from the one visit in the history, minus 10 left over */
-        const val SECOND_EVENING = 65
+        /** 3 * 15 estimated plus 2 * 15 from the one visit in the history, minus the 20 left over */
+        const val SECOND_EVENING = 55
     }
 }
 
@@ -94,8 +94,8 @@ class RecipeChangeThreeVisitHistorySystemTest : RecipeChangePlanningSystemTest()
     }
 
     private companion object {
-        /** 30 estimated plus 20 of history, minus the 10 left over */
-        const val SECOND_EVENING = 40
+        /** 30 estimated plus 20 of history, minus the 20 left over */
+        const val SECOND_EVENING = 30
 
         /** 30 estimated plus 40 of history, minus the 30 left over */
         const val THIRD_EVENING = 40

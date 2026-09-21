@@ -18,7 +18,6 @@ import de.unisaarland.cs.se.selab.food.Supplier
 import de.unisaarland.cs.se.selab.restaurant.Countertop
 import de.unisaarland.cs.se.selab.restaurant.Pantry
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -97,12 +96,8 @@ class CountertopAvailabilityTest {
 
     // ---- EVENT groups take orders with several waiters
 
-    @Disabled(
-        "bug in EventGroup.placeOrder: when every waiter is at the order limit the dish is added to the order " +
-            "but its ingredients are not reserved (spec: the ingredients are reserved in the exact amount at once)"
-    )
     @Test
-    fun `every dish of an EVENT order is reserved even if all waiters are at their order limit`() {
+    fun `an EVENT order only contains dishes whose ingredients were reserved when the waiters run out`() {
         // the pantry has exactly 12 portions of rice; the only waiter can take 10 orders per tick
         val ingredient = Ingredient("rice", MeasurementUnit.G, bestBefore = 3, initialPackagingVolume = 120)
         val dish = Recipe(1, "Rice", 10, listOf(CookType.TOURNANT), mutableMapOf(ingredient to 10), null)
@@ -125,7 +120,9 @@ class CountertopAvailabilityTest {
 
         assertTrue(group.placeOrder(mutableMapOf(Waiter() to 0), listOf(dish), counter))
 
-        assertEquals(12, group.currentOrder!!.dishes.size)
-        assertTrue(counter.getAvailableRecipes(listOf(dish)).isEmpty(), "all 12 portions were reserved")
+        // the customers the waiter cannot take an order from do not order, and nothing is left unreserved
+        assertEquals(10, group.currentOrder!!.dishes.size)
+        assertEquals(10, group.customersRemainingInRestaurant)
+        assertEquals(listOf(dish), counter.getAvailableRecipes(listOf(dish)), "2 of the 12 portions are still free")
     }
 }

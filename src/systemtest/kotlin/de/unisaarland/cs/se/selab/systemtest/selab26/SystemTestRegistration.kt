@@ -100,6 +100,8 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.Unavailability
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.UnavailableIncidentSupplierProcurementSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.WaitingForFoodSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.WaitstaffExhaustionTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.CanvisitA
+import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.CanvisitB
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.SomeDeliveryTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.packagingchangeincidentsystemtests.PackagingChangeIncidentSystemTests
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.AllFilesValidSystemTest
@@ -200,6 +202,8 @@ object SystemTestRegistration {
         registerRegularPlanningProbes(testSuite)
         registerStaffChangeProbes(testSuite)
         testSuite.registerTest(SomeDeliveryTest())
+        testSuite.registerTest(CanvisitA())
+        testSuite.registerTest(CanvisitB())
     }
 
     /**

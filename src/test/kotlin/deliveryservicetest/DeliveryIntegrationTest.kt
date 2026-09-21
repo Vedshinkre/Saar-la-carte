@@ -137,4 +137,72 @@ class DeliveryIntegrationTest {
         assertEquals(DriverState.RETURNING, returningDriver.state)
         assertEquals(10, returningDriver.totalTripTicks)
     }
+
+    @Test
+    fun `processEating - covers all delivery eating scenarios`() {
+        // Set a static tick for controlled timing
+        de.unisaarland.cs.se.selab.Time.tick = 10
+
+        //  deliveredAt is null
+        val groupNotDelivered = mock<CasualGroup>()
+        val orderNotDelivered = mock<Order>()
+        whenever(orderNotDelivered.deliveredAt).thenReturn(null)
+        whenever(orderNotDelivered.areAllDishesEaten()).thenReturn(false)
+        setupDeliveryGroupArrival(groupNotDelivered, orderNotDelivered, id = 1)
+
+        // Order already fully eaten
+        val groupAllEaten = mock<CasualGroup>()
+        val orderAllEaten = mock<Order>()
+        whenever(orderAllEaten.deliveredAt).thenReturn(8)
+        whenever(orderAllEaten.areAllDishesEaten()).thenReturn(true)
+        setupDeliveryGroupArrival(groupAllEaten, orderAllEaten, id = 2)
+
+        // Delivered EXACTLY now & dishes are SERVED
+        val groupJustDelivered = mock<CasualGroup>()
+        val orderJustDelivered = mock<Order>()
+        val dishServed = mock<Dish>()
+        whenever(dishServed.status).thenReturn(DishStatus.SERVED)
+
+        whenever(orderJustDelivered.deliveredAt).thenReturn(10)
+        // First check returns false, second check at the end returns true to log finished eating!
+        whenever(orderJustDelivered.areAllDishesEaten()).thenReturn(false, true)
+        whenever(orderJustDelivered.dishes).thenReturn(listOf(dishServed, dishServed))
+        setupDeliveryGroupArrival(groupJustDelivered, orderJustDelivered, id = 3)
+
+        //  Delivered in the past & dishes NOT SERVED
+        // (Should NOT increment foh stats, should NOT update eating)
+        val groupOldDelivery = mock<CasualGroup>()
+        val orderOldDelivery = mock<Order>()
+        val dishNotServed = mock<Dish>()
+        whenever(dishNotServed.status).thenReturn(DishStatus.EATEN) // Not SERVED
+
+        whenever(orderOldDelivery.deliveredAt).thenReturn(9) // Past tick
+        whenever(orderOldDelivery.areAllDishesEaten()).thenReturn(false, false)
+        whenever(orderOldDelivery.dishes).thenReturn(listOf(dishNotServed))
+        setupDeliveryGroupArrival(groupOldDelivery, orderOldDelivery, id = 4)
+
+        // ACTION: Process eating for all groups
+        foh.processEating()
+
+        // ASSERTIONS
+        verify(orderNotDelivered, org.mockito.kotlin.never()).dishes
+        verify(orderAllEaten, org.mockito.kotlin.never()).dishes
+
+        // deliveredAt == Time.tick (10), so FOH recorded 2 customers delivered
+        assertEquals(2, foh.numberOfCustomersDelivered)
+        // The 2 SERVED dishes had updateEating() called on them
+        verify(dishServed, org.mockito.kotlin.times(2)).updateEating()
+
+        // Dish was already EATEN, so updateEating was NOT called
+        verify(dishNotServed, org.mockito.kotlin.never()).updateEating()
+    }
+
+    // Helper function to keep the test clean
+    private fun setupDeliveryGroupArrival(group: CasualGroup, order: Order, id: Int) {
+        whenever(group.id).thenReturn(id)
+        whenever(group.wantsDelivery).thenReturn(true)
+        whenever(group.currentOrder).thenReturn(order)
+        whenever(group.placeOrder(any(), any(), any())).thenReturn(true)
+        foh.processArrival(group, emptyList())
+    }
 }

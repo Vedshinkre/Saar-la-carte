@@ -71,7 +71,7 @@ class ArrivalProcessor(
             inHouseGroupsToWaiter.remove(customerGroup)
             turnedAwayGroups.addLast(customerGroup)
         }
-        orderSuccess(customerGroup)
+        orderSuccess(customerGroup, listOf(assignedWaiter))
 
         return true
     }
@@ -189,10 +189,16 @@ class ArrivalProcessor(
 
         return false
     }
-    private fun orderSuccess(customerGroup: CustomerGroup) {
+    private fun orderSuccess(customerGroup: CustomerGroup, orderWaiters: List<Waiter?>) {
         val currentOrder = customerGroup.currentOrder
         if (currentOrder != null) {
-            logPlacedOrder(customerGroup, currentOrder)
+            if (customerGroup is EventGroup) {
+                val orderWaitersNotNull = orderWaiters.requireNoNulls()
+                logPlaceOrderEventGroup(customerGroup, orderWaitersNotNull)
+            } else {
+                val assignedWaiter = orderWaiters.firstOrNull()
+                logPlacedOrder(customerGroup, currentOrder, assignedWaiter)
+            }
         }
         // item 104: the group reports the customers who found no dish whether or not the rest of
         // the group managed to order, so this line also fires when nobody in the group could order
@@ -205,8 +211,12 @@ class ArrivalProcessor(
         }
     }
 
-    private fun logPlacedOrder(customerGroup: CustomerGroup, currentOrder: Order) {
-        val assignedWaiter = inHouseGroupsToWaiter[customerGroup]
+    private fun logPlaceOrderEventGroup(customerGroup: CustomerGroup, eventWaiters: List<Waiter>) {
+        waitersOrdered.addAll(eventWaiters)
+        customersOrdered.add(customerGroup)
+    }
+
+    private fun logPlacedOrder(customerGroup: CustomerGroup, currentOrder: Order, assignedWaiter: Waiter?) {
         if (customerGroup is RegularGroup) {
             // the streak is only broken once the group is actually served (see EatingProcessor),
             // otherwise two consecutive "nobody was served" evenings could never add up to two failures

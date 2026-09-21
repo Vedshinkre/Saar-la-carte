@@ -1,5 +1,9 @@
 package de.unisaarland.cs.se.selab.systemtest.selab26
 
+import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.PatienceLeavesFiveTicksAfterOrderSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.PatienceLeavesFourTicksAfterOrderSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.ServedOnFourthTickIsNeutralSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.ServedOnFourthTickIsPositiveSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.basicdishtests.AdaptedBasicDishAcceptedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.basicdishtests.AdaptedBasicDishOnlyAdapterAffectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.basicdishtests.AdaptedBasicDishRecipeChangeSystemTest
@@ -220,12 +224,21 @@ object SystemTestRegistration {
         registerRegularPlanningProbes(testSuite)
         registerStaffChangeProbes(testSuite)
         registerOfficeHourProbes(testSuite)
+        registerPatienceAbProbes(testSuite)
         testSuite.registerTest(SomeDeliveryTest())
         testSuite.registerTest(CanvisitA())
         testSuite.registerTest(CanvisitB())
         testSuite.registerTest(PackagingChangeIncidentSystemTests())
         testSuite.registerTest(IncidentZeroPackagingVolumeRejectedSystemTest())
         testSuite.registerTest(IncidentNegativePackagingVolumeRejectedSystemTest())
+    }
+
+    /** AB tests for the two tick windows fo the serving phase */
+    private fun registerPatienceAbProbes(testSuite: SELab26TestSuite) {
+        testSuite.registerTest(PatienceLeavesFiveTicksAfterOrderSystemTest())
+        testSuite.registerTest(PatienceLeavesFourTicksAfterOrderSystemTest())
+        testSuite.registerTest(ServedOnFourthTickIsPositiveSystemTest())
+        testSuite.registerTest(ServedOnFourthTickIsNeutralSystemTest())
     }
 
     /**

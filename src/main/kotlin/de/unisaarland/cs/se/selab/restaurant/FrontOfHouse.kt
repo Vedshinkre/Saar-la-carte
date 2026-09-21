@@ -373,8 +373,11 @@ class FrontOfHouse(
      * Beep beep I'm a document PLEASE change me
      */
     fun getAvailableDrivers(): Int {
-        // DOIT: check the delivery groups with an order and subtract that count from idle drivers so we get available
-        return drivers.size
+        val promised = deliveryGroups.count { group ->
+            val order = group.currentOrder
+            order != null && order.deliveredAt == null && drivers.none { it.targetGroup === group }
+        }
+        return (drivers.count { it.state == DriverState.IDLE } - promised).coerceAtLeast(0)
     }
 
     /**

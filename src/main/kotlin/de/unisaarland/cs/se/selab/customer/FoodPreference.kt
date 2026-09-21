@@ -49,7 +49,7 @@ class FoodPreference(
             return null
         }
 
-        if (eventFavourite.isNotEmpty()) {
+        if (eventFavourite != "No Dish") {
             val eventMatch = notExcluded.firstOrNull { it.name == eventFavourite }
             if (eventMatch != null) {
                 return Dish(eventMatch, restaurantType)

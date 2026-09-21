@@ -77,6 +77,8 @@ class EventGroup(
 
                 if (currentWaiter != null) {
                     registerDish(currentWaiter, customerDish, countertop)
+                } else {
+                    break
                 }
 
                 listOfDishes.add(customerDish)

@@ -7,6 +7,7 @@ import de.unisaarland.cs.se.selab.enums.LogLevel
 import de.unisaarland.cs.se.selab.enums.RatingType
 import de.unisaarland.cs.se.selab.enums.RestaurantType
 import de.unisaarland.cs.se.selab.enums.TableType
+import de.unisaarland.cs.se.selab.food.Order
 import de.unisaarland.cs.se.selab.food.Recipe
 import de.unisaarland.cs.se.selab.loggers.Logger
 import de.unisaarland.cs.se.selab.restaurant.FrontOfHouse
@@ -15,6 +16,8 @@ import de.unisaarland.cs.se.selab.restaurant.helpers.RatingProcessor
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 import kotlin.collections.emptyList
 import kotlin.test.Test
 import kotlin.test.assertFalse
@@ -396,7 +399,7 @@ class RegularEventGroupRatingTest {
     }
 
     @Test
-    fun `EventGroup gets negative rating due to delivery or service timeout`() {
+    fun `EventGroup gets negative rating due to service timeout`() {
         val eventGroup = createEventGroup(4, TableType.COMMON)
         val initialPositive = 20
         val initialNegative = 2
@@ -417,5 +420,80 @@ class RegularEventGroupRatingTest {
         assertEquals(RatingType.NEGATIVE, eventGroup.determineRating())
         assertEquals(20, updatedPositive)
         assertEquals(3, updatedNegative, "Negative ratings should increase due to timeout")
+    }
+
+    @Test
+    fun `RegularGroup at closing with no order receives NEGATIVE experience`() {
+        // Setup: A regular group that never successfully placed an order (order is null)
+        val regularGroup = createRegularGroup(2, TableType.COMMON)
+        val initialPositive = 10
+        val initialNegative = 5
+
+        // Action: Process rating at closing time
+        val processor = createProcessor()
+        val (updatedPositive, updatedNegative) = processor.rate(
+            group = regularGroup,
+            positiveRatings = initialPositive,
+            negativeRatings = initialNegative,
+            closing = true
+        )
+
+        // Assertions: The null order must force a NEGATIVE experience
+        assertEquals(ExperienceType.NEGATIVE, regularGroup.experience, "negative stuff")
+        assertEquals(RatingType.NEGATIVE, regularGroup.determineRating(), "Must generate a NEGATIVE rating")
+        assertEquals(10, updatedPositive)
+        assertEquals(6, updatedNegative)
+    }
+
+    @Test
+    fun `EventGroup at closing with unfinished order receives NEGATIVE experience`() {
+        val eventGroup = mock<EventGroup>()
+        val initialPositive = 10
+        val initialNegative = 5
+
+        val mockOrder = mock<Order>()
+
+        // Setup Mock Behaviors
+        whenever(mockOrder.areAllDishesEaten()).thenReturn(false)
+        whenever(eventGroup.currentOrder).thenReturn(mockOrder)
+        whenever(eventGroup.determineRating()).thenReturn(RatingType.NEGATIVE)
+
+        // Action: Process rating at closing time
+        val processor = createProcessor()
+        val (updatedPositive, updatedNegative) = processor.rate(
+            group = eventGroup,
+            positiveRatings = initialPositive,
+            negativeRatings = initialNegative,
+            closing = true
+        )
+
+        // to check the experience
+        verify(eventGroup).experience = ExperienceType.NEGATIVE
+
+        // Assert the rating counts updated correctly
+        assertEquals(10, updatedPositive)
+        assertEquals(6, updatedNegative)
+    }
+
+    @Test
+    fun `RegularGroup at closing with completely eaten order avoids NEGATIVE experience penalty`() {
+        val regularGroup = mock<RegularGroup>()
+        val mockOrder = mock<Order>()
+
+        // order.areAllDishesEaten() == true
+        whenever(mockOrder.areAllDishesEaten()).thenReturn(true)
+        whenever(regularGroup.currentOrder).thenReturn(mockOrder)
+        whenever(regularGroup.determineRating()).thenReturn(RatingType.POSITIVE)
+
+        val processor = createProcessor()
+        processor.rate(
+            group = regularGroup,
+            positiveRatings = 10,
+            negativeRatings = 5,
+            closing = true
+        )
+
+        // Assert that the processor NEVER tried to set a NEGATIVE experience
+        verify(regularGroup, org.mockito.kotlin.never()).experience = ExperienceType.NEGATIVE
     }
 }

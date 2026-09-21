@@ -15,6 +15,7 @@ class Order(val dishes: List<Dish>) {
     var firstDishCookedAt: Tick? = null
     var lastDishServedAt: Tick? = null
     val orderedAt: Tick = Time.tick
+    var deliveryGivenUp: Boolean = false
     var deliveredAt: Tick? = null
     private var servingStarted: Boolean = false
 

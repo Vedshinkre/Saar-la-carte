@@ -53,7 +53,7 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
         val seatCandidates = mutableListOf<RestaurantStats>()
         for (stats in openRestaurants) {
             val numberOfAvailableSeats = stats.availableSeats[group.tableType]
-            if (numberOfAvailableSeats != null && numberOfAvailableSeats >= 0) {
+            if (numberOfAvailableSeats != null && numberOfAvailableSeats >= group.size) {
                 seatCandidates.add(stats)
             }
         }
@@ -71,7 +71,11 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
     private fun getELigibleRestaurantsForEvent(group: EventGroup): Int? {
         val eventRestaurants = mutableListOf<RestaurantStats>()
         for (stats in restaurantStats) {
-            if (stats.restaurantType in group.restaurantTypes && stats.event && stats.isOpenAt(group.visitingAt)) {
+            if (stats.restaurantType in group.restaurantTypes && stats.event && stats.isOpenAt(
+                    group.visitingAt,
+                    group.eventEvening
+                )
+            ) {
                 eventRestaurants.add(stats)
             }
         }

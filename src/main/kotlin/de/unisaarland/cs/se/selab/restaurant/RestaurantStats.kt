@@ -1,11 +1,14 @@
 package de.unisaarland.cs.se.selab.restaurant
 
+import de.unisaarland.cs.se.selab.Evening
 import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.Tick
 import de.unisaarland.cs.se.selab.Time
 import de.unisaarland.cs.se.selab.enums.RestaurantType
 import de.unisaarland.cs.se.selab.enums.TableType
 import de.unisaarland.cs.se.selab.food.Recipe
+
+const val TWENTY_FOUR = 24
 
 /**
  * class shared between restaurant and browsing service
@@ -29,14 +32,14 @@ class RestaurantStats(
     /**
      * sake of detect
      */
-    fun isOpenAt(tick: Tick): Boolean {
-        return tick in openingTickStart..openingTickEnd - 3
+    fun isOpenAt(tick: Tick, eventEvening: Evening): Boolean {
+        return tick in openingTickStart..openingTickEnd - 3 && openingTickStart <= TWENTY_FOUR * eventEvening
     }
 
     /**
      * sake of detect
      */
     fun isOpen(): Boolean {
-        return isOpenAt(Time.tick)
+        return Time.tick in openingTickStart..openingTickEnd - 3
     }
 }

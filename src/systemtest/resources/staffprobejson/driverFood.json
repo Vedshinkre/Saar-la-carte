@@ -1,0 +1,9 @@
+{
+  "ingredients": [
+    {"name": "olive", "unit": "g", "packagingVolume": 1, "bestBefore": 9}
+  ],
+  "recipes": [
+    {"id": 1, "dishName": "Olive Plate", "duration": 10, "basicDishFor": "EUROPEAN",
+     "cookType": ["TOURNANT"], "ingredients": [{"name": "olive", "amount": 10}]}
+  ]
+}

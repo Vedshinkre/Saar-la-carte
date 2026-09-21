@@ -1,0 +1,9 @@
+{
+  "ingredients": [
+    {"name": "sago", "unit": "g", "packagingVolume": 1, "bestBefore": 9}
+  ],
+  "recipes": [
+    {"id": 1, "dishName": "Sago Bowl", "duration": 10, "basicDishFor": "EUROPEAN",
+     "cookType": ["TOURNANT"], "ingredients": [{"name": "sago", "amount": 10}]}
+  ]
+}

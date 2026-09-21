@@ -35,6 +35,8 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.eventtests.EventServingWait
 import de.unisaarland.cs.se.selab.systemtest.selab26.eventtests.EventServingWaitSeatingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.fulltests.fullScenarioSystemTests
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualAdHocTableMergingSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualBarExactFitNoMergeSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualBarRestaurantChoiceSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualDeliveryEarlyDecisionTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualDeliveryTimeoutTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualMergeTrimTieBreakSystemTest
@@ -363,6 +365,8 @@ object SystemTestRegistration {
         testSuite.registerTest(EventTableMergingSystemTest())
         testSuite.registerTest(CasualTableNoLiftSystemTest())
         testSuite.registerTest(CasualTableExclusionSystemTest())
+        testSuite.registerTest(CasualBarRestaurantChoiceSystemTest())
+        testSuite.registerTest(CasualBarExactFitNoMergeSystemTest())
         testSuite.registerTest(TableMergingLifecycleSystemTest())
     }
 

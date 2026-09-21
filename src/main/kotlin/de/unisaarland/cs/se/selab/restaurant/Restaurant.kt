@@ -130,24 +130,32 @@ class Restaurant(
             simulateOpeningHoursTick(isBeforeClosing = tick <= restaurantStats.openingTickEnd)
         }
         refreshAvailableSeats()
-        // DOTO: refreshAvailableDrivers()
+        refreshAvailableDrivers()
         if (tick == Constants.TICK_PER_EVENING) {
             endEvening()
         }
     }
 
     /**
-     * Items 153/154: the browsing service must see the seats that are free *right now* — tables
-     * freed again during this tick are handed back — minus the seats already claimed by casual
-     * groups that decided on this restaurant but are not sitting at a table yet. Reservations of
-     * REGULAR and EVENT groups need no such correction: their tables are already RESERVED.
+     * Refresh available Seats estimate (update map in restaurant stats)
      */
     private fun refreshAvailableSeats() {
-        val available = frontOfHouse.getAvailableSeats().toMutableMap()
+        /* val available = frontOfHouse.getAvailableSeats().toMutableMap()
         customerQueue.filterIsInstance<CasualGroup>()
             .filter { !it.wantsDelivery }
-            .forEach { available[it.tableType] = (available[it.tableType] ?: 0) - it.size }
-        restaurantStats.availableSeats.putAll(available)
+            .forEach { available[it.tableType] = (available[it.tableType] ?: 0) - it.size } */
+        restaurantStats.availableSeats.putAll(frontOfHouse.getAvailableSeats())
+    }
+
+    /**
+     * Refresh availableDrivers inside of restaurantStats
+     */
+    private fun refreshAvailableDrivers() {
+        /* val available = frontOfHouse.getAvailableSeats().toMutableMap()
+        customerQueue.filterIsInstance<CasualGroup>()
+            .filter { !it.wantsDelivery }
+            .forEach { available[it.tableType] = (available[it.tableType] ?: 0) - it.size } */
+        restaurantStats.availableDrivers = frontOfHouse.getAvailableDrivers()
     }
 
     /**
@@ -233,6 +241,7 @@ class Restaurant(
     }
 
     /** returns whether a driver is available */
+    // DOTO this function doesn't need to exist
     fun isDriverAvailable(): Boolean = frontOfHouse.isDriverAvailable()
 
     // statistics

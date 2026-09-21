@@ -20,7 +20,6 @@ class RegularGroup(
 ) : CustomerGroup(id, size, tableType, visitingAt, foodPreferences) {
     val orderHistory: ArrayDeque<Order> = ArrayDeque()
     var failedAttempts: Int = 0
-    var hasVisited: Boolean = false
 
     override fun isVisitingTonight(): Boolean {
         val isPeriodicVisitEvening: Boolean = Time.evening >= visitingStart &&

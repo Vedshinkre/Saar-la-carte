@@ -295,7 +295,7 @@ class ArrivalProcessor(
     }
 
     private fun successfulSeating(customerGroup: CustomerGroup, waiters: List<Waiter>) {
-        val assignedTables: List<Table> = customerToTable[customerGroup] ?: return
+        val assignedTables: List<Table> = customerToTable.getValue(customerGroup)
         val mergeTable: Table = assignedTables.minBy { it.id }
         if (assignedTables.size > 1) {
             FohReceptionLogger.logFohMergingTables(
@@ -308,7 +308,6 @@ class ArrivalProcessor(
         numberOfCustomersSeated += customerGroup.size
         waitersThatSeated.addAll(waiters)
         tablesSeatedOn.add(mergeTable)
-        if (customerGroup is RegularGroup) { customerGroup.hasVisited = true }
 
         FohReceptionLogger.logFohSeating(customerGroup.id, mergeTable.id, waiters.map { it.id!! })
     }

@@ -14,7 +14,6 @@ import de.unisaarland.cs.se.selab.restaurant.Table
 import de.unisaarland.cs.se.selab.restaurant.helpers.RatingProcessor
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
-import org.mockito.Mockito.mock
 import org.mockito.kotlin.mock
 import kotlin.collections.emptyList
 import kotlin.test.Test

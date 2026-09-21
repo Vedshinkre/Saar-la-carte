@@ -11,6 +11,8 @@ import de.unisaarland.cs.se.selab.enums.TableType
 import de.unisaarland.cs.se.selab.food.Ingredient
 import de.unisaarland.cs.se.selab.food.Recipe
 import de.unisaarland.cs.se.selab.food.Stock
+import de.unisaarland.cs.se.selab.incidents.Incident
+import de.unisaarland.cs.se.selab.incidents.PackagingChangeIncident
 import de.unisaarland.cs.se.selab.parsers.IncidentParser
 import de.unisaarland.cs.se.selab.restaurant.Restaurant
 import de.unisaarland.cs.se.selab.restaurant.RestaurantStats
@@ -20,6 +22,7 @@ import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.put
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import kotlin.test.assertEquals
 
 /**  */
 class PackagingChangeIncidentTest {
@@ -62,6 +65,22 @@ class PackagingChangeIncidentTest {
             stock
         )
     )
+
+    @Test
+    fun `Packaging Change Incident - Success`() {
+        val jsonArray = buildJsonArray {
+            addJsonObject {
+                put("id", 1)
+                put("type", "PACKAGING")
+                put("evening", 1)
+                put("ingredient", "Potato")
+                put("packagingVolume", 1)
+            }
+        }
+        val incidents: List<Incident> = parser.parseIncidentFile(jsonArray, ingredients, stock, recipes, restaurants)
+        assertEquals(1, incidents.size)
+        assert(incidents.first() is PackagingChangeIncident)
+    }
 
     @Test
     fun `Packaging Change Incident Non-Existent Ingredient`() {

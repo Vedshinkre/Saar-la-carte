@@ -140,15 +140,17 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.recipeincidenttests.RecipeC
 import de.unisaarland.cs.se.selab.systemtest.selab26.recipeincidenttests.RecipeChangePersistsAcrossEveningsSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.recipeincidenttests.RecipeChangeScopeSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.recipeincidenttests.RecipeChangeThreeVisitHistorySystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.ArrivedWithoutSeatingCountsAsVisitSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.ArrivedWithoutSeatingStillCountsSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.CasualConsumptionCarryOverSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.RegularFirstVisitCountsReservedSeatsSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.RegularPlanningFailedOrderSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.RegularPlanningTwoGroupsSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.RegularPlanningVisitingPeriodSystemTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.RegularReservationEstimateSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.RegularReservedTableIsTheExactFitSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.RegularSeatedWithoutOrderKeepsCountingSystemTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.RegularSeatedWithoutOrderStopsCountingSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.ReservedSeatsAreTheGroupSizeSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.ReservedSeatsAreTheWholeTableSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.staffchangetests.StaffChangeClampThenHireSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.staffchangetests.StaffChangeNoCookStillProcuresSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.staffchangetests.StaffChangeNoWaitstaffSystemTest
@@ -430,12 +432,14 @@ object SystemTestRegistration {
         testSuite.registerTest(RegularPlanningTwoGroupsSystemTest())
         testSuite.registerTest(RegularPlanningVisitingPeriodSystemTest())
         testSuite.registerTest(RegularPlanningFailedOrderSystemTest())
-        testSuite.registerTest(RegularReservationEstimateSystemTest())
         testSuite.registerTest(CasualConsumptionCarryOverSystemTest())
         testSuite.registerTest(RegularFirstVisitCountsReservedSeatsSystemTest())
         testSuite.registerTest(RegularReservedTableIsTheExactFitSystemTest())
-        testSuite.registerTest(RegularSeatedWithoutOrderStopsCountingSystemTest())
         testSuite.registerTest(RegularSeatedWithoutOrderKeepsCountingSystemTest())
+        testSuite.registerTest(ReservedSeatsAreTheWholeTableSystemTest())
+        testSuite.registerTest(ReservedSeatsAreTheGroupSizeSystemTest())
+        testSuite.registerTest(ArrivedWithoutSeatingStillCountsSystemTest())
+        testSuite.registerTest(ArrivedWithoutSeatingCountsAsVisitSystemTest())
     }
 
     /**

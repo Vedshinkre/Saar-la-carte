@@ -11,7 +11,7 @@ class CanvisitB : ExampleSystemTestExtension() {
     override val description = "Asserts that the group does not select a restaurant"
     override val food = "mayicome/food.json"
     override val restaurants = "mayicome/restaurants.json"
-    override val scenario = "mayicome/scenario_selects.json"
+    override val scenario = "mayicome/scenario.json"
     override val logLevel = "DEBUG"
     override val maxTicks = 24
 

@@ -42,7 +42,7 @@ class WaiterSelectionRulesTest {
 
         foh.processArrival(casualGroup(id = 1, size = 4), menu)
 
-        assertTrue(seatedBy().startsWith("${free.id}"), log.lines.toString())
+        assertTrue(seatedBy().startsWith("${free.id!!}"), log.lines.toString())
         assertNull(busy.id, "the waiter without enough remaining SEAT capacity must never be considered")
     }
 
@@ -69,7 +69,7 @@ class WaiterSelectionRulesTest {
         foh.processArrival(casualGroup(id = 1, size = 4), menu)
 
         assertTrue(mostLoaded.id != null, "the winning candidate must have been assigned an id")
-        assertTrue(seatedBy().startsWith("${mostLoaded.id}"), log.lines.toString())
+        assertTrue(seatedBy().startsWith("${mostLoaded.id!!}"), log.lines.toString())
         assertEquals(11, mostLoaded.currentLoad)
         assertNull(lessLoaded.id, "the less loaded candidate lost and must stay unassigned")
         assertEquals(3, lessLoaded.currentLoad, "an unpicked candidate's load must not change")

@@ -51,7 +51,7 @@ class EventWaiterCyclingTest {
         assertEquals(10, second.getTickLoad(ActionType.SEAT))
         assertEquals(1, third.getTickLoad(ActionType.SEAT))
         assertTrue(
-            log.lines("FOH Seating (R").single().endsWith("by waitstaff ${first.id},${second.id},${third.id}."),
+            log.lines("FOH Seating (R").single().endsWith("by waitstaff ${first.id!!},${second.id!!},${third.id!!}."),
             log.lines.toString()
         )
     }

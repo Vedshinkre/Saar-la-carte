@@ -281,7 +281,9 @@ class WaitingForFoodIntegrationTest {
         tickUntil(9)
 
         assertEquals(DishStatus.EATEN, order.dishes[0].status)
-        assertEquals(DishStatus.ABORTED, order.dishes[1].status)
+        // the kitchen carries on cooking abandoned dishes; this one was never cooked, so status is untouched
+        assertEquals(DishStatus.UNCOOKED, order.dishes[1].status)
+        assertTrue(order.dishes[1].abandoned)
         assertEquals(1, lines("Restaurant No Eating").size)
         assertTrue(lines("FOH Finished Eating").single().contains("1 customers of group 1"))
     }

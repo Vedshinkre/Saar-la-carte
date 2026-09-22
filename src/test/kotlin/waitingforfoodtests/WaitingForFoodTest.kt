@@ -56,7 +56,8 @@ class WaitingForFoodTest {
         )
         assertEquals(0, group.customersRemainingInRestaurant)
         assertEquals(3, group.getCustomersWhoLeft())
-        assertTrue(order.dishes.all { it.status == DishStatus.ABORTED })
+        // the kitchen carries on cooking abandoned dishes, so their status is untouched
+        assertTrue(order.dishes.all { it.abandoned })
         assertEquals(ExperienceType.NEGATIVE, group.experience)
     }
 

@@ -60,7 +60,6 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CorrectPartial
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CustomerBehaviourDecisionSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryCumulativeDistanceSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryEveningBoundaryNeverRatesSystemTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOrderScenarioTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOrderSuccessTestA
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOutboundTripSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryQueueDelayFailedReturnSystemTest
@@ -127,6 +126,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.CorrectPartialServ
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.DeliveryBasicDishPriorityA
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.DeliveryBasicDishPriorityB
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.KitchenCookAssignmentSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.RegularFailedTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.SomeDeliveryTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.ClosedRestaurantStillFinishesDeliverySystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.ExtendedPatienceLeavesInTickEightSystemTest
@@ -254,7 +254,7 @@ object SystemTestRegistration {
         testSuite.registerTest(PartialServiceSuccessTest())
         testSuite.registerTest(CookChangeNoOrderTest())
         testSuite.registerTest(RecipeChangeAcrossRestaurantsTest())
-        testSuite.registerTest(DeliveryOrderScenarioTest())
+        testSuite.registerTest(RegularFailedTest())
         testSuite.registerTest(CorrectPartialServing1())
         testSuite.registerTest(RegularRetrySucceedsSystemTest())
         registerRecipeChangeProbes(testSuite)

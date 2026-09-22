@@ -31,10 +31,11 @@ class WaiterLoadReleasedOnLeavingSystemTest : ExampleSystemTestExtension() {
         skipUntilString(FohArrivalTestLogs.seating(1, 1, 1, listOf(1)))
         skipUntilString(FohArrivalTestLogs.seating(1, 2, 2, listOf(1)))
 
-        // the group of 2 is served, eats and is escorted; the group of 10 gives up four ticks after ordering
-        skipUntilString(FohServiceTestLogs.escorting(1, 1, 2, 1, 1))
+        // in tick 6 both happen: the group of 2 finishes eating and is escorted, and the group of 10
+        // gives up four ticks after ordering, in that order (eating/leaving runs before escorting)
         skipUntilString(TickStatusTestLogs.tickStart(6, 1))
         skipUntilString(FohServiceTestLogs.noEating(1, 10, 2, 2))
+        skipUntilString(FohServiceTestLogs.escorting(1, 1, 2, 1, 1))
         skipUntilString(FohServiceTestLogs.rating(1, 2, "NEGATIVE", 11, 1))
 
         // both waiters are free again: the lowest id gets the next group

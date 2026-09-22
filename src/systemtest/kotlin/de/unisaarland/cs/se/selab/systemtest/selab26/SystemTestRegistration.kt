@@ -118,8 +118,11 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.CanvisitA
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.CanvisitB
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.CorrectPartialServing2
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.SomeDeliveryTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.ExtendedPatienceEndsSevenTicksAfterOrderingSystemTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.ExtendedPatienceEndsSixTicksAfterOrderingSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.ExtendedPatienceLeavesInTickEightSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.ExtendedPatienceLeavesInTickFiveSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.ExtendedPatienceLeavesInTickNineSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.ExtendedPatienceLeavesInTickSevenSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.ExtendedPatienceLeavesInTickSixSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.MergedTableIsUsedForServingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.MergedTablesAreLoggedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.NoReservationIsLoggedSystemTest
@@ -128,6 +131,11 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.PartialSer
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.PartialServingWaitsForTwoTicksSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.PatienceEndsFiveTicksAfterOrderingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.PatienceEndsFourTicksAfterOrderingSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.RecipeScopeAdaptedDishAddsToBasicSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.RecipeScopeAdaptedDishReplacesBasicSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.RecipeScopeFilesAcceptedSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.RecipeScopeRestaurantOneBuysExactAmountSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.RecipeScopeRestaurantOneBuysWholePackagesSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.packagingchangeincidentsystemtests.PackagingChangeIncidentSystemTests
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.AllFilesValidSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.CustomerGroupUnknownRestaurantSystemTest
@@ -529,8 +537,16 @@ object SystemTestRegistration {
         testSuite.registerTest(PatienceEndsFourTicksAfterOrderingSystemTest())
         testSuite.registerTest(PartialServingWaitsForTwoTicksSystemTest())
         testSuite.registerTest(PartialServingWaitsForOneTickSystemTest())
-        testSuite.registerTest(ExtendedPatienceEndsSevenTicksAfterOrderingSystemTest())
-        testSuite.registerTest(ExtendedPatienceEndsSixTicksAfterOrderingSystemTest())
+        testSuite.registerTest(ExtendedPatienceLeavesInTickFiveSystemTest())
+        testSuite.registerTest(ExtendedPatienceLeavesInTickSixSystemTest())
+        testSuite.registerTest(ExtendedPatienceLeavesInTickSevenSystemTest())
+        testSuite.registerTest(ExtendedPatienceLeavesInTickEightSystemTest())
+        testSuite.registerTest(ExtendedPatienceLeavesInTickNineSystemTest())
+        testSuite.registerTest(RecipeScopeFilesAcceptedSystemTest())
+        testSuite.registerTest(RecipeScopeRestaurantOneBuysWholePackagesSystemTest())
+        testSuite.registerTest(RecipeScopeRestaurantOneBuysExactAmountSystemTest())
+        testSuite.registerTest(RecipeScopeAdaptedDishReplacesBasicSystemTest())
+        testSuite.registerTest(RecipeScopeAdaptedDishAddsToBasicSystemTest())
     }
 
     /**

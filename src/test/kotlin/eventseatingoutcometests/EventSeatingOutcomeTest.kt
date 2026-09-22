@@ -143,7 +143,10 @@ class EventSeatingOutcomeTest {
         assertEquals(ExperienceType.NEUTRAL, group.experience)
     }
 
-    @Disabled
+    @Disabled(
+        " Deniz does not do safety checks that " +
+            "eventGroups who did not reserve arrive at the restaurant so the map lookup throws error"
+    )
     @Test
     fun `an event group without a reserved table does not crash the seating and logs no seating line`() {
         val group = eventGroup(4, 4)

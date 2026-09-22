@@ -350,7 +350,12 @@ class FrontOfHouse(
             driver.distanceDriven = 0
             driver.id = null
         }
-        serving.resetDriverIdCounter()
+        // a driver that is still on its way back keeps the id it was given this evening, so the
+        // counter has to continue above it instead of handing the same id out twice
+        serving.resetDriverIdCounter((drivers.mapNotNull { it.id }.maxOrNull() ?: 0) + 1)
+        // deliveries aborted at the end of the evening happen "without rating or other
+        // consequences": the groups must not linger and rate in the next evening
+        deliveryGroups.clear()
     }
 
     private fun removeProcessedGroup(group: CustomerGroup) {

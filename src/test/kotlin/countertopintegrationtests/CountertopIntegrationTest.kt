@@ -189,7 +189,7 @@ class CountertopIntegrationTest {
     fun `getAvailableRecipes-Expired Ingredients Are Not Counted-fails`() {
         val recipe = createDummyRecipe(requiredAmount = 50)
 
-        // For testing purposes, if you can't manually set expiration, we will use a mock:
+        // to mock expired ingredients
         val mockExpiredPkg = org.mockito.kotlin.mock<IngredientPackage>()
         org.mockito.kotlin.whenever(mockExpiredPkg.hasExpired()).thenReturn(true)
         org.mockito.kotlin.whenever(mockExpiredPkg.currentAmount).thenReturn(100)

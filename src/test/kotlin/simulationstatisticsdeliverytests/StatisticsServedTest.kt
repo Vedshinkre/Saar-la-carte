@@ -35,8 +35,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 private const val OPENING_TICK_END = 24
-private const val LARGE_ORDER = 12 // > Constants.ACTION_LIMIT: one waiter can't take it all at once
-private const val EVENT_ORDER = 15 // needs two full-capacity waiters to be served in one tick
+private const val LARGE_ORDER = 12
+private const val EVENT_ORDER = 15
 private const val DINE_IN_GROUP_SIZE = 2
 
 /**
@@ -68,8 +68,6 @@ class StatisticsServedTest {
 
     private fun log(): String = output.toString()
 
-    // ---- direct ServingProcessor unit tests ----
-
     private fun servingProcessor(
         waiters: List<Waiter>,
         inHouseGroups: List<CustomerGroup> = emptyList(),
@@ -87,7 +85,8 @@ class StatisticsServedTest {
             getServingPriority = { 0 },
             getAssignedTableId = getAssignedTableId,
             recruitWaitersForEventGroup = recruitForEvent,
-            getNextWaiterId = { nextWaiterId++ })
+            getNextWaiterId = { nextWaiterId++ }
+        )
     }
 
     @Test
@@ -182,7 +181,10 @@ class StatisticsServedTest {
         val w1 = Waiter().apply { id = 1 }
         val w2 = Waiter().apply { id = 2 }
         val processor = servingProcessor(
-            waiters = listOf(w1, w2), inHouseGroups = listOf(event), recruitForEvent = { _, _ -> listOf(w1, w2) })
+            waiters = listOf(w1, w2),
+            inHouseGroups = listOf(event),
+            recruitForEvent = { _, _ -> listOf(w1, w2) }
+        )
 
         processor.processServing()
 
@@ -200,7 +202,10 @@ class StatisticsServedTest {
         event.currentOrder = order(DishStatus.COOKED, dishes = LARGE_ORDER)
         val waiter = Waiter().apply { id = 1 }
         val processor = servingProcessor(
-            waiters = listOf(waiter), inHouseGroups = listOf(event), recruitForEvent = { _, _ -> listOf(waiter) })
+            waiters = listOf(waiter),
+            inHouseGroups = listOf(event),
+            recruitForEvent = { _, _ -> listOf(waiter) }
+        )
 
         processor.processServing()
 
@@ -271,10 +276,7 @@ class StatisticsServedTest {
             positiveRatings = 0,
             negativeRatings = 0,
             menu = listOf(zeroIngredientRecipe)
-        ) // Countertop.getAvailableRecipes requires a cook of the matching type to exist before it will
-        // ever let the order be placed (item F13), regardless of ingredients - but keeping it
-        // already "busy" stops the real Kitchen from actually cooking the dishes, so the test controls
-        // exactly when they become COOKED instead of racing the real cook duration.
+        )
         val busyCook = Cook(CookType.TOURNANT).apply { isCooking = true }
         val staff = RestaurantStaff(mutableListOf(busyCook), mutableListOf(waiter), mutableListOf())
         return Restaurant(stats, "Test Kitchen", staff, listOf(table), Stock(emptyList()))
@@ -311,7 +313,8 @@ class StatisticsServedTest {
         Simulation(SimulationConfig()).apply { restaurants = listOf(restaurant) }.runSimulation()
 
         assertTrue(
-            log().contains("Simulation Statistics: Restaurant 1 served $DINE_IN_GROUP_SIZE customers."), log()
+            log().contains("Simulation Statistics: Restaurant 1 served $DINE_IN_GROUP_SIZE customers."),
+            log()
         )
     }
 }

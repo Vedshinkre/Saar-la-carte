@@ -27,7 +27,7 @@ class DeliveryBasicDishPriorityB : ExampleSystemTestExtension() {
         // Basic dish (Tomato Soup: ID 2) MUST precede non-basic dish (Grilled Chicken: ID 1) in the map.
         assertNextLine(
             "[IMPORTANT] FOH Delivery (R 1): Waitstaff 1 serves " +
-                    "Grilled Chicken:1,Tomato Soup:1 meals to driver 1 for order 1."
+                "Grilled Chicken:1,Tomato Soup:1 meals to driver 1 for order 1."
         )
     }
 }

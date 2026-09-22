@@ -174,6 +174,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.RestaurantsT
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.StaffIncidentUnknownRestaurantSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.UnavailabilityDifferentIngredientsOverlapAcceptedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.ValidIncidentsAcceptedSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.ratingsystemtests.CasualGroupRatingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.recipeincidenttests.RecipeChangeEventPlanningSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.recipeincidenttests.RecipeChangeIncidentOrderSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.recipeincidenttests.RecipeChangeLaterEveningSystemTest
@@ -254,6 +255,7 @@ object SystemTestRegistration {
         testSuite.registerTest(DeliveryBrowsingTickResetA())
         testSuite.registerTest(ExhaustiveSimpleScenarioTest())
         testSuite.registerTest(CorrectPartialServing2())
+        testSuite.registerTest(CasualGroupRatingSystemTest())
     }
 
     /** AB tests for the two tick windows fo the serving phase */

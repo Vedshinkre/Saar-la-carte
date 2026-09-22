@@ -1,0 +1,51 @@
+{
+  "customerGroups": [
+    {
+      "id": 1,
+      "type": "CASUAL",
+      "size": 4,
+      "visitingTick": 1,
+      "foodPreferences": [{
+        "size": 4,
+        "excludedIngredients": ["Potato"],
+        "preferredIngredients": ["Chicken"],
+        "favoriteDishes": ["Roast Chicken"]
+      }],
+      "restaurantTypes": ["ASIAN"],
+      "visitingEvenings": [1],
+      "ratingLikelihood": "SOME"
+    },
+    {
+      "id": 2,
+      "type": "CASUAL",
+      "size": 1,
+      "visitingTick": 1,
+      "foodPreferences": [{
+        "size": 1,
+        "excludedIngredients": ["Potato"],
+        "preferredIngredients": ["Chicken"],
+        "favoriteDishes": ["Roast Chicken"]
+      }],
+      "restaurantTypes": ["ASIAN"],
+      "visitingEvenings": [1],
+      "ratingLikelihood": "SOME"
+    },
+    {
+      "id": 3,
+      "type": "CASUAL",
+      "size": 2,
+      "tableType": "BAR",
+      "visitingTick": 1,
+      "foodPreferences": [{
+        "size": 1,
+        "excludedIngredients": ["Chicken"],
+        "preferredIngredients": ["Potato"],
+        "favoriteDishes": ["Potato Soup"]
+      }],
+      "restaurantTypes": ["EUROPEAN"],
+      "visitingEvenings": [1],
+      "ratingLikelihood": "SOME"
+    }
+  ],
+  "incidents": []
+}

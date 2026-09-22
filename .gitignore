@@ -1,4 +1,5 @@
 .gradle
+LOGGING_ORDER.md
 .claude/
 build/
 libs/

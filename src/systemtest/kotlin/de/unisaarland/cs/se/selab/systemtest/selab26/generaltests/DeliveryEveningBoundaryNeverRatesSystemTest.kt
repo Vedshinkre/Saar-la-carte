@@ -8,20 +8,14 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.utils.StatisticsTestLogs
 import de.unisaarland.cs.se.selab.systemtest.selab26.utils.TickStatusTestLogs
 
 /**
- * F20/F27/P05, confirmed: once an evening ends, there are no more rating consequences for what
- * happened in it, so a delivery that can't be fully resolved before the evening ends must simply be
- * abandoned -- no rating, in this evening or any later one.
+ * F20/F27/P05: once an evening ends, there are no more rating consequences for what happened in it --
+ * a delivery unresolved by then is simply abandoned, no rating ever.
  *
- * A blocking dine-in order (group 1) delays the kitchen queue so the delivery group's (group 2) dish is
- * only handed to the driver in tick 23 and delivered in tick 24 -- the evening's last tick, and three
- * ticks after group 2's `visitingTick` of 21 (the latest a delivery's desired arrival may validly be).
- * At the moment of hand-over, [de.unisaarland.cs.se.selab.actors.Driver.handOverToCustomer] scores this
- * as a NEGATIVE experience (it arrived after `visitingTick`), but `Dish.updateEating()` needs 3 calls (2
- * full ticks after hand-over) to reach EATEN, so it cannot finish within evening 1.
- *
- * This matches what our own jar currently does: `FrontOfHouse.resetDrivers()` clears every delivery
- * group (`deliveryGroups.clear()`) at every evening's end, so group 2 is removed before
- * `RatingProcessor` ever gets a chance to rate it off a reset or otherwise stale experience.
+ * A blocking dine-in order delays the kitchen queue so group 2's delivery is only handed over in tick
+ * 24, the evening's last tick and 3 ticks after its `visitingTick` of 21. `Dish.updateEating()` needs 2
+ * more full ticks to reach EATEN, which don't exist in this evening. Matches current behavior:
+ * `FrontOfHouse.resetDrivers()` clears `deliveryGroups` at every evening's end, so group 2 is gone
+ * before `RatingProcessor` ever sees it.
  */
 class DeliveryEveningBoundaryNeverRatesSystemTest : ExampleSystemTestExtension() {
     override val name = "DeliveryEveningBoundaryNeverRatesSystemTest"
@@ -38,11 +32,11 @@ class DeliveryEveningBoundaryNeverRatesSystemTest : ExampleSystemTestExtension()
         skipUntilString(TickStatusTestLogs.tickStart(23, 1))
         skipUntilString(FohServiceTestLogs.deliveryHandover(1, 1, mapOf("Delivered Dish" to 1), 1, 2))
 
-        // hand-over happens on the evening's last tick, three ticks after group 2's visitingTick of 21
+        // hand-over on the evening's last tick, three ticks after visitingTick
         skipUntilString(TickStatusTestLogs.tickStart(24, 1))
         skipUntilString(DeliveryTestLogs.deliveryFinished(restId = 1, driverId = 1, orderId = 2, groupId = 2))
 
-        // evening 2 starts and runs to completion: the group is never resolved, never rates
+        // group is never resolved and never rates, even into evening 2
         skipUntilString(InitialAndPrepTestLogs.prepStart(2))
         skipUntilString(StatisticsTestLogs.statsReceived(1, 0))
     }

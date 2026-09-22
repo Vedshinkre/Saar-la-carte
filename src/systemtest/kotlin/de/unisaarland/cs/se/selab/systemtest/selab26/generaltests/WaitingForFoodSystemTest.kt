@@ -6,15 +6,10 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.utils.FohServiceTestLogs
 import de.unisaarland.cs.se.selab.systemtest.selab26.utils.TickStatusTestLogs
 
 /**
- * F27: the ordering tick counts as the first of the patience window, so customers wait 4 ticks after ordering
- * for their food (confirmed against the reference by [de.unisaarland.cs.se.selab.systemtest.selab26
- * .officehourprobes.PatienceEndsFourTicksAfterOrderingSystemTest]). One ROAST cook needs 3 ticks per order, so
- * group 1 (ordered in tick 2) is served in time, while groups 2 and 3 (ordered in tick 3) are still waiting
- * when the cook only starts their order. They leave in tick 7, four ticks after ordering, and rate negatively.
- * Group 1 finishes eating, is escorted and rates in that same tick. Per spec, the "leaving" pass is logged
- * for every group before the "finished eating" pass (confirmed against the reference by
- * [de.unisaarland.cs.se.selab.systemtest.selab26.abtests.EatingOrderIsTwoPassesSystemTest]), so groups 2
- * and 3 leaving comes before group 1 finishing eating, even though group 1 has the lower id.
+ * F27: the ordering tick counts as the first of the patience window, so customers wait 4 ticks. One ROAST
+ * cook needs 3 ticks per order: group 1 (ordered tick 2) is served in time; groups 2 and 3 (ordered tick 3)
+ * are still waiting when the cook starts their order and leave in tick 7. Group 1 finishes eating, is
+ * escorted and rates in the same tick -- leaving logs precede finished-eating logs regardless of group id.
  */
 class WaitingForFoodSystemTest : ExampleSystemTestExtension() {
     override val name = "WaitingForFoodSystemTest"
@@ -41,8 +36,7 @@ class WaitingForFoodSystemTest : ExampleSystemTestExtension() {
         skipUntilString(TickStatusTestLogs.tickStart(5, 1))
         skipUntilString(FohServiceTestLogs.serving(1, 1, mapOf(dish to 2), 1, 3))
 
-        // nobody left before tick 7: the leave logs must only appear after the start of tick 7. Group 1
-        // also finishes eating, is escorted and rates positively in this same tick.
+        // nobody leaves before tick 7; group 1 also finishes eating, is escorted, rates positively here
         skipUntilString(TickStatusTestLogs.tickStart(7, 1))
         skipUntilString(FohServiceTestLogs.noEating(1, 2, 2, 2))
         skipUntilString(FohServiceTestLogs.noEating(1, 1, 3, 3))

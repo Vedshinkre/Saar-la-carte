@@ -6,7 +6,7 @@
     {
       "id": 1, "dishName": "Rice Bowl", "duration": 10, "basicDishFor": "EUROPEAN",
       "cookType": ["TOURNANT"],
-      "ingredients": [{ "name": "Rice", "unit": "g", "amount": 10 }]
+      "ingredients": [{ "name": "Rice", "amount": 10 }]
     }
   ]
 }

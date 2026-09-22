@@ -1,0 +1,55 @@
+{
+  "ingredients": [
+    {
+      "name": "flour",
+      "unit": "g",
+      "packagingVolume": 1000,
+      "bestBefore": 10
+    }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "Blocker Dish X",
+      "duration": 40,
+      "basicDishFor": "EUROPEAN",
+      "cookType": [
+        "TOURNANT"
+      ],
+      "ingredients": [
+        {
+          "name": "flour",
+          "amount": 10
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "dishName": "Blocker Dish Y",
+      "duration": 40,
+      "cookType": [
+        "TOURNANT"
+      ],
+      "ingredients": [
+        {
+          "name": "flour",
+          "amount": 10
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "dishName": "Target Dish Z",
+      "duration": 10,
+      "cookType": [
+        "TOURNANT"
+      ],
+      "ingredients": [
+        {
+          "name": "flour",
+          "amount": 10
+        }
+      ]
+    }
+  ]
+}

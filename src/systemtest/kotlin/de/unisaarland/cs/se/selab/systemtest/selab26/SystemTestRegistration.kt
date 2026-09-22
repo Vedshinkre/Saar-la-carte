@@ -139,6 +139,8 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.RecipeScop
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.RecipeScopeFilesAcceptedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.RecipeScopeRestaurantOneBuysExactAmountSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.RecipeScopeRestaurantOneBuysWholePackagesSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.WalkedOutMealIsAbortedSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.WalkedOutMealIsStillCookedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.packagingchangeincidentsystemtests.PackagingChangeIncidentSystemTests
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.AllFilesValidSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.CustomerGroupUnknownRestaurantSystemTest
@@ -549,6 +551,8 @@ object SystemTestRegistration {
         testSuite.registerTest(RecipeScopeRestaurantOneBuysExactAmountSystemTest())
         testSuite.registerTest(RecipeScopeAdaptedDishReplacesBasicSystemTest())
         testSuite.registerTest(RecipeScopeAdaptedDishAddsToBasicSystemTest())
+        testSuite.registerTest(WalkedOutMealIsStillCookedSystemTest())
+        testSuite.registerTest(WalkedOutMealIsAbortedSystemTest())
     }
 
     /**

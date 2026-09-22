@@ -246,11 +246,6 @@ object SystemTestRegistration {
         testSuite.registerTest(DeliveryBrowsingTickResetB())
         testSuite.registerTest(DeliveryBrowsingTickResetA())
         testSuite.registerTest(ExhaustiveSimpleScenarioTest())
-        testSuite.registerTest(PackagingChangeIncidentSystemTests())
-        testSuite.registerTest(IncidentZeroPackagingVolumeRejectedSystemTest())
-        testSuite.registerTest(IncidentNegativePackagingVolumeRejectedSystemTest())
-        testSuite.registerTest(IncidentZeroAdaptationRejectedSystemTest())
-        testSuite.registerTest(IncidentNonUniqueIdsRejectedSystemTest())
         testSuite.registerTest(CorrectPartialServing2())
     }
 
@@ -270,6 +265,10 @@ object SystemTestRegistration {
      * Everything after 'Simulation start' works correctly
      */
     fun registerSystemTestsMutantValidation(testSuite: SELab26TestSuite) {
+        testSuite.registerTest(IncidentZeroPackagingVolumeRejectedSystemTest())
+        testSuite.registerTest(IncidentNegativePackagingVolumeRejectedSystemTest())
+        testSuite.registerTest(IncidentZeroAdaptationRejectedSystemTest())
+        testSuite.registerTest(IncidentNonUniqueIdsRejectedSystemTest())
         registeratharvaMutantValidationTests(testSuite)
         testSuite.registerTest(ExampleSystemTest())
         customerParserSystemTests().forEach { testSuite.registerTest(it) }
@@ -282,6 +281,7 @@ object SystemTestRegistration {
      * from the 'Simulation start' log onwards
      */
     fun registerSystemTestsMutantSimulation(testSuite: SELab26TestSuite) {
+        testSuite.registerTest(PackagingChangeIncidentSystemTests())
         testSuite.registerTest(ExampleSystemTest())
         testSuite.registerTest(EventReservationConflictTest())
         testSuite.registerTest(ExactStockoutTest())

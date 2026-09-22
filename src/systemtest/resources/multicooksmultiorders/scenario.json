@@ -1,0 +1,61 @@
+{
+  "customerGroups": [
+    {
+      "id": 1,
+      "type": "CASUAL",
+      "size": 2,
+      "tableType": "COMMON",
+      "restaurantTypes": [
+        "EUROPEAN"
+      ],
+      "visitingEvenings": [
+        1
+      ],
+      "visitingTick": 1,
+      "foodPreferences": [
+        {
+          "size": 1,
+          "favoriteDishes": [
+            "Potato Fries"
+          ]
+        },
+        {
+          "size": 1,
+          "favoriteDishes": [
+            "Roast Beef"
+          ]
+        }
+      ],
+      "ratingLikelihood": "NEVER"
+    },
+    {
+      "id": 2,
+      "type": "CASUAL",
+      "size": 2,
+      "tableType": "COMMON",
+      "restaurantTypes": [
+        "EUROPEAN"
+      ],
+      "visitingEvenings": [
+        1
+      ],
+      "visitingTick": 1,
+      "foodPreferences": [
+        {
+          "size": 1,
+          "favoriteDishes": [
+            "Potato Fries"
+          ]
+        },
+        {
+          "size": 1,
+          "favoriteDishes": [
+            "Apple Pie"
+          ]
+        }
+      ],
+      "ratingLikelihood": "NEVER"
+    }
+  ],
+  "incidents": []
+}

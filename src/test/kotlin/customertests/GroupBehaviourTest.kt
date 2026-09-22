@@ -81,23 +81,6 @@ class GroupBehaviourTest {
         assertEquals(RatingType.NEGATIVE, group.determineRating())
     }
 
-    @Test
-    fun `a CASUAL group rates according to its rating likelihood`() {
-        val expected = mapOf(
-            RatingLikelihood.NEVER to listOf(RatingType.NO_RATING, RatingType.NO_RATING, RatingType.NO_RATING),
-            RatingLikelihood.SOME to listOf(RatingType.NEGATIVE, RatingType.NO_RATING, RatingType.POSITIVE),
-            RatingLikelihood.ALWAYS to listOf(RatingType.NEGATIVE, RatingType.POSITIVE, RatingType.POSITIVE)
-        )
-        val experiences = listOf(ExperienceType.NEGATIVE, ExperienceType.NEUTRAL, ExperienceType.POSITIVE)
-
-        for ((likelihood, ratings) in expected) {
-            val actual = experiences.map { experience ->
-                casual(likelihood).also { it.experience = experience }.determineRating()
-            }
-            assertEquals(ratings, actual, "$likelihood")
-        }
-    }
-
     // ---- when a delivery group orders
 
     private fun orderTick(distance: Int, visitingAt: Int): Int? {

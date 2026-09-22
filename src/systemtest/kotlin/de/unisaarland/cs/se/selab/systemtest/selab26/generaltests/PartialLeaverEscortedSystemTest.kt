@@ -8,28 +8,14 @@ private const val MEAL_A = "mealA"
 private const val MEAL_B = "mealB"
 
 /**
- * F27: a group of 3 orders three different dishes (mealA duration 30, mealB and mealC duration 40 each) on a
- * single TOURNANT cook, so they finish one after another and the table is never complete. This reuses the
- * shared "officehourjson/partialserving" fixture, whose exact timings are cross-checked by
- * [de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.PartialServingWaitsForTwoTicksSystemTest] and
- * [de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.ExtendedPatienceLeavesInTickSevenSystemTest]
- * (the only one of five candidate ticks that passes against our own implementation).
+ * F27: a group of 3 orders three different dishes on a single TOURNANT cook, so they finish one after
+ * another and the table is never complete. Reuses the "officehourjson/partialserving" fixture.
  *
- * This replaces the previous version of this test, which assumed the base patience window was still 5 ticks
- * (basePatience is actually 4: the ordering tick counts as the first of the five, per spec adjustment /
- * [de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.PatienceEndsFourTicksAfterOrderingSystemTest]).
- * Under the old assumption mealA (cooked in tick 3, served in tick 5) would have been served exactly when the
- * whole group's base patience ran out, at which point nobody had been served yet by the old counting and the
- * whole group would incorrectly walk out. Confirmed against our own jar:
- *
- * - mealA is cooked in tick 3 (2 ticks after ordering in tick 1) and served in tick 5 (4 ticks after ordering,
- *   blocked for the cooking tick and the following one).
- * - mealB is cooked and served in tick 7 (6 ticks after ordering): this is also the tick the third customer's
- *   patience runs out (base 4 ticks, extended by 2 more once mealA was served in time), so that customer
- *   leaves unserved in the same tick mealB is served.
- * - mealA's customer finishes eating in tick 7 (served tick 5, eats ticks 5 and 6). mealB's customer finishes
- *   eating in tick 9 (served tick 7, eats ticks 7 and 8). Both are then escorted together in tick 9, and the
- *   group rates negatively because one customer never received food.
+ * mealA cooks in tick 3, serves in tick 5 (blocked for the cooking tick and the next). mealB cooks and
+ * serves in tick 7 -- the same tick the third customer's patience runs out (base 4 ticks, +2 once mealA
+ * was served in time), so that customer leaves unserved as mealB is served. mealA's customer finishes
+ * eating tick 7, mealB's tick 9; both are escorted together in tick 9, and the group rates negative since
+ * one customer never got food.
  */
 class PartialLeaverEscortedSystemTest : ExampleSystemTestExtension() {
     override val name = "PartialLeaverEscortedSystemTest"

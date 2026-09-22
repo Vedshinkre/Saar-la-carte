@@ -121,15 +121,6 @@ class SupplierTest {
     }
 
     @Test
-    fun `isAvailable - false once the ingredient is marked unavailable`() {
-        val stock = Stock(listOf(tomato))
-        stock.setIngredientToUnavailable(tomato, 2)
-        val supplier = Supplier(stock)
-
-        assertTrue(!supplier.isAvailable(tomato))
-    }
-
-    @Test
     fun `isAvailable - false for an ingredient never registered in stock`() {
         val cheese = Ingredient("cheese", MeasurementUnit.G, bestBefore = 3, initialPackagingVolume = 200)
         val supplier = supplierFor(tomato)

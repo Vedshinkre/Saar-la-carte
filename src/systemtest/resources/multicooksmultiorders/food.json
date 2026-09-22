@@ -1,0 +1,70 @@
+{
+  "ingredients": [
+    {
+      "name": "Potato",
+      "unit": "g",
+      "packagingVolume": 1000,
+      "bestBefore": 5
+    },
+    {
+      "name": "Beef",
+      "unit": "g",
+      "packagingVolume": 1000,
+      "bestBefore": 5
+    },
+    {
+      "name": "Apple",
+      "unit": "g",
+      "packagingVolume": 1000,
+      "bestBefore": 5
+    }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "Potato Fries",
+      "duration": 25,
+      "basicDishFor": "EUROPEAN",
+      "cookType": [
+        "TOURNANT",
+        "ROAST"
+      ],
+      "ingredients": [
+        {
+          "name": "Potato",
+          "amount": 200
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "dishName": "Apple Pie",
+      "duration": 25,
+      "cookType": [
+        "TOURNANT",
+        "PASTRY"
+      ],
+      "ingredients": [
+        {
+          "name": "Apple",
+          "amount": 200
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "dishName": "Roast Beef",
+      "duration": 25,
+      "cookType": [
+        "TOURNANT",
+        "ROAST"
+      ],
+      "ingredients": [
+        {
+          "name": "Beef",
+          "amount": 200
+        }
+      ]
+    }
+  ]
+}

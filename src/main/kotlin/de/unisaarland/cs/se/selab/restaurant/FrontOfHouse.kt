@@ -378,11 +378,10 @@ class FrontOfHouse(
      * Beep beep I'm a document PLEASE change me
      */
     fun getAvailableDrivers(): Int {
-        val promised = deliveryGroups.count { group ->
-            val order = group.currentOrder
-            order != null && order.deliveredAt == null && drivers.none { it.targetGroup === group }
+        return drivers.count {
+            it.state == DriverState.IDLE ||
+                it.state == DriverState.WAITING
         }
-        return (drivers.count { it.state == DriverState.IDLE } - promised).coerceAtLeast(0)
     }
 
     /**

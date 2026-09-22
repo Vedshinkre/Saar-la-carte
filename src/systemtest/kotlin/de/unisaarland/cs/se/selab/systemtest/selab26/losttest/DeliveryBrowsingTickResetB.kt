@@ -12,9 +12,9 @@ class DeliveryBrowsingTickResetB : ExampleSystemTestExtension() {
 
     override val name = "DeliveryBrowsingTickResetTestB"
     override val description = "the driver remains locked in the next tick"
-    override val restaurants = "driverlockedinnexttick/restaurants.json"
-    override val scenario = "driverlockedinnexttick/scenario.json"
-    override val food = "driverlockedinnexttick/food.json"
+    override val restaurants = "driveravailableinnexttick/restaurants.json"
+    override val scenario = "driveravailableinnexttick/scenario.json"
+    override val food = "driveravailableinnexttick/food.json"
     override val logLevel = "DEBUG"
     override val maxTicks = 24
 

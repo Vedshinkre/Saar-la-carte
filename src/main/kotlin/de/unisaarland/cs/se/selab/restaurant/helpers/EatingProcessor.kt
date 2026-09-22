@@ -36,18 +36,23 @@ class EatingProcessor(
         var eatingCount = 0
         var finishedCount = 0 // for logging
 
+        // the two kinds of log are each their own run over all groups (EatingOrderIsPerGroupSystemTest A/B test)
+        // every walk-out of the tick is logged before the first "finished eating" line
         val sortedGroups = getInHouseGroups().sortedWith(compareBy({ getServingPriority(it) }, { it.id }))
-        for (group in sortedGroups) {
-            val order = group.currentOrder
-            if (order == null) continue
+            .mapNotNull { group ->
+                val order = group.currentOrder
+                val tableId = getAssignedTableId(group)
+                if (order == null || tableId == null) null else Triple(group, order, tableId)
+            }
 
-            val tableId = getAssignedTableId(group)
-            if (tableId == null) continue
-
+        for ((group, order, tableId) in sortedGroups) {
             // receiving any food at all makes this visit a success, ending a REGULAR failure streak
             if (group is RegularGroup && order.dishes.any { wasServed(it) }) group.failedAttempts = 0
 
             handleLeavingCustomers(group, order, tableId)
+        }
+
+        for ((group, order, tableId) in sortedGroups) {
             handleFullyServedOrder(group, order) // for experience
 
             val (eating, finished) = progressEating(order)

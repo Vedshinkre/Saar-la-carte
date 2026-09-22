@@ -64,8 +64,14 @@ class EatingProcessor(
 
     /** aborts dishes and drops customers who have waited too long */
     private fun handleLeavingCustomers(group: CustomerGroup, order: Order, tableId: Id) {
+        // a meal that is COOKED but still waiting in the kitchen has not been SERVED either, so it
+        // doesn't stop its customer's patience from running out (spec page 15)
         val unservedDishes = order.dishes.filter {
-            it.status == DishStatus.UNCOOKED || it.status == DishStatus.COOKING
+            !it.abandoned && (
+                it.status == DishStatus.UNCOOKED ||
+                    it.status == DishStatus.COOKING ||
+                    it.status == DishStatus.COOKED
+                )
         }
         if (unservedDishes.isEmpty()) return // everyone served
 
@@ -83,8 +89,10 @@ class EatingProcessor(
 
         if (!unservedCustomersLeave) return
 
-        // all unserved customers leave, any unserved dish is aborted, customers remaining decremented
-        unservedDishes.forEach { it.status = DishStatus.ABORTED }
+        // all unserved customers leave
+        // their meals are not aborted: the kitchen carries on with them
+        // they never get served (CorrectPartialServing2)
+        unservedDishes.forEach { it.abandoned = true }
         val leavingCustomers = if (noDishServed) {
             // nobody was served: the whole group walks out, which is a failed attempt for a REGULAR group
             if (group is RegularGroup) group.failedAttempts++

@@ -3,6 +3,7 @@ package eveningclosetests
 import de.unisaarland.cs.se.selab.Time
 import de.unisaarland.cs.se.selab.actors.RestaurantStaff
 import de.unisaarland.cs.se.selab.actors.Waiter
+import de.unisaarland.cs.se.selab.enums.DishStatus
 import de.unisaarland.cs.se.selab.enums.DriverState
 import de.unisaarland.cs.se.selab.enums.ExperienceType
 import de.unisaarland.cs.se.selab.enums.LogLevel
@@ -25,10 +26,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 /**
- * F30 tests for `Restaurant.endEvening` related code
- * two independent triggers that happen to share tick 24 when a restaurant's own hours run the whole evening
- * I test both in a composition executing together when `openingTickEnd == 24`
- * and the opening-time reset not executing again at tick 24 for a restaurant that already closed earlier
+ * F30 tests for Restaurant.endEvening
  */
 class ClosingCompositionTest {
 
@@ -63,7 +61,10 @@ class ClosingCompositionTest {
 
     @Test
     fun `openingTickEnd 24 - both the opening-time reset and the driver reset happen in one call`() {
-        val group = regularGroup(id = 1)
+        // ordering 3 ticks before closing, well inside patience (Constants.UNSERVED_WAIT_TICKS - 1 = 4),
+        // so it's the force-escort at closing that removes the group, not the normal patience timeout
+        val orderingTick = 21
+        val group = regularGroup(id = 1, visitingAt = orderingTick)
         val driver = deliveringDriver()
         val staff = RestaurantStaff(mutableListOf(cook()), mutableListOf(Waiter()), mutableListOf(driver))
         val restaurant = restaurant(
@@ -76,7 +77,7 @@ class ClosingCompositionTest {
         )
 
         restaurant.prepareForEvening(listOf(group))
-        simulateTickAtIsolated(1, restaurant)
+        simulateTickAtIsolated(orderingTick, restaurant)
         assertEquals(2, group.customersRemainingInRestaurant, "group should still be seated before closing")
 
         simulateTickAtIsolated(24, restaurant)
@@ -84,8 +85,15 @@ class ClosingCompositionTest {
         // opening-time reset: the still mid-meal group was force-escorted out
         // (checking that endOfOpeningTime ran alongside endEvening)
         assertEquals(0, group.customersRemainingInRestaurant)
-        assertEquals(ExperienceType.NEGATIVE, group.experience)
-        // evening reset: the driver was aborted and sent home
+        assertEquals(
+            ExperienceType.NEGATIVE,
+            group.experience
+        ) // being forced out by the clock is not one of the spec's "failed attempt" reasons
+        assertEquals(0, group.failedAttempts) // kitchen reset: the still-cooking meal is thrown away, not left dangling
+        assertEquals(
+            DishStatus.ABORTED,
+            group.currentOrder?.dishes?.first()?.status
+        ) // evening reset: the driver was aborted and sent home
         assertEquals(DriverState.IDLE, driver.state)
     }
 
@@ -101,8 +109,10 @@ class ClosingCompositionTest {
         val eveningBoundaryLog = simulateTickAtIsolated(24, restaurant)
 
         assertFalse(eveningBoundaryLog.any { it.contains("Kitchen Status") }, eveningBoundaryLog.toString())
-        assertFalse(eveningBoundaryLog.any { it.contains("FOH Escorting") }, eveningBoundaryLog.toString())
-        // the evening reset itself still ran
+        assertFalse(
+            eveningBoundaryLog.any { it.contains("FOH Escorting") },
+            eveningBoundaryLog.toString()
+        ) // the evening reset itself still ran
         assertEquals(DriverState.IDLE, driver.state)
     }
 }

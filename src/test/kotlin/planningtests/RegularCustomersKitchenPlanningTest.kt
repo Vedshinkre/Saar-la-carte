@@ -47,14 +47,14 @@ class RegularCustomersKitchenPlanningTest {
     @Test
     fun `prepareForEvening pools every regular's history and treats new regulars as ordinary capacity`() {
         val withHistory = RegularGroup(1, 2, TableType.COMMON, 1, emptyList(), 1, 1, 1).also {
-                it.addOrderToHistory(
-                    Order(
-                        listOf(
-                            Dish(stew)
-                        )
+            it.addOrderToHistory(
+                Order(
+                    listOf(
+                        Dish(stew)
                     )
                 )
-            }
+            )
+        }
         val firstTimer = RegularGroup(2, 2, TableType.COMMON, 1, emptyList(), 1, 1, 1)
 
         val restaurant = Restaurant(

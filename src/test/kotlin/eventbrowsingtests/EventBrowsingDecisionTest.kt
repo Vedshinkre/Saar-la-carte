@@ -148,6 +148,13 @@ class EventBrowsingDecisionTest {
         assertNull(service.getEligibleRestaurants(eventGroup(visitingAt = 3)))
     }
 
+    @Test
+    fun `a restaurant opening too late relative to the event evening is excluded even if the tick fits`() {
+        val service = BrowsingService(listOf(restaurant(id = 1, openingTicks = 25..40)))
+
+        assertNull(service.getEligibleRestaurants(eventGroup(visitingAt = 30, eventEvening = 1)))
+    }
+
     // ---- Seats ----
 
     @Test
@@ -212,6 +219,15 @@ class EventBrowsingDecisionTest {
         val menu = listOf(recipe(1, "Salty", salt), recipe(2, "Plain Bread", flour))
         val service = BrowsingService(listOf(restaurant(id = 1, menu = menu)))
         val group = eventGroup(foodPreferences = listOf(excluding(salt)))
+
+        assertEquals(1, service.getEligibleRestaurants(group))
+    }
+
+    @Test
+    fun `a preference with no excluded ingredients is compatible with any non-empty menu`() {
+        val menu = listOf(recipe(1, "Salty", salt))
+        val service = BrowsingService(listOf(restaurant(id = 1, menu = menu)))
+        val group = eventGroup(foodPreferences = listOf(excluding()))
 
         assertEquals(1, service.getEligibleRestaurants(group))
     }

@@ -23,7 +23,12 @@ class WaitingForFoodTest {
 
     // ---- the wait limits
 
-    @Disabled("This test failed after the change to order.areAllDishesEaten to get aborted")
+    // EatingProcessor.handleLeavingCustomers now uses basePatience = UNSERVED_WAIT_TICKS - 1 = 4
+    // ("potential off by one error fix based on OH feedback"), so an unserved customer leaves at
+    // ticksSinceOrder == 4, not 5. That contradicts this test (and the spec text quoted at bug 4 in
+    // docs/testing_status_skerdi.md: "wait for up to 5 ticks"). Not re-enabling until the team confirms
+    // which reading of the spec the -1 is meant to implement.
+    @Disabled("EatingProcessor's unserved-wait threshold is now 4 ticks, not 5 - spec reading unconfirmed")
     @Test
     fun `nobody served - the group still waits four ticks after ordering`() {
         val order = fx.order(DishStatus.UNCOOKED, DishStatus.COOKING)
@@ -97,7 +102,6 @@ class WaitingForFoodTest {
     // The specification (page 21) counts the wait until the meal is SERVED, not until it is cooked:
     // "customers expect food within 4 ticks but wait for up to 5 ticks for their food to be SERVED".
     // Fix: include DishStatus.COOKED in the unservedDishes filter of handleLeavingCustomers.
-    @Disabled("EatingProcessor treats a COOKED but unserved dish as if the customer had been served")
     @Test
     fun `a cooked but not yet served dish counts as unserved and its customer leaves`() {
         val order = fx.order(DishStatus.COOKED)
@@ -108,12 +112,14 @@ class WaitingForFoodTest {
         processor.processEating()
 
         assertEquals(1, fx.noEatingLines().size, "cooked but never served food must not keep customers waiting")
-        assertEquals(DishStatus.ABORTED, order.dishes.single().status)
+        assertEquals(DishStatus.COOKED, order.dishes.single().status, "the kitchen carries on cooking it")
+        assertTrue(order.dishes.single().abandoned)
     }
 
     // ---- somebody was served: two more ticks
 
-    @Disabled("This test failed after the change to order.areAllDishesEaten to get aborted")
+    // same basePatience off-by-one as above: the "someone was served" wait is now 4 + 2 = 6 ticks, not 7
+    @Disabled("EatingProcessor's unserved-wait threshold is now 6 ticks, not 7 - spec reading unconfirmed")
     @Test
     fun `somebody served - the others wait until seven ticks after ordering`() {
         val order = fx.order(DishStatus.SERVED, DishStatus.UNCOOKED, DishStatus.COOKING)
@@ -281,7 +287,9 @@ class WaitingForFoodTest {
         assertEquals(0, group.failedAttempts)
     }
 
-    @Disabled("This test failed after the change to order.areAllDishesEaten to get aborted")
+    // same basePatience off-by-one: at ticksSinceOrder == 4 the group already leaves and gets a failed
+    // attempt, so this "still waiting" assertion no longer holds
+    @Disabled("EatingProcessor's unserved-wait threshold is now 4 ticks, not 5 - spec reading unconfirmed")
     @Test
     fun `a REGULAR group still waiting keeps its failed attempts`() {
         val group = fx.regular(1, fx.order(DishStatus.UNCOOKED))
@@ -307,7 +315,10 @@ class WaitingForFoodTest {
 
     // ---- experience once everything is served
 
-    @Disabled("This test failed after the change to order.areAllDishesEaten to get aborted")
+    // EatingProcessor.handleFullyServedOrder now uses `< EXPECTATION_WINDOW_TICKS` instead of `<=`
+    // ("might be counted inclusively, changed <= to <"), so being served exactly 4 ticks after
+    // ordering is NEUTRAL now, not POSITIVE. Same unconfirmed-spec-reading situation as the wait tests.
+    @Disabled("EatingProcessor's positive-experience window is now exclusive of tick 4 - spec reading unconfirmed")
     @Test
     fun `everything served within four ticks is a positive experience`() {
         val group = fx.casual(1, fx.order(DishStatus.SERVED, DishStatus.SERVED))

@@ -1,0 +1,47 @@
+{
+  "ingredients": [
+    {
+      "name": "chicken",
+      "unit": "g",
+      "packagingVolume": 1000,
+      "bestBefore": 3
+    },
+    {
+      "name": "potato",
+      "unit": "g",
+      "packagingVolume": 1000,
+      "bestBefore": 3
+    }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "chicken rice",
+      "duration": 10,
+      "cookType": [
+        "TOURNANT"
+      ],
+      "ingredients": [
+        {
+          "name": "chicken",
+          "amount": 100
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "dishName": "potato soup",
+      "duration": 10,
+      "basicDishFor": "EUROPEAN",
+      "cookType": [
+        "TOURNANT"
+      ],
+      "ingredients": [
+        {
+          "name": "potato",
+          "amount": 100
+        }
+      ]
+    }
+  ]
+}

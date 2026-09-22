@@ -1,0 +1,67 @@
+{
+  "ingredients": [
+    {
+      "name": "Beef",
+      "unit": "g",
+      "packagingVolume": 3000,
+      "bestBefore": 5
+    },
+    {
+      "name": "Potato",
+      "unit": "g",
+      "packagingVolume": 2000,
+      "bestBefore": 5
+    },
+    {
+      "name": "Lettuce",
+      "unit": "g",
+      "packagingVolume": 2000,
+      "bestBefore": 5
+    }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "Roast Beef",
+      "duration": 40,
+      "cookType": [
+        "TOURNANT"
+      ],
+      "ingredients": [
+        {
+          "name": "Beef",
+          "amount": 250
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "dishName": "Potato Soup",
+      "duration": 20,
+      "basicDishFor": "EUROPEAN",
+      "cookType": [
+        "TOURNANT"
+      ],
+      "ingredients": [
+        {
+          "name": "Potato",
+          "amount": 50
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "dishName": "Side Salad",
+      "duration": 20,
+      "cookType": [
+        "ROAST"
+      ],
+      "ingredients": [
+        {
+          "name": "Lettuce",
+          "amount": 50
+        }
+      ]
+    }
+  ]
+}

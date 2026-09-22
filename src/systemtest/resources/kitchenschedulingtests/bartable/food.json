@@ -1,0 +1,27 @@
+{
+  "ingredients": [
+    {
+      "name": "peanut",
+      "unit": "g",
+      "packagingVolume": 1000,
+      "bestBefore": 3
+    }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "bar snack",
+      "duration": 10,
+      "basicDishFor": "EUROPEAN",
+      "cookType": [
+        "TOURNANT"
+      ],
+      "ingredients": [
+        {
+          "name": "peanut",
+          "amount": 100
+        }
+      ]
+    }
+  ]
+}

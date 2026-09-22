@@ -1,0 +1,48 @@
+{
+  "ingredients": [
+    {
+      "name": "apple",
+      "unit": "g",
+      "packagingVolume": 1000,
+      "bestBefore": 3
+    },
+    {
+      "name": "flour",
+      "unit": "g",
+      "packagingVolume": 1000,
+      "bestBefore": 3
+    }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "apple pie",
+      "duration": 10,
+      "basicDishFor": "EUROPEAN",
+      "cookType": [
+        "EXEC",
+        "PASTRY"
+      ],
+      "ingredients": [
+        {
+          "name": "apple",
+          "amount": 100
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "dishName": "bread roll",
+      "duration": 10,
+      "cookType": [
+        "EXEC"
+      ],
+      "ingredients": [
+        {
+          "name": "flour",
+          "amount": 100
+        }
+      ]
+    }
+  ]
+}

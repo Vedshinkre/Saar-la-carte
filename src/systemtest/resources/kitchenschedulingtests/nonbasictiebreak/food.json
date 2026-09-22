@@ -1,0 +1,67 @@
+{
+  "ingredients": [
+    {
+      "name": "Flour",
+      "unit": "g",
+      "packagingVolume": 2000,
+      "bestBefore": 5
+    },
+    {
+      "name": "Zucchini",
+      "unit": "g",
+      "packagingVolume": 2000,
+      "bestBefore": 5
+    },
+    {
+      "name": "Salt",
+      "unit": "g",
+      "packagingVolume": 2000,
+      "bestBefore": 5
+    }
+  ],
+  "recipes": [
+    {
+      "id": 99,
+      "dishName": "House Basic",
+      "duration": 10,
+      "basicDishFor": "EUROPEAN",
+      "cookType": [
+        "SOUS"
+      ],
+      "ingredients": [
+        {
+          "name": "Salt",
+          "amount": 10
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "dishName": "Apple Tart",
+      "duration": 20,
+      "cookType": [
+        "PASTRY"
+      ],
+      "ingredients": [
+        {
+          "name": "Flour",
+          "amount": 50
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "dishName": "Zucchini Bake",
+      "duration": 20,
+      "cookType": [
+        "VEGETABLE"
+      ],
+      "ingredients": [
+        {
+          "name": "Zucchini",
+          "amount": 50
+        }
+      ]
+    }
+  ]
+}

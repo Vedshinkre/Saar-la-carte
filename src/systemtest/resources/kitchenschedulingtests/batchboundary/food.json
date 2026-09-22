@@ -1,0 +1,47 @@
+{
+  "ingredients": [
+    {
+      "name": "Chicken",
+      "unit": "g",
+      "packagingVolume": 5000,
+      "bestBefore": 5
+    },
+    {
+      "name": "Salt",
+      "unit": "g",
+      "packagingVolume": 2000,
+      "bestBefore": 5
+    }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "Grilled Chicken",
+      "duration": 20,
+      "cookType": [
+        "ROAST"
+      ],
+      "ingredients": [
+        {
+          "name": "Chicken",
+          "amount": 250
+        }
+      ]
+    },
+    {
+      "id": 99,
+      "dishName": "House Basic",
+      "duration": 10,
+      "basicDishFor": "EUROPEAN",
+      "cookType": [
+        "SOUS"
+      ],
+      "ingredients": [
+        {
+          "name": "Salt",
+          "amount": 10
+        }
+      ]
+    }
+  ]
+}

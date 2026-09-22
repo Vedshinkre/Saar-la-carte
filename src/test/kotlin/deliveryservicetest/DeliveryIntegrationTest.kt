@@ -3,6 +3,7 @@ package deliveryservicetest
 import de.unisaarland.cs.se.selab.actors.Driver
 import de.unisaarland.cs.se.selab.actors.Waiter
 import de.unisaarland.cs.se.selab.customer.CasualGroup
+import de.unisaarland.cs.se.selab.enums.ActionType
 import de.unisaarland.cs.se.selab.enums.DishStatus
 import de.unisaarland.cs.se.selab.enums.DriverState
 import de.unisaarland.cs.se.selab.enums.ExperienceType
@@ -204,5 +205,161 @@ class DeliveryIntegrationTest {
         whenever(group.currentOrder).thenReturn(order)
         whenever(group.placeOrder(any(), any(), any())).thenReturn(true)
         foh.processArrival(group, emptyList())
+    }
+
+    @Test
+    fun `serveDeliveryGroups - reuses already assigned driver and handles partial cooking handover`() {
+        val waiter = Waiter().apply { id = 1 }
+        val recipe = mock<Recipe> { whenever(it.name).thenReturn("Soup") }
+        val dish = Dish(recipe).apply { status = DishStatus.COOKED }
+
+        val group = mock<CasualGroup>()
+
+        //  Define mockOrder
+        val mockOrder = mock<Order>()
+        whenever(mockOrder.id).thenReturn(1)
+        whenever(mockOrder.getServableDishes()).thenReturn(listOf(dish))
+        whenever(mockOrder.areAllDishesCooked()).thenReturn(false)
+
+        //  Point currentOrder same mockOrder instance
+        val driver = Driver().apply {
+            state = DriverState.WAITING
+            targetGroup = group
+            currentOrder = mockOrder
+            id = 1
+        }
+        drivers.add(driver)
+
+        //  Create FOH with the waiter and the driver
+        val localFoh = FrontOfHouse(
+            tables = emptyList(),
+            waiters = listOf(waiter),
+            drivers = drivers,
+            countertop = countertop
+        )
+
+        whenever(group.id).thenReturn(1)
+        whenever(group.wantsDelivery).thenReturn(true)
+        whenever(group.currentOrder).thenReturn(mockOrder)
+        whenever(group.placeOrder(any(), any(), any())).thenReturn(true)
+
+        localFoh.processArrival(group, emptyList())
+        localFoh.processServing()
+
+        // Verifications
+        assertEquals(DriverState.WAITING, driver.state)
+        assertEquals(1, waiter.getTickLoad(ActionType.SERVE))
+    }
+
+    @Test
+    fun `serveDeliveryGroups - no free driver and order becoming null`() {
+        val busyDriver = Driver().apply { state = DriverState.DELIVERING }
+        drivers.add(busyDriver)
+
+        val localFoh = FrontOfHouse(
+            tables = emptyList(),
+            waiters = listOf(Waiter()),
+            drivers = drivers,
+            countertop = countertop
+        )
+
+        val mockOrder = mock<Order>()
+        val dish = mock<Dish>()
+        whenever(mockOrder.id).thenReturn(1)
+        whenever(mockOrder.getServableDishes()).thenReturn(listOf(dish))
+        whenever(mockOrder.areAllDishesCooked()).thenReturn(true)
+
+        // Group with no free driver available
+        val groupNoDriver = mock<CasualGroup>()
+        whenever(groupNoDriver.id).thenReturn(1)
+        whenever(groupNoDriver.wantsDelivery).thenReturn(true)
+        whenever(groupNoDriver.currentOrder).thenReturn(mockOrder)
+        whenever(groupNoDriver.placeOrder(any(), any(), any())).thenReturn(true)
+        localFoh.processArrival(groupNoDriver, emptyList())
+
+        //  Group whose currentOrder returns null during loop execution
+        val groupNullOrder = mock<CasualGroup>()
+        whenever(groupNullOrder.id).thenReturn(2)
+        whenever(groupNullOrder.wantsDelivery).thenReturn(true)
+        // First returns mockOrder for isReadyForHandOver filter, then null inside the loop
+        whenever(groupNullOrder.currentOrder).thenReturn(mockOrder, null)
+        whenever(groupNullOrder.placeOrder(any(), any(), any())).thenReturn(true)
+        localFoh.processArrival(groupNullOrder, emptyList())
+
+        localFoh.processServing()
+
+        // Assert no driver was transitioned to WAITING because none were IDLE
+        assertEquals(DriverState.DELIVERING, busyDriver.state)
+    }
+
+    @Test
+    fun `serveDeliveryGroups - idle driver with existing id and no available waiter breaks handover`() {
+        // Waiter has already reached ACTION_LIMIT for SERVE (tickLoad = 10)
+        val busyWaiter = Waiter().apply {
+            addToTickLoad(ActionType.SERVE, 10)
+        }
+        // Driver already has an ID assigned
+        val idleDriverWithId = Driver().apply {
+            state = DriverState.IDLE
+            id = 5
+        }
+        drivers.add(idleDriverWithId)
+
+        val localFoh = FrontOfHouse(
+            tables = emptyList(),
+            waiters = listOf(busyWaiter),
+            drivers = drivers,
+            countertop = countertop
+        )
+
+        val recipe = mock<Recipe> { whenever(it.name).thenReturn("Salad") }
+        val dish = Dish(recipe).apply { status = DishStatus.COOKED }
+        val order = Order(listOf(dish))
+
+        val group = mock<CasualGroup>()
+        whenever(group.id).thenReturn(1)
+        whenever(group.wantsDelivery).thenReturn(true)
+        whenever(group.currentOrder).thenReturn(order)
+        whenever(group.placeOrder(any(), any(), any())).thenReturn(true)
+
+        localFoh.processArrival(group, emptyList())
+        localFoh.processServing()
+
+        // Driver was claimed by the order and preserved ID 5
+        assertEquals(5, idleDriverWithId.id)
+        assertEquals(DriverState.WAITING, idleDriverWithId.state)
+        // But meals were not served because the waiter had no remaining capacity
+        assertEquals(DishStatus.COOKED, dish.status)
+    }
+
+    @Test
+    fun `isReadyForHandOver - reject orders that are uncooked, empty, or null`() {
+        val localFoh = FrontOfHouse(
+            tables = emptyList(),
+            waiters = emptyList(),
+            drivers = drivers,
+            countertop = countertop
+        )
+
+        // Group with empty servable dishes
+        val groupEmptyDishes = mock<CasualGroup>()
+        val orderEmptyDishes = mock<Order>()
+        whenever(orderEmptyDishes.id).thenReturn(1)
+        whenever(orderEmptyDishes.getServableDishes()).thenReturn(emptyList())
+        setupDeliveryGroupArrival(groupEmptyDishes, orderEmptyDishes, id = 1)
+
+        // Group with uncooked dishes and no driver carrying it
+        val groupUncooked = mock<CasualGroup>()
+        val orderUncooked = mock<Order>()
+        val dish = mock<Dish>()
+        whenever(orderUncooked.id).thenReturn(2)
+        whenever(orderUncooked.getServableDishes()).thenReturn(listOf(dish))
+        whenever(orderUncooked.areAllDishesCooked()).thenReturn(false)
+        setupDeliveryGroupArrival(groupUncooked, orderUncooked, id = 2)
+
+        localFoh.processServing()
+
+        // Neither order should be processed or handed over
+        assertTrue(drivers.isEmpty())
     }
 }

@@ -184,4 +184,24 @@ class CountertopIntegrationTest {
 
         assertFalse(available.contains(complexRecipe))
     }
+
+    @Test
+    fun `getAvailableRecipes-Expired Ingredients Are Not Counted-fails`() {
+        val recipe = createDummyRecipe(requiredAmount = 50)
+
+        // to mock expired ingredients
+        val mockExpiredPkg = org.mockito.kotlin.mock<IngredientPackage>()
+        org.mockito.kotlin.whenever(mockExpiredPkg.hasExpired()).thenReturn(true)
+        org.mockito.kotlin.whenever(mockExpiredPkg.currentAmount).thenReturn(100)
+        org.mockito.kotlin.whenever(mockExpiredPkg.ingredient).thenReturn(testIngredient)
+
+        val cook = createDummyCook(CookType.TOURNANT, isCooking = false)
+
+        val countertop = setupCountertop(listOf(mockExpiredPkg), listOf(cook))
+        val available = countertop.getAvailableRecipes(listOf(recipe))
+
+        // Should be false because the only available package is expired,
+        // meaning totalAmount will stay 0.
+        assertFalse(available.contains(recipe))
+    }
 }

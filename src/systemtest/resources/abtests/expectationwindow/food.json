@@ -1,0 +1,11 @@
+{
+  "ingredients": [
+    { "name": "rice", "unit": "g", "packagingVolume": 1000, "bestBefore": 5 }
+  ],
+  "recipes": [
+    { "id": 1, "dishName": "filler", "duration": 2, "basicDishFor": "EUROPEAN",
+      "cookType": ["TOURNANT"], "ingredients": [{ "name": "rice", "amount": 10 }] },
+    { "id": 2, "dishName": "target", "duration": 40,
+      "cookType": ["TOURNANT"], "ingredients": [{ "name": "rice", "amount": 10 }] }
+  ]
+}

@@ -19,7 +19,6 @@ import de.unisaarland.cs.se.selab.restaurant.RestaurantStats
 import de.unisaarland.cs.se.selab.restaurant.Table
 import de.unisaarland.cs.se.selab.restaurant.helpers.RatingProcessor
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -125,15 +124,6 @@ class CasualBrowsingIntegrationTest {
         assertTrue(tables.all { it.status == TableStatus.FREE }, "browsing must not touch real table state")
     }
 
-    // CONFIRMED BUG, not fixed here because BrowsingService is not my code (git blame: Atharva Kore).
-    // BrowsingService.getEligibleRestaurantForDineIn accepts a restaurant when
-    // "numberOfAvailableSeats >= 0", so a restaurant with no free seats of the wanted table type is
-    // still offered. The EVENT branch of the same class already uses ">= group.size".
-    // The tutors confirmed in the office hour that this is why we fail CasualNoDecisionNoSpaceTest,
-    // CustomerBehaviourDecisionSystemTest and the mandatory EqualRightsEqualLefts, EscortService,
-    // FF15, Influencer, TableIsTaken and DriveItLikeYouMeanIt tests.
-    // Fix: BrowsingService.kt:56 -> if (numberOfAvailableSeats != null && numberOfAvailableSeats >= group.size)
-    @Disabled("BrowsingService dine-in seat check uses >= 0 instead of >= group.size")
     @Test
     fun `two CASUAL groups deciding in the same tick share one seat estimate - the second can be blocked`() {
         val stats = restaurant(id = 1, seats = 5)

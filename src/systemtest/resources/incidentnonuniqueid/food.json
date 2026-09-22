@@ -1,0 +1,25 @@
+{
+  "ingredients": [
+    {
+      "name": "Chicken",
+      "unit": "g",
+      "packagingVolume": 1000,
+      "bestBefore": 1
+    }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "Roast Chicken",
+      "duration": 25,
+      "basicDishFor": "ASIAN",
+      "cookType": ["ROAST"],
+      "ingredients": [
+        {
+          "name": "Chicken",
+          "amount": 1000
+        }
+      ]
+    }
+  ]
+}

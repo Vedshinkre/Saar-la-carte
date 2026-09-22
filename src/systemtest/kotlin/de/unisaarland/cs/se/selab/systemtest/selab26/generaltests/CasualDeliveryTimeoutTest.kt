@@ -70,10 +70,14 @@ class CasualDeliveryTimeoutTest : ExampleSystemTestExtension() {
     private suspend fun assertEvening1Tick18() {
         skipUntilString(TickStatusTestLogs.tickStart(18, 1))
 
-        //  Group 2's patience expires at the end of tick 18 (15 + 3).
+        // Delivering. Group 2's patience expires at the end of tick 18 (15 + 3).
         skipUntilString(DeliveryTestLogs.deliveryGivenUp(restId = 1, groupId = 2, orderId = 2))
 
-        //  They rate negatively because they never got their food.
+        //  The simulation must  output Eating and Escorting statuses before Rating
+        assertNextLine(FohServiceTestLogs.eatingStatus(restId = 1, eating = 0, finished = 0))
+        assertNextLine(FohServiceTestLogs.escortingStatus(restId = 1, waitstaff = 0, customers = 0))
+
+        //  Rating. They rate negatively because they never got their food.
         assertNextLine(
             FohServiceTestLogs.rating(
                 restId = 1,
@@ -84,7 +88,7 @@ class CasualDeliveryTimeoutTest : ExampleSystemTestExtension() {
             )
         )
 
-        // Verify the summary status
+        // Verify the rating summary status
         assertNextLine(FohServiceTestLogs.ratingStatus(restId = 1, groups = 1))
     }
 }

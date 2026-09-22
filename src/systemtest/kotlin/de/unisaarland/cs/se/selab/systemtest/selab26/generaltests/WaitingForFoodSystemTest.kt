@@ -6,13 +6,16 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.utils.FohServiceTestLogs
 import de.unisaarland.cs.se.selab.systemtest.selab26.utils.TickStatusTestLogs
 
 /**
- * F27: customers wait 5 ticks for their food. One ROAST cook needs 3 ticks per order, so group 1 (ordered in
- * tick 2) is served in time, while groups 2 and 3 (ordered in tick 3) are still waiting when the cook only
- * starts their order. They leave in tick 8, five ticks after ordering, and rate negatively.
+ * F27: the ordering tick counts as the first of the patience window, so customers wait 4 ticks after ordering
+ * for their food (confirmed against the reference by [de.unisaarland.cs.se.selab.systemtest.selab26
+ * .officehourprobes.PatienceEndsFourTicksAfterOrderingSystemTest]). One ROAST cook needs 3 ticks per order, so
+ * group 1 (ordered in tick 2) is served in time, while groups 2 and 3 (ordered in tick 3) are still waiting
+ * when the cook only starts their order. They leave in tick 7, four ticks after ordering, and rate negatively.
+ * Group 1 finishes eating, is escorted and rates in that same tick.
  */
 class WaitingForFoodSystemTest : ExampleSystemTestExtension() {
     override val name = "WaitingForFoodSystemTest"
-    override val description = "Checks that customers are served in time, or leave five ticks after ordering"
+    override val description = "Checks that customers are served in time, or leave four ticks after ordering"
 
     override val restaurants = "waitingforfoodjson/restaurants.json"
     override val food = "waitingforfoodjson/food.json"
@@ -35,16 +38,14 @@ class WaitingForFoodSystemTest : ExampleSystemTestExtension() {
         skipUntilString(TickStatusTestLogs.tickStart(5, 1))
         skipUntilString(FohServiceTestLogs.serving(1, 1, mapOf(dish to 2), 1, 3))
 
-        // group 1 eats for two ticks, is escorted and rates positively
+        // nobody left before tick 7: the leave logs must only appear after the start of tick 7.
+        // group 1 also finishes eating, is escorted and rates positively in this same tick.
         skipUntilString(TickStatusTestLogs.tickStart(7, 1))
         skipUntilString(FohServiceTestLogs.finishedEating(1, 2, 1, 1))
-        skipUntilString(FohServiceTestLogs.escorting(1, 1, 2, 1, 1))
-        skipUntilString(FohServiceTestLogs.rating(1, 1, "POSITIVE", 11, 0))
-
-        // nobody left before tick 8: the leave logs must only appear after the start of tick 8
-        skipUntilString(TickStatusTestLogs.tickStart(8, 1))
         skipUntilString(FohServiceTestLogs.noEating(1, 2, 2, 2))
         skipUntilString(FohServiceTestLogs.noEating(1, 1, 3, 3))
+        skipUntilString(FohServiceTestLogs.escorting(1, 1, 2, 1, 1))
+        skipUntilString(FohServiceTestLogs.rating(1, 1, "POSITIVE", 11, 0))
         skipUntilString(FohServiceTestLogs.rating(1, 2, "NEGATIVE", 11, 1))
         skipUntilString(FohServiceTestLogs.rating(1, 3, "NEGATIVE", 11, 2))
     }

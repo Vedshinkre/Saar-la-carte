@@ -8,9 +8,12 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.utils.TickStatusTestLogs
 /**
  * Spec adjustment 5: the current load of a waiter counts the customers seated by them until those customers either
  * left or were escorted. Waiter 1 seats a group of 2 (tick 1) and a group of 10 (tick 2). The only cook is busy with
- * the first order until tick 4 and starts the second one in tick 5, so the group of 10 is not served and leaves in
- * tick 7. In tick 8 both waiters have no customers left, so waiter 1 (lowest id) seats the next group. If the ten
- * customers that left still counted as load, waiter 1 would be at load 10 and waiter 2 would be chosen instead.
+ * the first order until tick 4 and starts the second one in tick 5, so the group of 10 is not served. The ordering
+ * tick counts as the first of the patience window (confirmed against the reference by
+ * [de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.PatienceEndsFourTicksAfterOrderingSystemTest]),
+ * so the group of 10 gives up four ticks after ordering and leaves in tick 6. In tick 8 both waiters have no
+ * customers left, so waiter 1 (lowest id) seats the next group. If the ten customers that left still counted as
+ * load, waiter 1 would be at load 10 and waiter 2 would be chosen instead.
  */
 class WaiterLoadReleasedOnLeavingSystemTest : ExampleSystemTestExtension() {
     override val name = "WaiterLoadReleasedOnLeavingSystemTest"
@@ -28,10 +31,11 @@ class WaiterLoadReleasedOnLeavingSystemTest : ExampleSystemTestExtension() {
         skipUntilString(FohArrivalTestLogs.seating(1, 1, 1, listOf(1)))
         skipUntilString(FohArrivalTestLogs.seating(1, 2, 2, listOf(1)))
 
-        // the group of 2 is served, eats and is escorted; the group of 10 gives up five ticks after ordering
-        skipUntilString(FohServiceTestLogs.escorting(1, 1, 2, 1, 1))
-        skipUntilString(TickStatusTestLogs.tickStart(7, 1))
+        // in tick 6 both happen: the group of 2 finishes eating and is escorted, and the group of 10
+        // gives up four ticks after ordering, in that order (eating/leaving runs before escorting)
+        skipUntilString(TickStatusTestLogs.tickStart(6, 1))
         skipUntilString(FohServiceTestLogs.noEating(1, 10, 2, 2))
+        skipUntilString(FohServiceTestLogs.escorting(1, 1, 2, 1, 1))
         skipUntilString(FohServiceTestLogs.rating(1, 2, "NEGATIVE", 11, 1))
 
         // both waiters are free again: the lowest id gets the next group

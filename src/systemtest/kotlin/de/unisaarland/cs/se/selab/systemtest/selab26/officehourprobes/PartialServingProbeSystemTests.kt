@@ -78,37 +78,78 @@ class PartialServingWaitsForOneTickSystemTest : PartialServingScenario() {
 }
 
 /**
- * A/B probe for the two extra ticks a table gets once one of its customers has been served
- * (specification page 21): "If at least one person on the table has received their meal, they wait
- * for 2 more ticks."
+ * The two extra ticks a table gets once one of its customers has been served (specification page
+ * 21): "If at least one person on the table has received their meal, they wait for 2 more ticks."
  *
- * mealA reaches the table in tick 5, mealB in tick 7, and mealC is only assigned to the cook in tick
- * 8. Reading A counts the two extra ticks on top of the five of the base window, so the last
- * customer leaves once Time.tick - orderedAt reaches 7, which is tick 8. This is what we implement.
+ * The first pair of probes for this asserted a follow-up status line to pin the tick down and was
+ * mis-specified: both readings failed against the reference and against our own implementation, so
+ * the run said nothing. These five say only which tick the walk-out happens in, one candidate each,
+ * so exactly one of them can pass and the next run names the tick outright.
+ *
+ * The scenario is identical up to tick 5 on both implementations: mealA is cooked in tick 3 and,
+ * after the two blocked ticks, served in tick 5 (confirmed by [PartialServingWaitsForTwoTicksSystemTest]).
+ * From there the last customer, whose mealC is still not cooked, waits out the extension.
+ * Our implementation leaves in tick 7, six ticks after the order of tick 1.
  */
-class ExtendedPatienceEndsSevenTicksAfterOrderingSystemTest : PartialServingScenario() {
-    override val name = "ExtendedPatienceEndsSevenTicksAfterOrderingSystemTest"
-    override val description = "The last customer of a partly served table leaves 7 ticks after ordering"
+abstract class ExtendedPatienceScenario : ExampleSystemTestExtension() {
+    override val restaurants = "officehourjson/partialserving/restaurants.json"
+    override val scenario = "officehourjson/partialserving/scenario.json"
+    override val food = "officehourjson/partialserving/food.json"
+    override val logLevel = "DEBUG"
+    override val maxTicks = 12
 
-    override suspend fun run() {
-        assertSharedSetup()
-        // nothing may be given up before tick 8, so the skip starts there
-        skipUntilString(TickStatusTestLogs.tickStart(8, 1))
+    /**
+     * Pins the walk-out to exactly [tick]: the skip starts at that tick, so it cannot have happened
+     * earlier, and the start of the following tick must still be ahead of it, so it cannot have
+     * happened later either.
+     */
+    protected suspend fun assertLastCustomerLeavesInTick(tick: Int) {
+        skipUntilString(TickStatusTestLogs.tickStart(1, 1))
+        skipUntilString(
+            FohArrivalTestLogs.ordering(1, 1, 1, mapOf(MEAL_A to 1, MEAL_B to 1, MEAL_C to 1), 1)
+        )
+        skipUntilString(TickStatusTestLogs.tickStart(tick, 1))
         skipUntilString(FohServiceTestLogs.noEating(1, 1, 1, 1))
-        assertNextLine(FohServiceTestLogs.eatingStatus(1, 1, 0))
+        skipUntilString(TickStatusTestLogs.tickStart(tick + 1, 1))
     }
 }
 
-/** Reading B: the two extra ticks are counted inclusively, so the last customer leaves in tick 7. */
-class ExtendedPatienceEndsSixTicksAfterOrderingSystemTest : PartialServingScenario() {
-    override val name = "ExtendedPatienceEndsSixTicksAfterOrderingSystemTest"
-    override val description = "The last customer of a partly served table leaves 6 ticks after ordering"
+/** the extension is ignored and the base window of four ticks decides */
+class ExtendedPatienceLeavesInTickFiveSystemTest : ExtendedPatienceScenario() {
+    override val name = "ExtendedPatienceLeavesInTickFiveSystemTest"
+    override val description = "The last customer of a partly served table leaves in tick 5"
 
-    override suspend fun run() {
-        assertSharedSetup()
-        skipUntilString(TickStatusTestLogs.tickStart(7, 1))
-        skipUntilString(FohServiceTestLogs.noEating(1, 1, 1, 1))
-        // in tick 7 the customer of mealA is the one who has just finished eating
-        assertNextLine(FohServiceTestLogs.eatingStatus(1, 1, 1))
-    }
+    override suspend fun run() = assertLastCustomerLeavesInTick(5)
+}
+
+/** five ticks after ordering */
+class ExtendedPatienceLeavesInTickSixSystemTest : ExtendedPatienceScenario() {
+    override val name = "ExtendedPatienceLeavesInTickSixSystemTest"
+    override val description = "The last customer of a partly served table leaves in tick 6"
+
+    override suspend fun run() = assertLastCustomerLeavesInTick(6)
+}
+
+/** six ticks after ordering, the base window of four plus the two extra ticks: what we implement */
+class ExtendedPatienceLeavesInTickSevenSystemTest : ExtendedPatienceScenario() {
+    override val name = "ExtendedPatienceLeavesInTickSevenSystemTest"
+    override val description = "The last customer of a partly served table leaves in tick 7"
+
+    override suspend fun run() = assertLastCustomerLeavesInTick(7)
+}
+
+/** seven ticks after ordering, the two extra ticks counted on the old five tick base window */
+class ExtendedPatienceLeavesInTickEightSystemTest : ExtendedPatienceScenario() {
+    override val name = "ExtendedPatienceLeavesInTickEightSystemTest"
+    override val description = "The last customer of a partly served table leaves in tick 8"
+
+    override suspend fun run() = assertLastCustomerLeavesInTick(8)
+}
+
+/** the two extra ticks counted from the tick mealA was served rather than from the order */
+class ExtendedPatienceLeavesInTickNineSystemTest : ExtendedPatienceScenario() {
+    override val name = "ExtendedPatienceLeavesInTickNineSystemTest"
+    override val description = "The last customer of a partly served table leaves in tick 9"
+
+    override suspend fun run() = assertLastCustomerLeavesInTick(9)
 }

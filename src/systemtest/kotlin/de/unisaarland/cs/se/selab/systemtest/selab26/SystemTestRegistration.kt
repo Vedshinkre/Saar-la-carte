@@ -119,6 +119,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.WaiterLoadRele
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.WaitingForFoodSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.WaitstaffExhaustionTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentNegativePackagingVolumeRejectedSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentNoNameRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentNonUniqueIdsRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentZeroAdaptationRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentZeroPackagingVolumeRejectedSystemTest
@@ -261,6 +262,7 @@ object SystemTestRegistration {
         testSuite.registerTest(ExhaustiveSimpleScenarioTest())
         testSuite.registerTest(CorrectPartialServing2())
         testSuite.registerTest(CasualGroupRatingSystemTest())
+        testSuite.registerTest(IncidentNoNameRejectedSystemTest())
     }
 
     /** AB tests for the two tick windows fo the serving phase */

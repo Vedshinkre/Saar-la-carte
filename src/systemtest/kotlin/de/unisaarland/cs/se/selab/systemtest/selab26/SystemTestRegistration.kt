@@ -1,5 +1,7 @@
 package de.unisaarland.cs.se.selab.systemtest.selab26
 
+import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.EatingOrderIsPerGroupSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.EatingOrderIsTwoPassesSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.PatienceLeavesFiveTicksAfterOrderSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.PatienceLeavesFourTicksAfterOrderSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.ServedOnFourthTickIsNeutralSystemTest
@@ -221,6 +223,8 @@ object SystemTestRegistration {
         testSuite.registerTest(WaitingForFoodSystemTest())
         testSuite.registerTest(WaiterLoadReleasedOnLeavingSystemTest())
         testSuite.registerTest(PartialLeaverEscortedSystemTest())
+        testSuite.registerTest(EatingOrderIsPerGroupSystemTest())
+        testSuite.registerTest(EatingOrderIsTwoPassesSystemTest())
         registeratharvaRefrenceTests(testSuite)
         fullScenarioSystemTests(false).forEach { testSuite.registerTest(it) }
         testSuite.registerTest(DeliveryOrderSuccessTestA())

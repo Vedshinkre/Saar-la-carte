@@ -38,8 +38,13 @@ class WaitingForFoodSystemTest : ExampleSystemTestExtension() {
         skipUntilString(TickStatusTestLogs.tickStart(5, 1))
         skipUntilString(FohServiceTestLogs.serving(1, 1, mapOf(dish to 2), 1, 3))
 
-        // nobody left before tick 7: the leave logs must only appear after the start of tick 7.
-        // group 1 also finishes eating, is escorted and rates positively in this same tick.
+        // nobody left before tick 7: the leave logs must only appear after the start of tick 7. Group 1
+        // also finishes eating, is escorted and rates positively in this same tick. See
+        // [de.unisaarland.cs.se.selab.systemtest.selab26.abtests.EatingOrderIsPerGroupSystemTest] /
+        // [...EatingOrderIsTwoPassesSystemTest] for the open question of whether "finished eating" and
+        // "leaving unserved" logs of different groups in the same tick should interleave by group id
+        // (what we implement, and what this test currently checks for) or run as two separate full
+        // passes over all groups (closer to a literal reading of the spec's paragraph order).
         skipUntilString(TickStatusTestLogs.tickStart(7, 1))
         skipUntilString(FohServiceTestLogs.finishedEating(1, 2, 1, 1))
         skipUntilString(FohServiceTestLogs.noEating(1, 2, 2, 2))

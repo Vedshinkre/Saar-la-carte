@@ -118,8 +118,8 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.I
 import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentZeroAdaptationRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentZeroPackagingVolumeRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.CorrectPartialServing2
-import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.DeliveryBrowsingTickResetA
-import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.DeliveryBrowsingTickResetB
+import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.DeliveryBasicDishPriorityA
+import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.DeliveryBasicDishPriorityB
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.SomeDeliveryTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.ExtendedPatienceLeavesInTickEightSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.ExtendedPatienceLeavesInTickFiveSystemTest
@@ -251,8 +251,8 @@ object SystemTestRegistration {
         registerReservedForMeProbes(testSuite)
         registerPatienceAbProbes(testSuite)
         testSuite.registerTest(SomeDeliveryTest())
-        testSuite.registerTest(DeliveryBrowsingTickResetB())
-        testSuite.registerTest(DeliveryBrowsingTickResetA())
+        testSuite.registerTest(DeliveryBasicDishPriorityB())
+        testSuite.registerTest(DeliveryBasicDishPriorityA())
         testSuite.registerTest(ExhaustiveSimpleScenarioTest())
         testSuite.registerTest(CorrectPartialServing2())
         testSuite.registerTest(CasualGroupRatingSystemTest())

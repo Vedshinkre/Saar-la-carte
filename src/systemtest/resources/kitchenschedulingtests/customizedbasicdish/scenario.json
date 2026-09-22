@@ -1,0 +1,33 @@
+{
+  "customerGroups": [
+    {
+      "id": 1,
+      "type": "CASUAL",
+      "size": 2,
+      "tableType": "COMMON",
+      "restaurantTypes": [
+        "EUROPEAN"
+      ],
+      "visitingTick": 1,
+      "visitingEvenings": [
+        1
+      ],
+      "ratingLikelihood": "NEVER",
+      "foodPreferences": [
+        {
+          "size": 1,
+          "favoriteDishes": [
+            "chicken rice"
+          ]
+        },
+        {
+          "size": 1,
+          "favoriteDishes": [
+            "potato soup"
+          ]
+        }
+      ]
+    }
+  ],
+  "incidents": []
+}

@@ -58,9 +58,9 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualTiebreak
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CookChangeNoOrderTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CorrectPartialServing1
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CustomerBehaviourDecisionSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CustomizedBasicDishPrioritySystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryCumulativeDistanceSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryEveningBoundaryNeverRatesSystemTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOrderScenarioTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOrderSuccessTestA
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOutboundTripSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryQueueDelayFailedReturnSystemTest
@@ -90,6 +90,8 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventSeatingSp
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventTableMergingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.ExactStockoutTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.LateCasualNoWaiterSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.LowestRankingCookSelectionSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.NonMergeableBarTableBrowsingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.OneCookTwoOrdersTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.PantryExpirySystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.PartialLeaverEscortedSystemTest
@@ -123,10 +125,17 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.I
 import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentNonUniqueIdsRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentZeroAdaptationRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentZeroPackagingVolumeRejectedSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.kitchenschedulingtests.BasicDishPrecedenceOverLowerIdSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.kitchenschedulingtests.BatchDoesNotAbsorbLaterArrivingOrderSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.kitchenschedulingtests.LowestRankingCookAssignedAcrossHierarchySystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.kitchenschedulingtests.NonBasicDishesTieBreakByAscendingIdSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.kitchenschedulingtests.TieBreakSameCookTypeByLowestExistingIdSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.kitchenschedulingtests.UncookableDishIsSkippedForCookableOneSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.CorrectPartialServing2
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.DeliveryBasicDishPriorityA
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.DeliveryBasicDishPriorityB
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.KitchenCookAssignmentSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.RegularFailedTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.SomeDeliveryTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.ClosedRestaurantStillFinishesDeliverySystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.ExtendedPatienceLeavesInTickEightSystemTest
@@ -254,7 +263,7 @@ object SystemTestRegistration {
         testSuite.registerTest(PartialServiceSuccessTest())
         testSuite.registerTest(CookChangeNoOrderTest())
         testSuite.registerTest(RecipeChangeAcrossRestaurantsTest())
-        testSuite.registerTest(DeliveryOrderScenarioTest())
+        testSuite.registerTest(RegularFailedTest())
         testSuite.registerTest(CorrectPartialServing1())
         testSuite.registerTest(RegularRetrySucceedsSystemTest())
         registerRecipeChangeProbes(testSuite)
@@ -327,6 +336,7 @@ object SystemTestRegistration {
         testSuite.registerTest(SupplierProcurementSystemTest())
         testSuite.registerTest(UnavailableIncidentSupplierProcurementSystemTest())
         testSuite.registerTest(LateCasualNoWaiterSystemTest())
+        testSuite.registerTest(KitchenCookAssignmentSystemTest())
         testSuite.registerTest(CorrectPartialServing1()) // testSuite.registerTest(StaffLoadConcentrationSystemTest())
         // testSuite.registerTest(StaffMultiWaiterExhaustionSystemTest())
         testSuite.registerTest(
@@ -386,6 +396,15 @@ object SystemTestRegistration {
         testSuite.registerTest(RegularSeatingFailureRatesNegativeSystemTest())
         testSuite.registerTest(RegularUnservedGroupLeavesRatesNegativeSystemTest())
         testSuite.registerTest(RegularConsecutiveFailuresAcrossDifferentFailureTypesSystemTest())
+        testSuite.registerTest(BasicDishPrecedenceOverLowerIdSystemTest())
+        testSuite.registerTest(NonBasicDishesTieBreakByAscendingIdSystemTest())
+        testSuite.registerTest(UncookableDishIsSkippedForCookableOneSystemTest())
+        testSuite.registerTest(BatchDoesNotAbsorbLaterArrivingOrderSystemTest())
+        testSuite.registerTest(LowestRankingCookAssignedAcrossHierarchySystemTest())
+        testSuite.registerTest(TieBreakSameCookTypeByLowestExistingIdSystemTest())
+        testSuite.registerTest(CustomizedBasicDishPrioritySystemTest())
+        testSuite.registerTest(LowestRankingCookSelectionSystemTest())
+        testSuite.registerTest(NonMergeableBarTableBrowsingSystemTest())
         registerTableMergingTests(testSuite)
         registerEventTests(testSuite)
         helperregisteratharvaRefrenceTests(testSuite)

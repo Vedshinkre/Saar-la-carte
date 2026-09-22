@@ -1,0 +1,34 @@
+{
+  "restaurants": [
+    {
+      "id": 1,
+      "name": "Depression",
+      "type": "EUROPEAN",
+      "openingTickStart": 1,
+      "openingTickEnd": 24,
+      "deliveryDrivers": 1,
+      "event": true,
+      "positiveRatings": 10,
+      "negativeRatings": 3,
+      "recipes": [1, 2, 99],
+      "kitchenStaff": {
+        "EXEC": 1,
+        "SOUS": 0,
+        "TOURNANT": 0,
+        "SAUCE": 0,
+        "FISH": 0,
+        "ROAST": 1,
+        "VEGETABLE": 1,
+        "PASTRY": 1
+      },
+      "waitstaff": 2,
+      "tables": [
+        {
+          "id": 1,
+          "type": "COMMON",
+          "size": 2
+        }
+      ]
+    }
+  ]
+}

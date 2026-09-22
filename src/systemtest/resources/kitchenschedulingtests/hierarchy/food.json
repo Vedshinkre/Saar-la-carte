@@ -1,0 +1,69 @@
+{
+  "ingredients": [
+    {
+      "name": "Truffle",
+      "unit": "g",
+      "packagingVolume": 2000,
+      "bestBefore": 5
+    },
+    {
+      "name": "Root",
+      "unit": "g",
+      "packagingVolume": 2000,
+      "bestBefore": 5
+    },
+    {
+      "name": "Salt",
+      "unit": "g",
+      "packagingVolume": 2000,
+      "bestBefore": 5
+    }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "Chef Special",
+      "duration": 20,
+      "cookType": [
+        "EXEC",
+        "VEGETABLE"
+      ],
+      "ingredients": [
+        {
+          "name": "Truffle",
+          "amount": 50
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "dishName": "Root Roast",
+      "duration": 20,
+      "cookType": [
+        "ROAST",
+        "PASTRY"
+      ],
+      "ingredients": [
+        {
+          "name": "Root",
+          "amount": 50
+        }
+      ]
+    },
+    {
+      "id": 99,
+      "dishName": "House Basic",
+      "duration": 10,
+      "basicDishFor": "EUROPEAN",
+      "cookType": [
+        "SOUS"
+      ],
+      "ingredients": [
+        {
+          "name": "Salt",
+          "amount": 10
+        }
+      ]
+    }
+  ]
+}

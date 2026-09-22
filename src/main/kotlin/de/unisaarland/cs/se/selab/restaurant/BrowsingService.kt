@@ -31,7 +31,7 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
             return getEligibleRestaurantForDineIn(group)
         }
         val openRestaurants = collectOpenRestaurants(group)
-        val travelTicks = kotlin.math.ceil(group.deliveryDistance / FIVE).toInt()
+        val travelTicks = kotlin.math.ceil(group.deliveryDistance.toDouble() / FIVE).toInt()
         val cookingFinishTick = group.visitingAt - travelTicks
 
         val deliveryCandidates = mutableListOf<RestaurantStats>()
@@ -111,8 +111,7 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
     }
 
     private fun filterDietaryCompatible(
-        candidates: List<RestaurantStats>,
-        group: CustomerGroup
+        candidates: List<RestaurantStats>, group: CustomerGroup
     ): List<RestaurantStats> {
         val compatible = mutableListOf<RestaurantStats>()
         for (stats in candidates) {

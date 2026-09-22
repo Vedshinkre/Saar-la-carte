@@ -114,9 +114,9 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.I
 import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentNonUniqueIdsRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentZeroAdaptationRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentZeroPackagingVolumeRejectedSystemTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.CanvisitA
-import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.CanvisitB
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.CorrectPartialServing2
+import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.DeliveryBrowsingTickResetA
+import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.DeliveryBrowsingTickResetB
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.SomeDeliveryTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.ExtendedPatienceLeavesInTickEightSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.ExtendedPatienceLeavesInTickFiveSystemTest
@@ -239,8 +239,8 @@ object SystemTestRegistration {
         registerReservedForMeProbes(testSuite)
         registerPatienceAbProbes(testSuite)
         testSuite.registerTest(SomeDeliveryTest())
-        testSuite.registerTest(CanvisitA())
-        testSuite.registerTest(CanvisitB())
+        testSuite.registerTest(DeliveryBrowsingTickResetB())
+        testSuite.registerTest(DeliveryBrowsingTickResetA())
         testSuite.registerTest(ExhaustiveSimpleScenarioTest())
         testSuite.registerTest(PackagingChangeIncidentSystemTests())
         testSuite.registerTest(IncidentZeroPackagingVolumeRejectedSystemTest())

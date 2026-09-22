@@ -20,6 +20,7 @@ import de.unisaarland.cs.se.selab.restaurant.Table
 import kotlinx.serialization.json.addJsonObject
 import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.put
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import kotlin.test.assertEquals
@@ -81,7 +82,7 @@ class PackagingChangeIncidentTest {
         }
         val incidents: List<Incident> = parser.parseIncidentFile(jsonArray, ingredients, stock, recipes, restaurants)
         assertEquals(1, incidents.size)
-        assert(incidents.first() is PackagingChangeIncident)
+        assertTrue(incidents.first() is PackagingChangeIncident)
     }
 
     @Test

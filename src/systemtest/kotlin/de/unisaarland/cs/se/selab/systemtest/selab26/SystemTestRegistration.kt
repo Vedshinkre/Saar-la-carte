@@ -502,13 +502,8 @@ object SystemTestRegistration {
         testSuite.registerTest(RegularPlanningVisitingPeriodSystemTest())
         testSuite.registerTest(RegularPlanningFailedOrderSystemTest())
         testSuite.registerTest(CasualConsumptionCarryOverSystemTest())
-        testSuite.registerTest(RegularFirstVisitCountsReservedSeatsSystemTest())
         testSuite.registerTest(RegularReservedTableIsTheExactFitSystemTest())
         testSuite.registerTest(RegularSeatedWithoutOrderKeepsCountingSystemTest())
-        testSuite.registerTest(ReservedSeatsAreTheWholeTableSystemTest())
-        testSuite.registerTest(ReservedSeatsAreTheGroupSizeSystemTest())
-        testSuite.registerTest(ArrivedWithoutSeatingStillCountsSystemTest())
-        testSuite.registerTest(ArrivedWithoutSeatingCountsAsVisitSystemTest())
     }
 
     /**

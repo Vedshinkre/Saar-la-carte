@@ -1,0 +1,41 @@
+{
+  "ingredients": [
+    {
+      "name": "x",
+      "unit": "g",
+      "packagingVolume": 1000,
+      "bestBefore": 5
+    }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "Delivered Dish",
+      "duration": 40,
+      "basicDishFor": "EUROPEAN",
+      "cookType": [
+        "TOURNANT"
+      ],
+      "ingredients": [
+        {
+          "name": "x",
+          "amount": 100
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "dishName": "Blocker A",
+      "duration": 40,
+      "cookType": [
+        "TOURNANT"
+      ],
+      "ingredients": [
+        {
+          "name": "x",
+          "amount": 50
+        }
+      ]
+    }
+  ]
+}

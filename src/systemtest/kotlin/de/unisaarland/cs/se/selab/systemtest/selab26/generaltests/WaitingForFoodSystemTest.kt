@@ -11,7 +11,10 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.utils.TickStatusTestLogs
  * .officehourprobes.PatienceEndsFourTicksAfterOrderingSystemTest]). One ROAST cook needs 3 ticks per order, so
  * group 1 (ordered in tick 2) is served in time, while groups 2 and 3 (ordered in tick 3) are still waiting
  * when the cook only starts their order. They leave in tick 7, four ticks after ordering, and rate negatively.
- * Group 1 finishes eating, is escorted and rates in that same tick.
+ * Group 1 finishes eating, is escorted and rates in that same tick. Per spec, the "leaving" pass is logged
+ * for every group before the "finished eating" pass (confirmed against the reference by
+ * [de.unisaarland.cs.se.selab.systemtest.selab26.abtests.EatingOrderIsTwoPassesSystemTest]), so groups 2
+ * and 3 leaving comes before group 1 finishing eating, even though group 1 has the lower id.
  */
 class WaitingForFoodSystemTest : ExampleSystemTestExtension() {
     override val name = "WaitingForFoodSystemTest"
@@ -39,16 +42,11 @@ class WaitingForFoodSystemTest : ExampleSystemTestExtension() {
         skipUntilString(FohServiceTestLogs.serving(1, 1, mapOf(dish to 2), 1, 3))
 
         // nobody left before tick 7: the leave logs must only appear after the start of tick 7. Group 1
-        // also finishes eating, is escorted and rates positively in this same tick. See
-        // [de.unisaarland.cs.se.selab.systemtest.selab26.abtests.EatingOrderIsPerGroupSystemTest] /
-        // [...EatingOrderIsTwoPassesSystemTest] for the open question of whether "finished eating" and
-        // "leaving unserved" logs of different groups in the same tick should interleave by group id
-        // (what we implement, and what this test currently checks for) or run as two separate full
-        // passes over all groups (closer to a literal reading of the spec's paragraph order).
+        // also finishes eating, is escorted and rates positively in this same tick.
         skipUntilString(TickStatusTestLogs.tickStart(7, 1))
-        skipUntilString(FohServiceTestLogs.finishedEating(1, 2, 1, 1))
         skipUntilString(FohServiceTestLogs.noEating(1, 2, 2, 2))
         skipUntilString(FohServiceTestLogs.noEating(1, 1, 3, 3))
+        skipUntilString(FohServiceTestLogs.finishedEating(1, 2, 1, 1))
         skipUntilString(FohServiceTestLogs.escorting(1, 1, 2, 1, 1))
         skipUntilString(FohServiceTestLogs.rating(1, 1, "POSITIVE", 11, 0))
         skipUntilString(FohServiceTestLogs.rating(1, 2, "NEGATIVE", 11, 1))

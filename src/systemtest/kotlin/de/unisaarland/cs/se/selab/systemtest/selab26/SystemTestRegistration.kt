@@ -54,7 +54,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CookChangeNoOr
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CorrectPartialServing1
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CustomerBehaviourDecisionSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryCumulativeDistanceSystemTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryEveningBoundaryRatingSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryEveningBoundaryNeverRatesSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOrderScenarioTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOrderSuccessTestA
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOutboundTripSystemTest
@@ -236,7 +236,7 @@ object SystemTestRegistration {
         testSuite.registerTest(DeliveryOrderSuccessTestA())
         testSuite.registerTest(CasualDeliveryTimeoutTest())
         testSuite.registerTest(DeliveryQueueDelayTimeoutSystemTest())
-        testSuite.registerTest(DeliveryEveningBoundaryRatingSystemTest())
+        testSuite.registerTest(DeliveryEveningBoundaryNeverRatesSystemTest())
         testSuite.registerTest(PartialServiceSuccessTest())
         testSuite.registerTest(CookChangeNoOrderTest())
         testSuite.registerTest(RecipeChangeAcrossRestaurantsTest())

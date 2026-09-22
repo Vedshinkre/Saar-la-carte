@@ -261,8 +261,6 @@ object SystemTestRegistration {
         testSuite.registerTest(DeliveryBasicDishPriorityA())
         testSuite.registerTest(ExhaustiveSimpleScenarioTest())
         testSuite.registerTest(CorrectPartialServing2())
-        testSuite.registerTest(CasualGroupRatingSystemTest())
-        testSuite.registerTest(IncidentNoNameRejectedSystemTest())
     }
 
     /** AB tests for the two tick windows fo the serving phase */
@@ -299,6 +297,7 @@ object SystemTestRegistration {
         customerParserSystemTests().forEach { testSuite.registerTest(it) }
         registerVladValidationMutantTests(testSuite)
         fullScenarioSystemTests(true).forEach { testSuite.registerTest(it) }
+        testSuite.registerTest(IncidentNoNameRejectedSystemTest())
     }
 
     /**
@@ -329,6 +328,7 @@ object SystemTestRegistration {
         testSuite.registerTest(CookChangeNoOrderTest())
         registerVladSimulationMutantTests(testSuite)
         fullScenarioSystemTests(true).forEach { testSuite.registerTest(it) }
+        testSuite.registerTest(CasualGroupRatingSystemTest())
     }
 
     /**

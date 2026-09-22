@@ -1,0 +1,38 @@
+{
+  "customerGroups": [
+    {
+      "id": 1,
+      "type": "REGULAR",
+      "size": 10,
+      "tableType": "COMMON",
+      "visitingTick": 2,
+      "visitingStart": 1,
+      "visitingPeriod": 1,
+      "restaurant": 1,
+      "foodPreferences": []
+    },
+    {
+      "id": 2,
+      "type": "REGULAR",
+      "size": 10,
+      "tableType": "COMMON",
+      "visitingTick": 3,
+      "visitingStart": 1,
+      "visitingPeriod": 1,
+      "restaurant": 1,
+      "foodPreferences": []
+    },
+    {
+      "id": 3,
+      "type": "REGULAR",
+      "size": 2,
+      "tableType": "COMMON",
+      "visitingTick": 2,
+      "visitingStart": 1,
+      "visitingPeriod": 1,
+      "restaurant": 1,
+      "foodPreferences": []
+    }
+  ],
+  "incidents": []
+}

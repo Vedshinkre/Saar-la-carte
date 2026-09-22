@@ -185,9 +185,12 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.Regula
 import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.RegularPlanningVisitingPeriodSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.RegularReservedTableIsTheExactFitSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.RegularSeatedWithoutOrderKeepsCountingSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.reservationdecisiontests.RegularConsecutiveFailuresAcrossDifferentFailureTypesSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.reservationdecisiontests.RegularFailedAttemptsNotResetByInterveningSuccessSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.reservationdecisiontests.RegularReservationOrderIsAscendingIdNotFileOrderSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.reservationdecisiontests.RegularSeatingFailureRatesNegativeSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.reservationdecisiontests.RegularUneventfulVisitRatesPositiveSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.reservationdecisiontests.RegularUnservedGroupLeavesRatesNegativeSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.staffchangetests.StaffChangeClampThenHireSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.staffchangetests.StaffChangeNoCookStillProcuresSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.staffchangetests.StaffChangeNoWaitstaffSystemTest
@@ -353,6 +356,9 @@ object SystemTestRegistration {
         testSuite.registerTest(EatingFinishedAndEscortedSameTickTest())
         testSuite.registerTest(CasualNoDecisionNoSpaceTest()) // doesnt pass on refrence
         testSuite.registerTest(CasualMergeTrimTieBreakSystemTest())
+        testSuite.registerTest(RegularSeatingFailureRatesNegativeSystemTest())
+        testSuite.registerTest(RegularUnservedGroupLeavesRatesNegativeSystemTest())
+        testSuite.registerTest(RegularConsecutiveFailuresAcrossDifferentFailureTypesSystemTest())
         registerTableMergingTests(testSuite)
         registerEventTests(testSuite)
         helperregisteratharvaRefrenceTests(testSuite)

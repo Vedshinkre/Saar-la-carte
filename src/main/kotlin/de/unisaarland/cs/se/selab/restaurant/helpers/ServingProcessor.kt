@@ -32,9 +32,10 @@ class ServingProcessor(
 
     private fun getNextDriverId() = nextDriverIdCounter++
 
-    /** driver ids are handed out per restaurant and evening, so the counter restarts every evening */
-    fun resetDriverIdCounter() {
-        nextDriverIdCounter = 1
+    /** driver ids are handed out per restaurant and evening, so the counter restarts every evening.
+     *  [start] lets the caller keep it above the ids of drivers that are still mid-trip. */
+    fun resetDriverIdCounter(start: Id = 1) {
+        nextDriverIdCounter = start
     }
 
     /** serves cooked meals from kitchen to in-house groups and drivers, logs SERVING actions performed */

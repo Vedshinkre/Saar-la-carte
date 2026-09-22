@@ -190,7 +190,7 @@ class ExhaustiveSimpleScenarioTest : ExampleSystemTestExtension() {
 
     private suspend fun assertFinalStatistics() {
         // Because maxTicks = 5, the serving phase ends immediately after Tick 5 completes.
-        assertNextLine(TickStatusTestLogs.servingEnd(1))
+        assertNextLine(TickStatusTestLogs.servingEnd(1)) // DOTO: wrong ~Ciprian
 
         // Final Global Statistics
         assertNextLine(StatisticsTestLogs.STATS_CALCULATED)

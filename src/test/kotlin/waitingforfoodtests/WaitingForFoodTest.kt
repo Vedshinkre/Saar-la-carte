@@ -56,7 +56,8 @@ class WaitingForFoodTest {
         )
         assertEquals(0, group.customersRemainingInRestaurant)
         assertEquals(3, group.getCustomersWhoLeft())
-        assertTrue(order.dishes.all { it.status == DishStatus.ABORTED })
+        // the kitchen carries on cooking abandoned dishes, so their status is untouched
+        assertTrue(order.dishes.all { it.abandoned })
         assertEquals(ExperienceType.NEGATIVE, group.experience)
     }
 
@@ -257,7 +258,7 @@ class WaitingForFoodTest {
     }
 
     @Test
-    fun `a REGULAR group where only some customers leave gets no failed attempt`() {
+    fun `a REGULAR group where only some customers leave gets no failed attempt but a negative rating`() {
         val group = fx.regular(1, fx.order(DishStatus.SERVED, DishStatus.UNCOOKED))
         group.failedAttempts = 1
         val processor = fx.eating(listOf(group))
@@ -266,6 +267,7 @@ class WaitingForFoodTest {
         processor.processEating()
 
         assertEquals(0, group.failedAttempts, "receiving any food ends the failure streak")
+        assertEquals(ExperienceType.NEGATIVE, group.experience, "but the visit is still rated negative")
     }
 
     @Test

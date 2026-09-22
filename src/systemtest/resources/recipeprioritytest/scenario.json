@@ -1,0 +1,33 @@
+{
+  "customerGroups": [
+    {
+      "id": 1,
+      "type": "CASUAL",
+      "size": 2,
+      "deliveryDistance": 5,
+      "restaurantTypes": [
+        "EUROPEAN"
+      ],
+      "visitingEvenings": [
+        1
+      ],
+      "visitingTick": 5,
+      "foodPreferences": [
+        {
+          "size": 1,
+          "favoriteDishes": [
+            "Grilled Chicken"
+          ]
+        },
+        {
+          "size": 1,
+          "favoriteDishes": [
+            "Tomato Soup"
+          ]
+        }
+      ],
+      "ratingLikelihood": "NEVER"
+    }
+  ],
+  "incidents": []
+}

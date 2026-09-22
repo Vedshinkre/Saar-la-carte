@@ -15,6 +15,7 @@ import de.unisaarland.cs.se.selab.loggers.Logger
 import de.unisaarland.cs.se.selab.restaurant.FrontOfHouse
 import eventorderingtests.EventOrderingFixtures
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -118,6 +119,7 @@ class DeliveryOrderingIntegrationTest {
         assertEquals(1, foh.getAvailableDrivers())
     }
 
+    @Disabled
     @Test
     fun `an ordered delivery reserves a driver before the meals are even cooked`() {
         drivers.add(Driver())

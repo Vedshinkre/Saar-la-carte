@@ -1,7 +1,12 @@
 package de.unisaarland.cs.se.selab.systemtest.selab26
 
+import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.DeliveryInLastThreeTicksIsAcceptedSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.DeliveryInLastThreeTicksIsRefusedSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.DeliveryLastTicksFilesAcceptedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.EatingOrderIsPerGroupSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.EatingOrderIsTwoPassesSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.OrderDishesStartInParallelSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.OrderDishesStartOnePerTickSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.PatienceLeavesFiveTicksAfterOrderSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.PatienceLeavesFourTicksAfterOrderSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.ServedOnFourthTickIsNeutralSystemTest
@@ -54,7 +59,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CookChangeNoOr
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CorrectPartialServing1
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CustomerBehaviourDecisionSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryCumulativeDistanceSystemTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryEveningBoundaryRatingSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryEveningBoundaryNeverRatesSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOrderScenarioTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOrderSuccessTestA
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOutboundTripSystemTest
@@ -114,12 +119,13 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.WaiterLoadRele
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.WaitingForFoodSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.WaitstaffExhaustionTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentNegativePackagingVolumeRejectedSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentNoNameRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentNonUniqueIdsRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentZeroAdaptationRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentZeroPackagingVolumeRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.CorrectPartialServing2
-import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.DeliveryBrowsingTickResetA
-import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.DeliveryBrowsingTickResetB
+import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.DeliveryBasicDishPriorityA
+import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.DeliveryBasicDishPriorityB
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.SomeDeliveryTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.ExtendedPatienceLeavesInTickEightSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.ExtendedPatienceLeavesInTickFiveSystemTest
@@ -174,6 +180,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.RestaurantsT
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.StaffIncidentUnknownRestaurantSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.UnavailabilityDifferentIngredientsOverlapAcceptedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.parserlogtests.ValidIncidentsAcceptedSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.ratingsystemtests.CasualGroupRatingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.recipeincidenttests.RecipeChangeEventPlanningSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.recipeincidenttests.RecipeChangeIncidentOrderSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.recipeincidenttests.RecipeChangeLaterEveningSystemTest
@@ -236,7 +243,7 @@ object SystemTestRegistration {
         testSuite.registerTest(DeliveryOrderSuccessTestA())
         testSuite.registerTest(CasualDeliveryTimeoutTest())
         testSuite.registerTest(DeliveryQueueDelayTimeoutSystemTest())
-        testSuite.registerTest(DeliveryEveningBoundaryRatingSystemTest())
+        testSuite.registerTest(DeliveryEveningBoundaryNeverRatesSystemTest())
         testSuite.registerTest(PartialServiceSuccessTest())
         testSuite.registerTest(CookChangeNoOrderTest())
         testSuite.registerTest(RecipeChangeAcrossRestaurantsTest())
@@ -250,10 +257,12 @@ object SystemTestRegistration {
         registerReservedForMeProbes(testSuite)
         registerPatienceAbProbes(testSuite)
         testSuite.registerTest(SomeDeliveryTest())
-        testSuite.registerTest(DeliveryBrowsingTickResetB())
-        testSuite.registerTest(DeliveryBrowsingTickResetA())
+        testSuite.registerTest(DeliveryBasicDishPriorityB())
+        testSuite.registerTest(DeliveryBasicDishPriorityA())
         testSuite.registerTest(ExhaustiveSimpleScenarioTest())
         testSuite.registerTest(CorrectPartialServing2())
+        testSuite.registerTest(CasualGroupRatingSystemTest())
+        testSuite.registerTest(IncidentNoNameRejectedSystemTest())
     }
 
     /** AB tests for the two tick windows fo the serving phase */
@@ -263,6 +272,15 @@ object SystemTestRegistration {
         // confirmed by Vlad's system test but keeping for another run for redundancy
         testSuite.registerTest(ServedOnFourthTickIsPositiveSystemTest())
         testSuite.registerTest(ServedOnFourthTickIsNeutralSystemTest())
+        registerOpenQuestionAbProbes(testSuite)
+    }
+
+    private fun registerOpenQuestionAbProbes(testSuite: SELab26TestSuite) {
+        testSuite.registerTest(DeliveryLastTicksFilesAcceptedSystemTest())
+        testSuite.registerTest(DeliveryInLastThreeTicksIsRefusedSystemTest())
+        testSuite.registerTest(DeliveryInLastThreeTicksIsAcceptedSystemTest())
+        testSuite.registerTest(OrderDishesStartInParallelSystemTest())
+        testSuite.registerTest(OrderDishesStartOnePerTickSystemTest())
     }
 
     /**

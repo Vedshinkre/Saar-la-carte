@@ -9,7 +9,10 @@ class Dish(
     val recipe: Recipe,
     val isBasic: Boolean,
     var eatingProgress: Int,
-    var status: DishStatus
+    var status: DishStatus,
+    // set when the customer who ordered the dish left before it served, so kitchen can keep cooking it */
+    var abandoned: Boolean = false
+    // getServableDishes also updated accordingly
 ) {
     // explicit constructor with only recipe
     constructor(recipe: Recipe) : this(

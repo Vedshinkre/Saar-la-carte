@@ -540,21 +540,7 @@ class Kitchen(
             // Replaced with helper
             if (finished > 0) {
                 logFinishedMeals(cook, finished, dishNameBeforeCooking, baseOrderIdBeforeCooking)
-            }
-        }
 
-        val servableMeals = getServableDishesNumber()
-        KitchenLogger.logKitchenStatus(
-            numberOfCooks = activeCooks,
-            totalNumberOfMeals = totalMeals,
-            finishedNumberOfMeals = finishedMeals,
-            servableMeals = servableMeals
-        )
-    }
-
-    /**
-     * Helper function to find the base order and log finished meals (to solve detekt issue).
-     */
     private fun logFinishedMeals(cook: Cook, finished: Int, dishNameBeforeCooking: String?, baseOrderId: Int?) {
         val cookId = cook.id ?: -1
         val dishName = dishNameBeforeCooking ?: "Unknown Dish"

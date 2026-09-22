@@ -331,6 +331,35 @@ class WaitingForFoodIntegrationTest {
         assertTrue(lines("Restaurant No Eating").isEmpty())
     }
 
+    @Test
+    fun `a REGULAR group partially served does not get a failed attempt`() {
+        // spec adjustment 5: a failed attempt is only the WHOLE group leaving unserved, not part of it
+        val regular = EventOrderingFixtures.regularGroup(id = 1, size = 2)
+        foh.reserveTables(regular)
+        arrive(regular)
+        val order = regular.currentOrder!!
+        cook(regular, 0)
+        order.firstDishCookedAt = 1
+
+        tickUntil(9) // the second, never-cooked dish leaves seven ticks after ordering
+
+        assertEquals(0, regular.failedAttempts)
+        assertEquals(1, lines("Restaurant No Eating").size)
+    }
+
+    @Test
+    fun `a REGULAR group served this visit resets a prior failed-attempt streak`() {
+        val regular = EventOrderingFixtures.regularGroup(id = 1, size = 2)
+        regular.failedAttempts = 1
+        foh.reserveTables(regular)
+        arrive(regular)
+        cook(regular)
+
+        tick() // served and eating starts within the same tick
+
+        assertEquals(0, regular.failedAttempts)
+    }
+
     // ---- delivery
 
     @Test

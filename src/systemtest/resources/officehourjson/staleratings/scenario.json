@@ -1,0 +1,71 @@
+{
+  "customerGroups": [
+    {
+      "id": 1,
+      "type": "CASUAL",
+      "size": 2,
+      "tableType": "COMMON",
+      "restaurantTypes": [
+        "EUROPEAN"
+      ],
+      "visitingEvenings": [
+        1
+      ],
+      "visitingTick": 14,
+      "foodPreferences": [
+        {
+          "size": 2,
+          "favoriteDishes": [
+            "Slow Bowl"
+          ]
+        }
+      ],
+      "ratingLikelihood": "NEVER"
+    },
+    {
+      "id": 2,
+      "type": "CASUAL",
+      "size": 2,
+      "tableType": "COMMON",
+      "restaurantTypes": [
+        "EUROPEAN"
+      ],
+      "visitingEvenings": [
+        1
+      ],
+      "visitingTick": 15,
+      "foodPreferences": [
+        {
+          "size": 2,
+          "favoriteDishes": [
+            "Other Slow Bowl"
+          ]
+        }
+      ],
+      "ratingLikelihood": "NEVER"
+    },
+    {
+      "id": 3,
+      "type": "CASUAL",
+      "size": 1,
+      "deliveryDistance": 5,
+      "restaurantTypes": [
+        "EUROPEAN"
+      ],
+      "visitingEvenings": [
+        1
+      ],
+      "visitingTick": 21,
+      "foodPreferences": [
+        {
+          "size": 1,
+          "favoriteDishes": [
+            "Quick Bowl"
+          ]
+        }
+      ],
+      "ratingLikelihood": "ALWAYS"
+    }
+  ],
+  "incidents": []
+}

@@ -1,0 +1,27 @@
+{
+  "customerGroups": [
+    {
+      "id": 1,
+      "type": "CASUAL",
+      "size": 1,
+      "deliveryDistance": 40,
+      "restaurantTypes": [
+        "EUROPEAN"
+      ],
+      "visitingEvenings": [
+        1
+      ],
+      "visitingTick": 16,
+      "foodPreferences": [
+        {
+          "size": 1,
+          "favoriteDishes": [
+            "Quick Bowl"
+          ]
+        }
+      ],
+      "ratingLikelihood": "ALWAYS"
+    }
+  ],
+  "incidents": []
+}

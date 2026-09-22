@@ -243,9 +243,9 @@ object SystemTestRegistration {
 
     /** AB tests for the two tick windows fo the serving phase */
     private fun registerPatienceAbProbes(testSuite: SELab26TestSuite) {
-        // testSuite.registerTest(PatienceLeavesFiveTicksAfterOrderSystemTest())
-        // testSuite.registerTest(PatienceLeavesFourTicksAfterOrderSystemTest())
-        // confirmed by Vlad's system test
+        testSuite.registerTest(PatienceLeavesFiveTicksAfterOrderSystemTest())
+        testSuite.registerTest(PatienceLeavesFourTicksAfterOrderSystemTest())
+        // confirmed by Vlad's system test but keeping for another run for redundancy
         testSuite.registerTest(ServedOnFourthTickIsPositiveSystemTest())
         testSuite.registerTest(ServedOnFourthTickIsNeutralSystemTest())
     }

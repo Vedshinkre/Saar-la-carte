@@ -1,7 +1,12 @@
 package de.unisaarland.cs.se.selab.systemtest.selab26
 
+import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.DeliveryInLastThreeTicksIsAcceptedSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.DeliveryInLastThreeTicksIsRefusedSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.DeliveryLastTicksFilesAcceptedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.EatingOrderIsPerGroupSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.EatingOrderIsTwoPassesSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.OrderDishesStartInParallelSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.OrderDishesStartOnePerTickSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.PatienceLeavesFiveTicksAfterOrderSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.PatienceLeavesFourTicksAfterOrderSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.ServedOnFourthTickIsNeutralSystemTest
@@ -265,6 +270,15 @@ object SystemTestRegistration {
         // confirmed by Vlad's system test but keeping for another run for redundancy
         testSuite.registerTest(ServedOnFourthTickIsPositiveSystemTest())
         testSuite.registerTest(ServedOnFourthTickIsNeutralSystemTest())
+        registerOpenQuestionAbProbes(testSuite)
+    }
+
+    private fun registerOpenQuestionAbProbes(testSuite: SELab26TestSuite) {
+        testSuite.registerTest(DeliveryLastTicksFilesAcceptedSystemTest())
+        testSuite.registerTest(DeliveryInLastThreeTicksIsRefusedSystemTest())
+        testSuite.registerTest(DeliveryInLastThreeTicksIsAcceptedSystemTest())
+        testSuite.registerTest(OrderDishesStartInParallelSystemTest())
+        testSuite.registerTest(OrderDishesStartOnePerTickSystemTest())
     }
 
     /**

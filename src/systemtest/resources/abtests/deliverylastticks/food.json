@@ -1,0 +1,12 @@
+{
+  "ingredients": [
+    { "name": "rice", "unit": "g", "packagingVolume": 1000, "bestBefore": 5 }
+  ],
+  "recipes": [
+    {
+      "id": 1, "dishName": "alpha", "duration": 10, "basicDishFor": "EUROPEAN",
+      "cookType": ["TOURNANT"],
+      "ingredients": [ { "name": "rice", "amount": 10 } ]
+    }
+  ]
+}

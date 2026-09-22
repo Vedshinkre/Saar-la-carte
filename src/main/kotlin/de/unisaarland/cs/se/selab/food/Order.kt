@@ -72,7 +72,7 @@ class Order(val dishes: List<Dish>) {
     }
 
     /** get dishes in the order that can be served this tick, ordered by basic dishes first then ascending recipe id */
-    fun getServableDishes(): Any {
+    fun getServableDishes(): List<Dish> {
         val cookedDishes = dishes.filter { it.status == DishStatus.COOKED && !it.abandoned }
         return cookedDishes.sortedWith(compareBy({ !it.isBasic }, { it.recipe.id }))
     }

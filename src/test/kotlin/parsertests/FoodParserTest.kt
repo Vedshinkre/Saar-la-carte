@@ -266,6 +266,16 @@ class FoodParserTest {
         assertEquals(40, parsedRecipes.single().duration)
     }
 
+    @Test
+    fun `recipe duration below the minimum is rejected`() {
+        assertFailsWith<IllegalArgumentException> { parseWithRice(recipeJson(duration = 1)) }
+    }
+
+    @Test
+    fun `recipe duration above the maximum is rejected`() {
+        assertFailsWith<IllegalArgumentException> { parseWithRice(recipeJson(duration = 41)) }
+    }
+
     // RECIPE: unique id and basic dishname
 
     @Test

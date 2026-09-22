@@ -178,6 +178,9 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.Regula
 import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.RegularSeatedWithoutOrderKeepsCountingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.ReservedSeatsAreTheGroupSizeSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.ReservedSeatsAreTheWholeTableSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.reservationdecisiontests.RegularFailedAttemptsNotResetByInterveningSuccessSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.reservationdecisiontests.RegularReservationOrderIsAscendingIdNotFileOrderSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.reservationdecisiontests.RegularUneventfulVisitRatesPositiveSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.staffchangetests.StaffChangeClampThenHireSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.staffchangetests.StaffChangeNoCookStillProcuresSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.staffchangetests.StaffChangeNoWaitstaffSystemTest
@@ -228,6 +231,7 @@ object SystemTestRegistration {
         registerRegularPlanningProbes(testSuite)
         registerStaffChangeProbes(testSuite)
         registerOfficeHourProbes(testSuite)
+        registerReservedForMeProbes(testSuite)
         registerPatienceAbProbes(testSuite)
         testSuite.registerTest(SomeDeliveryTest())
         testSuite.registerTest(CanvisitA())
@@ -525,6 +529,18 @@ object SystemTestRegistration {
         testSuite.registerTest(PartialServingWaitsForOneTickSystemTest())
         testSuite.registerTest(ExtendedPatienceEndsSevenTicksAfterOrderingSystemTest())
         testSuite.registerTest(ExtendedPatienceEndsSixTicksAfterOrderingSystemTest())
+    }
+
+    /**
+     * Probes written to find why the mandatory "ReservedForMe" component test (RRR:
+     * reservation of REGULAR groups and their ratings) fails against our implementation: one
+     * decision each, so that a failure against our own jar names the exact rule we read wrongly.
+     * Not registered for the mutants until the reference run confirms them.
+     */
+    private fun registerReservedForMeProbes(testSuite: SELab26TestSuite) {
+        testSuite.registerTest(RegularFailedAttemptsNotResetByInterveningSuccessSystemTest())
+        testSuite.registerTest(RegularReservationOrderIsAscendingIdNotFileOrderSystemTest())
+        testSuite.registerTest(RegularUneventfulVisitRatesPositiveSystemTest())
     }
 
     private fun registerRecipeChangeProbes(testSuite: SELab26TestSuite) {

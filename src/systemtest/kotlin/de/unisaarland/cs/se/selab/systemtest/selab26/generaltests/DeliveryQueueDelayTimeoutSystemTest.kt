@@ -8,6 +8,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.utils.KitchenTestLogs
 import de.unisaarland.cs.se.selab.systemtest.selab26.utils.TickStatusTestLogs
 
 private const val BAKED_POTATO = "baked potato"
+private const val POTATO_FRIES = "potato fries"
 
 /**
  * F20/F18: a single TOURNANT cook is occupied by an in-restaurant CASUAL group's order (potato fries,
@@ -47,32 +48,32 @@ class DeliveryQueueDelayTimeoutSystemTest : ExampleSystemTestExtension() {
         skipUntilString(TickStatusTestLogs.tickStart(10, 1))
         skipUntilString(FohArrivalTestLogs.arrival(1, 1))
         assertNextLine(FohArrivalTestLogs.seating(1, 1, 1, listOf(1)))
-        assertNextLine(FohArrivalTestLogs.ordering(1, 1, 1, mapOf("potato fries" to 2), 1))
+        assertNextLine(FohArrivalTestLogs.ordering(1, 1, 1, mapOf(POTATO_FRIES to 2), 1))
         assertNextLine(
             FohArrivalTestLogs.ordering(
                 restId = 1,
                 groupId = 2,
                 orderId = 2,
-                dishes = mapOf("baked potato" to 1),
+                dishes = mapOf(BAKED_POTATO to 1),
                 waitstaffId = null
             )
         )
 
         // the cook is busy with group 1's order first: group 2's dish is only assigned once it is done
         skipUntilString(
-            KitchenTestLogs.kitchenAssign(1, 1, "TOURNANT", 2, "potato fries", baseOrderId = 1, allOrders = listOf(1))
+            KitchenTestLogs.kitchenAssign(1, 1, "TOURNANT", 2, POTATO_FRIES, baseOrderId = 1, allOrders = listOf(1))
         )
         skipUntilString(TickStatusTestLogs.tickStart(13, 1))
-        skipUntilString(KitchenTestLogs.kitchenCooked(1, 1, 2, "potato fries", 3))
+        skipUntilString(KitchenTestLogs.kitchenCooked(1, 1, 2, POTATO_FRIES, 3))
 
         skipUntilString(TickStatusTestLogs.tickStart(14, 1))
         skipUntilString(
-            KitchenTestLogs.kitchenAssign(1, 1, "TOURNANT", 1, "baked potato", baseOrderId = 2, allOrders = listOf(2))
+            KitchenTestLogs.kitchenAssign(1, 1, "TOURNANT", 1, BAKED_POTATO, baseOrderId = 2, allOrders = listOf(2))
         )
 
         skipUntilString(TickStatusTestLogs.tickStart(17, 1))
-        skipUntilString(KitchenTestLogs.kitchenCooked(1, 1, 1, "baked potato", 7))
-        skipUntilString(FohServiceTestLogs.deliveryHandover(1, 1, mapOf("baked potato" to 1), 1, 2))
+        skipUntilString(KitchenTestLogs.kitchenCooked(1, 1, 1, BAKED_POTATO, 7))
+        skipUntilString(FohServiceTestLogs.deliveryHandover(1, 1, mapOf(BAKED_POTATO to 1), 1, 2))
         skipUntilString(DeliveryTestLogs.deliveryPrep(restId = 1, driverId = 1, orderId = 2, groupId = 2, ticks = 2))
 
         // the group gives up one tick before the driver would have reached them

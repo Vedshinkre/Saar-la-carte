@@ -7,6 +7,9 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.EatingOrderIsPerGro
 import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.EatingOrderIsTwoPassesSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.OrderDishesStartInParallelSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.OrderDishesStartOnePerTickSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.PartialDriverHandoverIsSplitSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.PartiallyLoadedDriverIsBusySystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.PartiallyLoadedDriverStillAvailableSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.PatienceLeavesFiveTicksAfterOrderSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.PatienceLeavesFourTicksAfterOrderSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.ServedOnFourthTickIsNeutralSystemTest
@@ -299,6 +302,9 @@ object SystemTestRegistration {
         testSuite.registerTest(DeliveryInLastThreeTicksIsAcceptedSystemTest())
         testSuite.registerTest(OrderDishesStartInParallelSystemTest())
         testSuite.registerTest(OrderDishesStartOnePerTickSystemTest())
+        testSuite.registerTest(PartialDriverHandoverIsSplitSystemTest())
+        testSuite.registerTest(PartiallyLoadedDriverStillAvailableSystemTest())
+        testSuite.registerTest(PartiallyLoadedDriverIsBusySystemTest())
     }
 
     /**

@@ -1,0 +1,31 @@
+{
+  "ingredients": [
+    {
+      "name": "flour",
+      "unit": "g",
+      "packagingVolume": 200,
+      "bestBefore": 10
+    }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "basic bun",
+      "duration": 20,
+      "cookType": ["SOUS"],
+      "ingredients": [
+        {"name": "flour", "amount": 5}
+      ],
+      "basicDishFor": "EUROPEAN"
+    },
+    {
+      "id": 2,
+      "dishName": "steak",
+      "duration": 20,
+      "cookType": ["SOUS"],
+      "ingredients": [
+        {"name": "flour", "amount": 8}
+      ]
+    }
+  ]
+}

@@ -23,6 +23,14 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.utils.TickStatusTestLogs
  * The scenario: one TOURNANT cook. Group 1 dines in and orders Slow A and Slow B, which keep the cook
  * busy from tick 1 to tick 8. Group 2 orders a Quick D for delivery in tick 1, wants it in tick 5 and
  * gives up in tick 8, when its dish is still queued behind Slow B.
+ *
+ * Results 10: reading B is the reference's. The premise and both B probes pass there, and
+ * GivenUpDeliveryIsDroppedFromTheKitchenSystemTest fails. Both B probes fail on our dev branch
+ * because of code that is not mine (Ansh's DeliveryProcessor.processAbortions): giving up sets
+ * every dish of the order to ABORTED, so the kitchen drops the order and releaseStrandedDrivers
+ * frees the driver. Fix: only set order.deliveryGivenUp (and the negative experience) there. Then
+ * make Driver.handOverToCustomer fail on that flag as it does for ABORTED dishes, and make sure the
+ * group does not rate a second time after the failed attempt.
  */
 abstract class DeliveryAfterGiveUpScenario : ExampleSystemTestExtension() {
     override val restaurants = "officehourjson/givenupkitchen/restaurants.json"

@@ -54,6 +54,7 @@ abstract class CookIdTieBreakScenario : ExampleSystemTestExtension() {
 }
 
 // ---- question 1: are both dishes started at once, and which cook earns which id? ----
+// Results 10: reading A is the reference's, the same as ours.
 
 /**
  * Reading A: both orders of tick 1 are started in that same tick, and the cook ids follow the order
@@ -103,6 +104,9 @@ class SecondOrderOfATickWaitsOneTickSystemTest : CookIdTieBreakScenario() {
 }
 
 // ---- question 2: which of two idle, already-numbered cooks takes the next job? ----
+// Results 10: reading B is the reference's, so cook 2 takes Soup C. Ours picks cook 1 because
+// Kitchen.findLowestRankingCook (Ved's code, not mine) breaks ties by the lowest existing id.
+// Question 3 below narrows down which rule the reference uses instead.
 
 /**
  * Reading A: the free cook with the **lowest** id takes it, so the third dish goes back to cook 1.
@@ -129,4 +133,83 @@ class IdleCookWithHigherIdTakesNextJobSystemTest : CookIdTieBreakScenario() {
     override suspend fun run() {
         assertAssignedInTick(tick = 3, cookId = 2, dish = SOUP_C, orderId = 3)
     }
+}
+
+// ---- question 3: which rule makes the reference pick cook 2 in question 2? ----
+
+/**
+ * Results 10 settled question 2 the other way: when both cooks finish in the same tick, the
+ * reference hands the next dish to cook 2. Three rules explain that, and the two scenarios below
+ * tell them apart by letting the cooks finish at different ticks.
+ *
+ * Tick 1 again gives Soup A to cook 1 and Soup B to cook 2, but one of the soups now takes 40
+ * minutes (finished in tick 4) and the other 10 (finished in tick 1). Soup C is ordered in tick 5,
+ * when both cooks are idle again.
+ *
+ * | rule                                 | cook 1 finishes last | cook 2 finishes last |
+ * |--------------------------------------|----------------------|----------------------|
+ * | highest id (or last to start)        | cook 2               | cook 2               |
+ * | most recently freed (a stack)        | cook 1               | cook 2               |
+ * | idle the longest (a queue)           | cook 2               | cook 1               |
+ * | lowest id (ours, already disproved)  | cook 1               | cook 1               |
+ */
+abstract class IdleCookRuleScenario(private val fixture: String) : CookIdTieBreakScenario() {
+    override val restaurants = "officehourjson/$fixture/restaurants.json"
+    override val scenario = "officehourjson/$fixture/scenario.json"
+    override val food = "officehourjson/$fixture/food.json"
+    override val maxTicks = 6
+
+    /** the premise: the slow soup finishes in tick 4, then Soup C goes to [cookId] in tick 5 */
+    protected suspend fun assertSoupCGoesTo(slowCook: Int, slowDish: String, cookId: Int) {
+        skipUntilString(TickStatusTestLogs.tickStart(SLOW_DISH_DONE, 1))
+        skipUntilString(KitchenTestLogs.kitchenCooked(1, slowCook, MEALS_PER_GROUP, slowDish, SLOW_DISH_DONE - 1))
+        assertAssignedInTick(tick = SOUP_C_ORDERED, cookId = cookId, dish = SOUP_C, orderId = 3)
+    }
+
+    protected companion object {
+        const val SLOW_DISH_DONE = 4
+        const val SOUP_C_ORDERED = 5
+    }
+}
+
+/** Cook 1 cooks the slow Soup A, so cook 2 has been idle since tick 1 and cook 1 only since tick 4. */
+abstract class CookOneFinishesLastScenario : IdleCookRuleScenario("idlecookonefinisheslast") {
+    protected suspend fun assertSoupCGoesTo(cookId: Int) = assertSoupCGoesTo(1, SOUP_A, cookId)
+}
+
+/** Cook 2 cooks the slow Soup B, so cook 1 has been idle since tick 1 and cook 2 only since tick 4. */
+abstract class CookTwoFinishesLastScenario : IdleCookRuleScenario("idlecooktwofinisheslast") {
+    protected suspend fun assertSoupCGoesTo(cookId: Int) = assertSoupCGoesTo(2, SOUP_B, cookId)
+}
+
+/** Highest id or idle the longest: cook 2 takes Soup C although cook 1 was freed more recently. */
+class CookOneFinishesLastCookTwoTakesNextJobSystemTest : CookOneFinishesLastScenario() {
+    override val name = "CookOneFinishesLastCookTwoTakesNextJobSystemTest"
+    override val description = "Cook 1 freed in tick 4 and cook 2 in tick 1: cook 2 takes the next dish"
+
+    override suspend fun run() = assertSoupCGoesTo(cookId = 2)
+}
+
+/** Most recently freed: cook 1, freed in tick 4, takes Soup C. */
+class CookOneFinishesLastCookOneTakesNextJobSystemTest : CookOneFinishesLastScenario() {
+    override val name = "CookOneFinishesLastCookOneTakesNextJobSystemTest"
+    override val description = "Cook 1 freed in tick 4 and cook 2 in tick 1: cook 1 takes the next dish"
+
+    override suspend fun run() = assertSoupCGoesTo(cookId = 1)
+}
+
+/** Highest id or most recently freed: cook 2, freed in tick 4, takes Soup C. */
+class CookTwoFinishesLastCookTwoTakesNextJobSystemTest : CookTwoFinishesLastScenario() {
+    override val name = "CookTwoFinishesLastCookTwoTakesNextJobSystemTest"
+    override val description = "Cook 2 freed in tick 4 and cook 1 in tick 1: cook 2 takes the next dish"
+
+    override suspend fun run() = assertSoupCGoesTo(cookId = 2)
+}
+
+/** Idle the longest: cook 1, idle since tick 1, takes Soup C. */
+class CookTwoFinishesLastCookOneTakesNextJobSystemTest : CookTwoFinishesLastScenario() {
+    override val name = "CookTwoFinishesLastCookOneTakesNextJobSystemTest"
+    override val description = "Cook 2 freed in tick 4 and cook 1 in tick 1: cook 1 takes the next dish"
+
+    override suspend fun run() = assertSoupCGoesTo(cookId = 1)
 }

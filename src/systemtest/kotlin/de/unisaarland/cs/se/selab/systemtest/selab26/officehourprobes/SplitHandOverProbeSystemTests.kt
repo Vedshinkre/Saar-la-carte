@@ -20,6 +20,9 @@ private const val BOWL = "Bowl"
  * four both order the only dish, which is cooked on the spot. Serving goes to the table first, so the
  * waiter spends 8 of their 10 serving actions there and has room for only 2 of the 4 delivery meals.
  *
+ * Results 10: HandOverContinuesInTheNextTick and HandOverCountsInTheServingStatus pass on the
+ * reference, the same as on our dev branch. The other three fail there by design.
+ *
  * Every probe pins its line to one tick: the skip starts at that tick and the start of the next tick
  * must still be ahead of the line.
  */

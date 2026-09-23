@@ -146,6 +146,10 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.BothOrders
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.ClosedRestaurantStillFinishesDeliverySystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.CookIdsAreReversedOnTheFirstTickSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.CookIdsFollowAssignmentOrderSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.CookOneFinishesLastCookOneTakesNextJobSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.CookOneFinishesLastCookTwoTakesNextJobSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.CookTwoFinishesLastCookOneTakesNextJobSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.CookTwoFinishesLastCookTwoTakesNextJobSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.ExtendedPatienceLeavesInTickEightSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.ExtendedPatienceLeavesInTickFiveSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.ExtendedPatienceLeavesInTickNineSystemTest
@@ -178,6 +182,13 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.RecipeScop
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.RecipeScopeRestaurantOneBuysExactAmountSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.RecipeScopeRestaurantOneBuysWholePackagesSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.SecondOrderOfATickWaitsOneTickSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.StaffIncidentsFailedReservationRatesInTickOneSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.StaffIncidentsIncidentsLoggedBeforePreparationSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.StaffIncidentsLateCasualLeavesSilentlySystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.StaffIncidentsNoCookSeatsButCannotOrderSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.StaffIncidentsRegularStopsAfterTwoFailuresSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.StaffIncidentsRegularTriesAgainAfterOneFailureSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.StaffIncidentsStatisticsSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.UnfinishedDeliveryArrivesInTheLastTicksSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.UnfinishedDeliveryDoesNotRateNextEveningSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.WalkedOutMealIsAbortedSystemTest
@@ -578,21 +589,24 @@ object SystemTestRegistration {
         testSuite.registerTest(RecipeScopeRestaurantOneBuysExactAmountSystemTest())
         testSuite.registerTest(RecipeScopeAdaptedDishAddsToBasicSystemTest())
         testSuite.registerTest(WalkedOutMealIsAbortedSystemTest())
-        testSuite.registerTest(GivenUpDeliveryGivesUpInTickEightSystemTest())
         testSuite.registerTest(GivenUpDeliveryIsDroppedFromTheKitchenSystemTest())
-        testSuite.registerTest(GivenUpDeliveryIsStillCookedSystemTest())
-        testSuite.registerTest(GivenUpDeliveryIsStillDrivenOutAndFailsSystemTest())
-        testSuite.registerTest(HandOverContinuesInTheNextTickSystemTest())
         testSuite.registerTest(HandOverWaitsForTheWholeOrderSystemTest())
         testSuite.registerTest(HandOverNeverCompletesSystemTest())
-        testSuite.registerTest(HandOverCountsInTheServingStatusSystemTest())
         testSuite.registerTest(HandOverIsNotCountedInTheServingStatusSystemTest())
-        testSuite.registerTest(CookIdsFollowAssignmentOrderSystemTest())
         testSuite.registerTest(CookIdsAreReversedOnTheFirstTickSystemTest())
-        testSuite.registerTest(BothOrdersOfATickStartTogetherSystemTest())
         testSuite.registerTest(SecondOrderOfATickWaitsOneTickSystemTest())
         testSuite.registerTest(IdleCookWithLowestIdTakesNextJobSystemTest())
-        testSuite.registerTest(IdleCookWithHigherIdTakesNextJobSystemTest())
+        testSuite.registerTest(CookOneFinishesLastCookTwoTakesNextJobSystemTest())
+        testSuite.registerTest(CookOneFinishesLastCookOneTakesNextJobSystemTest())
+        testSuite.registerTest(CookTwoFinishesLastCookTwoTakesNextJobSystemTest())
+        testSuite.registerTest(CookTwoFinishesLastCookOneTakesNextJobSystemTest())
+        testSuite.registerTest(StaffIncidentsFailedReservationRatesInTickOneSystemTest())
+        testSuite.registerTest(StaffIncidentsRegularTriesAgainAfterOneFailureSystemTest())
+        testSuite.registerTest(StaffIncidentsRegularStopsAfterTwoFailuresSystemTest())
+        testSuite.registerTest(StaffIncidentsLateCasualLeavesSilentlySystemTest())
+        testSuite.registerTest(StaffIncidentsIncidentsLoggedBeforePreparationSystemTest())
+        testSuite.registerTest(StaffIncidentsNoCookSeatsButCannotOrderSystemTest())
+        testSuite.registerTest(StaffIncidentsStatisticsSystemTest())
     }
 
     /**
@@ -629,7 +643,7 @@ object SystemTestRegistration {
     }
 
     /**
-     * My probes that the reference run confirmed (results 8). Each of them names one rule, so a
+     * My probes that the reference runs confirmed (results 8 and 10). Each of them names one rule, so a
      * mutant that breaks that rule fails exactly one of them. Only the winning reading of each A/B
      * pair is here; the losing ones fail against the reference by design and stay off this list.
      */
@@ -661,6 +675,14 @@ object SystemTestRegistration {
         testSuite.registerTest(StaffChangeNoCookStillProcuresSystemTest())
         testSuite.registerTest(StaffChangeNoWaitstaffSystemTest())
         testSuite.registerTest(RegularRetrySucceedsSystemTest())
+        testSuite.registerTest(GivenUpDeliveryGivesUpInTickEightSystemTest())
+        testSuite.registerTest(GivenUpDeliveryIsStillCookedSystemTest())
+        testSuite.registerTest(GivenUpDeliveryIsStillDrivenOutAndFailsSystemTest())
+        testSuite.registerTest(HandOverContinuesInTheNextTickSystemTest())
+        testSuite.registerTest(HandOverCountsInTheServingStatusSystemTest())
+        testSuite.registerTest(CookIdsFollowAssignmentOrderSystemTest())
+        testSuite.registerTest(BothOrdersOfATickStartTogetherSystemTest())
+        testSuite.registerTest(IdleCookWithHigherIdTakesNextJobSystemTest())
     }
 
     private fun registerVladValidationMutantTests(testSuite: SELab26TestSuite) {

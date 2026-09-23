@@ -31,6 +31,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
 /**
+ * Tests the integration of the eligibility criteria of the BrowsingService for CasualGroups.
  */
 class CasualBrowsingSeatEstimateIntegrationTest {
     private val water = Ingredient("water", MeasurementUnit.ML, 9, 1000)

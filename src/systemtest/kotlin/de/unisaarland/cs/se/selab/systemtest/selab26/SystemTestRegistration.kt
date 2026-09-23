@@ -52,7 +52,6 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualAdHocTab
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualBarExactFitNoMergeSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualBarRestaurantChoiceSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualDeliveryEarlyDecisionTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualDeliveryTimeoutTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualMergeTrimTieBreakSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualNoDecisionNoSpaceTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualTableExclusionSystemTest
@@ -64,10 +63,12 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CustomerBehavi
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CustomizedBasicDishPrioritySystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryCumulativeDistanceSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryEveningBoundaryNeverRatesSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryMultipleWaitersServeOneOrderSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOrderSuccessTestA
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryOutboundTripSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryQueueDelayFailedReturnSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DeliveryQueueDelayTimeoutSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.DriverIncidentReducesBrowsingAvailabilitySystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EatingFinishedAndEscortedSameTickTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventReservationConflictTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventSeatingCapacityCasualAfterEventTest
@@ -96,6 +97,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.LateCasualNoWa
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.LowestRankingCookSelectionSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.NonMergeableBarTableBrowsingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.OneCookTwoOrdersTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.PantryExpiryAlphabeticalOrderSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.PantryExpirySystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.PartialDeliveryHandoverSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.PartialLeaverEscortedSystemTest
@@ -104,6 +106,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RecipeChangeAc
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RecipeChangeMinimumAmountSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RecipeChangeRoundingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RegularBeforeCasualServingTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RegularCapacityBlockedOrderNotLostSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RegularGradualCookServingTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RegularRetrySucceedsSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SimulationLifecycleSystemTest
@@ -240,8 +243,10 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.Regula
 import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.RegularPlanningVisitingPeriodSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.RegularReservedTableIsTheExactFitSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.regularplanningtests.RegularSeatedWithoutOrderKeepsCountingSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.reservationdecisiontests.FailedReservationRatesAtFirstOpeningTickSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.reservationdecisiontests.RegularConsecutiveFailuresAcrossDifferentFailureTypesSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.reservationdecisiontests.RegularFailedAttemptsNotResetByInterveningSuccessSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.reservationdecisiontests.RegularPartiallyServedGroupKeepsVisitingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.reservationdecisiontests.RegularReservationOrderIsAscendingIdNotFileOrderSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.reservationdecisiontests.RegularSeatingFailureRatesNegativeSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.reservationdecisiontests.RegularUneventfulVisitRatesPositiveSystemTest
@@ -279,6 +284,7 @@ object SystemTestRegistration {
         testSuite.registerTest(
             PantryExpirySystemTest()
         )
+        testSuite.registerTest(PantryExpiryAlphabeticalOrderSystemTest())
         testSuite.registerTest(LateCasualNoWaiterSystemTest())
         testSuite.registerTest(WaitingForFoodSystemTest())
         testSuite.registerTest(WaiterLoadReleasedOnLeavingSystemTest())
@@ -288,9 +294,11 @@ object SystemTestRegistration {
         registeratharvaRefrenceTests(testSuite)
         fullScenarioSystemTests(false).forEach { testSuite.registerTest(it) }
         testSuite.registerTest(DeliveryOrderSuccessTestA())
-        testSuite.registerTest(CasualDeliveryTimeoutTest())
         testSuite.registerTest(DeliveryQueueDelayTimeoutSystemTest())
         testSuite.registerTest(DeliveryQueueDelayFailedReturnSystemTest())
+        testSuite.registerTest(DriverIncidentReducesBrowsingAvailabilitySystemTest())
+        testSuite.registerTest(RegularCapacityBlockedOrderNotLostSystemTest())
+        testSuite.registerTest(DeliveryMultipleWaitersServeOneOrderSystemTest())
         testSuite.registerTest(DeliveryEveningBoundaryNeverRatesSystemTest())
         testSuite.registerTest(PartialServiceSuccessTest())
         testSuite.registerTest(PartialDeliveryHandoverSystemTest())
@@ -619,6 +627,8 @@ object SystemTestRegistration {
         testSuite.registerTest(RegularFailedAttemptsNotResetByInterveningSuccessSystemTest())
         testSuite.registerTest(RegularReservationOrderIsAscendingIdNotFileOrderSystemTest())
         testSuite.registerTest(RegularUneventfulVisitRatesPositiveSystemTest())
+        testSuite.registerTest(RegularPartiallyServedGroupKeepsVisitingSystemTest())
+        testSuite.registerTest(FailedReservationRatesAtFirstOpeningTickSystemTest())
     }
 
     private fun registerVladSimulationMutantTests(testSuite: SELab26TestSuite) {

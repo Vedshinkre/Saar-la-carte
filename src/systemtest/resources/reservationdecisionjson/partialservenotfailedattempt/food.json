@@ -1,0 +1,34 @@
+{
+  "ingredients": [
+    {
+      "name": "chicken",
+      "unit": "g",
+      "packagingVolume": 1000,
+      "bestBefore": 15
+    }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "mealA",
+      "duration": 30,
+      "basicDishFor": "EUROPEAN",
+      "cookType": ["TOURNANT"],
+      "ingredients": [{ "name": "chicken", "amount": 100 }]
+    },
+    {
+      "id": 2,
+      "dishName": "mealB",
+      "duration": 40,
+      "cookType": ["TOURNANT"],
+      "ingredients": [{ "name": "chicken", "amount": 100 }]
+    },
+    {
+      "id": 3,
+      "dishName": "mealC",
+      "duration": 40,
+      "cookType": ["TOURNANT"],
+      "ingredients": [{ "name": "chicken", "amount": 100 }]
+    }
+  ]
+}

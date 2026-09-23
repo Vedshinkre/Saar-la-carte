@@ -1,0 +1,24 @@
+{
+  "restaurants": [
+    {
+      "id": 1,
+      "name": "Late Opener",
+      "type": "EUROPEAN",
+      "openingTickStart": 5,
+      "openingTickEnd": 24,
+      "deliveryDrivers": 0,
+      "event": false,
+      "positiveRatings": 0,
+      "negativeRatings": 0,
+      "recipes": [1],
+      "kitchenStaff": {
+        "EXEC": 0, "SOUS": 0, "TOURNANT": 1, "SAUCE": 0,
+        "FISH": 0, "ROAST": 0, "VEGETABLE": 0, "PASTRY": 0
+      },
+      "waitstaff": 1,
+      "tables": [
+        { "id": 1, "type": "BAR", "size": 4 }
+      ]
+    }
+  ]
+}

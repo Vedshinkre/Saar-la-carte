@@ -1,0 +1,20 @@
+{
+  "customerGroups": [
+    {
+      "id": 1,
+      "type": "REGULAR",
+      "size": 3,
+      "tableType": "COMMON",
+      "visitingTick": 1,
+      "visitingStart": 1,
+      "visitingPeriod": 1,
+      "restaurant": 1,
+      "foodPreferences": [
+        { "size": 1, "favoriteDishes": ["mealA"] },
+        { "size": 1, "favoriteDishes": ["mealB"] },
+        { "size": 1, "favoriteDishes": ["mealC"] }
+      ]
+    }
+  ],
+  "incidents": []
+}

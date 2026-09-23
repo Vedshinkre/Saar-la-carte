@@ -6,13 +6,12 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.utils.InitialAndPrepTestLog
 import de.unisaarland.cs.se.selab.systemtest.selab26.utils.KitchenTestLogs
 import de.unisaarland.cs.se.selab.systemtest.selab26.utils.TickStatusTestLogs
 
-private const val DEBUG_LOG_LEVEL = "DEBUG"
-private const val POTATO_SOUP = "potato soup"
-
 /**
  * System tests designed to trigger subtle edge cases in Kitchen Scheduling
  * (basic dish prioritization, cook rank selection) and Browsing Service (BAR table non-mergeability).
  */
+
+private const val DEBUG_LOG_LEVEL = "DEBUG"
 
 // =========================================================================
 // 1. CUSTOMIZED BASIC DISH PRIORITIZATION SYSTEM TEST
@@ -84,6 +83,10 @@ class CustomizedBasicDishPrioritySystemTest : ExampleSystemTestExtension() {
             )
         )
     }
+
+    private companion object {
+        const val POTATO_SOUP = "potato soup"
+    }
 }
 
 // =========================================================================
@@ -112,6 +115,8 @@ class LowestRankingCookSelectionSystemTest : ExampleSystemTestExtension() {
         assertNextLine(FohArrivalTestLogs.seatingStatus(1, 1, 2, 1))
         assertNextLine(FohArrivalTestLogs.orderingStatus(1, 2, 1))
 
+        // CRITICAL CHECK: PASTRY cook (rank 8, lowest rank) MUST be assigned instead of
+        // EXEC cook (rank 1, highest rank)
         assertNextLine(
             KitchenTestLogs.kitchenAssign(
                 restId = 1,
@@ -137,7 +142,8 @@ class LowestRankingCookSelectionSystemTest : ExampleSystemTestExtension() {
 class NonMergeableBarTableBrowsingSystemTest : ExampleSystemTestExtension() {
 
     override val name = "NonMergeableBarTableBrowsingSystemTest"
-    override val description = "A CASUAL group is rejected "
+    override val description =
+        "A CASUAL group is rejected when no single BAR table fits, even though two together would"
     override val food = "kitchenschedulingtests/bartable/food.json"
     override val restaurants = "kitchenschedulingtests/bartable/restaurants.json"
     override val scenario = "kitchenschedulingtests/bartable/scenario.json"

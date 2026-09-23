@@ -75,4 +75,8 @@ class BatchDoesNotAbsorbLaterArrivingOrderSystemTest : ExampleSystemTestExtensio
             )
         )
     }
+
+    private companion object {
+        const val GRILLED_CHICKEN = "Grilled Chicken"
+    }
 }

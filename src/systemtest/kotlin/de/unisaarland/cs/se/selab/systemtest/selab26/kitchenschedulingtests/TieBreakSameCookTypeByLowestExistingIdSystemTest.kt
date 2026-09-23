@@ -89,4 +89,10 @@ class TieBreakSameCookTypeByLowestExistingIdSystemTest : ExampleSystemTestExtens
             )
         )
     }
+
+    private companion object {
+        const val SOUP_A = "Soup A"
+        const val SOUP_B = "Soup B"
+        const val TOURNANT = "TOURNANT"
+    }
 }

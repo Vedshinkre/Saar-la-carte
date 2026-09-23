@@ -43,12 +43,31 @@ class DeliveryProcessor(
         // 5. delivery given up
         processAbortions()
 
+        // DOTO: check if this fix is required and if there's a neater way to refactor later
+        // release drivers still waiting for the rest of an order that will never be completed
+        // (given up, or aborted because the kitchen stopped)
+        releaseStrandedDrivers()
+
         // 6. delivery returned
         returning.filter { it.hasReachedDestination() }.forEach { it.finishReturnTrip() }
     }
 
+    /**
+     * Frees drivers that are still waiting outside with an order that can no longer be completed.
+     * They never left the restaurant, so nothing is logged; they become available again
+     */
+    private fun releaseStrandedDrivers() {
+        for (driver in driversInState(DriverState.WAITING)) {
+            val order = driver.currentOrder ?: continue
+            if (order.dishes.none { it.status == DishStatus.ABORTED }) continue
+
+            driver.state = DriverState.IDLE
+            driver.currentOrder = null
+            driver.targetGroup = null
+        }
+    }
+
     /** whether any driver is currently free to take on a new delivery */
-    // DOTO This function is not used actually. It doesn't need to exist
     fun isDriverAvailable(): Boolean = drivers.any { it.state == DriverState.IDLE }
 
     /** computes the trip length and sends the driver off in the next tick */

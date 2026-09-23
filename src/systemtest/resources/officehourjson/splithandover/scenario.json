@@ -1,0 +1,49 @@
+{
+  "customerGroups": [
+    {
+      "id": 1,
+      "type": "CASUAL",
+      "size": 8,
+      "tableType": "COMMON",
+      "restaurantTypes": [
+        "EUROPEAN"
+      ],
+      "visitingEvenings": [
+        1
+      ],
+      "visitingTick": 2,
+      "ratingLikelihood": "NEVER",
+      "foodPreferences": [
+        {
+          "size": 8,
+          "favoriteDishes": [
+            "Bowl"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "CASUAL",
+      "size": 4,
+      "deliveryDistance": 5,
+      "restaurantTypes": [
+        "EUROPEAN"
+      ],
+      "visitingEvenings": [
+        1
+      ],
+      "visitingTick": 6,
+      "ratingLikelihood": "ALWAYS",
+      "foodPreferences": [
+        {
+          "size": 4,
+          "favoriteDishes": [
+            "Bowl"
+          ]
+        }
+      ]
+    }
+  ],
+  "incidents": []
+}

@@ -1,0 +1,89 @@
+{
+  "customerGroups": [
+    {
+      "id": 1,
+      "type": "REGULAR",
+      "size": 4,
+      "tableType": "COMMON",
+      "restaurant": 1,
+      "visitingTick": 5,
+      "visitingStart": 1,
+      "visitingPeriod": 1,
+      "foodPreferences": []
+    },
+    {
+      "id": 2,
+      "type": "REGULAR",
+      "size": 4,
+      "tableType": "COMMON",
+      "restaurant": 1,
+      "visitingTick": 6,
+      "visitingStart": 1,
+      "visitingPeriod": 1,
+      "foodPreferences": []
+    },
+    {
+      "id": 3,
+      "type": "REGULAR",
+      "size": 5,
+      "tableType": "COMMON",
+      "restaurant": 1,
+      "visitingTick": 7,
+      "visitingStart": 1,
+      "visitingPeriod": 1,
+      "foodPreferences": []
+    },
+    {
+      "id": 8,
+      "type": "CASUAL",
+      "size": 9,
+      "tableType": "BAR",
+      "restaurantTypes": ["EUROPEAN"],
+      "visitingEvenings": [3],
+      "visitingTick": 21,
+      "ratingLikelihood": "NEVER",
+      "foodPreferences": []
+    },
+    {
+      "id": 9,
+      "type": "CASUAL",
+      "size": 9,
+      "tableType": "BAR",
+      "restaurantTypes": ["EUROPEAN"],
+      "visitingEvenings": [3],
+      "visitingTick": 21,
+      "ratingLikelihood": "NEVER",
+      "foodPreferences": []
+    },
+    {
+      "id": 10,
+      "type": "CASUAL",
+      "size": 2,
+      "tableType": "BAR",
+      "restaurantTypes": ["EUROPEAN"],
+      "visitingEvenings": [3],
+      "visitingTick": 21,
+      "ratingLikelihood": "NEVER",
+      "foodPreferences": []
+    }
+  ],
+  "incidents": [
+    {
+      "id": 1,
+      "type": "STAFF",
+      "evening": 4,
+      "restaurant": 1,
+      "staffType": "WAITSTAFF",
+      "number": 1
+    },
+    {
+      "id": 2,
+      "type": "STAFF",
+      "evening": 4,
+      "restaurant": 1,
+      "staffType": "COOK",
+      "cookType": "SOUS",
+      "number": -1
+    }
+  ]
+}

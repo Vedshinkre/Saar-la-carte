@@ -1,0 +1,27 @@
+{
+  "ingredients": [
+    {
+      "name": "chicken",
+      "unit": "g",
+      "packagingVolume": 10000,
+      "bestBefore": 15
+    }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "mealA",
+      "duration": 30,
+      "basicDishFor": "EUROPEAN",
+      "cookType": [
+        "TOURNANT"
+      ],
+      "ingredients": [
+        {
+          "name": "chicken",
+          "amount": 10
+        }
+      ]
+    }
+  ]
+}

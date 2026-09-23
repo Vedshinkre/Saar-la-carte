@@ -70,4 +70,8 @@ class BasicDishPrecedenceOverLowerIdSystemTest : ExampleSystemTestExtension() {
         assertNextLine(KitchenTestLogs.kitchenCooked(1, 1, 1, TOMATO_SOUP, 0))
         assertNextLine(KitchenTestLogs.kitchenStatus(1, 2, 2, 1, 1))
     }
+
+    private companion object {
+        const val TOMATO_SOUP = "Tomato Soup"
+    }
 }

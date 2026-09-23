@@ -24,6 +24,13 @@ import java.io.ByteArrayOutputStream
 import java.io.PrintWriter
 import kotlin.collections.emptyList
 
+/**Reservation Table Merging Test F 15
+ * ReservationTableMergingTest validates pre-visit table reservation rules in FrontOfHouse.reserveTables().
+ * It ensures that casual customer reservations throw IllegalArgumentExceptions,
+ * verifies exact capacity matching and the three-quarters rule for single tables across
+ * all table types (COMMON, SEPARATED, BAR), tests valid merging for COMMON and SEPARATED tables
+ * while prohibiting BAR table merges, and checks excess capacity trimming that frees the smallest tables.
+ */
 class ReservationTableMergingTest {
 
     // helper methods
@@ -97,7 +104,7 @@ class ReservationTableMergingTest {
 
     @Test
     fun `reserveTables - CasualGroup Common throws exception`() {
-        // casual groups cannot have tables reserved for them
+        //   a COMMON table reservation for a CasualGroup must throw an IllegalArgumentException
         val foh = setupFoh(emptyList())
         val casualGroup = createDummyCasualGroup(5, TableType.COMMON)
 
@@ -108,7 +115,7 @@ class ReservationTableMergingTest {
 
     @Test
     fun `reserveTables - CasualGroup Bar throws exception`() {
-        // casual groups cannot have tables reserved for them
+        // a BAR table reservation for a CasualGroup must throw an IllegalArgumentException
         val foh = setupFoh(emptyList())
         val casualGroup = createDummyCasualGroup(5, TableType.BAR)
 
@@ -119,7 +126,7 @@ class ReservationTableMergingTest {
 
     @Test
     fun `reserveTables - CasualGroup Seperated throws exception`() {
-        // casual groups cannot have tables reserved for them
+        // a SEPARATED table reservation for a CasualGroup must throw an IllegalArgumentException
         val foh = setupFoh(emptyList())
         val casualGroup = createDummyCasualGroup(5, TableType.SEPARATED)
 
@@ -130,9 +137,9 @@ class ReservationTableMergingTest {
 
     @Test
     fun `reserveTables - Casual Group With Available COMMON Tables fails`() {
+        // even if the table type matches , we still do not reserve for casuals
         val table1 = Table(id = 1, size = 4, tableType = TableType.COMMON)
         val foh = setupFoh(listOf(table1))
-        // even if the table type matches , we still do not reserve for casuals
         val casualGroup = createDummyCasualGroup(groupSize = 4, TableType.COMMON)
 
         assertThrows<IllegalArgumentException> {
@@ -142,9 +149,10 @@ class ReservationTableMergingTest {
 
     @Test
     fun `reserveTables - Casual Group With Available BAR Tables fails`() {
+        // even if the table type matches , we still do not reserve for casuals
         val table1 = Table(id = 1, size = 4, tableType = TableType.BAR)
         val foh = setupFoh(listOf(table1))
-        // even if the table type matches , we still do not reserve for casuals
+
         val casualGroup = createDummyCasualGroup(groupSize = 4, TableType.BAR)
 
         assertThrows<IllegalArgumentException> {
@@ -154,9 +162,10 @@ class ReservationTableMergingTest {
 
     @Test
     fun `reserveTables - Casual Group With Available SEPERATED Tables fails`() {
+        // even if the table type matches , we still do not reserve for casuals
         val table1 = Table(id = 1, size = 4, tableType = TableType.SEPARATED)
         val foh = setupFoh(listOf(table1))
-        // even if the table type matches , we still do not reserve for casuals
+
         val casualGroup = createDummyCasualGroup(groupSize = 4, TableType.SEPARATED)
 
         assertThrows<IllegalArgumentException> {
@@ -168,6 +177,7 @@ class ReservationTableMergingTest {
 
     @Test
     fun `reserveTables-Event Groups-Common- exact capacity match succeeds`() {
+        //  an EventGroup successfully reserves a single COMMON table when table capacity exactly matches
         val table1 = Table(id = 1, size = 4, tableType = TableType.COMMON)
         val foh = setupFoh(listOf(table1))
         val eventGroup = createDummyEventGroup(groupSize = 4, TableType.COMMON)
@@ -178,6 +188,7 @@ class ReservationTableMergingTest {
 
     @Test
     fun `reserveTables-Regular Groups-Common- exact capacity match succeeds`() {
+        //  an RegularGroup successfully reserves a single COMMON table when table capacity exactly matches
         val table1 = Table(id = 1, size = 4, tableType = TableType.COMMON)
         val foh = setupFoh(listOf(table1))
         val eventGroup = createDummyRegularGroup(groupSize = 4, TableType.COMMON)
@@ -188,6 +199,7 @@ class ReservationTableMergingTest {
 
     @Test
     fun `reserveTables-Event Groups-BAR- exact capacity match succeeds`() {
+        //  an EventGroup successfully reserves a single BAR table when table capacity exactly matches
         val table1 = Table(id = 1, size = 4, tableType = TableType.BAR)
         val foh = setupFoh(listOf(table1))
         val eventGroup = createDummyEventGroup(groupSize = 4, TableType.BAR)
@@ -198,6 +210,7 @@ class ReservationTableMergingTest {
 
     @Test
     fun `reserveTables-Regular Groups-BAR- exact capacity match succeeds`() {
+        //  an RegularGroup successfully reserves a single BAR table when table capacity exactly matches
         val table1 = Table(id = 1, size = 4, tableType = TableType.BAR)
         val foh = setupFoh(listOf(table1))
         val eventGroup = createDummyRegularGroup(groupSize = 4, TableType.BAR)
@@ -208,6 +221,7 @@ class ReservationTableMergingTest {
 
     @Test
     fun `reserveTables-Event Groups-SEPERATED- exact capacity match succeeds`() {
+        //  an EventGroup successfully reserves a single SEPERATED table when table capacity exactly matches
         val table1 = Table(id = 1, size = 4, tableType = TableType.SEPARATED)
         val foh = setupFoh(listOf(table1))
         val eventGroup = createDummyEventGroup(groupSize = 4, TableType.SEPARATED)
@@ -218,6 +232,7 @@ class ReservationTableMergingTest {
 
     @Test
     fun `reserveTables-Regular Groups-SEPERATED- exact capacity match succeeds`() {
+        //  an RegularGroup successfully reserves a single SEPERATED table when table capacity exactly matches
         val table1 = Table(id = 1, size = 4, tableType = TableType.SEPARATED)
         val foh = setupFoh(listOf(table1))
         val eventGroup = createDummyRegularGroup(groupSize = 4, TableType.SEPARATED)
@@ -317,6 +332,8 @@ class ReservationTableMergingTest {
         assertEquals(TableStatus.RESERVED, table1.status)
         assertEquals(TableStatus.RESERVED, table2.status)
     }
+
+    @Test
     fun `reserveTables merge exact capacity match succeeds- EVENT-SEPERATED`() {
         val table1 = Table(id = 1, size = 2, tableType = TableType.SEPARATED)
         val table2 = Table(id = 2, size = 2, tableType = TableType.SEPARATED)

@@ -21,6 +21,12 @@ import java.io.ByteArrayOutputStream
 import java.io.PrintWriter
 import kotlin.collections.emptyList
 
+/** Reservation Table Merging 2 Test F 15
+ * ReservationTableMerging2Test focuses on edge-case reservation rules and tie-breaking.
+ * It tests tie-break that drops lower-ID tables when table sizes match, verifies table filtering
+ * that skips non-free or type-mismatched tables, checks rules where oversized single or merged tables are
+ * allocated when the three-quarters threshold cannot be met, and  rejects when total capacity is insufficient .
+ */
 class ReservationTableMerging2Test {
 
     // helper methods

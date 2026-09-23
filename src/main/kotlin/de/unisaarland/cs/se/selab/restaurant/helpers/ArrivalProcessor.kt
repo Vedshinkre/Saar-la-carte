@@ -193,6 +193,12 @@ class ArrivalProcessor(
         return false
     }
 
+    /**
+     * Logs the outcome of a group's ordering: the ordering line if an order was placed, then one
+     * no-ordering line for the customers who found no dish.
+     *
+     * @param orderWaiters the waiters who took orders; only the first is used for regular and casual groups
+     */
     private fun orderSuccess(customerGroup: CustomerGroup, orderWaiters: List<Waiter?>) {
         val currentOrder = customerGroup.currentOrder
         if (currentOrder != null) {
@@ -225,6 +231,10 @@ class ArrivalProcessor(
         customersOrdered.add(customerGroup)
     }
 
+    /**
+     * Logs the order of a regular or casual group (without a waiter for a delivery), records it in a
+     * regular group's order history, and counts it for the ordering status.
+     */
     private fun logPlacedOrder(customerGroup: CustomerGroup, currentOrder: Order, assignedWaiter: Waiter?) {
         if (customerGroup is RegularGroup) {
             customerGroup.addOrderToHistory(currentOrder)

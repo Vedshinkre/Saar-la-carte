@@ -254,9 +254,7 @@ class FrontOfHouse(
     /** process escorting */
     fun processEscorting() = escorting.processEscorting()
 
-    /**
-     * returns the number of free seats per table type
-     */
+    /** Seats on free tables per table type; every type is present, with 0 if it has none. */
     fun getFreeSeats(): MutableMap<TableType, Int> {
         val freeTables = tables.filter { it.status == TableStatus.FREE }
         val map = mutableMapOf<TableType, Int>()

@@ -31,7 +31,7 @@ class CasualGroup(
     val ratingLikelihood: RatingLikelihood
 ) : CustomerGroup(id, size, tableType, visitingAt, foodPreferences) {
 
-    /** Divides this value by the other value, ceiling the result to an integer that is closer to positive infinity. */
+    /** Integer division rounded up (towards positive infinity). */
     fun Int.ceilDiv(other: Int): Int {
         return this.floorDiv(other) + this.rem(other).sign.absoluteValue
     }
@@ -42,7 +42,8 @@ class CasualGroup(
     var wantsDelivery: Boolean = deliveryDistance > 0
 
     /**
-     * returns true if they are coming to the restaurant this tick
+     * Whether the group acts in the current tick: a dine-in group on its visiting tick, a delivery
+     * group on its ordering tick (see [getDeliveryOrderTick]).
      */
     override fun isVisitingThisTick(): Boolean {
         if (wantsDelivery) {
@@ -53,12 +54,14 @@ class CasualGroup(
         return Time.tick == visitingAt
     }
 
+    /** Whether the current evening is one of the group's visiting evenings. */
     override fun isVisitingTonight(): Boolean {
         return visitingEvenings.contains(Time.evening)
     }
 
     /**
-     * returns the tick at which they will put the order to the restaurant
+     * The tick a delivery group orders in: early enough for three ticks of cooking and the drive
+     * (distance / 5, rounded up) before its visiting tick.
      */
     private fun getDeliveryOrderTick(): Tick {
         val orderTick = visitingAt - DELIVERY_COOKING_TICKS - deliveryDistance.ceilDiv(DISTANCE_PER_TICK)

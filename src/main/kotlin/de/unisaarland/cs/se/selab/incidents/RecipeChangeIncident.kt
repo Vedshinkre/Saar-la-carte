@@ -11,8 +11,11 @@ import kotlin.math.max
 private const val PERCENT = 100
 
 /**
- * Incident that changes the amount of a specific ingredient
- * across all recipes that use it, by a relative percentage.
+ * RECIPE incident: changes the amount of one ingredient in every recipe of a restaurant's menu by a
+ * percentage.
+ *
+ * @property adaptation the change in percent, e.g. `-20` for 20 % less
+ * @property recipes the recipes of the affected restaurant
  */
 class RecipeChangeIncident(
     override val id: Id,
@@ -25,9 +28,8 @@ class RecipeChangeIncident(
     override val type: String = "RECIPE"
 
     /**
-     * applies the recipe change incident (adapts the amount of [ingredient]
-     * in every recipe that uses it by [adaptation] percent). A menu copy of a recipe shares the
-     * ingredient map of the original, so each map is only changed once.
+     * Scales the amount of [ingredient] by [adaptation] percent in every recipe that uses it,
+     * rounding down and never below 1. Recipes sharing one ingredient map are changed only once.
      */
     override fun apply() {
         val percentage = PERCENT + adaptation

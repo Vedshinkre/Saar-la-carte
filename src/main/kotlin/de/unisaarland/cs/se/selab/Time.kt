@@ -1,7 +1,12 @@
 package de.unisaarland.cs.se.selab
 
 /**
- * Global object that keeps track of the ticks and time of the simulation
+ * The simulation clock, shared by everything that needs the current time.
+ *
+ * @property tick the tick of the current evening, from 1 to 24
+ * @property evening the current evening, starting at 1
+ * @property maxTicks the `--maxTicks` limit on the whole run
+ * @property ticksElapsed ticks simulated so far across all evenings, compared against [maxTicks]
  */
 object Time {
     internal var tick: Tick = 1
@@ -9,58 +14,42 @@ object Time {
     internal var maxTicks: Tick = 0
     internal var ticksElapsed: Tick = 0
 
-    /**
-     * resets the Current tick to 1 (used before next serving phase)
-     */
+    /** Sets the tick back to 1 for the next evening's serving phase. */
     fun resetTick() {
         tick = 1
     }
 
-    /**
-     * returns the current Evening
-     */
+    /** The current evening. */
     fun getEvening(): Evening {
         return evening
     }
 
-    /**
-     * returns the max ticks for the simulation
-     */
+    /** The `--maxTicks` limit on the whole run. */
     fun getMaxTicks(): Tick {
         return maxTicks
     }
 
-    /**
-     * returns the current tick
-     */
+    /** The tick of the current evening. */
     fun getCurrentTick(): Tick {
         return tick
     }
 
-    /**
-     * increments the evening by 1
-     */
+    /** Moves on to the next evening. */
     fun incrementEvening() {
         evening += 1
     }
 
-    /**
-     * sets the max ticks
-     */
+    /** Sets the `--maxTicks` limit on the whole run. */
     fun setMaxTicks(maxTicks: Tick) {
         this.maxTicks = maxTicks
     }
 
-    /**
-     * increments the tick by 1
-     */
+    /** Moves on to the next tick of the evening. */
     fun incrementTick() {
         tick++
     }
 
-    /**
-     * Increments the total elapsed ticks by 1
-     */
+    /** Counts one more simulated tick towards [maxTicks]. */
     fun incrementTicksElapsed() {
         ticksElapsed++
     }

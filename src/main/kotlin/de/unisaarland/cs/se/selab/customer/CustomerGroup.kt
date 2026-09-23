@@ -69,22 +69,24 @@ sealed class CustomerGroup(
         customersRemainingInRestaurant = size
     }
 
-    /**
-     * returns true if the customerGroup is visiting this tick
-     */
+    /** Whether the group arrives in the current tick. */
     open fun isVisitingThisTick(): Boolean {
         return Time.tick == visitingAt
     }
 
-    /**
-     * returns the number of customers who left
-     */
+    /** How many of the group's customers have already left. */
     fun getCustomersWhoLeft(): Int {
         return size - customersRemainingInRestaurant
     }
 
     /**
-     * takes the order of a customer group
+     * Lets every customer choose a dish, in [orderingSequence], and places the order with the
+     * kitchen. Each chosen dish reserves its ingredients at once, so later customers see less
+     * stock. Customers who find no dish leave, which makes the experience negative.
+     *
+     * @param waiters the waiters taking the order, in the order they take customers; empty for a
+     *   delivery order
+     * @return `false` if nobody could order, in which case no order is placed
      */
     open fun placeOrder(waiters: List<Waiter>, menu: List<Recipe>, countertop: Countertop): Boolean {
         val listOfDishes = mutableListOf<Dish>()
@@ -128,23 +130,17 @@ sealed class CustomerGroup(
             .thenBy { it.favouriteDishes.size }
     )
 
-    /**
-     * returns true if group is visiting a restaurant tonight
-     */
+    /** Whether the group visits a restaurant tonight. */
     abstract fun isVisitingTonight(): Boolean
 
-    /**
-     * updates the pantry and the tickLoad of the waiter which "registers" that a dish has been ordered
-     */
+    /** Registers an ordered [dish]: reserves its ingredients and counts one order action for [waiter]. */
     fun registerDish(waiter: Waiter, dish: Dish, countertop: Countertop) {
         val recipe = dish.recipe
         countertop.reserveIngredients(recipe)
         waiter.addToTickLoad(ActionType.TAKE_ORDER, 1)
     }
 
-    /**
-     * updates the pantry which "registers" that a dish has been ordered
-     */
+    /** Registers an ordered [dish] without a waiter (a delivery order): reserves its ingredients. */
     fun registerDish(dish: Dish, countertop: Countertop) {
         val recipe = dish.recipe
         countertop.reserveIngredients(recipe)

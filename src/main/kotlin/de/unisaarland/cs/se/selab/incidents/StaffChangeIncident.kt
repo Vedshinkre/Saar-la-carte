@@ -11,7 +11,10 @@ import de.unisaarland.cs.se.selab.enums.StaffType
 import kotlin.math.absoluteValue
 
 /**
- * Incident that changes the staff of a restaurant
+ * STAFF incident: adds or removes cooks, waiters or drivers of a restaurant before an evening.
+ *
+ * @property number how many staff members to add (positive) or remove (negative)
+ * @property cookType the type of cook affected; only set for cook changes
  */
 class StaffChangeIncident(
     override val id: Id,
@@ -24,9 +27,7 @@ class StaffChangeIncident(
 
     override val type: String = "STAFF"
 
-    /**
-     * applies the staff change incident (adds/removes staff from a restaurant)
-     */
+    /** Adds or removes the staff members. Removing more than there are leaves none, never fewer. */
     override fun apply() {
         when (staffType) {
             StaffType.COOK -> applyCookChange()
@@ -35,6 +36,7 @@ class StaffChangeIncident(
         }
     }
 
+    /** Adds or removes cooks of [cookType]. */
     private fun applyCookChange() {
         val type = cookType ?: return
         if (number > 0) {
@@ -44,6 +46,7 @@ class StaffChangeIncident(
         }
     }
 
+    /** Removes up to [count] cooks of the given [type]. */
     private fun removeCooks(type: CookType, count: Int) {
         var remaining = count
         val iterator = restaurantStaff.cooks.iterator()
@@ -55,6 +58,7 @@ class StaffChangeIncident(
         }
     }
 
+    /** Adds or removes waiters. */
     private fun applyWaitstaffChange() {
         if (number > 0) {
             repeat(number) { restaurantStaff.waiters.addFirst(Waiter()) }
@@ -65,6 +69,7 @@ class StaffChangeIncident(
         }
     }
 
+    /** Adds or removes drivers. */
     private fun applyDriverChange() {
         if (number > 0) {
             repeat(number) { restaurantStaff.drivers.addFirst(Driver()) }

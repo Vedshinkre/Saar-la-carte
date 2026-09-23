@@ -28,8 +28,9 @@ class DriverIncidentReducesBrowsingAvailabilitySystemTest : ExampleSystemTestExt
     override val maxTicks = 24 + 6
 
     override suspend fun run() {
-        skipUntilString(InitialAndPrepTestLogs.prepStart(2))
-        assertNextLine(InitialAndPrepTestLogs.incident(1, "STAFF", 2))
+        // incidents are logged right after the serving of the evening before, ahead of the preparation
+        skipUntilString(InitialAndPrepTestLogs.incident(1, "STAFF", 2))
+        assertNextLine(InitialAndPrepTestLogs.prepStart(2))
 
         skipUntilString(TickStatusTestLogs.tickStart(6, 2))
         // group 1 gets the one remaining driver

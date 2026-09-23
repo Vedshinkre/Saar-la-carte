@@ -361,7 +361,9 @@ class FrontOfHouse(
         if (getInHouseGroups().contains(group)) {
             removeInHouseGroup(group)
         } else if (deliveryGroups.contains(group)) {
-            deliveryGroups.remove(group)
+            // a group that gave up has already rated, but its meals are still cooked and handed to
+            // a driver, so it stays in the list until the evening clears it
+            if (group.currentOrder?.deliveryGivenUp != true) deliveryGroups.remove(group)
         } else if (turnedAwayGroups.contains(group)) {
             turnedAwayGroups.remove(group)
         } else if (group is EventGroup) {
@@ -374,7 +376,10 @@ class FrontOfHouse(
     }
 
     /**
-     * Beep beep I'm a document PLEASE change me
+     * How many drivers the browsing service may still offer this restaurant for a delivery.
+     * A driver that has already been claimed for an order is busy even while it is still waiting
+     * outside for the rest of that order, so only IDLE drivers count
+     * (PartiallyLoadedDriverIsBusySystemTest).
      */
     fun getAvailableDrivers(): Int {
         return drivers.count {

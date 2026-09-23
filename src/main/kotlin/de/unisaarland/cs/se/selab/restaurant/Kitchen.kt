@@ -130,6 +130,7 @@ class Kitchen(
         while (orderQueue.isNotEmpty()) {
             val order = orderQueue.removeFirst()
             for (dish in order.dishes) {
+                if (dish.status == DishStatus.SERVED || dish.status == DishStatus.EATEN) continue
                 dish.status = DishStatus.ABORTED
             }
         }

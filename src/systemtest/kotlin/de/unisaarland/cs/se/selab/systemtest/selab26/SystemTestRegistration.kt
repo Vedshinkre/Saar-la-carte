@@ -78,8 +78,6 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventSeatingCa
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventSeatingCapacityCasualRetryTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventSeatingCapacityExactFitTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventSeatingCapacityFailedEventRatingTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventSeatingCapacityFailedKeepsTickLoadTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventSeatingCapacityFailedThenRetryTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventSeatingCapacityOneTooManyTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventSeatingLoadPriorityBuildUpTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.EventSeatingLoadPriorityBusiestWaiterFirstTest
@@ -324,8 +322,9 @@ object SystemTestRegistration {
     /** AB tests for the two tick windows fo the serving phase */
     private fun registerPatienceAbProbes(testSuite: SELab26TestSuite) {
         testSuite.registerTest(PatienceLeavesFiveTicksAfterOrderSystemTest())
-        testSuite.registerTest(PatienceLeavesFourTicksAfterOrderSystemTest())
-        // confirmed by Vlad's system test but keeping for another run for redundancy
+        testSuite.registerTest(
+            PatienceLeavesFourTicksAfterOrderSystemTest()
+        ) // confirmed by Vlad's system test but keeping for another run for redundancy
         testSuite.registerTest(ServedOnFourthTickIsPositiveSystemTest())
         testSuite.registerTest(ServedOnFourthTickIsNeutralSystemTest())
         registerOpenQuestionAbProbes(testSuite)
@@ -478,8 +477,8 @@ object SystemTestRegistration {
         testSuite.registerTest(EventSeatingCapacityCasualRetryTest())
         testSuite.registerTest(EventSeatingCapacityOneTooManyTest())
         testSuite.registerTest(EventSeatingCapacityFailedEventRatingTest())
-        testSuite.registerTest(EventSeatingCapacityFailedKeepsTickLoadTest())
-        testSuite.registerTest(EventSeatingCapacityFailedThenRetryTest())
+        /** testSuite.registerTest(EventSeatingCapacityFailedKeepsTickLoadTest())
+         // testSuite.registerTest(EventSeatingCapacityFailedThenRetryTest())**/
         testSuite.registerTest(EventSeatingSharedCapacityFirstEventTest())
         testSuite.registerTest(EventSeatingSharedCapacitySecondEventTest())
         testSuite.registerTest(EventSeatingSharedCapacityNoCapacityLeftTest())

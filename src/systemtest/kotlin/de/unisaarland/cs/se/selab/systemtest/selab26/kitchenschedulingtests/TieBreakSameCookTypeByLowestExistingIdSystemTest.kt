@@ -5,6 +5,10 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.utils.FohArrivalTestLogs
 import de.unisaarland.cs.se.selab.systemtest.selab26.utils.KitchenTestLogs
 import de.unisaarland.cs.se.selab.systemtest.selab26.utils.TickStatusTestLogs
 
+private const val TOURNANT = "TOURNANT"
+private const val SOUP_A = "Soup A"
+private const val SOUP_B = "Soup B"
+
 /**
  * Spec (p.13-14): "Cooks are seen as interchangeable, they do not have ids assigned at the start
  * of the simulation... A cook is assigned an id the moment they start cooking the first assigned
@@ -34,19 +38,19 @@ class TieBreakSameCookTypeByLowestExistingIdSystemTest : ExampleSystemTestExtens
         // remaining, still-unassigned cook, which becomes Cook 2.
         skipUntilString(TickStatusTestLogs.tickStart(1, 1))
         skipUntilString(
-            FohArrivalTestLogs.ordering(1, 1, 1, mapOf("Soup A" to 2), 1)
+            FohArrivalTestLogs.ordering(1, 1, 1, mapOf(SOUP_A to 2), 1)
         )
         skipUntilString(
-            FohArrivalTestLogs.ordering(1, 2, 2, mapOf("Soup B" to 2), 1)
+            FohArrivalTestLogs.ordering(1, 2, 2, mapOf(SOUP_B to 2), 1)
         )
         skipUntilString(FohArrivalTestLogs.orderingStatus(1, 4, 1))
         assertNextLine(
             KitchenTestLogs.kitchenAssign(
                 restId = 1,
                 cookId = 1,
-                cookType = "TOURNANT",
+                cookType = TOURNANT,
                 meals = 2,
-                dishName = "Soup A",
+                dishName = SOUP_A,
                 baseOrderId = 1,
                 allOrders = listOf(1)
             )
@@ -55,9 +59,9 @@ class TieBreakSameCookTypeByLowestExistingIdSystemTest : ExampleSystemTestExtens
             KitchenTestLogs.kitchenAssign(
                 restId = 1,
                 cookId = 2,
-                cookType = "TOURNANT",
+                cookType = TOURNANT,
                 meals = 2,
-                dishName = "Soup B",
+                dishName = SOUP_B,
                 baseOrderId = 2,
                 allOrders = listOf(2)
             )
@@ -66,8 +70,8 @@ class TieBreakSameCookTypeByLowestExistingIdSystemTest : ExampleSystemTestExtens
         // Tick 2: both meals finish (1 tick after ordering), freeing Cook 1 and Cook 2, each
         // keeping their assigned id for the rest of the evening.
         skipUntilString(TickStatusTestLogs.tickStart(2, 1))
-        skipUntilString(KitchenTestLogs.kitchenCooked(1, 1, 2, "Soup A", 1))
-        assertNextLine(KitchenTestLogs.kitchenCooked(1, 2, 2, "Soup B", 1))
+        skipUntilString(KitchenTestLogs.kitchenCooked(1, 1, 2, SOUP_A, 1))
+        assertNextLine(KitchenTestLogs.kitchenCooked(1, 2, 2, SOUP_B, 1))
 
         // Tick 3: group 3 orders Soup C. Cook 1 and Cook 2 are both free, both already have
         // ids, and both are equally-ranked TOURNANT cooks: Cook 1 (the lowest existing id)
@@ -77,7 +81,7 @@ class TieBreakSameCookTypeByLowestExistingIdSystemTest : ExampleSystemTestExtens
             KitchenTestLogs.kitchenAssign(
                 restId = 1,
                 cookId = 1,
-                cookType = "TOURNANT",
+                cookType = TOURNANT,
                 meals = 2,
                 dishName = "Soup C",
                 baseOrderId = 3,

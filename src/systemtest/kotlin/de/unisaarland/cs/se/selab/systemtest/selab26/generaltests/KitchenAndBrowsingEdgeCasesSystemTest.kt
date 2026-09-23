@@ -6,6 +6,9 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.utils.InitialAndPrepTestLog
 import de.unisaarland.cs.se.selab.systemtest.selab26.utils.KitchenTestLogs
 import de.unisaarland.cs.se.selab.systemtest.selab26.utils.TickStatusTestLogs
 
+private const val DEBUG_LOG_LEVEL = "DEBUG"
+private const val POTATO_SOUP = "potato soup"
+
 /**
  * System tests designed to trigger subtle edge cases in Kitchen Scheduling
  * (basic dish prioritization, cook rank selection) and Browsing Service (BAR table non-mergeability).
@@ -25,7 +28,7 @@ class CustomizedBasicDishPrioritySystemTest : ExampleSystemTestExtension() {
     override val food = "kitchenschedulingtests/customizedbasicdish/food.json"
     override val restaurants = "kitchenschedulingtests/customizedbasicdish/restaurants.json"
     override val scenario = "kitchenschedulingtests/customizedbasicdish/scenario.json"
-    override val logLevel = "DEBUG"
+    override val logLevel = DEBUG_LOG_LEVEL
     override val maxTicks = 2
 
     override suspend fun run() {
@@ -43,7 +46,7 @@ class CustomizedBasicDishPrioritySystemTest : ExampleSystemTestExtension() {
         assertNextLine(TickStatusTestLogs.restStart(1))
         assertNextLine(FohArrivalTestLogs.arrival(1, 1))
         assertNextLine(FohArrivalTestLogs.seating(1, 1, 1, listOf(1)))
-        assertNextLine(FohArrivalTestLogs.ordering(1, 1, 1, mapOf("chicken rice" to 1, "potato soup" to 1), 1))
+        assertNextLine(FohArrivalTestLogs.ordering(1, 1, 1, mapOf("chicken rice" to 1, POTATO_SOUP to 1), 1))
         assertNextLine(FohArrivalTestLogs.seatingStatus(1, 1, 2, 1))
         assertNextLine(FohArrivalTestLogs.orderingStatus(1, 2, 1))
 
@@ -55,12 +58,12 @@ class CustomizedBasicDishPrioritySystemTest : ExampleSystemTestExtension() {
                 cookId = 1,
                 cookType = "TOURNANT",
                 meals = 1,
-                dishName = "potato soup",
+                dishName = POTATO_SOUP,
                 baseOrderId = 1,
                 allOrders = listOf(1)
             )
         )
-        assertNextLine(KitchenTestLogs.kitchenCooked(1, 1, 1, "potato soup", 0))
+        assertNextLine(KitchenTestLogs.kitchenCooked(1, 1, 1, POTATO_SOUP, 0))
 
         // The restaurant's only cook is busy with potato soup for the rest of this tick, so
         // chicken rice cannot be assigned until the cook is free again on the next tick - it was
@@ -97,7 +100,7 @@ class LowestRankingCookSelectionSystemTest : ExampleSystemTestExtension() {
     override val food = "kitchenschedulingtests/cookrank/food.json"
     override val restaurants = "kitchenschedulingtests/cookrank/restaurants.json"
     override val scenario = "kitchenschedulingtests/cookrank/scenario.json"
-    override val logLevel = "DEBUG"
+    override val logLevel = DEBUG_LOG_LEVEL
     override val maxTicks = 1
 
     override suspend fun run() {
@@ -109,7 +112,6 @@ class LowestRankingCookSelectionSystemTest : ExampleSystemTestExtension() {
         assertNextLine(FohArrivalTestLogs.seatingStatus(1, 1, 2, 1))
         assertNextLine(FohArrivalTestLogs.orderingStatus(1, 2, 1))
 
-        // CRITICAL CHECK: PASTRY cook (rank 8, lowest rank) MUST be assigned instead of EXEC cook (rank 1, highest rank)
         assertNextLine(
             KitchenTestLogs.kitchenAssign(
                 restId = 1,
@@ -135,11 +137,11 @@ class LowestRankingCookSelectionSystemTest : ExampleSystemTestExtension() {
 class NonMergeableBarTableBrowsingSystemTest : ExampleSystemTestExtension() {
 
     override val name = "NonMergeableBarTableBrowsingSystemTest"
-    override val description = "A CASUAL group is rejected when no single BAR table fits, even though two together would"
+    override val description = "A CASUAL group is rejected "
     override val food = "kitchenschedulingtests/bartable/food.json"
     override val restaurants = "kitchenschedulingtests/bartable/restaurants.json"
     override val scenario = "kitchenschedulingtests/bartable/scenario.json"
-    override val logLevel = "DEBUG"
+    override val logLevel = DEBUG_LOG_LEVEL
     override val maxTicks = 1
 
     override suspend fun run() {

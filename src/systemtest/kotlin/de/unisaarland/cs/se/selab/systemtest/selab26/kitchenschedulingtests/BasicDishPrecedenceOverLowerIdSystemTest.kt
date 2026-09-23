@@ -5,6 +5,8 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.utils.FohArrivalTestLogs
 import de.unisaarland.cs.se.selab.systemtest.selab26.utils.KitchenTestLogs
 import de.unisaarland.cs.se.selab.systemtest.selab26.utils.TickStatusTestLogs
 
+private const val TOMATO_SOUP = "Tomato Soup"
+
 /**
  * Spec (p.13): "Per order in the queue, the dishes of the order are assigned to a cook. Basic
  * dishes take precedence, then the lower id of the dish recipe."
@@ -32,7 +34,7 @@ class BasicDishPrecedenceOverLowerIdSystemTest : ExampleSystemTestExtension() {
                 1,
                 1,
                 1,
-                mapOf("Grilled Chicken" to 1, "Tomato Soup" to 1),
+                mapOf("Grilled Chicken" to 1, TOMATO_SOUP to 1),
                 1
             )
         )
@@ -47,7 +49,7 @@ class BasicDishPrecedenceOverLowerIdSystemTest : ExampleSystemTestExtension() {
                 cookId = 1,
                 cookType = "TOURNANT",
                 meals = 1,
-                dishName = "Tomato Soup",
+                dishName = TOMATO_SOUP,
                 baseOrderId = 1,
                 allOrders = listOf(1)
             )
@@ -65,7 +67,7 @@ class BasicDishPrecedenceOverLowerIdSystemTest : ExampleSystemTestExtension() {
         )
         // Tomato Soup's duration (10) resolves to 0 remaining ticks, so it finishes cooking in
         // the same tick it was assigned.
-        assertNextLine(KitchenTestLogs.kitchenCooked(1, 1, 1, "Tomato Soup", 0))
+        assertNextLine(KitchenTestLogs.kitchenCooked(1, 1, 1, TOMATO_SOUP, 0))
         assertNextLine(KitchenTestLogs.kitchenStatus(1, 2, 2, 1, 1))
     }
 }

@@ -15,8 +15,11 @@ private const val STAFF_AND_TABLES = "staff-and-tables"
 private const val KITCHEN_AND_SERVING = "kitchen-and-serving"
 private const val DELIVERY_HANDOFF = "delivery-handoff"
 private const val EVENT_MERGE_INCIDENTS = "event-merge-incidents"
+private const val STAFF_INCIDENTS = "staff-incidents"
 
-private val FAILING_AGAINST_REFERENCE: Set<String> = setOf()
+private val FAILING_AGAINST_REFERENCE: Set<String> = setOf(
+    STAFF_INCIDENTS
+)
 
 /** test against scenarios of `fulltests/`, run simulation on each entry and compares log lines against expected ones */
 fun fullScenarioSystemTests(excludeReferenceFailingTests: Boolean): List<SystemTestSELab26> = listOf(
@@ -27,6 +30,7 @@ fun fullScenarioSystemTests(excludeReferenceFailingTests: Boolean): List<SystemT
     FullScenarioSystemTest(KITCHEN_AND_SERVING, maxTicks = 24),
     FullScenarioSystemTest(DELIVERY_HANDOFF, maxTicks = 48),
     FullScenarioSystemTest(EVENT_MERGE_INCIDENTS, maxTicks = 96),
+    FullScenarioSystemTest(STAFF_INCIDENTS, maxTicks = 96),
 ).filter { !excludeReferenceFailingTests || it.scenarioName !in FAILING_AGAINST_REFERENCE }
 
 /** replays the `fulltests` scenario [scenarioName]

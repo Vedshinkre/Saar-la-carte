@@ -615,6 +615,7 @@ object SystemTestRegistration {
         testSuite.registerTest(StaffIncidentsIncidentsLoggedBeforePreparationSystemTest())
         testSuite.registerTest(StaffIncidentsNoCookSeatsButCannotOrderSystemTest())
         testSuite.registerTest(StaffIncidentsStatisticsSystemTest())
+        testSuite.registerTest(IdleCookWithHigherIdTakesNextJobSystemTest())
     }
 
     /**

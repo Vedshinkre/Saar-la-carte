@@ -31,7 +31,7 @@ class BatchDoesNotAbsorbLaterArrivingOrderSystemTest : ExampleSystemTestExtensio
         // Tick 1: group 1 orders 2 meals of Grilled Chicken; the only ROAST cook starts on them.
         skipUntilString(TickStatusTestLogs.tickStart(1, 1))
         skipUntilString(
-            FohArrivalTestLogs.ordering(1, 1, 1, mapOf("Grilled Chicken" to 2), 1)
+            FohArrivalTestLogs.ordering(1, 1, 1, mapOf(GRILLED_CHICKEN to 2), 1)
         )
         skipUntilString(FohArrivalTestLogs.orderingStatus(1, 2, 1))
         assertNextLine(
@@ -40,7 +40,7 @@ class BatchDoesNotAbsorbLaterArrivingOrderSystemTest : ExampleSystemTestExtensio
                 cookId = 1,
                 cookType = "ROAST",
                 meals = 2,
-                dishName = "Grilled Chicken",
+                dishName = GRILLED_CHICKEN,
                 baseOrderId = 1,
                 allOrders = listOf(1)
             )
@@ -50,12 +50,12 @@ class BatchDoesNotAbsorbLaterArrivingOrderSystemTest : ExampleSystemTestExtensio
         // on order 1.
         skipUntilString(TickStatusTestLogs.tickStart(2, 1))
         skipUntilString(
-            FohArrivalTestLogs.ordering(1, 2, 2, mapOf("Grilled Chicken" to 2), 1)
+            FohArrivalTestLogs.ordering(1, 2, 2, mapOf(GRILLED_CHICKEN to 2), 1)
         )
 
         // The cook finishes order 1's original 2 meals -- not 4 -- proving order 2's dishes were
         // not folded into the already-running job.
-        skipUntilString(KitchenTestLogs.kitchenCooked(1, 1, 2, "Grilled Chicken", 1))
+        skipUntilString(KitchenTestLogs.kitchenCooked(1, 1, 2, GRILLED_CHICKEN, 1))
         assertNextLine(KitchenTestLogs.kitchenStatus(1, 1, 2, 2, 2))
 
         // Tick 3: the cook is free again and now starts order 2's Grilled Chicken as its own,
@@ -67,10 +67,14 @@ class BatchDoesNotAbsorbLaterArrivingOrderSystemTest : ExampleSystemTestExtensio
                 cookId = 1,
                 cookType = "ROAST",
                 meals = 2,
-                dishName = "Grilled Chicken",
+                dishName = GRILLED_CHICKEN,
                 baseOrderId = 2,
                 allOrders = listOf(2)
             )
         )
+    }
+
+    private companion object {
+        const val GRILLED_CHICKEN = "Grilled Chicken"
     }
 }

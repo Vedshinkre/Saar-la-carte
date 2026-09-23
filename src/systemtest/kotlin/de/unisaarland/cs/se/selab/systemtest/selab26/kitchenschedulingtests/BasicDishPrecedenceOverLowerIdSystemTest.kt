@@ -32,7 +32,7 @@ class BasicDishPrecedenceOverLowerIdSystemTest : ExampleSystemTestExtension() {
                 1,
                 1,
                 1,
-                mapOf("Grilled Chicken" to 1, "Tomato Soup" to 1),
+                mapOf("Grilled Chicken" to 1, TOMATO_SOUP to 1),
                 1
             )
         )
@@ -47,7 +47,7 @@ class BasicDishPrecedenceOverLowerIdSystemTest : ExampleSystemTestExtension() {
                 cookId = 1,
                 cookType = "TOURNANT",
                 meals = 1,
-                dishName = "Tomato Soup",
+                dishName = TOMATO_SOUP,
                 baseOrderId = 1,
                 allOrders = listOf(1)
             )
@@ -65,7 +65,11 @@ class BasicDishPrecedenceOverLowerIdSystemTest : ExampleSystemTestExtension() {
         )
         // Tomato Soup's duration (10) resolves to 0 remaining ticks, so it finishes cooking in
         // the same tick it was assigned.
-        assertNextLine(KitchenTestLogs.kitchenCooked(1, 1, 1, "Tomato Soup", 0))
+        assertNextLine(KitchenTestLogs.kitchenCooked(1, 1, 1, TOMATO_SOUP, 0))
         assertNextLine(KitchenTestLogs.kitchenStatus(1, 2, 2, 1, 1))
+    }
+
+    private companion object {
+        const val TOMATO_SOUP = "Tomato Soup"
     }
 }

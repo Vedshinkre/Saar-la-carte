@@ -8,6 +8,12 @@ import org.junit.jupiter.api.assertThrows
 import java.io.File
 import kotlin.test.AfterTest
 
+/** F01: Main Integration
+ * MainIntegrationTest verifies the CLI entry point (main), checking that valid arguments complete
+ * a full simulation run, malformed configuration files abort execution early,
+ * out-of-bounds maxTicks throw an IllegalArgumentException, and omitting --out
+ * defaults cleanly to standard output.
+ */
 class MainIntegrationTest {
 
     private val outputPath = "build/test_output.log"

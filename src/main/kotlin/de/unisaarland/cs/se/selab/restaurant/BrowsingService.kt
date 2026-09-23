@@ -32,7 +32,7 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
         }
         val openRestaurants = collectOpenRestaurants(group)
         val travelTicks = kotlin.math.ceil(group.deliveryDistance.toDouble() / FIVE).toInt()
-        val cookingFinishTick = group.visitingAt - travelTicks
+        val cookingFinishTick = group.visitingAt - travelTicks - 3
 
         val deliveryCandidates = mutableListOf<RestaurantStats>()
         for (stats in openRestaurants) {

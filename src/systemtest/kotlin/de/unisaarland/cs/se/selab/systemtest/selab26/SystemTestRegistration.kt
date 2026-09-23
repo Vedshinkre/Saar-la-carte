@@ -94,6 +94,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.LowestRankingC
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.NonMergeableBarTableBrowsingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.OneCookTwoOrdersTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.PantryExpirySystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.PartialDeliveryHandoverSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.PartialLeaverEscortedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.PartialServiceSuccessTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RecipeChangeAcrossRestaurantsTest
@@ -263,6 +264,7 @@ object SystemTestRegistration {
         testSuite.registerTest(DeliveryQueueDelayFailedReturnSystemTest())
         testSuite.registerTest(DeliveryEveningBoundaryNeverRatesSystemTest())
         testSuite.registerTest(PartialServiceSuccessTest())
+        testSuite.registerTest(PartialDeliveryHandoverSystemTest())
         testSuite.registerTest(CookChangeNoOrderTest())
         testSuite.registerTest(RecipeChangeAcrossRestaurantsTest())
         testSuite.registerTest(RegularFailedTest())

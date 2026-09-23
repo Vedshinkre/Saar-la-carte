@@ -1,0 +1,41 @@
+{
+  "ingredients": [
+    {
+      "name": "rice",
+      "unit": "g",
+      "packagingVolume": 1000,
+      "bestBefore": 5
+    }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "Bowl",
+      "duration": 10,
+      "basicDishFor": "EUROPEAN",
+      "cookType": [
+        "TOURNANT"
+      ],
+      "ingredients": [
+        {
+          "name": "rice",
+          "amount": 10
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "dishName": "Unused Plate",
+      "duration": 10,
+      "cookType": [
+        "TOURNANT"
+      ],
+      "ingredients": [
+        {
+          "name": "rice",
+          "amount": 10
+        }
+      ]
+    }
+  ]
+}

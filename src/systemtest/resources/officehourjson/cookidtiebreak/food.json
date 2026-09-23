@@ -1,0 +1,75 @@
+{
+  "ingredients": [
+    {
+      "name": "Broth",
+      "unit": "g",
+      "packagingVolume": 5000,
+      "bestBefore": 5
+    },
+    {
+      "name": "Salt",
+      "unit": "g",
+      "packagingVolume": 2000,
+      "bestBefore": 5
+    }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "Soup A",
+      "duration": 20,
+      "cookType": [
+        "TOURNANT"
+      ],
+      "ingredients": [
+        {
+          "name": "Broth",
+          "amount": 50
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "dishName": "Soup B",
+      "duration": 20,
+      "cookType": [
+        "TOURNANT"
+      ],
+      "ingredients": [
+        {
+          "name": "Broth",
+          "amount": 50
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "dishName": "Soup C",
+      "duration": 20,
+      "cookType": [
+        "TOURNANT"
+      ],
+      "ingredients": [
+        {
+          "name": "Broth",
+          "amount": 50
+        }
+      ]
+    },
+    {
+      "id": 99,
+      "dishName": "House Basic",
+      "duration": 10,
+      "basicDishFor": "EUROPEAN",
+      "cookType": [
+        "SOUS"
+      ],
+      "ingredients": [
+        {
+          "name": "Salt",
+          "amount": 10
+        }
+      ]
+    }
+  ]
+}

@@ -144,7 +144,11 @@ class ServingProcessor(
         for (group in readyGroups) {
             val order = group.currentOrder
             if (order == null) continue
-            val driver = getOrAssignDriver(group, order)
+            // a driver is only claimed when a waiter can actually start handing meals over; claiming
+            // one that receives nothing would take it out of circulation for the rest of the evening
+            val driver = driverHolding(group, order)
+                ?: if (assignWaiterForDelivery() != null) claimIdleDriver(group, order) else null
+            // val driver = getOrAssignDriver(group, order)
             if (driver != null) {
                 serveToDriver(order.getServableDishes(), driver, order)
             }
@@ -166,12 +170,12 @@ class ServingProcessor(
         waiters.filter { it.getTickLoad(ActionType.SERVE) < Constants.ACTION_LIMIT }
             .minByOrNull { it.id ?: Int.MAX_VALUE }
 
-    private fun getOrAssignDriver(group: CustomerGroup, order: Order): Driver? {
-        val assigned = drivers.find { it.targetGroup == group && it.currentOrder == order }
-        if (assigned != null) return assigned
+    /** the driver that is already holding this order, if the hand-over is under way */
+    private fun driverHolding(group: CustomerGroup, order: Order): Driver? =
+        drivers.find { it.targetGroup == group && it.currentOrder == order }
 
+    private fun claimIdleDriver(group: CustomerGroup, order: Order): Driver? {
         val freeDriver = drivers.find { it.state == DriverState.IDLE } ?: return null
-        if (freeDriver.id == null) { freeDriver.id = getNextDriverId() }
 
         freeDriver.targetGroup = group
         freeDriver.currentOrder = order
@@ -192,7 +196,8 @@ class ServingProcessor(
             waiter.addToTickLoad(ActionType.SERVE, batch.size)
 
             val waiterId = waiter.ensureId(getNextWaiterId)
-            val driverId = requireNotNull(driver.id) { "a driver taking an order always has an id" }
+            // ids are handed out "at the moment they receive meals", so not before this point
+            val driverId = driver.id ?: getNextDriverId().also { driver.id = it }
 
             FohServiceLogger.logFohDelivery(waiterId, toDishNameAmounts(batch), driverId, order.id)
             remaining = remaining.drop(batch.size)

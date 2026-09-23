@@ -59,7 +59,7 @@ class DeliveryProcessor(
     private fun releaseStrandedDrivers() {
         for (driver in driversInState(DriverState.WAITING)) {
             val order = driver.currentOrder ?: continue
-            if (order.dishes.none { it.status == DishStatus.ABORTED }) continue
+            if (!order.deliveryGivenUp && order.dishes.none { it.status == DishStatus.ABORTED }) continue
 
             driver.state = DriverState.IDLE
             driver.currentOrder = null

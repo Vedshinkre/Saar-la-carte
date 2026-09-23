@@ -75,7 +75,7 @@ class EventGroup(
             }
 
             val availableDishes = countertop.getAvailableRecipes(menu)
-            val eventFavoriteDish = eventDishes[currentRestaurantType] ?: "No Dish"
+            val eventFavoriteDish = eventDishes[currentRestaurantType] ?: ""
             val customerDish = foodPreference.decideDish(availableDishes, eventFavoriteDish, countertop.restaurantType)
             waitersToTakeOrder[currentWaiter] = waitersToTakeOrder.getValue(currentWaiter) - 1
             if (customerDish != null) {

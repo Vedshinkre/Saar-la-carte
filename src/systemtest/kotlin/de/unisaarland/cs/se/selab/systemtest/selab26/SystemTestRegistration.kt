@@ -279,33 +279,12 @@ object SystemTestRegistration {
         testSuite.registerTest(ExampleEmptyTickOneCycleTest())
         testSuite.registerTest(EventReservationConflictTest())
         testSuite.registerTest(WaitstaffExhaustionTest())
-        testSuite.registerTest(CustomerBehaviourDecisionSystemTest())
         testSuite.registerTest(IdleCookReuseA())
         testSuite.registerTest(IdleCookReuseB()) // testSuite.registerTest(RegularRetrySucceedsSystemTest())
-        testSuite.registerTest(SimulationLifecycleSystemTest())
-        testSuite.registerTest(StatisticsOrderingSystemTest())
-        testSuite.registerTest(SupplierProcurementSystemTest())
-        testSuite.registerTest(UnavailableIncidentSupplierProcurementSystemTest())
-        testSuite.registerTest(
-            PantryExpirySystemTest()
-        )
-        testSuite.registerTest(PantryExpiryAlphabeticalOrderSystemTest())
-        testSuite.registerTest(PantryAbandonedDishIngredientsNotRefundedSystemTest())
-        testSuite.registerTest(BrowsingRefusesDineInInLastThreeTicksSystemTest())
-        testSuite.registerTest(LateCasualNoWaiterSystemTest())
-        testSuite.registerTest(WaitingForFoodSystemTest())
-        testSuite.registerTest(WaiterLoadReleasedOnLeavingSystemTest())
-        testSuite.registerTest(PartialLeaverEscortedSystemTest())
-        testSuite.registerTest(EatingOrderIsTwoPassesSystemTest())
+        registerSkerdiReferenceTests(testSuite)
         registeratharvaRefrenceTests(testSuite)
         fullScenarioSystemTests(false).forEach { testSuite.registerTest(it) }
         testSuite.registerTest(DeliveryOrderSuccessTestA())
-        testSuite.registerTest(DeliveryQueueDelayTimeoutSystemTest())
-        testSuite.registerTest(DeliveryQueueDelayFailedReturnSystemTest())
-        testSuite.registerTest(DriverIncidentReducesBrowsingAvailabilitySystemTest())
-        testSuite.registerTest(RegularCapacityBlockedOrderNotLostSystemTest())
-        testSuite.registerTest(DeliveryMultipleWaitersServeOneOrderSystemTest())
-        testSuite.registerTest(DeliveryEveningBoundaryNeverRatesSystemTest())
         testSuite.registerTest(PartialServiceSuccessTest())
         testSuite.registerTest(PartialDeliveryHandoverSystemTest())
         testSuite.registerTest(CookChangeNoOrderTest())
@@ -313,7 +292,6 @@ object SystemTestRegistration {
         testSuite.registerTest(RegularFailedTest())
         testSuite.registerTest(CorrectPartialServing1())
         registerOfficeHourProbes(testSuite)
-        registerReservedForMeProbes(testSuite)
         registerPatienceAbProbes(testSuite)
         testSuite.registerTest(SomeDeliveryTest())
         testSuite.registerTest(CookIdTieBreakHighestIdB())
@@ -392,6 +370,7 @@ object SystemTestRegistration {
         testSuite.registerTest(CookChangeNoOrderTest())
         registerVladSimulationMutantTests(testSuite)
         registerVladConfirmedProbeMutantTests(testSuite)
+        registerSkerdiConfirmedMutantTests(testSuite)
         fullScenarioSystemTests(true).forEach { testSuite.registerTest(it) }
         testSuite.registerTest(CasualGroupRatingSystemTest())
         testSuite.registerTest(RegularFailedTest())
@@ -528,8 +507,6 @@ object SystemTestRegistration {
         testSuite.registerTest(EventTableMergingSystemTest())
         testSuite.registerTest(CasualTableNoLiftSystemTest())
         testSuite.registerTest(CasualTableExclusionSystemTest())
-        testSuite.registerTest(CasualBarRestaurantChoiceSystemTest())
-        testSuite.registerTest(CasualBarExactFitNoMergeSystemTest())
         testSuite.registerTest(TableMergingLifecycleSystemTest())
     }
 
@@ -629,12 +606,39 @@ object SystemTestRegistration {
     }
 
     /**
-     * Probes written to find why the mandatory "ReservedForMe" component test (RRR:
-     * reservation of REGULAR groups and their ratings) fails against our implementation: one
-     * decision each, so that a failure against our own jar names the exact rule we read wrongly.
-     * Not registered for the mutants until the reference run confirms them.
+     * All of Skerdi's system tests, to run against the reference implementation. The negative control
+     * EatingOrderIsPerGroupSystemTest is left out on purpose: it is wrong against the reference by design.
      */
-    private fun registerReservedForMeProbes(testSuite: SELab26TestSuite) {
+    private fun registerSkerdiReferenceTests(testSuite: SELab26TestSuite) {
+        // simulation and statistics
+        testSuite.registerTest(SimulationLifecycleSystemTest())
+        testSuite.registerTest(StatisticsOrderingSystemTest())
+        // supplier and pantry
+        testSuite.registerTest(SupplierProcurementSystemTest())
+        testSuite.registerTest(UnavailableIncidentSupplierProcurementSystemTest())
+        testSuite.registerTest(UnavailabilityDurationExpirySystemTest())
+        testSuite.registerTest(PantryExpirySystemTest())
+        testSuite.registerTest(PantryExpiryAlphabeticalOrderSystemTest())
+        testSuite.registerTest(PantryAbandonedDishIngredientsNotRefundedSystemTest())
+        // restaurant decision and browsing
+        testSuite.registerTest(CustomerBehaviourDecisionSystemTest())
+        testSuite.registerTest(BrowsingRefusesDineInInLastThreeTicksSystemTest())
+        testSuite.registerTest(CasualBarRestaurantChoiceSystemTest())
+        testSuite.registerTest(CasualBarExactFitNoMergeSystemTest())
+        testSuite.registerTest(DriverIncidentReducesBrowsingAvailabilitySystemTest())
+        // waiting for food, leaving, escorting, serving capacity
+        testSuite.registerTest(LateCasualNoWaiterSystemTest())
+        testSuite.registerTest(WaitingForFoodSystemTest())
+        testSuite.registerTest(WaiterLoadReleasedOnLeavingSystemTest())
+        testSuite.registerTest(PartialLeaverEscortedSystemTest())
+        testSuite.registerTest(EatingOrderIsTwoPassesSystemTest())
+        testSuite.registerTest(RegularCapacityBlockedOrderNotLostSystemTest())
+        // delivery
+        testSuite.registerTest(DeliveryQueueDelayTimeoutSystemTest())
+        testSuite.registerTest(DeliveryQueueDelayFailedReturnSystemTest())
+        testSuite.registerTest(DeliveryMultipleWaitersServeOneOrderSystemTest())
+        testSuite.registerTest(DeliveryEveningBoundaryNeverRatesSystemTest())
+        // REGULAR reservations and ratings (probes for the mandatory ReservedForMe test)
         testSuite.registerTest(RegularFailedAttemptsNotResetByInterveningSuccessSystemTest())
         testSuite.registerTest(RegularReservationOrderIsAscendingIdNotFileOrderSystemTest())
         testSuite.registerTest(RegularUneventfulVisitRatesPositiveSystemTest())
@@ -705,6 +709,26 @@ object SystemTestRegistration {
         testSuite.registerTest(CookIdsFollowAssignmentOrderSystemTest())
         testSuite.registerTest(BothOrdersOfATickStartTogetherSystemTest())
         testSuite.registerTest(IdleCookWithHigherIdTakesNextJobSystemTest())
+    }
+
+    /** Skerdi's system tests that passed against the reference (results of commit 91d36d5). */
+    private fun registerSkerdiConfirmedMutantTests(testSuite: SELab26TestSuite) {
+        testSuite.registerTest(PantryExpiryAlphabeticalOrderSystemTest())
+        testSuite.registerTest(WaitingForFoodSystemTest())
+        testSuite.registerTest(WaiterLoadReleasedOnLeavingSystemTest())
+        testSuite.registerTest(PartialLeaverEscortedSystemTest())
+        testSuite.registerTest(EatingOrderIsTwoPassesSystemTest())
+        testSuite.registerTest(DeliveryQueueDelayTimeoutSystemTest())
+        testSuite.registerTest(DeliveryQueueDelayFailedReturnSystemTest())
+        testSuite.registerTest(RegularCapacityBlockedOrderNotLostSystemTest())
+        testSuite.registerTest(DeliveryMultipleWaitersServeOneOrderSystemTest())
+        testSuite.registerTest(DeliveryEveningBoundaryNeverRatesSystemTest())
+        testSuite.registerTest(CasualBarRestaurantChoiceSystemTest())
+        testSuite.registerTest(CasualBarExactFitNoMergeSystemTest())
+        testSuite.registerTest(RegularFailedAttemptsNotResetByInterveningSuccessSystemTest())
+        testSuite.registerTest(RegularReservationOrderIsAscendingIdNotFileOrderSystemTest())
+        testSuite.registerTest(RegularUneventfulVisitRatesPositiveSystemTest())
+        testSuite.registerTest(RegularPartiallyServedGroupKeepsVisitingSystemTest())
     }
 
     private fun registerVladValidationMutantTests(testSuite: SELab26TestSuite) {

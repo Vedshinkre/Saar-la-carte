@@ -155,26 +155,33 @@ class ArrivalProcessor(
             tables.forEach { table -> table.status = TableStatus.RESERVED }
             customerToTable[regularOrEventCustomerGroup] = tables
             true
-        } // Step 1: Filter and sort
-        val sortedTables: List<Table> = getSortedPreferredFreeTables(
-            regularOrEventCustomerGroup
-        ) // Step 2 and 3: Perfect fit or single table with three quarters rule
+        }
+        // Step 1: Filter and sort
+        val sortedTables: List<Table> = getSortedPreferredFreeTables(regularOrEventCustomerGroup)
+        // Step 2 and 3: Perfect fit or single table with three quarters rule
         trySingleTable(
             regularOrEventCustomerGroup,
             sortedTables,
             true
-        )?.also { return reserveSingleTable(it) } // Step 4: Multiple tables with three quarters rule
+        )?.also { return reserveSingleTable(it) }
+        // Step 4: Multiple tables with three quarters rule
         mergeTables(
             regularOrEventCustomerGroup,
             sortedTables,
             true
-        )?.also { return reserveMultipleTables(it) } // Step 5: Single table without three quarters rule
+        )?.also { return reserveMultipleTables(it) }
+        // Step 5: Single table without three quarters rule
         trySingleTable(
             regularOrEventCustomerGroup,
             sortedTables,
             false
-        )?.also { return reserveSingleTable(it) } // Step 6: Multiple tables without three quarters rule
-        mergeTables(regularOrEventCustomerGroup, sortedTables, false)?.also { return reserveMultipleTables(it) }
+        )?.also { return reserveSingleTable(it) }
+        // Step 6: Multiple tables without three quarters rule
+        mergeTables(
+            regularOrEventCustomerGroup,
+            sortedTables,
+            false
+        )?.also { return reserveMultipleTables(it) }
 
         InitialAndPrepLogger.logFohNoReservation(regularOrEventCustomerGroup.id)
         regularOrEventCustomerGroup.experience = ExperienceType.NEGATIVE

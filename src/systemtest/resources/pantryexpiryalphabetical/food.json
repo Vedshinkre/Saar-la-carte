@@ -1,0 +1,46 @@
+{
+  "ingredients": [
+    {
+      "name": "Zucchini",
+      "unit": "g",
+      "packagingVolume": 300,
+      "bestBefore": 2
+    },
+    {
+      "name": "Apple",
+      "unit": "g",
+      "packagingVolume": 700,
+      "bestBefore": 2
+    },
+    {
+      "name": "Mango",
+      "unit": "g",
+      "packagingVolume": 150,
+      "bestBefore": 2
+    }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "Mango Sorbet",
+      "duration": 10,
+      "cookType": ["PASTRY"],
+      "ingredients": [{ "name": "Mango", "amount": 80 }]
+    },
+    {
+      "id": 2,
+      "dishName": "Zucchini Bake",
+      "duration": 15,
+      "cookType": ["VEGETABLE"],
+      "ingredients": [{ "name": "Zucchini", "amount": 200 }]
+    },
+    {
+      "id": 3,
+      "dishName": "Apple Pie",
+      "duration": 20,
+      "basicDishFor": "EUROPEAN",
+      "cookType": ["SAUCE"],
+      "ingredients": [{ "name": "Apple", "amount": 400 }]
+    }
+  ]
+}

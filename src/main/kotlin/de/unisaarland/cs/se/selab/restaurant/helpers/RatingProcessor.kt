@@ -1,8 +1,9 @@
 package de.unisaarland.cs.se.selab.restaurant.helpers
 
+import de.unisaarland.cs.se.selab.Constants
+import de.unisaarland.cs.se.selab.Time
 import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.customer.EventGroup
-import de.unisaarland.cs.se.selab.enums.DishStatus
 import de.unisaarland.cs.se.selab.enums.ExperienceType
 import de.unisaarland.cs.se.selab.enums.RatingType
 import de.unisaarland.cs.se.selab.loggers.FohServiceLogger.logCustomerRateRestaurant
@@ -33,11 +34,18 @@ class RatingProcessor(
         var negative = negativeRatings
         val filteredInHouseGroups = getInHouseGroups().filter { it.customersRemainingInRestaurant == 0 }
         val filteredEventGroups = eventGroups.filter { it.customersRemainingInRestaurant == 0 }
-        val filteredDeliveryGroups = deliveryGroups.filter {
-            val order = it.currentOrder
-
-            order == null || order.areAllDishesEaten() || order.dishes.any { dish ->
-                dish.status == DishStatus.ABORTED
+        // A delivery group rates when it has eaten food it was actually given, or in the tick it
+        // gave up waiting - never because the kitchen abandoned its meals, which leaves the group
+        // still sitting at home waiting for a delivery that will not come.
+        val filteredDeliveryGroups = deliveryGroups.filter { group ->
+            val order = group.currentOrder
+            when {
+                order == null -> true
+                // a group that gave up stays in the list so the rest of its order still reaches a
+                // driver, so its one rating is pinned to the tick it gave up in
+                order.deliveryGivenUp ->
+                    Time.tick == group.visitingAt + Constants.CUSTOMER_DELIVERY_WAIT_TICKS
+                else -> order.deliveredAt != null && order.areAllDishesEaten()
             }
         }
         var groupsGivingRatings = 0

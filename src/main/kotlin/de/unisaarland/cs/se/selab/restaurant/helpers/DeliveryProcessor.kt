@@ -93,7 +93,8 @@ class DeliveryProcessor(
             .filter { (group, order) -> hasAborted(group, order) }
 
         for ((group, order) in rejecting) {
-            order.dishes.forEach { if (it.status != DishStatus.EATEN) it.status = DishStatus.ABORTED }
+            // NOTE: no more setting ABORTED, it will be deprecated later when code is desphagettified
+            // order.dishes.forEach { if (it.status != DishStatus.EATEN) it.status = DishStatus.ABORTED }
             order.deliveryGivenUp = true
             group.experience = ExperienceType.NEGATIVE
             DeliveryLogger.logDeliveryGivenUp(group.id, order.id)

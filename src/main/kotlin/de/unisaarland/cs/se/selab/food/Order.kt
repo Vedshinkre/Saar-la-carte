@@ -65,6 +65,7 @@ class Order(val dishes: List<Dish>) {
      * uses "still null" to detect the first tick an order is complete
      * (see [de.unisaarland.cs.se.selab.restaurant.helpers.EatingProcessor]).
      */
+    // DOTO: rename this, maybe checkAndMarkFullyServed
     fun markFullyServed() {
         if (areAllDishesServed()) {
             servingStarted = false

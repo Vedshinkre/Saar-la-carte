@@ -63,8 +63,10 @@ class Driver {
         val group = targetGroup ?: return
         val order = currentOrder ?: return
 
-        // a rejected or otherwise aborted order can no longer be delivered
-        if (order.dishes.any { it.status == DishStatus.ABORTED }) {
+        // DOTO: maybe remove second part of or for cleanup after ensuring aborted is handled properly
+        // a given-up or otherwise aborted order can no longer be delivered: it is still driven out,
+        // but the customer refuses it at the door
+        if (order.deliveryGivenUp || order.dishes.any { it.status == DishStatus.ABORTED }) {
             DeliveryLogger.logDeliveryFailed(driverId, order.id, group.id)
         } else {
             order.deliveredAt = Time.tick

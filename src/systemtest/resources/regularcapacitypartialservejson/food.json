@@ -1,0 +1,17 @@
+{
+  "ingredients": [
+    { "name": "Rice", "unit": "g", "packagingVolume": 5000, "bestBefore": 5 }
+  ],
+  "recipes": [
+    {
+      "id": 1, "dishName": "Hog Dish", "duration": 20, "basicDishFor": "EUROPEAN",
+      "cookType": ["TOURNANT"],
+      "ingredients": [{ "name": "Rice", "amount": 10 }]
+    },
+    {
+      "id": 2, "dishName": "Target Dish", "duration": 10,
+      "cookType": ["ROAST"],
+      "ingredients": [{ "name": "Rice", "amount": 10 }]
+    }
+  ]
+}

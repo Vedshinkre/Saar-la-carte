@@ -372,12 +372,3 @@ class FoodDuplicateRecipeIdRejectedSystemTest : FoodFixtureRejectedSystemTest(
     name = "foodDuplicateRecipeId Is Rejected System Test",
     description = "A duplicate recipe id is rejected."
 )
-
-/**
- * dish name reused by a non-basic recipe after being claimed as a basic dish is rejected
- */
-class FoodDuplicateNameRejectedSystemTest : FoodFixtureRejectedSystemTest(
-    "foodDuplicateRecipeId.json",
-    name = "foodDuplicateRecipeId Is Rejected System Test",
-    description = "A duplicate recipe id is rejected."
-)

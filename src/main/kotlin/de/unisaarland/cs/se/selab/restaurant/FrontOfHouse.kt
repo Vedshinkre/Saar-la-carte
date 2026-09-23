@@ -38,8 +38,7 @@ private fun sortWaitersByServableDishes(waiterToCookedDishes: Map<Waiter, Int>):
     for (entry in waiterToCookedDishes.entries) {
         entries.add(entry)
     }
-    val byDishesThenId = compareByDescending<Map.Entry<Waiter, Int>> { it.value }
-        .thenBy { it.key.id ?: Int.MAX_VALUE }
+    val byDishesThenId = compareByDescending<Map.Entry<Waiter, Int>> { it.value }.thenBy { it.key.id ?: Int.MAX_VALUE }
     val sortedWaiters = mutableListOf<Waiter>()
     for (entry in entries.sortedWith(byDishesThenId)) {
         sortedWaiters.add(entry.key)
@@ -246,8 +245,7 @@ class FrontOfHouse(
     /** starts driving drivers who just received a full order, and advances already-driving drivers */
     fun processDelivering() = delivering.processDelivering()
 
-    /** whether any driver is currently free to take on a new delivery */
-    // DOTO this function doesn't need to exist
+    /** whether any driver is currently free to take on a new delivery */ // DOTO this function doesn't need to exist
     fun isDriverAvailable(): Boolean = delivering.isDriverAvailable()
 
     /** process eating */
@@ -350,11 +348,11 @@ class FrontOfHouse(
             driver.tripDistance = 0
             driver.distanceDriven = 0
             driver.id = null
-        }
-        // a driver that is still on its way back keeps the id it was given this evening, so the
+        } // a driver that is still on its way back keeps the id it was given this evening, so the
         // counter has to continue above it instead of handing the same id out twice
-        serving.resetDriverIdCounter((drivers.mapNotNull { it.id }.maxOrNull() ?: 0) + 1)
-        // deliveries aborted at the end of the evening happen "without rating or other
+        serving.resetDriverIdCounter(
+            (drivers.mapNotNull { it.id }.maxOrNull() ?: 0) + 1
+        ) // deliveries aborted at the end of the evening happen "without rating or other
         // consequences": the groups must not linger and rate in the next evening
         deliveryGroups.clear()
     }
@@ -363,7 +361,9 @@ class FrontOfHouse(
         if (getInHouseGroups().contains(group)) {
             removeInHouseGroup(group)
         } else if (deliveryGroups.contains(group)) {
-            deliveryGroups.remove(group)
+            // a group that gave up has already rated, but its meals are still cooked and handed to
+            // a driver, so it stays in the list until the evening clears it
+            if (group.currentOrder?.deliveryGivenUp != true) deliveryGroups.remove(group)
         } else if (turnedAwayGroups.contains(group)) {
             turnedAwayGroups.remove(group)
         } else if (group is EventGroup) {
@@ -376,12 +376,14 @@ class FrontOfHouse(
     }
 
     /**
-     * Beep beep I'm a document PLEASE change me
+     * How many drivers the browsing service may still offer this restaurant for a delivery.
+     * A driver that has already been claimed for an order is busy even while it is still waiting
+     * outside for the rest of that order, so only IDLE drivers count
+     * (PartiallyLoadedDriverIsBusySystemTest).
      */
     fun getAvailableDrivers(): Int {
         return drivers.count {
-            it.state == DriverState.IDLE ||
-                it.state == DriverState.WAITING
+            it.state == DriverState.IDLE
         }
     }
 
@@ -403,6 +405,5 @@ class FrontOfHouse(
     }
 
     /** Returns the number of reserved seats for customer group. */
-    fun getReservedSeats(customerGroup: CustomerGroup): Int =
-        customerToTable[customerGroup]?.sumOf { it.size } ?: 0
+    fun getReservedSeats(customerGroup: CustomerGroup): Int = customerToTable[customerGroup]?.sumOf { it.size } ?: 0
 }

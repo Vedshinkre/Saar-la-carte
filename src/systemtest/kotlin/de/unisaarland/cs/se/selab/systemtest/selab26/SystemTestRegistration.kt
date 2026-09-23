@@ -103,7 +103,6 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RegularBeforeC
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RegularGradualCookServingTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RegularRetrySucceedsSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SimulationLifecycleSystemTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.SingleOrCouple
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.StaffIdResetAcrossEveningsSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.StaffLoadBalancingFallbackSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.StaffLoadConcentrationSystemTest
@@ -134,6 +133,8 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.kitchenschedulingtests.Unco
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.CorrectPartialServing2
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.DeliveryBasicDishPriorityA
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.DeliveryBasicDishPriorityB
+import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.IdleCookReuseA
+import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.IdleCookReuseB
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.KitchenCookAssignmentSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.RegularFailedTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.SomeDeliveryTest
@@ -239,7 +240,8 @@ object SystemTestRegistration {
         testSuite.registerTest(EventReservationConflictTest())
         testSuite.registerTest(WaitstaffExhaustionTest())
         testSuite.registerTest(CustomerBehaviourDecisionSystemTest())
-        testSuite.registerTest(SingleOrCouple()) // testSuite.registerTest(RegularRetrySucceedsSystemTest())
+        testSuite.registerTest(IdleCookReuseA())
+        testSuite.registerTest(IdleCookReuseB()) // testSuite.registerTest(RegularRetrySucceedsSystemTest())
         testSuite.registerTest(SimulationLifecycleSystemTest())
         testSuite.registerTest(StatisticsOrderingSystemTest())
         testSuite.registerTest(SupplierProcurementSystemTest())

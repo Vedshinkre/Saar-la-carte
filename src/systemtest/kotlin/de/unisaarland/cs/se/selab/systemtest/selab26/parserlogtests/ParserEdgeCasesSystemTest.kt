@@ -7,8 +7,6 @@ private const val RESTAURANTS_FILE = "restaurants.json"
 
 private fun successLine(file: String) = "[INFO] Initialization Info: $file successfully parsed and validated."
 
-private fun failLine(file: String) = "[IMPORTANT] Initialization Info: $file is invalid."
-
 /**
  * Overlapping UNAVAILABLE incidents are only a conflict when they concern the same ingredient,
  * so overlapping evenings on two different ingredients must be accepted.

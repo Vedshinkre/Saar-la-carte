@@ -25,6 +25,11 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertContains
 
+/**F01: Simulation Coverage Test
+ * SimulationCoverageTest validates lifecycle of Simulation.kt, testing the filtering of regular customer groups
+ * into their assigned restaurants during evening preparation,successful restaurant choice vs. indecision,
+ * evening shutdown causes and boundary conditions such as zero-tick early termination.
+ */
 class SimulationCoverageTest {
 
     private lateinit var output: StringWriter
@@ -50,6 +55,7 @@ class SimulationCoverageTest {
 
     @Test
     fun `regular group is filtered correctly among multiple restaurants`() {
+        //  regular groups are routed to their designated restaurant during evening preparation
         val regularGroup = mock<RegularGroup> {
             on { id } doReturn 77
             on { restaurantId } doReturn 2
@@ -77,6 +83,7 @@ class SimulationCoverageTest {
 
     @Test
     fun `simulation end is exactly at the end of an evening`() {
+        // reaching maxTicks at the end of an evening triggers the proper evening closing event
         Time.maxTicks = 24
         val stats = RestaurantStats(1, RestaurantType.AMERICAN, 1, 24, false, 0, 0, emptyList())
         val rest = mock<Restaurant> { on { getRestaurantStats() } doReturn stats }
@@ -93,6 +100,7 @@ class SimulationCoverageTest {
 
     @Test
     fun `casual group - no eligible restaurant `() {
+        //  a visiting group logs 'No Decision' when the browsing service finds no eligible restaurant
         val casualGroup = mock<CasualGroup> {
             on { id } doReturn 47
             on { isVisitingTonight() } doReturn true
@@ -122,6 +130,7 @@ class SimulationCoverageTest {
 
     @Test
     fun `getRestaurantById- find second restaurant for event group`() {
+        // a group selects and logs the matching restaurant ID returned by the browsing service
         val eventGroup = de.unisaarland.cs.se.selab.customer.EventGroup(
             id = 10,
             size = 4,
@@ -163,6 +172,7 @@ class SimulationCoverageTest {
 
     @Test
     fun `simulation with zero max ticks`() {
+        //  a simulation configured with zero maxTicks immediately terminates and logs final statistics
         Time.maxTicks = 0
         val simulation = Simulation(SimulationConfig()).apply {
             this.restaurants = emptyList()
@@ -177,6 +187,7 @@ class SimulationCoverageTest {
 
     @Test
     fun `simulation initialization with config collections`() {
+        // restaurants, incidents, and customer groups from SimConfig are correctly put into the Simulation
         val mockRestaurant = mock<Restaurant> {
             on { getRestaurantStats() } doReturn RestaurantStats(
                 restaurantId = 1,

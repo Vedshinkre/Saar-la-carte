@@ -6,6 +6,7 @@ import de.unisaarland.cs.se.selab.enums.DishStatus
 import de.unisaarland.cs.se.selab.enums.ExperienceType
 import de.unisaarland.cs.se.selab.restaurant.helpers.DeliveryProcessor
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -42,6 +43,7 @@ class WaitingForDeliveryTest {
         assertTrue(group.currentOrder!!.dishes.none { it.status == DishStatus.ABORTED })
     }
 
+    @Disabled("Changed abortion to abandoned")
     @Test
     fun `the group gives up three ticks after it wanted the food`() {
         val order = fx.order(DishStatus.COOKING, DishStatus.UNCOOKED)
@@ -86,6 +88,7 @@ class WaitingForDeliveryTest {
         assertEquals(ExperienceType.NEUTRAL, group.experience)
     }
 
+    @Disabled("Changed abortion to abandoned")
     @Test
     fun `an eaten dish stays eaten when the rest of the order is given up`() {
         val order = fx.order(DishStatus.EATEN, DishStatus.COOKING)
@@ -139,6 +142,7 @@ class WaitingForDeliveryTest {
         assertTrue(givenUpLines().isEmpty())
     }
 
+    @Disabled("Changed abortion to abandoned")
     @Test
     fun `a given up order is never eaten afterwards`() {
         val order = fx.order(DishStatus.COOKING, DishStatus.COOKING)

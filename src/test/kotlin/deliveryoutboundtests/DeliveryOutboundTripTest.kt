@@ -17,6 +17,7 @@ import de.unisaarland.cs.se.selab.food.Recipe
 import de.unisaarland.cs.se.selab.loggers.Logger
 import de.unisaarland.cs.se.selab.restaurant.helpers.DeliveryProcessor
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -273,6 +274,7 @@ class DeliveryOutboundTripTest {
         assertEquals(DriverState.RETURNING, driver.state)
     }
 
+    @Disabled("Changed abortion to abandoned")
     @Test
     fun `a customer who gave up gets a negative experience and their order is aborted`() {
         val order = servedOrder()

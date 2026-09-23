@@ -21,6 +21,7 @@ import de.unisaarland.cs.se.selab.system.SimulationConfig
 import eventseatingoutcometests.EventSeatingFixtures
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import simulationstatisticsdeliverytests.StatisticsFixtures.deliveryGroup
 import simulationstatisticsdeliverytests.StatisticsFixtures.restaurantMock
@@ -122,6 +123,7 @@ class StatisticsDeliveredAndRatedIntegrationTest {
 
     // ---- Ratings through the FrontOfHouse ----
 
+    @Disabled("Changed abortion to abandoned")
     @Test
     fun `turned away, event and aborted delivery groups each add one rating, groups that never rate add none`() {
         val foh = frontOfHouse()

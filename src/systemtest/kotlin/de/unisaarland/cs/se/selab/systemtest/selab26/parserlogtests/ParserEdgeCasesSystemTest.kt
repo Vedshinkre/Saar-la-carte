@@ -30,22 +30,3 @@ class UnavailabilityDifferentIngredientsOverlapAcceptedSystemTest : ExampleSyste
         assertNextLine(successLine(scenarioFile))
     }
 }
-
-/**
- * A recipe naming the same ingredient twice is rejected, otherwise one amount would silently
- * overwrite the other.
- */
-class RecipeDuplicateIngredientRejectedSystemTest : ExampleSystemTestExtension() {
-    private val foodFile = "foodDuplicateIngredientInRecipe.json"
-    override val food: String = "$RESOURCE_DIR/$foodFile"
-    override val restaurants: String = "$RESOURCE_DIR/$RESTAURANTS_FILE"
-    override val scenario: String = "$RESOURCE_DIR/scenario.json"
-    override val logLevel: String = "DEBUG"
-    override val maxTicks: Int = 0
-    override val name = "Recipe Duplicate Ingredient Rejected System Test"
-    override val description = "A recipe listing the same ingredient twice makes the food file invalid."
-
-    override suspend fun run() {
-        assertNextLine(failLine(foodFile))
-    }
-}

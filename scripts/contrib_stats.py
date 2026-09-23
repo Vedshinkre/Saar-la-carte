@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
-"""Per-person contribution statistics: commits, lines added/removed, and survival rate.
+"""Per-person contribution statistics: commits, lines added/removed, and surviving lines.
 
 Run from anywhere inside the repo:
     python scripts/contrib_stats.py                 # current HEAD
     python scripts/contrib_stats.py --ref origin/main
     python scripts/contrib_stats.py --csv stats.csv
 
-Survival rate = lines still attributed to a person by `git blame` at --ref
-divided by all lines that person ever added (in the same category).
+Surviving = lines still attributed to a person by `git blame` at --ref.
+Share = that person's surviving lines as a percentage of all surviving lines
+in the same category (so each table's Share column adds up to 100%).
 """
 import argparse
 import csv
@@ -129,17 +130,18 @@ def collect_survival(ref, stats):
 
 def build_rows(cat_stats):
     rows = []
+    total_surviving = sum(s["surviving"] for s in cat_stats.values())
     for author, s in cat_stats.items():
         if not any(s.values()):
             continue
-        surv = f"{100 * s['surviving'] / s['added']:.1f}%" if s["added"] else "-"
+        share = f"{100 * s['surviving'] / total_surviving:.1f}%" if total_surviving else "-"
         rows.append([author, s["commits"], s["added"], s["removed"],
-                     s["added"] - s["removed"], s["surviving"], surv])
+                     s["added"] - s["removed"], s["surviving"], share])
     rows.sort(key=lambda r: -r[2])
     return rows
 
 
-HEADER = ["Author", "Commits", "Added", "Removed", "Net", "Surviving", "Survival"]
+HEADER = ["Author", "Commits", "Added", "Removed", "Net", "Surviving", "Share"]
 
 
 def print_table(title, rows):
@@ -147,10 +149,8 @@ def print_table(title, rows):
     if not rows:
         print("(no data)")
         return
-    tot_added = sum(r[2] for r in rows)
-    total = ["TOTAL", "", tot_added, sum(r[3] for r in rows), sum(r[4] for r in rows),
-             sum(r[5] for r in rows),
-             f"{100 * sum(r[5] for r in rows) / tot_added:.1f}%" if tot_added else "-"]
+    total = ["TOTAL", "", sum(r[2] for r in rows), sum(r[3] for r in rows),
+             sum(r[4] for r in rows), sum(r[5] for r in rows), "100.0%"]
     table = [HEADER] + rows + [total]
     widths = [max(len(str(r[i])) for r in table) for i in range(len(HEADER))]
     for i, r in enumerate(table):

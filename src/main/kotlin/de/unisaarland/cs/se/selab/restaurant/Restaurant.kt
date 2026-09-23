@@ -1,7 +1,6 @@
 package de.unisaarland.cs.se.selab.restaurant
 
 import de.unisaarland.cs.se.selab.Constants
-import de.unisaarland.cs.se.selab.Tick
 import de.unisaarland.cs.se.selab.Time
 import de.unisaarland.cs.se.selab.actors.RestaurantStaff
 import de.unisaarland.cs.se.selab.customer.CasualGroup
@@ -46,13 +45,6 @@ class Restaurant(
     }, { it.id })
 
     /**
-     acceptDeliveryOrder returns if the maximum cook ticks of a dish in the order and current tick <= openingEndTick
-     */
-    fun acceptDeliveryOrder(order: Order, openingEndTick: Tick): Boolean {
-        return order.orderedAt == openingEndTick
-    }
-
-    /**
      * sake of detect
      */
     fun getRestaurantStats(): RestaurantStats {
@@ -67,7 +59,9 @@ class Restaurant(
     }
 
     /**
-     * reserves tables for regulars and eventGroups. Plans the ingredients needed for them
+     * Preparation phase of this restaurant: reserves tables for tonight's event groups first and then
+     * for [regularGroups], queues the groups that got a table, plans the ingredients for the evening,
+     * and publishes the free seats and drivers to the browsing service.
      */
     fun prepareForEvening(regularGroups: List<RegularGroup>) {
         val eventGroupsForTonight = eventCustomers.filter { it.isVisitingTonight() }.sortedBy { it.id }
@@ -138,31 +132,20 @@ class Restaurant(
         }
     }
 
-    /**
-     * Refresh available Seats estimate (update map in restaurant stats)
-     */
+    /** Publishes the current free seats per table type to the browsing service. */
     private fun refreshAvailableSeats() {
-        /* val available = frontOfHouse.getAvailableSeats().toMutableMap()
-        customerQueue.filterIsInstance<CasualGroup>()
-            .filter { !it.wantsDelivery }
-            .forEach { available[it.tableType] = (available[it.tableType] ?: 0) - it.size } */
         restaurantStats.availableSeats.putAll(frontOfHouse.getAvailableSeats())
     }
 
-    /**
-     * Refresh availableDrivers inside of restaurantStats
-     */
+    /** Publishes the current number of free drivers to the browsing service. */
     private fun refreshAvailableDrivers() {
-        /* val available = frontOfHouse.getAvailableSeats().toMutableMap()
-        customerQueue.filterIsInstance<CasualGroup>()
-            .filter { !it.wantsDelivery }
-            .forEach { available[it.tableType] = (available[it.tableType] ?: 0) - it.size } */
         restaurantStats.availableDrivers = frontOfHouse.getAvailableDrivers()
     }
 
     /**
-     * The seven tick steps. After the opening time has ended only delivering, eating and rating
-     * may still run and log, so [isBeforeClosing] switches the other four steps off.
+     * Runs the seven steps of a tick. After the opening time only delivering, eating and rating
+     * still run, so [isBeforeClosing] switches the other four off. On the closing tick everyone still
+     * inside is sent out before the rating step, so their ratings belong to this tick.
      */
     private fun simulateOpeningHoursTick(isBeforeClosing: Boolean) {
         frontOfHouse.clearActionLoads()
@@ -189,6 +172,7 @@ class Restaurant(
         }
     }
 
+    /** Runs the rating step and adds the new ratings to both the running and the simulation-only totals. */
     private fun processRatingStep() {
         val previousPositiveRatings = restaurantStats.positiveRatings
         val previousNegativeRatings = restaurantStats.negativeRatings

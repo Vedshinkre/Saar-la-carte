@@ -7,8 +7,14 @@ import de.unisaarland.cs.se.selab.enums.DishStatus
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
- * The order that a customer orders. This class is used as a way to keep track of the status of an order as well.
- * It is created by the Fron Of House and then used
+ * One order of a customer group: its dishes, and the state of the order as it goes through the
+ * kitchen, serving and eating. Order ids count up across the whole run.
+ *
+ * @property firstDishCookedAt the tick the first dish was cooked; starts the partial-serving hold
+ * @property lastDishServedAt the tick the order was first completely served; set by the eating step
+ * @property orderedAt the tick the order was placed
+ * @property deliveryGivenUp set when a delivery group gave up waiting; later delivery attempts fail
+ * @property deliveredAt the tick a driver handed the order over to a delivery group
  */
 class Order(val dishes: List<Dish>) {
     val id: Id = nextId.getAndIncrement()
@@ -19,13 +25,11 @@ class Order(val dishes: List<Dish>) {
     var deliveredAt: Tick? = null
     private var servingStarted: Boolean = false
 
-    /**
-     * object used to set the IDs of orders during the simulation
-     */
+    /** Hands out the order ids. */
     companion object {
         private val nextId = AtomicInteger(1)
 
-        /** restarts order ids at 1; call once per simulation run so ids do not leak between runs */
+        /** Restarts the ids at 1. Called once per simulation run so ids do not leak between runs. */
         fun resetIds() {
             nextId.set(1)
         }
@@ -35,35 +39,30 @@ class Order(val dishes: List<Dish>) {
         require(id >= 1)
     }
 
-    /**
-     * returns true if all dishes have been served, false if not
-     */
+    /** Whether every dish has been served. */
     fun areAllDishesServed(): Boolean {
         return dishes.all { it.status == DishStatus.SERVED }
     }
 
     /**
-     * returns true if serving has started
+     * Whether serving has started: the table has already received dishes, or was once turned down
+     * for lack of waiter capacity. A started order is served piece by piece, without being held back.
      */
     fun hasServingStarted(): Boolean {
         return servingStarted
     }
 
-    /**
-     * returns true if any dish has been served already
-     */
+    /** Marks the order as started (see [hasServingStarted]). */
     fun startServing() {
         servingStarted = true
     }
 
     /**
-     * Clears the "one-by-one serving is under way" flag, but only once every dish really has been
-     * served. A partially served table has to keep the flag so the next tick carries on serving
-     * instead of falling back into the waiting branch (items 109, 110).
+     * Clears the started state (see [hasServingStarted]) once every dish has been served. Until then
+     * it stays, so a partly served table carries on being served in the next tick.
      *
-     * [lastDishServedAt] is deliberately not touched here: it is owned by the eating step, which
-     * uses "still null" to detect the first tick an order is complete
-     * (see [de.unisaarland.cs.se.selab.restaurant.helpers.EatingProcessor]).
+     * [lastDishServedAt] is left to the eating step, which uses it to detect the first tick the order
+     * is complete.
      */
     // DOTO: rename this, maybe checkAndMarkFullyServed
     fun markFullyServed() {
@@ -72,7 +71,10 @@ class Order(val dishes: List<Dish>) {
         }
     }
 
-    /** get dishes in the order that can be served this tick, ordered by basic dishes first then ascending recipe id */
+    /**
+     * The dishes that are cooked and waiting to be served, basic dishes first, then ascending
+     * recipe id. Dishes of customers who walked out are left out.
+     */
     fun getServableDishes(): List<Dish> {
         val cookedDishes = dishes.filter { it.status == DishStatus.COOKED && !it.abandoned }
         return cookedDishes.sortedWith(compareBy({ !it.isBasic }, { it.recipe.id }))
@@ -80,9 +82,7 @@ class Order(val dishes: List<Dish>) {
 
     // functions with logic
 
-    /**
-     * returns List of dishes that have been served from this order
-     */
+    /** The dishes that have been served and are not eaten yet. */
     fun getServedDishes(): List<Dish> {
         val servedDishes = mutableListOf<Dish>()
         for (dish in dishes) {
@@ -93,9 +93,7 @@ class Order(val dishes: List<Dish>) {
         return servedDishes
     }
 
-    /**
-     * returns List of dishes that are uncooked from this order
-     */
+    /** The dishes no cook has started yet. */
     fun getUncookedDishes(): List<Dish> {
         val uncookedDishes = mutableListOf<Dish>()
         for (dish in dishes) {
@@ -106,9 +104,7 @@ class Order(val dishes: List<Dish>) {
         return uncookedDishes
     }
 
-    /**
-     * returns true if all the dishes in this order have been cooked
-     */
+    /** Whether every dish is cooked and none has been served yet. */
     fun areAllDishesCooked(): Boolean {
         for (dish in dishes) {
             if (dish.status != DishStatus.COOKED) {
@@ -119,7 +115,8 @@ class Order(val dishes: List<Dish>) {
     }
 
     /**
-     * returns true if all the dishes in this order have been eaten or aborted
+     * Whether the order is finished: every dish is eaten or aborted. Dishes of customers who
+     * walked out are not waited for.
      */
     fun areAllDishesEaten(): Boolean {
         for (dish in dishes) {
@@ -131,9 +128,7 @@ class Order(val dishes: List<Dish>) {
         return true
     }
 
-    /**
-     * returns true if all the dishes in this order have been served or aborted
-     */
+    /** Whether every dish is served or aborted, so the kitchen can drop the order. */
     fun areAllDishesServedOrAborted(): Boolean {
         for (dish in dishes) {
             val status = dish.status
@@ -146,17 +141,13 @@ class Order(val dishes: List<Dish>) {
         return true
     }
 
-    /**
-     * returns true if 2 ticks have passed since the order has been placed
-     */
+    /** Whether at least 2 ticks have passed since the order was placed. Currently unused. */
     fun needsToBePartiallyServed(): Boolean {
         val currentTime = Time.tick
         return currentTime - orderedAt >= 2
     }
 
-    /**
-     * returns map of dish names to the amount that was ordered
-     */
+    /** How many of each dish were ordered, by dish name, for the ordering log. */
     fun dishNameToAmount(): Map<String, Int> {
         val map = mutableMapOf<String, Int>()
         for (dish in dishes) {

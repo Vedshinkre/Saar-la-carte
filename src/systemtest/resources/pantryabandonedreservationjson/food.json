@@ -1,0 +1,18 @@
+{
+  "ingredients": [
+    { "name": "Saffron", "unit": "g", "packagingVolume": 50, "bestBefore": 10 },
+    { "name": "Rice", "unit": "g", "packagingVolume": 1000, "bestBefore": 10 }
+  ],
+  "recipes": [
+    {
+      "id": 1, "dishName": "Plain Rice", "duration": 40, "basicDishFor": "EUROPEAN",
+      "cookType": ["TOURNANT"],
+      "ingredients": [{ "name": "Rice", "amount": 10 }]
+    },
+    {
+      "id": 2, "dishName": "Slow Paella", "duration": 40,
+      "cookType": ["TOURNANT"],
+      "ingredients": [{ "name": "Saffron", "amount": 50 }]
+    }
+  ]
+}

@@ -16,7 +16,6 @@ import eventseatingoutcometests.EventSeatingFixtures.reserve
 import eventseatingoutcometests.EventSeatingFixtures.table
 import eventseatingoutcometests.EventSeatingFixtures.waiter
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -143,16 +142,23 @@ class EventSeatingOutcomeTest {
         assertEquals(ExperienceType.NEUTRAL, group.experience)
     }
 
-    @Disabled(
-        " Deniz does not do safety checks that " +
-            "eventGroups who did not reserve arrive at the restaurant so the map lookup throws error"
-    )
+    /**
+     * An event group without a reserved table never reaches seating: the preparation phase only
+     * queues the event groups whose reservation succeeded. What happens instead is checked here -
+     * the failed reservation turns the group away with a negative experience and no seating line.
+     */
     @Test
-    fun `an event group without a reserved table does not crash the seating and logs no seating line`() {
+    fun `an event group whose reservation fails is turned away before it can be seated`() {
+        val smallTable = table(1, 2)
         val group = eventGroup(4, 4)
 
-        processor(emptyList(), listOf(waiter())).processArrival(group, menu)
+        val reserved = processor(listOf(smallTable), listOf(waiter())).reserveTables(group)
 
+        assertFalse(reserved)
+        assertTrue(log().contains("FOH No Reserving (R 1): No table could be reserved for group 4."))
+        assertFalse(customerToTable.containsKey(group))
+        assertTrue(turnedAway.contains(group))
+        assertEquals(ExperienceType.NEGATIVE, group.experience)
         assertFalse(log().contains(SEATING_LOG))
     }
 

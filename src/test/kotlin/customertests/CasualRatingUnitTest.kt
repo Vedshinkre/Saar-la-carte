@@ -28,7 +28,7 @@ import kotlin.test.assertTrue
  * tests for F23
  * CASUAL group experience and rating behavior [RatingProcessor] (visiting and delivery timing tested by Deniz)
  */
-class CasualRatingBehaviorTest {
+class CasualRatingUnitTest {
     private lateinit var output: StringWriter
 
     @BeforeTest

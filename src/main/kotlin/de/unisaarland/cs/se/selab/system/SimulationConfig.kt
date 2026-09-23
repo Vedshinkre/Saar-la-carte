@@ -9,9 +9,10 @@ import de.unisaarland.cs.se.selab.restaurant.Restaurant
 import de.unisaarland.cs.se.selab.restaurant.RestaurantStats
 
 /**
- * Class that contains the data of the whole simulation
- * */
-
+ * Everything the parsers produce from the three input files, handed to the [Simulation].
+ *
+ * @property wasInvalidFile set when one of the files failed validation; the simulation is then not run
+ */
 class SimulationConfig {
 
     var restaurants: List<Restaurant> = listOf()

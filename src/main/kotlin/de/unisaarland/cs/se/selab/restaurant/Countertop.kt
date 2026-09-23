@@ -61,17 +61,13 @@ class Countertop(
         return totalAmount
     }
 
-    /**
-     * updates the inventory inside the pantry after a recipe was chosen to order
-     */
+    /** Reserves the ingredients of one [recipe] in the pantry when a customer orders it. */
     fun reserveIngredients(recipe: Recipe) {
         val ingredients = recipe.ingredients
         pantry.reserveIngredients(ingredients)
     }
 
-    /**
-     * adds the order to the Order queue (shared via reference with the kitchen)
-     */
+    /** Queues [newOrder] for the kitchen; the queue is shared with it. */
     fun addOrder(newOrder: Order) {
         orderQueue.add(newOrder)
     }

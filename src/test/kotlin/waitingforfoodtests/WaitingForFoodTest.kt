@@ -23,36 +23,33 @@ class WaitingForFoodTest {
 
     // ---- the wait limits
 
-    // EatingProcessor.handleLeavingCustomers now uses basePatience = UNSERVED_WAIT_TICKS - 1 = 4
-    // ("potential off by one error fix based on OH feedback"), so an unserved customer leaves at
-    // ticksSinceOrder == 4, not 5. That contradicts this test (and the spec text quoted at bug 4 in
-    // docs/testing_status_skerdi.md: "wait for up to 5 ticks"). Not re-enabling until the team confirms
-    // which reading of the spec the -1 is meant to implement.
-    @Disabled("EatingProcessor's unserved-wait threshold is now 4 ticks, not 5 - spec reading unconfirmed")
+    // The ordering tick is the first tick of the patience window, so "wait up to 5 ticks" means the
+    // group is gone at ticksSinceOrder == 4 (confirmed against the reference: PatienceEndsFourTicks...
+    // passes, PatienceEndsFiveTicks... fails) and, when someone was served, at 4 + 2 = 6.
     @Test
-    fun `nobody served - the group still waits four ticks after ordering`() {
+    fun `nobody served - the group does not leave before four ticks after ordering`() {
         val order = fx.order(DishStatus.UNCOOKED, DishStatus.COOKING)
         val group = fx.casual(1, order)
         val processor = fx.eating(listOf(group))
 
-        for (ticks in 0..4) {
+        for (ticks in 0..3) {
             fx.atTicksSinceOrder(ticks)
             processor.processEating()
         }
 
         assertTrue(fx.noEatingLines().isEmpty())
         assertEquals(2, group.customersRemainingInRestaurant)
-        assertTrue(order.dishes.none { it.status == DishStatus.ABORTED })
+        assertTrue(order.dishes.none { it.abandoned })
         assertEquals(ExperienceType.NEUTRAL, group.experience)
     }
 
     @Test
-    fun `nobody served - the whole group leaves five ticks after ordering`() {
+    fun `nobody served - the whole group leaves four ticks after ordering`() {
         val order = fx.order(DishStatus.UNCOOKED, DishStatus.COOKING, DishStatus.UNCOOKED)
         val group = fx.casual(1, order)
         val processor = fx.eating(listOf(group), tables = mapOf(group to 7))
 
-        fx.atTicksSinceOrder(5)
+        fx.atTicksSinceOrder(4)
         processor.processEating()
 
         assertEquals(
@@ -71,7 +68,7 @@ class WaitingForFoodTest {
         val group = fx.casual(1, fx.order(DishStatus.UNCOOKED))
         val processor = fx.eating(listOf(group))
 
-        for (ticks in 5..9) {
+        for (ticks in 4..8) {
             fx.atTicksSinceOrder(ticks)
             processor.processEating()
         }
@@ -86,7 +83,7 @@ class WaitingForFoodTest {
         group.customersRemainingInRestaurant = 2
         val processor = fx.eating(listOf(group))
 
-        fx.atTicksSinceOrder(5)
+        fx.atTicksSinceOrder(4)
         processor.processEating()
 
         assertEquals(
@@ -108,7 +105,7 @@ class WaitingForFoodTest {
         val group = fx.casual(1, order)
         val processor = fx.eating(listOf(group))
 
-        fx.atTicksSinceOrder(5)
+        fx.atTicksSinceOrder(4)
         processor.processEating()
 
         assertEquals(1, fx.noEatingLines().size, "cooked but never served food must not keep customers waiting")
@@ -118,29 +115,30 @@ class WaitingForFoodTest {
 
     // ---- somebody was served: two more ticks
 
-    // same basePatience off-by-one as above: the "someone was served" wait is now 4 + 2 = 6 ticks, not 7
-    @Disabled("EatingProcessor's unserved-wait threshold is now 6 ticks, not 7 - spec reading unconfirmed")
+    // the "someone was served" wait is the 4 ticks plus 2 more = 6 ticks after ordering
     @Test
-    fun `somebody served - the others wait until seven ticks after ordering`() {
+    fun `somebody served - the others wait until six ticks after ordering`() {
         val order = fx.order(DishStatus.SERVED, DishStatus.UNCOOKED, DishStatus.COOKING)
         val group = fx.casual(1, order)
         val processor = fx.eating(listOf(group))
 
-        for (ticks in 5..6) {
+        for (ticks in 4..5) {
             fx.atTicksSinceOrder(ticks)
             processor.processEating()
             assertTrue(fx.noEatingLines().isEmpty(), "still waiting $ticks ticks after ordering")
         }
 
-        fx.atTicksSinceOrder(7)
+        fx.atTicksSinceOrder(6)
         processor.processEating()
 
         assertEquals(
             listOf("[INFO] Restaurant No Eating (R 1): 2 customers of group 1 leave table 1 due to not being served."),
             fx.noEatingLines()
         )
-        assertEquals(DishStatus.ABORTED, order.dishes[1].status)
-        assertEquals(DishStatus.ABORTED, order.dishes[2].status)
+        // the kitchen carries on: the statuses stay, the customers just never get the meals
+        assertEquals(DishStatus.UNCOOKED, order.dishes[1].status)
+        assertEquals(DishStatus.COOKING, order.dishes[2].status)
+        assertTrue(order.dishes[1].abandoned && order.dishes[2].abandoned)
         assertEquals(1, group.customersRemainingInRestaurant)
         assertEquals(ExperienceType.NEGATIVE, group.experience)
     }
@@ -287,16 +285,13 @@ class WaitingForFoodTest {
         assertEquals(0, group.failedAttempts)
     }
 
-    // same basePatience off-by-one: at ticksSinceOrder == 4 the group already leaves and gets a failed
-    // attempt, so this "still waiting" assertion no longer holds
-    @Disabled("EatingProcessor's unserved-wait threshold is now 4 ticks, not 5 - spec reading unconfirmed")
     @Test
     fun `a REGULAR group still waiting keeps its failed attempts`() {
         val group = fx.regular(1, fx.order(DishStatus.UNCOOKED))
         group.failedAttempts = 1
         val processor = fx.eating(listOf(group))
 
-        fx.atTicksSinceOrder(4)
+        fx.atTicksSinceOrder(3)
         processor.processEating()
 
         assertEquals(1, group.failedAttempts)
@@ -315,10 +310,11 @@ class WaitingForFoodTest {
 
     // ---- experience once everything is served
 
-    // EatingProcessor.handleFullyServedOrder now uses `< EXPECTATION_WINDOW_TICKS` instead of `<=`
-    // ("might be counted inclusively, changed <= to <"), so being served exactly 4 ticks after
-    // ordering is NEUTRAL now, not POSITIVE. Same unconfirmed-spec-reading situation as the wait tests.
-    @Disabled("EatingProcessor's positive-experience window is now exclusive of tick 4 - spec reading unconfirmed")
+    // EatingProcessor.handleFullyServedOrder uses `< EXPECTATION_WINDOW_TICKS`, so being served exactly
+    // 4 ticks after ordering is NEUTRAL there. Whether the spec's "before the 4 tick expectation window is
+    // over" makes tick 4 POSITIVE or NEUTRAL is still not confirmed against the reference (the patience
+    // question is settled, this one is not).
+    @Disabled("unconfirmed: is food served exactly 4 ticks after ordering POSITIVE (<=) or NEUTRAL (<)?")
     @Test
     fun `everything served within four ticks is a positive experience`() {
         val group = fx.casual(1, fx.order(DishStatus.SERVED, DishStatus.SERVED))

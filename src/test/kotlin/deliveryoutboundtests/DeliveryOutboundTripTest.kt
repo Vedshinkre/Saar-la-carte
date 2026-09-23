@@ -17,7 +17,6 @@ import de.unisaarland.cs.se.selab.food.Recipe
 import de.unisaarland.cs.se.selab.loggers.Logger
 import de.unisaarland.cs.se.selab.restaurant.helpers.DeliveryProcessor
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -274,9 +273,13 @@ class DeliveryOutboundTripTest {
         assertEquals(DriverState.RETURNING, driver.state)
     }
 
-    @Disabled("Changed abortion to abandoned")
+    /**
+     * Giving up does not abort the meals: the order is only flagged, so a driver already carrying it
+     * still drives it out and fails at the door (GivenUpDeliveryIsStillDrivenOutAndFailsSystemTest,
+     * confirmed against the reference implementation).
+     */
     @Test
-    fun `a customer who gave up gets a negative experience and their order is aborted`() {
+    fun `a customer who gave up gets a negative experience and their order is flagged as given up`() {
         val order = servedOrder()
         val group = deliveryGroup(distance = 13, visitingAt = 5)
         val driver = drivingDriver(group, order, oneWayTicks = 3)
@@ -285,7 +288,8 @@ class DeliveryOutboundTripTest {
         tick(driver, group)
 
         assertEquals(ExperienceType.NEGATIVE, group.experience)
-        assertTrue(order.dishes.all { it.status == DishStatus.ABORTED })
+        assertTrue(order.deliveryGivenUp)
+        assertTrue(order.dishes.all { it.status == DishStatus.SERVED }, "the meals stay with the driver")
     }
 
     @Test

@@ -1,14 +1,16 @@
 package waitingforfoodtests
 
 import de.unisaarland.cs.se.selab.Time
+import de.unisaarland.cs.se.selab.actors.Driver
 import de.unisaarland.cs.se.selab.customer.CustomerGroup
 import de.unisaarland.cs.se.selab.enums.DishStatus
+import de.unisaarland.cs.se.selab.enums.DriverState
 import de.unisaarland.cs.se.selab.enums.ExperienceType
 import de.unisaarland.cs.se.selab.restaurant.helpers.DeliveryProcessor
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
@@ -43,7 +45,6 @@ class WaitingForDeliveryTest {
         assertTrue(group.currentOrder!!.dishes.none { it.status == DishStatus.ABORTED })
     }
 
-    @Disabled("Changed abortion to abandoned")
     @Test
     fun `the group gives up three ticks after it wanted the food`() {
         val order = fx.order(DishStatus.COOKING, DishStatus.UNCOOKED)
@@ -91,7 +92,6 @@ class WaitingForDeliveryTest {
         assertEquals(ExperienceType.NEUTRAL, group.experience)
     }
 
-    @Disabled("Changed abortion to abandoned")
     @Test
     fun `giving up leaves every dish of the order as it was`() {
         val order = fx.order(DishStatus.EATEN, DishStatus.COOKING)
@@ -145,7 +145,30 @@ class WaitingForDeliveryTest {
         assertTrue(givenUpLines().isEmpty())
     }
 
-    @Disabled("Changed abortion to abandoned")
+    @Test
+    fun `a driver still waiting for a given up order is freed`() {
+        val order = fx.order(DishStatus.COOKING, DishStatus.UNCOOKED)
+        val group = fx.deliveryGroup(1, order, visitingAt = 10)
+        val driver = Driver().apply {
+            id = 1
+            state = DriverState.WAITING
+            currentOrder = order
+            targetGroup = group
+        }
+        val processor = DeliveryProcessor(drivers = listOf(driver), deliveryGroups = listOf(group))
+
+        Time.tick = 12
+        processor.processDelivering()
+        assertEquals(DriverState.WAITING, driver.state, "the customers still wait for the food")
+
+        Time.tick = 13
+        processor.processDelivering()
+
+        assertEquals(DriverState.IDLE, driver.state)
+        assertNull(driver.currentOrder)
+        assertNull(driver.targetGroup)
+    }
+
     @Test
     fun `a given up order is never eaten afterwards`() {
         val order = fx.order(DishStatus.COOKING, DishStatus.COOKING)

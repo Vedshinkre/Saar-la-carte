@@ -185,8 +185,9 @@ class WaitingForFoodIntegrationTest {
         assertEquals(1, lines("FOH Escorting").filter { it.contains("group 1") || it.contains("Group 1") }.size)
     }
 
-    // EatingProcessor now uses `< EXPECTATION_WINDOW_TICKS`, so exactly 4 ticks is NEUTRAL, not POSITIVE
-    @Disabled("EatingProcessor's positive-experience window is now exclusive of tick 4 - spec reading unconfirmed")
+    // EatingProcessor uses `< EXPECTATION_WINDOW_TICKS`, so exactly 4 ticks is NEUTRAL there. Whether the
+    // spec makes it POSITIVE (<=) or NEUTRAL (<) is not confirmed against the reference yet.
+    @Disabled("unconfirmed: is food served exactly 4 ticks after ordering POSITIVE (<=) or NEUTRAL (<)?")
     @Test
     fun `food served four ticks after ordering is still a positive experience`() {
         val group = casual(1, size = 2)
@@ -200,21 +201,19 @@ class WaitingForFoodIntegrationTest {
         assertTrue(lines("Restaurant No Eating").isEmpty())
     }
 
-    // basePatience off-by-one (see WaitingForFoodTest): the group already leaves at tick 4 unserved,
-    // before this test gets to tick 6 to serve it late
-    @Disabled("EatingProcessor's unserved-wait threshold is now 4 ticks, not 5 - spec reading unconfirmed")
     @Test
-    fun `food served exactly five ticks after ordering arrives before the group leaves and is neutral`() {
+    fun `food served in the last tick before the patience runs out is served and the group stays`() {
         val group = casual(1, size = 2)
         arrive(group)
 
-        tickUntil(6)
+        tickUntil(5) // ticks 1..4: nothing cooked, the group is still waiting
+        assertTrue(lines("Restaurant No Eating").isEmpty())
         cook(group)
-        tick() // tick 6: serving runs before eating, so the customer is served before the wait check
+        tick() // tick 5 = four ticks after ordering: serving runs before eating, so the wait check finds it served
 
         assertTrue(lines("Restaurant No Eating").isEmpty())
         assertEquals(1, lines("FOH Serving (R 1)").size)
-        assertEquals(ExperienceType.NEUTRAL, group.experience)
+        assertTrue(group.experience != ExperienceType.NEGATIVE, "served before the customers left")
     }
 
     @Test
@@ -231,10 +230,9 @@ class WaitingForFoodIntegrationTest {
 
     // ---- partial service
 
-    // same basePatience off-by-one: the "someone was served" wait is now 4 + 2 = 6 ticks, not 7
-    @Disabled("EatingProcessor's unserved-wait threshold is now 6 ticks, not 7 - spec reading unconfirmed")
+    // the "someone was served" wait is the 4 ticks plus 2 more = 6 ticks after ordering
     @Test
-    fun `partially served group - the unserved customers leave seven ticks after ordering`() {
+    fun `partially served group - the unserved customers leave six ticks after ordering`() {
         val group = casual(1, size = 2)
         arrive(group) // tick 1
         val order = group.currentOrder!!
@@ -245,15 +243,16 @@ class WaitingForFoodIntegrationTest {
         assertTrue(lines("Restaurant No Eating").isEmpty(), "still waiting")
         assertEquals(DishStatus.SERVED, order.dishes[0].status, "partial serving starts after the wait window")
 
-        tickThrough(7) // ticks 4..7: up to six ticks after ordering
+        tickThrough(6) // ticks 4..6: up to five ticks after ordering
         assertTrue(lines("Restaurant No Eating").isEmpty(), "two more ticks after the first meal were served")
 
-        tick() // tick 8 = seven ticks after ordering
+        tick() // tick 7 = six ticks after ordering
         assertEquals(
             listOf("[INFO] Restaurant No Eating (R 1): 1 customers of group 1 leave table 1 due to not being served."),
             lines("Restaurant No Eating")
         )
-        assertEquals(1, group.customersRemainingInRestaurant)
+        // the customer served earlier has finished eating, so the escort phase of the same tick takes them out
+        assertEquals(0, group.customersRemainingInRestaurant)
         assertEquals(ExperienceType.NEGATIVE, group.experience)
         assertTrue(order.dishes.drop(1).all { it.abandoned })
     }

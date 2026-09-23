@@ -3,7 +3,9 @@ package de.unisaarland.cs.se.selab
 import de.unisaarland.cs.se.selab.enums.LogLevel
 
 /**
- * data class that contains all the command line arguments that get passed to main
+ * The parsed command-line arguments.
+ *
+ * @property outputPath the log file, or an empty string to log to stdout
  */
 // rename to CliInfo
 data class Cliinfo(

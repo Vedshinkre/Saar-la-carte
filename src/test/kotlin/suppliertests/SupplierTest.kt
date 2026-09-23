@@ -157,5 +157,4 @@ class SupplierTest {
         val procured = supplier.procure(tomato, 100)
         assertEquals(1, procured.size)
     }
-    // DENIZ continues
 }

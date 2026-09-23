@@ -33,7 +33,7 @@ import kotlin.test.assertTrue
  * unit tests for F21 (FOH - Escorting) for event escorting (with recruited waiters)
  * assigned waiter escorting tested by Deniz
  */
-class EscortingEventWaitersTest {
+class EscortingEventWaitersUnitTest {
     private lateinit var output: StringWriter
 
     @BeforeTest

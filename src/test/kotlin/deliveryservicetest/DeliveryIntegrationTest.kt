@@ -19,11 +19,12 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
+import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
@@ -49,9 +50,6 @@ class DeliveryIntegrationTest {
 
     @Test
     fun `processArrival - delivery group successfully and add to delivery system`() {
-        // test when a delivery group is waiting for their order for long and dont get order
-        // in time , they eave negative review
-        // setup group and order
         val casualGroup = mock<CasualGroup>()
         val order = Order(dishes = emptyList())
 
@@ -66,14 +64,11 @@ class DeliveryIntegrationTest {
             )
         ).thenReturn(true)
 
-        // Force immediate abortion upon processing
         whenever(casualGroup.visitingAt).thenReturn(-999)
 
-        // Register arrival, then process deliveries to trigger the abortion logic
         foh.processArrival(casualGroup, emptyList())
         foh.processDelivering()
 
-        //  The group reached the private delivery queue and was subsequently aborted
         verify(casualGroup).experience = ExperienceType.NEGATIVE
     }
 
@@ -85,17 +80,14 @@ class DeliveryIntegrationTest {
         drivers.add(driver1)
         drivers.add(driver2)
 
-        // Verify false when no drivers are IDLE
         assertFalse(foh.isDriverAvailable())
 
-        // Verify true when at least one driver becomes IDLE
         driver2.state = DriverState.IDLE
         assertTrue(foh.isDriverAvailable())
     }
 
     @Test
     fun `resetDrivers- what happens to drivers when the restaurant closes`() {
-        // active outbound driver (should be reset) and returning driver (should be ignored)
         val recipe = mock<Recipe>()
         val dish1 = Dish(recipe).apply { status = DishStatus.COOKED }
         val dish2 = Dish(recipe).apply { status = DishStatus.EATEN }
@@ -119,10 +111,8 @@ class DeliveryIntegrationTest {
         drivers.add(deliveringDriver)
         drivers.add(returningDriver)
 
-        // Action
         foh.resetDrivers()
 
-        //  Outbound driver is fully reset to IDLE and stats cleared
         assertEquals(DriverState.IDLE, deliveringDriver.state)
         assertNull(deliveringDriver.currentOrder)
         assertNull(deliveringDriver.targetGroup)
@@ -131,75 +121,59 @@ class DeliveryIntegrationTest {
         assertEquals(0, deliveringDriver.tripDistance)
         assertEquals(0, deliveringDriver.distanceDriven)
 
-        //  Active dishes aborted, but eaten dishes remain untouched
         assertEquals(DishStatus.ABORTED, dish1.status)
         assertEquals(DishStatus.EATEN, dish2.status)
 
-        //  Returning driver remains completely unaffected
         assertEquals(DriverState.RETURNING, returningDriver.state)
         assertEquals(10, returningDriver.totalTripTicks)
     }
 
     @Test
     fun `processEating - covers all delivery eating scenarios`() {
-        // Set a static tick for controlled timing
         de.unisaarland.cs.se.selab.Time.tick = 10
 
-        //  deliveredAt is null
         val groupNotDelivered = mock<CasualGroup>()
         val orderNotDelivered = mock<Order>()
         whenever(orderNotDelivered.deliveredAt).thenReturn(null)
         whenever(orderNotDelivered.areAllDishesEaten()).thenReturn(false)
         setupDeliveryGroupArrival(groupNotDelivered, orderNotDelivered, id = 1)
 
-        // Order already fully eaten
         val groupAllEaten = mock<CasualGroup>()
         val orderAllEaten = mock<Order>()
         whenever(orderAllEaten.deliveredAt).thenReturn(8)
         whenever(orderAllEaten.areAllDishesEaten()).thenReturn(true)
         setupDeliveryGroupArrival(groupAllEaten, orderAllEaten, id = 2)
 
-        // Delivered EXACTLY now & dishes are SERVED
         val groupJustDelivered = mock<CasualGroup>()
         val orderJustDelivered = mock<Order>()
         val dishServed = mock<Dish>()
         whenever(dishServed.status).thenReturn(DishStatus.SERVED)
 
         whenever(orderJustDelivered.deliveredAt).thenReturn(10)
-        // First check returns false, second check at the end returns true to log finished eating!
         whenever(orderJustDelivered.areAllDishesEaten()).thenReturn(false, true)
         whenever(orderJustDelivered.dishes).thenReturn(listOf(dishServed, dishServed))
         setupDeliveryGroupArrival(groupJustDelivered, orderJustDelivered, id = 3)
 
-        //  Delivered in the past & dishes NOT SERVED
-        // (Should NOT increment foh stats, should NOT update eating)
         val groupOldDelivery = mock<CasualGroup>()
         val orderOldDelivery = mock<Order>()
         val dishNotServed = mock<Dish>()
-        whenever(dishNotServed.status).thenReturn(DishStatus.EATEN) // Not SERVED
+        whenever(dishNotServed.status).thenReturn(DishStatus.EATEN)
 
-        whenever(orderOldDelivery.deliveredAt).thenReturn(9) // Past tick
+        whenever(orderOldDelivery.deliveredAt).thenReturn(9)
         whenever(orderOldDelivery.areAllDishesEaten()).thenReturn(false, false)
         whenever(orderOldDelivery.dishes).thenReturn(listOf(dishNotServed))
         setupDeliveryGroupArrival(groupOldDelivery, orderOldDelivery, id = 4)
 
-        // ACTION: Process eating for all groups
         foh.processEating()
 
-        // ASSERTIONS
-        verify(orderNotDelivered, org.mockito.kotlin.never()).dishes
-        verify(orderAllEaten, org.mockito.kotlin.never()).dishes
+        verify(orderNotDelivered, never()).dishes
+        verify(orderAllEaten, never()).dishes
 
-        // deliveredAt == Time.tick (10), so FOH recorded 2 customers delivered
         assertEquals(2, foh.numberOfCustomersDelivered)
-        // The 2 SERVED dishes had updateEating() called on them
-        verify(dishServed, org.mockito.kotlin.times(2)).updateEating()
-
-        // Dish was already EATEN, so updateEating was NOT called
-        verify(dishNotServed, org.mockito.kotlin.never()).updateEating()
+        verify(dishServed, times(2)).updateEating()
+        verify(dishNotServed, never()).updateEating()
     }
 
-    // Helper function to keep the test clean
     private fun setupDeliveryGroupArrival(group: CasualGroup, order: Order, id: Int) {
         whenever(group.id).thenReturn(id)
         whenever(group.wantsDelivery).thenReturn(true)
@@ -216,13 +190,11 @@ class DeliveryIntegrationTest {
 
         val group = mock<CasualGroup>()
 
-        //  Define mockOrder
         val mockOrder = mock<Order>()
         whenever(mockOrder.id).thenReturn(1)
         whenever(mockOrder.getServableDishes()).thenReturn(listOf(dish))
         whenever(mockOrder.areAllDishesCooked()).thenReturn(false)
 
-        //  Point currentOrder same mockOrder instance
         val driver = Driver().apply {
             state = DriverState.WAITING
             targetGroup = group
@@ -231,7 +203,6 @@ class DeliveryIntegrationTest {
         }
         drivers.add(driver)
 
-        //  Create FOH with the waiter and the driver
         val localFoh = FrontOfHouse(
             tables = emptyList(),
             waiters = listOf(waiter),
@@ -247,7 +218,6 @@ class DeliveryIntegrationTest {
         localFoh.processArrival(group, emptyList())
         localFoh.processServing()
 
-        // Verifications
         assertEquals(DriverState.WAITING, driver.state)
         assertEquals(1, waiter.getTickLoad(ActionType.SERVE))
     }
@@ -270,7 +240,6 @@ class DeliveryIntegrationTest {
         whenever(mockOrder.getServableDishes()).thenReturn(listOf(dish))
         whenever(mockOrder.areAllDishesCooked()).thenReturn(true)
 
-        // Group with no free driver available
         val groupNoDriver = mock<CasualGroup>()
         whenever(groupNoDriver.id).thenReturn(1)
         whenever(groupNoDriver.wantsDelivery).thenReturn(true)
@@ -278,64 +247,16 @@ class DeliveryIntegrationTest {
         whenever(groupNoDriver.placeOrder(any(), any(), any())).thenReturn(true)
         localFoh.processArrival(groupNoDriver, emptyList())
 
-        //  Group whose currentOrder returns null during loop execution
         val groupNullOrder = mock<CasualGroup>()
         whenever(groupNullOrder.id).thenReturn(2)
         whenever(groupNullOrder.wantsDelivery).thenReturn(true)
-        // First returns mockOrder for isReadyForHandOver filter, then null inside the loop
         whenever(groupNullOrder.currentOrder).thenReturn(mockOrder, null)
         whenever(groupNullOrder.placeOrder(any(), any(), any())).thenReturn(true)
         localFoh.processArrival(groupNullOrder, emptyList())
 
         localFoh.processServing()
 
-        // Assert no driver was transitioned to WAITING because none were IDLE
         assertEquals(DriverState.DELIVERING, busyDriver.state)
-    }
-
-    @Disabled
-    @Test
-    fun `serveDeliveryGroups - idle driver with existing id and no available waiter breaks handover`() {
-        // Waiter has already reached ACTION_LIMIT for SERVE (tickLoad = 10)
-        val busyWaiter = Waiter().apply {
-            addToTickLoad(ActionType.SERVE, 10)
-        }
-        // Driver already has an ID assigned
-        val idleDriverWithId = Driver().apply {
-            state = DriverState.IDLE
-            id = 5
-        }
-        drivers.add(idleDriverWithId)
-
-        val localFoh = FrontOfHouse(
-            tables = emptyList(),
-            waiters = listOf(busyWaiter),
-            drivers = drivers,
-            countertop = countertop
-        )
-
-        val recipe = mock<Recipe> { whenever(it.name).thenReturn("Salad") }
-        val dish = Dish(recipe).apply { status = DishStatus.COOKED }
-        val order = Order(listOf(dish))
-
-        val group = mock<CasualGroup>()
-        whenever(group.id).thenReturn(1)
-        whenever(group.wantsDelivery).thenReturn(true)
-        whenever(group.currentOrder).thenReturn(order)
-        whenever(group.placeOrder(any(), any(), any())).thenReturn(true)
-
-        localFoh.processArrival(group, emptyList())
-        localFoh.processServing()
-
-        // Nobody could hand anything over, so the driver is left alone: it keeps the id it already
-        // had and stays IDLE, free to be claimed in a later tick when a waiter has capacity again.
-        // A driver only becomes WAITING once it actually receives meals, because the spec hands out
-        // driver ids "at the moment they receive meals".
-        assertEquals(5, idleDriverWithId.id)
-        // DOTO: based on AB test results maybe change WAITING to IDLE
-        assertEquals(DriverState.WAITING, idleDriverWithId.state)
-        // But meals were not served because the waiter had no remaining capacity
-        assertEquals(DishStatus.COOKED, dish.status)
     }
 
     @Test
@@ -347,14 +268,12 @@ class DeliveryIntegrationTest {
             countertop = countertop
         )
 
-        // Group with empty servable dishes
         val groupEmptyDishes = mock<CasualGroup>()
         val orderEmptyDishes = mock<Order>()
         whenever(orderEmptyDishes.id).thenReturn(1)
         whenever(orderEmptyDishes.getServableDishes()).thenReturn(emptyList())
         setupDeliveryGroupArrival(groupEmptyDishes, orderEmptyDishes, id = 1)
 
-        // Group with uncooked dishes and no driver carrying it
         val groupUncooked = mock<CasualGroup>()
         val orderUncooked = mock<Order>()
         val dish = mock<Dish>()
@@ -365,7 +284,121 @@ class DeliveryIntegrationTest {
 
         localFoh.processServing()
 
-        // Neither order should be processed or handed over
         assertTrue(drivers.isEmpty())
+    }
+
+    // --- NAYE COVERAGE TESTS ---
+
+    @Test
+    fun `releaseStrandedDrivers - releases driver when order has aborted dishes`() {
+        val strandedDriver = Driver().apply {
+            state = DriverState.WAITING
+            id = 1
+        }
+
+        val recipe = mock<Recipe>()
+        val abortedDish = Dish(recipe).apply { status = DishStatus.ABORTED }
+        val cookedDish = Dish(recipe).apply { status = DishStatus.COOKED }
+        val order = Order(listOf(abortedDish, cookedDish))
+
+        val casualGroup = mock<CasualGroup>()
+        strandedDriver.currentOrder = order
+        strandedDriver.targetGroup = casualGroup
+        drivers.add(strandedDriver)
+
+        foh.processDelivering()
+
+        assertEquals(DriverState.IDLE, strandedDriver.state)
+        assertNull(strandedDriver.currentOrder)
+        assertNull(strandedDriver.targetGroup)
+    }
+
+    @Test
+    fun `releaseStrandedDrivers - skips drivers with null order or without aborted dishes`() {
+        val driverNullOrder = Driver().apply {
+            state = DriverState.WAITING
+            currentOrder = null
+        }
+
+        val recipe = mock<Recipe>()
+        val normalDish = Dish(recipe).apply { status = DishStatus.COOKED }
+        val orderNormal = Order(listOf(normalDish))
+
+        val driverNormalOrder = Driver().apply {
+            state = DriverState.WAITING
+            currentOrder = orderNormal
+        }
+
+        drivers.add(driverNullOrder)
+        drivers.add(driverNormalOrder)
+
+        foh.processDelivering()
+
+        assertEquals(DriverState.WAITING, driverNullOrder.state)
+        assertEquals(DriverState.WAITING, driverNormalOrder.state)
+    }
+
+    @Test
+    fun `prepareDelivery - safely returns when driver fields are missing`() {
+        val driverNoId = Driver().apply {
+            state = DriverState.WAITING
+            id = null
+            val mockOrder = mock<Order>()
+            whenever(mockOrder.areAllDishesServed()).thenReturn(true)
+            currentOrder = mockOrder
+            targetGroup = mock<CasualGroup>()
+        }
+
+        val driverNoGroup = Driver().apply {
+            state = DriverState.WAITING
+            id = 2
+            val mockOrder = mock<Order>()
+            whenever(mockOrder.areAllDishesServed()).thenReturn(true)
+            currentOrder = mockOrder
+            targetGroup = null
+        }
+
+        val driverNoOrder = Driver().apply {
+            state = DriverState.WAITING
+            id = 3
+            currentOrder = null
+            targetGroup = mock<CasualGroup>()
+        }
+
+        drivers.add(driverNoId)
+        drivers.add(driverNoGroup)
+        drivers.add(driverNoOrder)
+
+        foh.processDelivering()
+
+        assertEquals(DriverState.WAITING, driverNoId.state)
+        assertEquals(DriverState.WAITING, driverNoGroup.state)
+        assertEquals(DriverState.WAITING, driverNoOrder.state)
+    }
+
+    @Test
+    fun `prepareDelivery - successfully prepares delivery for valid waiting driver`() {
+        val casualGroup = mock<CasualGroup>()
+        whenever(casualGroup.id).thenReturn(10)
+        whenever(casualGroup.deliveryDistance).thenReturn(15)
+
+        val mockOrder = mock<Order>()
+        whenever(mockOrder.id).thenReturn(20)
+        whenever(mockOrder.areAllDishesServed()).thenReturn(true)
+
+        val readyDriver = Driver().apply {
+            state = DriverState.WAITING
+            id = 1
+            targetGroup = casualGroup
+            currentOrder = mockOrder
+        }
+        drivers.add(readyDriver)
+
+        foh.processDelivering()
+
+        assertEquals(DriverState.DELIVERING, readyDriver.state)
+        assertEquals(15, readyDriver.tripDistance)
+        assertEquals(3, readyDriver.ticksToDest)
+        assertEquals(6, readyDriver.totalTripTicks)
     }
 }

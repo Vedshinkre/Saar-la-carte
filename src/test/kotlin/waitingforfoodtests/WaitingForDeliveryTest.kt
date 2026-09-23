@@ -57,7 +57,10 @@ class WaitingForDeliveryTest {
             listOf("[INFO] Delivery Given Up (R 1): Group 1 gave up on waiting for delivery of order ${order.id}."),
             givenUpLines()
         )
-        assertTrue(order.dishes.all { it.status == DishStatus.ABORTED })
+        // the kitchen is not told: the meals carry on being cooked and are driven out, only to be
+        // refused at the door (GivenUpDeliveryIsStillCookedSystemTest)
+        assertTrue(order.deliveryGivenUp)
+        assertTrue(order.dishes.none { it.status == DishStatus.ABORTED })
         assertEquals(ExperienceType.NEGATIVE, group.experience)
     }
 
@@ -90,7 +93,7 @@ class WaitingForDeliveryTest {
 
     @Disabled("Changed abortion to abandoned")
     @Test
-    fun `an eaten dish stays eaten when the rest of the order is given up`() {
+    fun `giving up leaves every dish of the order as it was`() {
         val order = fx.order(DishStatus.EATEN, DishStatus.COOKING)
         val group = fx.deliveryGroup(1, order, visitingAt = 10)
         val processor = delivery(group)
@@ -99,7 +102,7 @@ class WaitingForDeliveryTest {
         processor.processDelivering()
 
         assertEquals(DishStatus.EATEN, order.dishes[0].status)
-        assertEquals(DishStatus.ABORTED, order.dishes[1].status)
+        assertEquals(DishStatus.COOKING, order.dishes[1].status)
     }
 
     @Test
@@ -160,7 +163,8 @@ class WaitingForDeliveryTest {
 
         assertTrue(delivered.isEmpty())
         assertTrue(fx.logLinesContaining("Delivery Finished Eating").isEmpty())
-        assertTrue(order.dishes.all { it.status == DishStatus.ABORTED })
+        // the meals are still cooking for a delivery that will be refused on arrival
+        assertTrue(order.dishes.all { it.status == DishStatus.COOKING })
     }
 
     @Test

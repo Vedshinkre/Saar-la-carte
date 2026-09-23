@@ -6,8 +6,6 @@ import de.unisaarland.cs.se.selab.customer.EventGroup
 import de.unisaarland.cs.se.selab.customer.FoodPreference
 import de.unisaarland.cs.se.selab.food.Recipe
 
-const val FIVE = 5.0
-
 /**
  * manages browsingService
  */
@@ -31,12 +29,10 @@ class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
             return getEligibleRestaurantForDineIn(group)
         }
         val openRestaurants = collectOpenRestaurants(group)
-        val travelTicks = kotlin.math.ceil(group.deliveryDistance.toDouble() / FIVE).toInt()
-        val cookingFinishTick = group.visitingAt - travelTicks - 3
 
         val deliveryCandidates = mutableListOf<RestaurantStats>()
         for (stats in openRestaurants) {
-            if (stats.availableDrivers > 0 && cookingFinishTick <= stats.openingTickEnd) {
+            if (stats.availableDrivers > 0) {
                 deliveryCandidates.add(stats)
             }
         }

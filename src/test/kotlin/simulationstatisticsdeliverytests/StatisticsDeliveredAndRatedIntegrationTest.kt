@@ -1,5 +1,6 @@
 package simulationstatisticsdeliverytests
 
+import de.unisaarland.cs.se.selab.Constants
 import de.unisaarland.cs.se.selab.Time
 import de.unisaarland.cs.se.selab.actors.Driver
 import de.unisaarland.cs.se.selab.actors.RestaurantStaff
@@ -21,7 +22,6 @@ import de.unisaarland.cs.se.selab.system.SimulationConfig
 import eventseatingoutcometests.EventSeatingFixtures
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import simulationstatisticsdeliverytests.StatisticsFixtures.deliveryGroup
 import simulationstatisticsdeliverytests.StatisticsFixtures.restaurantMock
@@ -123,9 +123,12 @@ class StatisticsDeliveredAndRatedIntegrationTest {
 
     // ---- Ratings through the FrontOfHouse ----
 
-    @Disabled("Changed abortion to abandoned")
+    /**
+     * A delivery group rates once, in the tick it gives up (its wanted tick plus the three ticks it
+     * waits), and not because its meals are aborted.
+     */
     @Test
-    fun `turned away, event and aborted delivery groups each add one rating, groups that never rate add none`() {
+    fun `turned away, event and given-up delivery groups each add one rating, groups that never rate add none`() {
         val foh = frontOfHouse()
         val regular = RegularGroup(1, 2, TableType.COMMON, 1, emptyList(), 1, 1, 1)
         val event = EventSeatingFixtures.eventGroup(2, 2)
@@ -135,8 +138,9 @@ class StatisticsDeliveredAndRatedIntegrationTest {
         val silent = cookedDelivery(foh, deliveryGroup(id = 4, likelihood = RatingLikelihood.NEVER))
         listOf(rating, silent).forEach { group ->
             group.experience = ExperienceType.NEGATIVE
-            requireNotNull(group.currentOrder).dishes.forEach { it.status = DishStatus.ABORTED }
+            requireNotNull(group.currentOrder).deliveryGivenUp = true
         }
+        Time.tick = rating.visitingAt + Constants.CUSTOMER_DELIVERY_WAIT_TICKS
 
         val (positive, negative) = foh.processRatings(RATINGS_BEFORE, NEGATIVE_BEFORE)
 

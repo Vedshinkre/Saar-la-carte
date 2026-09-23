@@ -137,9 +137,9 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.kitchenschedulingtests.Lowe
 import de.unisaarland.cs.se.selab.systemtest.selab26.kitchenschedulingtests.NonBasicDishesTieBreakByAscendingIdSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.kitchenschedulingtests.TieBreakSameCookTypeByLowestExistingIdSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.kitchenschedulingtests.UncookableDishIsSkippedForCookableOneSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.CookIdTieBreakHighestIdB
+import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.CookIdTieBreakLowestIdA
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.CorrectPartialServing2
-import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.DeliveryBasicDishPriorityA
-import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.DeliveryBasicDishPriorityB
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.IdleCookReuseA
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.IdleCookReuseB
 import de.unisaarland.cs.se.selab.systemtest.selab26.losttest.KitchenCookAssignmentSystemTest
@@ -310,8 +310,8 @@ object SystemTestRegistration {
         registerReservedForMeProbes(testSuite)
         registerPatienceAbProbes(testSuite)
         testSuite.registerTest(SomeDeliveryTest())
-        testSuite.registerTest(DeliveryBasicDishPriorityB())
-        testSuite.registerTest(DeliveryBasicDishPriorityA())
+        testSuite.registerTest(CookIdTieBreakHighestIdB())
+        testSuite.registerTest(CookIdTieBreakLowestIdA())
         testSuite.registerTest(KitchenCookAssignmentSystemTest())
         testSuite.registerTest(CorrectPartialServing2())
     }

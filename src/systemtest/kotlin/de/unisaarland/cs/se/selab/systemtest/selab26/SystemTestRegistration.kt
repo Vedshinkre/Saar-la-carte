@@ -346,6 +346,8 @@ object SystemTestRegistration {
         registerVladSimulationMutantTests(testSuite)
         fullScenarioSystemTests(true).forEach { testSuite.registerTest(it) }
         testSuite.registerTest(CasualGroupRatingSystemTest())
+        testSuite.registerTest(RegularFailedTest())
+        testSuite.registerTest(KitchenCookAssignmentSystemTest())
     }
 
     /**

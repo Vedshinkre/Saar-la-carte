@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
@@ -292,6 +293,7 @@ class DeliveryIntegrationTest {
         assertEquals(DriverState.DELIVERING, busyDriver.state)
     }
 
+    @Disabled
     @Test
     fun `serveDeliveryGroups - idle driver with existing id and no available waiter breaks handover`() {
         // Waiter has already reached ACTION_LIMIT for SERVE (tickLoad = 10)

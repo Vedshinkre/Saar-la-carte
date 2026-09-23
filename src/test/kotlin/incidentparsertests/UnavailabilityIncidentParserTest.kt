@@ -55,6 +55,7 @@ class UnavailabilityIncidentParserTest {
 
     @Test
     fun `unavailable Incident-Missing Ingredient Property-Fails`() {
+        //  parsing fails with IllegalArgumentException when the required ingredient property is missing
         val jsonArray = buildJsonArray {
             addJsonObject {
                 put("id", 1)
@@ -70,6 +71,7 @@ class UnavailabilityIncidentParserTest {
 
     @Test
     fun `unavailable Incident-Unknown Ingredient Name-Fails`() {
+        //  parsing fails with IllegalArgumentException when  specified ingredient name is not in the ingredient list
         val jsonArray = buildJsonArray {
             addJsonObject {
                 put("id", 2)
@@ -86,6 +88,7 @@ class UnavailabilityIncidentParserTest {
 
     @Test
     fun `unavailable Incident-Missing Duration Property-Fails`() {
+        //  parsing fails with IllegalArgumentException when the required duration property is missing
         val jsonArray = buildJsonArray {
             addJsonObject {
                 put("id", 3)

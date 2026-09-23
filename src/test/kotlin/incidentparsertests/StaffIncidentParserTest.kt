@@ -15,6 +15,12 @@ import kotlinx.serialization.json.put
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
+/** F06: Staff Incident Parser Test
+ * StaffIncidentParserTest validates the negative schema and paths handling of IncidentParser for STAFF incidents,
+ * verifying that jsons that miss valid terms ,have invalid enum values (staffType, cookType, type),
+ * non-integer quantities, invalid restaurant IDs, and missing conditional cook attributes—consistently trigger
+ * an IllegalArgumentException.
+ */
 class StaffIncidentParserTest {
     private val parser: IncidentParser = IncidentParser()
 
@@ -66,7 +72,7 @@ class StaffIncidentParserTest {
     )
 
     // EXCEPTION tests (Negative case scenarios)
-
+//  parsing fails with IllegalArgumentException when staffType contains an unrecognized enum value
     @Test
     fun `staff Incident-Unknown Staff type Enum-Fails`() {
         val jsonArray = buildJsonArray {
@@ -86,6 +92,7 @@ class StaffIncidentParserTest {
 
     @Test
     fun `staff Incident-Missing Restaurant Property-Fails`() {
+        // parsing fails with IllegalArgumentException when the restaurant property is missinng
         val jsonArray = buildJsonArray {
             addJsonObject {
                 put("id", 2)
@@ -102,6 +109,7 @@ class StaffIncidentParserTest {
 
     @Test
     fun `staff Incident-Unknown Restaurant Id-Fails`() {
+        // parsing fails with IllegalArgumentException when the restaurant ID does not exist
         val jsonArray = buildJsonArray {
             addJsonObject {
                 put("id", 3)
@@ -119,6 +127,7 @@ class StaffIncidentParserTest {
 
     @Test
     fun `staff Incident-Negative Restaurant Id-Fails`() {
+        // parsing fails with IllegalArgumentException when the restaurant ID is negative
         val jsonArray = buildJsonArray {
             addJsonObject {
                 put("id", 4)
@@ -136,6 +145,7 @@ class StaffIncidentParserTest {
 
     @Test
     fun `staff Incident-Cook Missing Cook Type-Fails`() {
+        // parsing fails with IllegalArgumentException when staffType is COOK but the cookType field is omitted
         val jsonArray = buildJsonArray {
             addJsonObject {
                 put("id", 5)
@@ -153,6 +163,7 @@ class StaffIncidentParserTest {
 
     @Test
     fun `staff Incident-Cook Invalid Cook Type Enum-Fails`() {
+        // parsing fails with IllegalArgumentException when cookType contains an invalid cook type
         val jsonArray = buildJsonArray {
             addJsonObject {
                 put("id", 6)
@@ -171,6 +182,7 @@ class StaffIncidentParserTest {
 
     @Test
     fun `staff Incident-Missing Number Property-Fails`() {
+//  parsing fails with IllegalArgumentException when the required staff count number property is missing
         val jsonArray = buildJsonArray {
             addJsonObject {
                 put("id", 7)
@@ -187,6 +199,7 @@ class StaffIncidentParserTest {
 
     @Test
     fun `staff Incident-Non Integer Number-Fails`() {
+        //  parsing fails with IllegalArgumentException when the number property is a string rather than integer
         val jsonArray = buildJsonArray {
             addJsonObject {
                 put("id", 8)
@@ -204,6 +217,7 @@ class StaffIncidentParserTest {
 
     @Test
     fun `staff Incident-Missing Evening-Fails`() {
+        // parsing fails with IllegalArgumentException when the required evening property is missing
         val jsonArray = buildJsonArray {
             addJsonObject {
                 put("id", 9)
@@ -221,6 +235,7 @@ class StaffIncidentParserTest {
 
     @Test
     fun `staff Incident-Missing Id-Fails`() {
+        // parsing fails with IllegalArgumentException when the required incident id property is missing
         val jsonArray = buildJsonArray {
             addJsonObject {
                 put("evening", 1)
@@ -237,6 +252,7 @@ class StaffIncidentParserTest {
 
     @Test
     fun `staff Incident-Missing Type Property-Fails`() {
+        // parsing fails with IllegalArgumentException when the required incident type property is missing
         val jsonArray = buildJsonArray {
             addJsonObject {
                 put("id", 11)
@@ -253,6 +269,7 @@ class StaffIncidentParserTest {
 
     @Test
     fun `staff Incident-Missing StaffType Property-Fails`() {
+        // parsing fails with IllegalArgumentException when the required staffType property is missing
         val jsonArray = buildJsonArray {
             addJsonObject {
                 put("id", 12)
@@ -269,6 +286,7 @@ class StaffIncidentParserTest {
 
     @Test
     fun `staff Incident-Unknown Incident Type Enum-Fails`() {
+        // parsing fails with IllegalArgumentException when the incident type is an unknown enum value
         val jsonArray = buildJsonArray {
             addJsonObject {
                 put("id", 18)

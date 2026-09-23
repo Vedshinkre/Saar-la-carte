@@ -58,7 +58,7 @@ class FrontOfHouse(
     private val inHouseGroupsToWaiter: MutableMap<CustomerGroup, Waiter> = mutableMapOf()
     private val eventGroups: MutableList<EventGroup> = mutableListOf()
     private val deliveryGroups: MutableList<CustomerGroup> = mutableListOf()
-    val turnedAwayGroups: MutableList<CustomerGroup> = mutableListOf()
+    private val turnedAwayGroups: MutableList<CustomerGroup> = mutableListOf()
 
     // statistics
     var numberOfCustomersDelivered: Int = 0
@@ -318,6 +318,7 @@ class FrontOfHouse(
         }
 
         inHouseGroupsToWaiter.clear()
+        turnedAwayGroups.clear()
         resetWaiters()
     }
 

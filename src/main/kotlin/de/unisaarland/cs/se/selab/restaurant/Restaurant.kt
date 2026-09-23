@@ -186,7 +186,6 @@ class Restaurant(
         processRatingStep()
         if (isClosingTick) {
             endOfOpeningTime()
-            frontOfHouse.turnedAwayGroups.clear()
         }
     }
 

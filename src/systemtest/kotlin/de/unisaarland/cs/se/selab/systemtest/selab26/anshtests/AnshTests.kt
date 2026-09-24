@@ -17,6 +17,7 @@ fun anshTests(): List<SystemTestSELab26> = FoodParsingSystemTests.all() + listOf
     EventsSystemTest(),
     EventSeatingSystemTest(),
     ThoroughTest(),
+    EnormousTest(),
     MeticulousTest(),
 )
 

@@ -63,6 +63,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualMergeTri
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualNoDecisionNoSpaceTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualTableExclusionSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualTableNoLiftSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualTableTypesNeverMixSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualTiebreakLowestIdTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CookChangeNoOrderTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CorrectPartialServing1
@@ -133,6 +134,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.UnavailableInc
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.WaiterLoadReleasedOnLeavingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.WaitingForFoodSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.WaitstaffExhaustionTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.deliveryDriverFlowSystemTests
 import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentNegativePackagingVolumeRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentNoNameRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentNonUniqueIdsRejectedSystemTest
@@ -507,6 +509,8 @@ object SystemTestRegistration {
         testSuite.registerTest(TableReservationSingleTableSystemTest())
         testSuite.registerTest(TableReservationMergeSystemTest())
         testSuite.registerTest(TableTypeRestrictionsSystemTest())
+        testSuite.registerTest(CasualTableTypesNeverMixSystemTest())
+        deliveryDriverFlowSystemTests().forEach { testSuite.registerTest(it) }
         testSuite.registerTest(TableReservationConflictsSystemTest())
         testSuite.registerTest(EventTableMergingSystemTest())
         testSuite.registerTest(CasualTableNoLiftSystemTest())

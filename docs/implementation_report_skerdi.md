@@ -1,7 +1,5 @@
 # Implementation report - Skerdi Cuka (draft to paste into `implementation_report.md`)
 
-Everything below is taken from `feature_assignments.yaml` and `git log` / `git blame`. Days are the commit dates.
-
 ## 1. Features implemented by me
 
 | Feature | What | Where the code lies |
@@ -19,7 +17,6 @@ Only changes that fixed behaviour are listed, not formatting or merge commits.
 
 | Feature / owner | My change | Commit / day |
 |---|---|---|
-| Kitchen reset, F10-F12 (Ved) | reset kitchen at the end of the evening; call `applyUnavailableDurations` in the reset; clear `orderedAtByOrderId`; runtime error during reset | `122bfec` Tue 15 Sep, `ee33929` Thu 17 Sep, `eb69350` Thu 17 Sep, `65f4c6b` Fri 18 Sep |
 | Pantry, F09 (Ved) | expired packages were still counted | `1122229` Fri 18 Sep |
 | Incidents, F32/F33 (Atharva) | unavailability was applied per restaurant instead of once per evening | `b550491` Sat 19 Sep |
 | Drivers / delivery, F20 (Ansh) | drivers are removed at the end of the evening; driver id counter is reset | `94fce0e` Wed 16 Sep, `6b5ea26` Mon 21 Sep, `2245919` Tue 22 Sep |
@@ -55,11 +52,6 @@ My own features F02, F13, F21, F30, P04, P05 are tested by the members named as 
 | `servingoutcometests` | `StaggeredOrderWaitWindowTest` | F27 waiting window |
 | `escortingtests` | `WaiterEscortTest` | F21 escorting |
 
-No test of mine carries `@Disabled` any more. Changes made for this:
-- `FoodParserTest`: the disabled ingredient test passes as it is; the test for a recipe ingredient whose `unit` differs from the ingredient was removed, because it needs a schema change (`recipe.schema` accepts unknown keys) and nobody adds more code.
-- `FoodParserIntegrationTest`: the restaurant fixture path pointed to a deleted file, now `src/systemtest/resources/RestaurantParserTests/Restaurants.json`; the food fixture had an ingredient amount of 100 g for a package of 20 g and is now 500 g.
-- `WaitingForFoodTest`, `WaitingForFoodIntegrationTest`: the open question "exactly 4 ticks after ordering positive or neutral" is answered (neutral, "before the 4 tick expectation window is over"). The test now expects NEUTRAL at 4 ticks and POSITIVE at 3 ticks.
-
 ## 4. System tests I wrote (`src/systemtest/kotlin/.../selab26`)
 
 | Package | Classes |
@@ -91,6 +83,3 @@ No test of mine carries `@Disabled` any more. Changes made for this:
 - **Sat 19 Sep:** system tests for customer behaviour and late casual groups, restaurant and customer parser integration tests, recipe change incident edge cases, restaurant decision unit and integration tests, basic dish test, unavailability applied once per evening, registration of the system tests for the reference and the mutants.
 - **Sun 20 Sep:** no commits.
 
-## 6. Documentation
-
-All public functions of the `loggers` package (my F02 code) have KDoc with `@param` tags. The other public functions of my features already had KDoc; there are no `//` comments in place of KDoc on public functions of mine.

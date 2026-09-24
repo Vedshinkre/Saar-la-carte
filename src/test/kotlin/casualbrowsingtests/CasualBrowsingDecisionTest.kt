@@ -212,8 +212,8 @@ class CasualBrowsingDecisionTest {
 
     @Test
     fun `the restaurant with the highest positive minus negative rating difference is chosen`() {
-        val worse = restaurant(id = 1, positiveRatings = 5, negativeRatings = 5) // diff 0
-        val better = restaurant(id = 2, positiveRatings = 10, negativeRatings = 2) // diff 8
+        val worse = restaurant(id = 1, positiveRatings = 10, negativeRatings = 9) // diff 1, more positive ratings
+        val better = restaurant(id = 2, positiveRatings = 3, negativeRatings = 0) // diff 3
         val service = BrowsingService(listOf(worse, better))
 
         val result = service.getEligibleRestaurants(dineInGroup())
@@ -237,7 +237,7 @@ class CasualBrowsingDecisionTest {
     @Test
     fun `a successful dine-in decision decrements only that restaurant's available seats`() {
         val chosen = restaurant(id = 1, seats = 10)
-        val other = restaurant(id = 2, seats = 10, positiveRatings = -1) // rated lower, won't be picked
+        val other = restaurant(id = 2, seats = 10) // same rating, loses the tie on its higher id
         val service = BrowsingService(listOf(chosen, other))
 
         service.getEligibleRestaurants(dineInGroup(size = 4, tableType = TableType.COMMON))
@@ -284,17 +284,20 @@ class CasualBrowsingDecisionTest {
 
     @Test
     fun `a delivery group decides visitingTick minus ceil(distance div 5) minus 3`() {
-        // distance 7 -> ceil(7/5) = 2, so decision tick = visitingAt - 2 - 3
+        // distance 7 -> ceil(7/5) = 2 and distance 10 -> ceil(10/5) = 2, so decision tick = visitingAt - 2 - 3
         val group = deliveryGroup(visitingAt = 10, deliveryDistance = 7)
+        val multipleOfFive = deliveryGroup(id = 2, visitingAt = 10, deliveryDistance = 10)
 
         Time.tick = 5
         val decisionTick = group.isVisitingThisTick()
+        val multipleOfFiveDecides = multipleOfFive.isVisitingThisTick()
         Time.tick = 4
         val tooEarly = group.isVisitingThisTick()
         Time.tick = 10
         val actualVisitingTick = group.isVisitingThisTick()
 
         assertEquals(true, decisionTick)
+        assertEquals(true, multipleOfFiveDecides, "ceil, not floor + 1, for a distance divisible by 5")
         assertEquals(false, tooEarly)
         assertEquals(false, actualVisitingTick, "delivery groups don't decide again at their visitingTick")
     }

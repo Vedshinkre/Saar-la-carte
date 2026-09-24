@@ -86,16 +86,17 @@ class EventOrderingTest {
 
     @Test
     fun `customers order by most excluded ingredients, then fewest favourite dishes, then JSON order`() {
-        // JSON order: [no preference -> Rice, likes Bread -> Bread, refuses rice -> Bread].
-        // The sequence is: refuses rice (one exclusion), then no favourites, then the Bread fan.
+        // JSON order: [likes Bread -> Bread, no preference -> Rice, refuses rice -> Bread, no preference -> Rice].
+        // The sequence is: refuses rice (one exclusion), then the two customers without favourites in
+        // JSON order, and then Bread guy last although listed first.
         val breadFan = FoodPreference(emptyList(), emptyList(), listOf("Bread"))
         val refusesRice = FoodPreference(listOf(riceIngredient), emptyList(), emptyList())
-        val group = eventGroup(1, listOf(noPreference(), breadFan, refusesRice))
+        val group = eventGroup(1, listOf(breadFan, noPreference(), refusesRice, noPreference()))
 
         seatAndOrder(group, listOf(waiter()))
 
         val dishes = requireNotNull(group.currentOrder).dishes.map { it.recipe.name }
-        assertEquals(listOf("Bread", "Rice", "Bread"), dishes)
+        assertEquals(listOf("Bread", "Rice", "Rice", "Bread"), dishes)
     }
 
     // ---- Waiter blocks ----
@@ -129,7 +130,7 @@ class EventOrderingTest {
     // ---- The FOH Ordering log ----
 
     @Test
-    fun `the ordering log names the group, the order id, the dishes and the sorted waiter ids`() {
+    fun `the ordering log names the group, the order id, the dishes and the waiter`() {
         val group = eventGroup(1, listOf(noPreference(), noPreference(), noPreference(), noPreference()))
 
         seatAndOrder(group, listOf(waiter()))

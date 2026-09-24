@@ -4,8 +4,12 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.utils.DeliveryTestLogs
 import de.unisaarland.cs.se.selab.systemtest.selab26.utils.ExampleSystemTestExtension
 
 /**
- * F29 (forum thread 126): a 13 km delivery takes 3 ticks and the driving log reports the
- * cumulative distance, capped at the total: 5, 10, then 13 km.
+ * A 13 km delivery takes three ticks, and each driving line reports the distance covered so far,
+ * capped at the total: 5, 10, then 13 km, with 2, 1 and 0 ticks left (forum topic 126).
+ *
+ * 13 is not a multiple of 5, so the last line checks the cap. The ticks-left value in each line
+ * ties it to its tick. The arrival has to follow the last driving line directly. Written as tester
+ * of the delivery feature (Sep 18).
  */
 class DeliveryCumulativeDistanceSystemTest : ExampleSystemTestExtension() {
     override val name = "DeliveryCumulativeDistanceSystemTest"

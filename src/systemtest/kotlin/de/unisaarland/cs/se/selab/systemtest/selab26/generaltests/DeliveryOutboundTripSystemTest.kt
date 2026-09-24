@@ -5,8 +5,11 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.utils.ExampleSystemTestExte
 import de.unisaarland.cs.se.selab.systemtest.selab26.utils.TickStatusTestLogs
 
 /**
- * F29 outbound trip: a 5 km delivery ordered at tick 6 is handed to driver 1, prepared, driven
- * (1 tick) and handed over to the customer, who is early and therefore has a positive experience.
+ * The outbound trip of a 5 km delivery ordered in tick 6: the driver prepares in tick 6, drives in
+ * tick 7 (one tick for 5 km), arrives and hands the food over directly after the driving line.
+ *
+ * Reuses the fixture of [CasualDeliveryEarlyDecisionTest]. The group never rates, so its
+ * experience is not checked here. Written as tester of the delivery feature (Sep 18).
  */
 class DeliveryOutboundTripSystemTest : ExampleSystemTestExtension() {
     override val name = "DeliveryOutboundTripSystemTest"

@@ -4,10 +4,12 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.utils.ExampleSystemTestExte
 import de.unisaarland.cs.se.selab.systemtest.selab26.utils.TickStatusTestLogs
 
 /**
- * Two restaurants tied on positive-minus-negative rating (both id-eligible, same type,
- * same seats) - F25: the CASUAL group's browsing decision must break the tie by choosing
- * the LOWEST restaurant id (restaurant 2), not the highest. This is a regression test for
- * a sign bug in BrowsingService's tie-break comparator that picked the highest id instead.
+ * Two restaurants tie on rating (3 positive, 1 negative each), type and free seats, so a CASUAL
+ * group has to break the tie by the lowest restaurant id and choose restaurant 2.
+ *
+ * Restaurant 5 is listed first in the file, so "lowest id" and "first in the file" give different
+ * answers. Added together with the fix of the tie-break comparator in BrowsingService, which had
+ * picked the highest id (Sep 18), as its regression test.
  */
 class CasualTiebreakLowestIdTest : ExampleSystemTestExtension() {
     override val name = "CasualTiebreakLowestIdTest"

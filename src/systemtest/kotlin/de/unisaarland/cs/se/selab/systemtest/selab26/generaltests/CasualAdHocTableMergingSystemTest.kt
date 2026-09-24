@@ -5,10 +5,12 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.utils.FohArrivalTestLogs
 import de.unisaarland.cs.se.selab.systemtest.selab26.utils.TickStatusTestLogs
 
 /**
- * A CASUAL group too big for either single table gets seated by merging both of them
- * ad-hoc, at SEATING time (F16's assignTables), rather than through a pre-existing F14
- * reservation - REGULAR/EVENT groups get their table before the evening starts, but a
- * CASUAL group's table (merged or not) is only decided the moment they're seated.
+ * A CASUAL group of 5 fits neither of the two 3 seat tables, so the tables are merged at seating
+ * time (1 and 2 into 1). CASUAL groups reserve nothing, so unlike REGULAR and EVENT groups their
+ * merge can only happen when they are seated.
+ *
+ * Asserts the whole arrival block of tick 1 line by line: arrival, merge, seating on the merged
+ * table and the order. Written as tester of the seating feature (Sep 18).
  */
 class CasualAdHocTableMergingSystemTest : ExampleSystemTestExtension() {
     override val name = "CasualAdHocTableMergingSystemTest"

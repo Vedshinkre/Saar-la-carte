@@ -11,13 +11,14 @@ private const val FIVE_TICKS = 5
 private fun riceBowls(amount: Int) = mapOf("Rice Bowl" to amount)
 
 /**
- * A REGULAR group blocked at their visitingTick by a waiter already saturated by an earlier REGULAR
- * group retries the next tick, when the waiter's tick load has reset, and succeeds. This is the
- * other outcome of the same rejection path that [WaitstaffExhaustionTest] follows to a group
- * giving up after a second failed attempt.
+ * REGULAR group 1 (10 people) uses up the only waiter's seating capacity in tick 1, so group 2
+ * gets "no free waitstaff". In tick 2 the waiter's tick load has reset, group 2's retry succeeds,
+ * and it is seated without a second arrival line.
  *
- * Both groups are first-time visitors, so their reserved seats count towards the estimate and the
- * kitchen has stock for both orders.
+ * Both ticks are asserted line by line. Written as tester of the seating feature (Sep 18). It
+ * covers the successful retry; [WaitstaffExhaustionTest] covers the group that fails twice and
+ * leaves. Both groups visit for the first time, so their reserved seats count towards the estimate
+ * and the kitchen has stock for both orders.
  */
 class RegularRetrySucceedsSystemTest : ExampleSystemTestExtension() {
     override val name = "RegularRetrySucceedsSystemTest"

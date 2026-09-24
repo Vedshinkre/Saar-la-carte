@@ -9,22 +9,18 @@ private const val SLOW = "Slow Bowl"
 private const val BLOCKED = "Blocked Bowl"
 
 /**
- * A/B probe for the way the five ticks of patience are counted, the rule the tutors pointed at for
- * the BallKnowledge component test ("the way the 5 ticks are being counted [...] should probably be
- * inclusive of the first tick, off by one").
+ * A/B pair (Sep 21) for how the five ticks of patience are counted. Written after the office hour,
+ * where the tutors said the counting for the BallKnowledge component test is probably off by one.
+ * The reference chose reading B (runs 4-12), later confirmed in forum topic 340.
  *
- * Both groups order in tick 1 on the only TOURNANT cook. Group 1's Slow Bowl occupies the cook from
- * tick 1 to tick 4, so group 2's Blocked Bowl only starts in tick 5 and is never served. The two
- * tests below differ only in the tick in which group 2 gives up, so exactly one of them can pass:
+ * Both groups order in tick 1 and share the only cook. Group 1's Slow Bowl keeps the cook busy
+ * until tick 4, so group 2's Blocked Bowl is never served. The two tests differ only in the tick in
+ * which group 2 leaves:
+ *  - A, [PatienceEndsFiveTicksAfterOrderingSystemTest]: the ordering tick does not count, tick 6;
+ *  - B, [PatienceEndsFourTicksAfterOrderingSystemTest]: it counts as the first of the five, tick 5.
  *
- *  - [PatienceEndsFiveTicksAfterOrderingSystemTest]: the ordering tick does not count, so the group
- *    leaves once Time.tick - orderedAt reaches 5, which is tick 6. This is what we implement.
- *  - [PatienceEndsFourTicksAfterOrderingSystemTest]: the ordering tick is the first of the five, so
- *    the group leaves in tick 5.
- *
- * Group 1 was served in tick 4 and eats two full ticks, so it is still eating in tick 5 and has
- * finished in tick 6. The eating status of the tick therefore pins down which tick the "Restaurant
- * No Eating" line belongs to.
+ * Group 1 is served in tick 4 and is still eating in tick 5, but not in tick 6. The eating status
+ * right after the "Restaurant No Eating" line therefore shows which tick that line is in.
  */
 abstract class PatienceScenario : ExampleSystemTestExtension() {
     override val restaurants = "officehourjson/patience/restaurants.json"
@@ -47,7 +43,7 @@ abstract class PatienceScenario : ExampleSystemTestExtension() {
     }
 }
 
-/** Reading A: the group leaves in tick 6, five ticks after the tick it ordered in. */
+/** Reading A (rejected by the reference, fails by design): group 2 leaves in tick 6. */
 class PatienceEndsFiveTicksAfterOrderingSystemTest : PatienceScenario() {
     override val name = "PatienceEndsFiveTicksAfterOrderingSystemTest"
     override val description = "A group whose food never arrives leaves 5 ticks after its ordering tick"
@@ -62,7 +58,7 @@ class PatienceEndsFiveTicksAfterOrderingSystemTest : PatienceScenario() {
     }
 }
 
-/** Reading B: the ordering tick counts as the first of the five, so the group leaves in tick 5. */
+/** Reading B (the reference's): the ordering tick is the first of the five, so group 2 leaves in tick 5. */
 class PatienceEndsFourTicksAfterOrderingSystemTest : PatienceScenario() {
     override val name = "PatienceEndsFourTicksAfterOrderingSystemTest"
     override val description = "A group whose food never arrives leaves 4 ticks after its ordering tick"

@@ -10,19 +10,15 @@ private const val SOUP_B = "Soup B"
 private const val SOUP_C = "Soup C"
 
 /**
- * Narrowing probes for TieBreakSameCookTypeByLowestExistingIdSystemTest, which passes on our
- * implementation but fails against the reference. That test asserts three separate things in one
- * run - who cooks in tick 1, that both meals finish in tick 2, and who cooks in tick 3 - so its
- * failure cannot say which of them the reference disagrees with.
+ * Narrowing probes (Sep 23) for TieBreakSameCookTypeByLowestExistingIdSystemTest, which passed on
+ * our implementation and failed on the reference. That test asserts three things in one run (who
+ * cooks in tick 1, that both meals finish in tick 2, who cooks in tick 3), so its failure could not
+ * say which one differs. Each question here is its own A/B pair, and each probe pins one line to
+ * one tick.
  *
- * The scenario: a restaurant with exactly two TOURNANT cooks and nothing else. In tick 1 two groups
- * order two different TOURNANT-only dishes at once, so both cooks are put to work and both earn an
- * id. Both meals finish in tick 2, leaving two idle cooks that already have ids. In tick 3 a third
- * group orders a third TOURNANT-only dish, and exactly one of the two idle cooks has to take it.
- *
- * Each probe below pins a single line to a single tick: the skip starts at that tick, finds the
- * line, and then requires the following tick's start to still be ahead of it. Within each pair only
- * one can pass, so the next run names the rule outright.
+ * Two TOURNANT cooks and nothing else. In tick 1 two groups order two different dishes, so both
+ * cooks start and both get an id. Both finish in tick 2. In tick 3 a third group orders, and one of
+ * the two idle cooks takes the dish.
  */
 abstract class CookIdTieBreakScenario : ExampleSystemTestExtension() {
     override val restaurants = "officehourjson/cookidtiebreak/restaurants.json"
@@ -53,12 +49,12 @@ abstract class CookIdTieBreakScenario : ExampleSystemTestExtension() {
     }
 }
 
-// ---- question 1: are both dishes started at once, and which cook earns which id? ----
-// Results 10: reading A is the reference's, the same as ours.
+// ---- question 1: are both dishes started at once, and which cook gets which id? ----
+// The reference chose reading A for both (runs 9-12).
 
 /**
- * Reading A: both orders of tick 1 are started in that same tick, and the cook ids follow the order
- * the dishes were assigned in, so the earlier order's dish belongs to cook 1. This is ours.
+ * Reading A (the reference's): the cook ids follow the order in which the dishes are assigned, so
+ * the earlier order's dish is started by cook 1 in tick 1.
  */
 class CookIdsFollowAssignmentOrderSystemTest : CookIdTieBreakScenario() {
     override val name = "CookIdsFollowAssignmentOrderSystemTest"
@@ -69,7 +65,7 @@ class CookIdsFollowAssignmentOrderSystemTest : CookIdTieBreakScenario() {
     }
 }
 
-/** Reading B: the ids come out the other way round, so the earlier order's dish belongs to cook 2. */
+/** Reading B (rejected, fails by design): the ids are the other way round, so cook 2 starts Soup A. */
 class CookIdsAreReversedOnTheFirstTickSystemTest : CookIdTieBreakScenario() {
     override val name = "CookIdsAreReversedOnTheFirstTickSystemTest"
     override val description = "The dish of the earlier order is started by cook 2 in tick 1"
@@ -79,7 +75,7 @@ class CookIdsAreReversedOnTheFirstTickSystemTest : CookIdTieBreakScenario() {
     }
 }
 
-/** Reading A, second half: the later order of tick 1 is started in tick 1 as well, by the other cook. */
+/** Reading A, second half (the reference's): the later order of tick 1 also starts in tick 1, by cook 2. */
 class BothOrdersOfATickStartTogetherSystemTest : CookIdTieBreakScenario() {
     override val name = "BothOrdersOfATickStartTogetherSystemTest"
     override val description = "Two orders placed in one tick are both started in that tick"
@@ -90,9 +86,8 @@ class BothOrdersOfATickStartTogetherSystemTest : CookIdTieBreakScenario() {
 }
 
 /**
- * Reading C: only one order is started per tick, so the second order of tick 1 waits and is started
- * in tick 2 instead. If this passes, the divergence is about how many jobs a kitchen starts per
- * tick and not about cook ids at all.
+ * Reading C (rejected, fails by design): the kitchen starts only one order per tick, so the second
+ * order of tick 1 is started in tick 2.
  */
 class SecondOrderOfATickWaitsOneTickSystemTest : CookIdTieBreakScenario() {
     override val name = "SecondOrderOfATickWaitsOneTickSystemTest"
@@ -103,15 +98,12 @@ class SecondOrderOfATickWaitsOneTickSystemTest : CookIdTieBreakScenario() {
     }
 }
 
-// ---- question 2: which of two idle, already-numbered cooks takes the next job? ----
-// Results 10: reading B is the reference's, so cook 2 takes Soup C. Ours picks cook 1 because
-// Kitchen.findLowestRankingCook (Ved's code, not mine) breaks ties by the lowest existing id.
-// Question 3 below narrows down which rule the reference uses instead.
+// ---- question 2: which of two idle cooks that already have ids takes the next job? ----
+// The reference chose reading B (runs 9-12): cook 2 takes Soup C. Question 3 finds out why.
 
 /**
- * Reading A: the free cook with the **lowest** id takes it, so the third dish goes back to cook 1.
- * This is ours. The assertion deliberately says nothing about tick 1, so it stands on its own even
- * if the ids were handed out differently there.
+ * Reading A (rejected, fails by design): the idle cook with the lowest id takes Soup C. The test
+ * asserts nothing about tick 1, so it does not depend on how the ids were given out.
  */
 class IdleCookWithLowestIdTakesNextJobSystemTest : CookIdTieBreakScenario() {
     override val name = "IdleCookWithLowestIdTakesNextJobSystemTest"
@@ -123,8 +115,8 @@ class IdleCookWithLowestIdTakesNextJobSystemTest : CookIdTieBreakScenario() {
 }
 
 /**
- * Reading B: the other cook takes it - the one that did not cook most recently, or simply the
- * higher id. Either way the third dish goes to cook 2.
+ * Reading B (the reference's): cook 2 takes Soup C. Several rules give this result, and question 3
+ * separates them.
  */
 class IdleCookWithHigherIdTakesNextJobSystemTest : CookIdTieBreakScenario() {
     override val name = "IdleCookWithHigherIdTakesNextJobSystemTest"
@@ -138,9 +130,9 @@ class IdleCookWithHigherIdTakesNextJobSystemTest : CookIdTieBreakScenario() {
 // ---- question 3: which rule makes the reference pick cook 2 in question 2? ----
 
 /**
- * Results 10 settled question 2 the other way: when both cooks finish in the same tick, the
- * reference hands the next dish to cook 2. Three rules explain that, and the two scenarios below
- * tell them apart by letting the cooks finish at different ticks.
+ * Three rules explain the answer to question 2. The two scenarios below tell them apart by letting
+ * the cooks finish in different ticks. Each scenario has one test per possible cook. The reference
+ * chose "most recently freed" (runs 11-12): cook 1 in the first scenario, cook 2 in the second.
  *
  * Tick 1 again gives Soup A to cook 1 and Soup B to cook 2, but one of the soups now takes 40
  * minutes (finished in tick 4) and the other 10 (finished in tick 1). Soup C is ordered in tick 5,
@@ -182,7 +174,7 @@ abstract class CookTwoFinishesLastScenario : IdleCookRuleScenario("idlecooktwofi
     protected suspend fun assertSoupCGoesTo(cookId: Int) = assertSoupCGoesTo(2, SOUP_B, cookId)
 }
 
-/** Highest id or idle the longest: cook 2 takes Soup C although cook 1 was freed more recently. */
+/** Rejected, fails by design (highest id or idle the longest): cook 2 takes Soup C. */
 class CookOneFinishesLastCookTwoTakesNextJobSystemTest : CookOneFinishesLastScenario() {
     override val name = "CookOneFinishesLastCookTwoTakesNextJobSystemTest"
     override val description = "Cook 1 freed in tick 4 and cook 2 in tick 1: cook 2 takes the next dish"
@@ -190,7 +182,7 @@ class CookOneFinishesLastCookTwoTakesNextJobSystemTest : CookOneFinishesLastScen
     override suspend fun run() = assertSoupCGoesTo(cookId = 2)
 }
 
-/** Most recently freed: cook 1, freed in tick 4, takes Soup C. */
+/** The reference's (most recently freed): cook 1, freed in tick 4, takes Soup C. */
 class CookOneFinishesLastCookOneTakesNextJobSystemTest : CookOneFinishesLastScenario() {
     override val name = "CookOneFinishesLastCookOneTakesNextJobSystemTest"
     override val description = "Cook 1 freed in tick 4 and cook 2 in tick 1: cook 1 takes the next dish"
@@ -198,7 +190,7 @@ class CookOneFinishesLastCookOneTakesNextJobSystemTest : CookOneFinishesLastScen
     override suspend fun run() = assertSoupCGoesTo(cookId = 1)
 }
 
-/** Highest id or most recently freed: cook 2, freed in tick 4, takes Soup C. */
+/** The reference's (most recently freed, or highest id): cook 2, freed in tick 4, takes Soup C. */
 class CookTwoFinishesLastCookTwoTakesNextJobSystemTest : CookTwoFinishesLastScenario() {
     override val name = "CookTwoFinishesLastCookTwoTakesNextJobSystemTest"
     override val description = "Cook 2 freed in tick 4 and cook 1 in tick 1: cook 2 takes the next dish"
@@ -206,7 +198,7 @@ class CookTwoFinishesLastCookTwoTakesNextJobSystemTest : CookTwoFinishesLastScen
     override suspend fun run() = assertSoupCGoesTo(cookId = 2)
 }
 
-/** Idle the longest: cook 1, idle since tick 1, takes Soup C. */
+/** Rejected, fails by design (idle the longest): cook 1, idle since tick 1, takes Soup C. */
 class CookTwoFinishesLastCookOneTakesNextJobSystemTest : CookTwoFinishesLastScenario() {
     override val name = "CookTwoFinishesLastCookOneTakesNextJobSystemTest"
     override val description = "Cook 2 freed in tick 4 and cook 1 in tick 1: cook 1 takes the next dish"

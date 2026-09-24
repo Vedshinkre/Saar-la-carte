@@ -9,17 +9,15 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.utils.TickStatusTestLogs
 private const val MEAL_C = "mealC"
 
 /**
- * A/B probe for what happens to a meal that was never cooked when its customer walks out.
+ * A/B pair (Sep 22): what happens to a meal that is not yet cooked when its customer walks out.
+ * Specification page 13 says such a meal can be aborted when the customer "leaves the restaurant".
+ * Specification adjustment #21 says the kitchen keeps cooking for customers who left. Written after
+ * CorrectPartialServing2 (mealC still cooked in tick 11) passed on the reference and failed on our
+ * implementation, which aborted the meal. The reference chose reading A (runs 7-12), and our
+ * implementation was changed to match.
  *
- * Specification page 13 says such a meal is aborted and its ingredients go back to the pantry:
- * "It can happen that a meal in an order is aborted, e.g., when a customer has been waiting for too
- * long and leaves the restaurant". We implement exactly that, and drop the meal from the kitchen
- * queue. The reference appears not to: CorrectPartialServing2 asserts that mealC is still assigned
- * to a cook in tick 8, finished in tick 11 and counted in the statistics, and it passes there while
- * failing here.
- *
- * Same three customer group as the extended patience probes: mealA is served in tick 5, mealB in
- * tick 7, and the customer waiting for mealC walks out in tick 7 before the cook ever starts it.
+ * Same table of three as the partial-serving probes: the customer waiting for mealC walks out in
+ * tick 7, before a cook has started mealC.
  */
 abstract class AbortedMealScenario : ExampleSystemTestExtension() {
     override val restaurants = "officehourjson/partialserving/restaurants.json"
@@ -36,8 +34,8 @@ abstract class AbortedMealScenario : ExampleSystemTestExtension() {
 }
 
 /**
- * Reading A: the meal stays in the kitchen queue and is cooked anyway, ten ticks after the order,
- * and counts towards the meals the restaurant cooked. This is what the reference seems to do.
+ * Reading A (the reference's): mealC stays in the kitchen queue, is cooked ten ticks after the
+ * order, and counts in the statistics (3 meals cooked).
  */
 class WalkedOutMealIsStillCookedSystemTest : AbortedMealScenario() {
     override val name = "WalkedOutMealIsStillCookedSystemTest"
@@ -51,9 +49,8 @@ class WalkedOutMealIsStillCookedSystemTest : AbortedMealScenario() {
 }
 
 /**
- * Reading B: the meal is aborted with the customer, never reaches a cook, and the restaurant ends
- * the evening having cooked only the two meals it served. This is what we implement and what the
- * specification describes.
+ * Reading B (rejected by the reference, fails by design): mealC is aborted with its customer, so
+ * only 2 meals are cooked. This is the literal reading of page 13 that adjustment #21 overrides.
  */
 class WalkedOutMealIsAbortedSystemTest : AbortedMealScenario() {
     override val name = "WalkedOutMealIsAbortedSystemTest"

@@ -6,31 +6,18 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.utils.StatisticsTestLogs
 import de.unisaarland.cs.se.selab.systemtest.selab26.utils.TickStatusTestLogs
 
 /**
- * A/B probes for what happens to a delivery order after its group gives up while the meal has not
- * even been started - the area of the DeluluVery and YinAndYang failures.
+ * A/B probes (Sep 23) for a delivery order whose group gives up before its meal is even started.
+ * Written for the failing DeluluVery and YinAndYang full tests. At the time our implementation
+ * dropped the order from the kitchen.
  *
- * The delivery log section of the specification, on the given-up line: "Customers can decide to
- * give up waiting for a delivery [...]. All following delivery attempts of this order will fail."
- * That sentence only makes sense if a given-up order can still be attempted: cooked, handed to a
- * driver, driven out, and then
- * refused at the door with a "Delivery Failed" line. It also matches what the reference confirmed
- * for in-house customers (WalkedOutMealIsStillCookedSystemTest): a meal that was ordered is cooked,
- * whoever walked away from it.
+ * The specification's given-up log says "All following delivery attempts of this order will fail".
+ * That only makes sense if the order is still cooked, driven out, and refused at the door.
+ * Adjustment #21 and forum topic 126 say the same. The reference chose reading B (runs 9-12), and
+ * our implementation was changed to match.
  *
- * We do the opposite for deliveries: giving up marks the meal aborted, the kitchen drops the order,
- * and nothing about it is logged again.
- *
- * The scenario: one TOURNANT cook. Group 1 dines in and orders Slow A and Slow B, which keep the cook
- * busy from tick 1 to tick 8. Group 2 orders a Quick D for delivery in tick 1, wants it in tick 5 and
- * gives up in tick 8, when its dish is still queued behind Slow B.
- *
- * Results 10: reading B is the reference's. The premise and both B probes pass there, and
- * GivenUpDeliveryIsDroppedFromTheKitchenSystemTest fails. Both B probes fail on our dev branch
- * because of code that is not mine (Ansh's DeliveryProcessor.processAbortions): giving up sets
- * every dish of the order to ABORTED, so the kitchen drops the order and releaseStrandedDrivers
- * frees the driver. Fix: only set order.deliveryGivenUp (and the negative experience) there. Then
- * make Driver.handOverToCustomer fail on that flag as it does for ABORTED dishes, and make sure the
- * group does not rate a second time after the failed attempt.
+ * One TOURNANT cook. Group 1 dines in and its Slow A and Slow B keep the cook busy until tick 8.
+ * Group 2 orders Quick D for delivery in tick 1, wants it in tick 5, and gives up in tick 8, while
+ * Quick D is still queued.
  */
 abstract class DeliveryAfterGiveUpScenario : ExampleSystemTestExtension() {
     override val restaurants = "officehourjson/givenupkitchen/restaurants.json"
@@ -54,7 +41,7 @@ abstract class DeliveryAfterGiveUpScenario : ExampleSystemTestExtension() {
     }
 }
 
-/** Setup: the give-up happens in tick 8 on both implementations, so the other probes are comparable. */
+/** Premise shared by both readings: group 2 gives up within tick 8 (visiting tick 5 plus three ticks). */
 class GivenUpDeliveryGivesUpInTickEightSystemTest : DeliveryAfterGiveUpScenario() {
     override val name = "GivenUpDeliveryGivesUpInTickEightSystemTest"
     override val description = "A delivery group whose dish is still queued gives up three ticks after its wanted tick"
@@ -63,8 +50,8 @@ class GivenUpDeliveryGivesUpInTickEightSystemTest : DeliveryAfterGiveUpScenario(
 }
 
 /**
- * Reading A: giving up takes the meal out of the kitchen, so it is never cooked and the restaurant
- * ends the evening having cooked only group 1's two meals. This is what we implement.
+ * Reading A (rejected, fails by design): giving up takes the meal out of the kitchen, so only
+ * group 1's two meals are cooked.
  */
 class GivenUpDeliveryIsDroppedFromTheKitchenSystemTest : DeliveryAfterGiveUpScenario() {
     override val name = "GivenUpDeliveryIsDroppedFromTheKitchenSystemTest"
@@ -77,8 +64,8 @@ class GivenUpDeliveryIsDroppedFromTheKitchenSystemTest : DeliveryAfterGiveUpScen
 }
 
 /**
- * Reading B: the kitchen carries on with the order as it does for in-house customers who walked
- * out, so Quick D is still cooked after the give-up and counts as a third cooked meal.
+ * Reading B (the reference's): the kitchen still cooks Quick D after the give-up, as it does for
+ * in-house customers who walked out, and it counts as a third cooked meal.
  */
 class GivenUpDeliveryIsStillCookedSystemTest : DeliveryAfterGiveUpScenario() {
     override val name = "GivenUpDeliveryIsStillCookedSystemTest"
@@ -92,8 +79,8 @@ class GivenUpDeliveryIsStillCookedSystemTest : DeliveryAfterGiveUpScenario() {
 }
 
 /**
- * Reading B, carried through to the door: the cooked meal is handed to a driver, driven out and
- * refused, exactly as "all following delivery attempts of this order will fail" describes.
+ * Reading B at the door (the reference's): the cooked meal is driven out and the attempt ends with
+ * "Delivery Failed", as "all following delivery attempts of this order will fail" describes.
  */
 class GivenUpDeliveryIsStillDrivenOutAndFailsSystemTest : DeliveryAfterGiveUpScenario() {
     override val name = "GivenUpDeliveryIsStillDrivenOutAndFailsSystemTest"

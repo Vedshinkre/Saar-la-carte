@@ -10,8 +10,13 @@ private const val FOOD_FILE = "food.json"
 private const val RESTAURANTS_FILE = "restaurants.json"
 
 /**
- * All customer parsing system tests (F05: shared customer group fields and food preferences),
- * so the registration only needs a single loop.
+ * All customer parsing system tests (F05: shared customer group fields and food preferences), in one
+ * list so the registration only needs a single loop. Written on Sep 17 as the tester of F05.
+ *
+ * Every rule of the customer section gets a valid and an invalid case, and every numeric range gets
+ * both sides of its boundary (e.g. visitingTick 1 and 21 accepted, 0 and 22 rejected). Each rejected
+ * scenario is a small file that breaks exactly one rule, so a failure names the rule. Food and
+ * restaurants are the same valid files for every test.
  */
 fun customerParserSystemTests(): List<SystemTestSELab26> = listOf(
     CustomerMixedTypesAcceptedSystemTest(),

@@ -8,18 +8,16 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.utils.KitchenTestLogs
 import de.unisaarland.cs.se.selab.systemtest.selab26.utils.TickStatusTestLogs
 
 /**
- * An evening runs for all 24 ticks even after its restaurants have closed, and it has to end there:
- * nothing an evening started may still be logged in the next one.
+ * Written on Sep 22 to check two things. Ratings that come after closing time are still logged in
+ * their evening. Nothing from one evening is logged in the next one.
  *
  * Specification page 23: "Only deliveries already given to a driver continue after the opening time
- * of the restaurant until the end of the evening." Page 24 adds that at the end of the evening the
- * remaining deliveries are aborted "without rating or other consequences", which is what separates
- * the two halves of this file: a delivery that lands in time still rates, inside its own evening,
- * while one that does not is simply gone.
+ * of the restaurant until the end of the evening." Page 24: deliveries left at the end of the evening
+ * are aborted "without rating or other consequences" (see also forum topic 281). The first scenario
+ * has a delivery that lands in time and rates. In the second, the delivery lands too late to rate.
  *
- * Every evening 2 assertion below is a whole tick asserted line by line rather than a skip, because
- * what is being ruled out is an *extra* line. A leftover rating lands between the escorting status
- * and the rating status and breaks the chain there.
+ * Each evening 2 check asserts a whole tick line by line instead of skipping, because what it rules
+ * out is an *extra* line. A leftover rating would land between the escorting and rating statuses.
  */
 abstract class EveningBoundaryScenario : ExampleSystemTestExtension() {
     override val logLevel = "DEBUG"
@@ -80,8 +78,10 @@ class ClosedRestaurantStillFinishesDeliverySystemTest : LateRatingScenario() {
 }
 
 /**
- * The rating of that delivery is collected in tick 15, well after the restaurant closed and well
- * before the evening runs out, and it is counted by the rating status of that same tick.
+ * The delivery group rates in tick 15, after the restaurant closed, and the rating status of that
+ * tick counts it. After closing only delivering, eating and rating run (adjustment #18), and
+ * delivery customers are not in the eating status (forum topic 333). So the empty eating status is
+ * followed directly by the rating, with no escorting status in between.
  */
 class RatingAfterClosingIsStillCollectedSystemTest : LateRatingScenario() {
     override val name = "RatingAfterClosingIsStillCollectedSystemTest"
@@ -105,7 +105,7 @@ class RatingAfterClosingIsStillCollectedSystemTest : LateRatingScenario() {
     }
 }
 
-/** That rating belongs to evening 1 only: evening 2 opens with nothing carried over. */
+/** After the group rated in evening 1, tick 1 of evening 2 is completely quiet: nothing is carried over. */
 class RatingDoesNotRepeatInTheNextEveningSystemTest : LateRatingScenario() {
     override val name = "RatingDoesNotRepeatInTheNextEveningSystemTest"
     override val description = "A group that rated in evening 1 does not rate again in evening 2"
@@ -132,7 +132,7 @@ abstract class StaleRatingScenario : EveningBoundaryScenario() {
     override val food = "officehourjson/staleratings/food.json"
 }
 
-/** Setup: the delivery really does arrive in tick 23, with the evening ending one tick later. */
+/** Premise for the test below: the delayed delivery is handed over to the group in tick 23 or later. */
 class UnfinishedDeliveryArrivesInTheLastTicksSystemTest : StaleRatingScenario() {
     override val name = "UnfinishedDeliveryArrivesInTheLastTicksSystemTest"
     override val description = "The delayed delivery reaches the group in tick 23, too late to be eaten"
@@ -140,7 +140,7 @@ class UnfinishedDeliveryArrivesInTheLastTicksSystemTest : StaleRatingScenario() 
     override suspend fun run() {
         skipUntilString(TickStatusTestLogs.tickStart(ARRIVAL_TICK, 1))
         skipUntilString(DeliveryTestLogs.deliveryFinished(1, 1, 3, 3))
-        // the group is still eating when the evening ends, so nothing of theirs is rated before it
+        // and the evening ends after that
         skipUntilString(TickStatusTestLogs.servingEnd(1))
     }
 

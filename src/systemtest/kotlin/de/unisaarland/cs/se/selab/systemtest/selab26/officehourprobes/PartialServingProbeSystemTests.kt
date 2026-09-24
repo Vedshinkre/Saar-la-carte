@@ -11,17 +11,13 @@ private const val MEAL_B = "mealB"
 private const val MEAL_C = "mealC"
 
 /**
- * A/B probes for the two waiting windows of a partially cooked table. One customer orders mealA
- * (duration 30), one mealB and one mealC (duration 40 each), the kitchen has a single TOURNANT
- * cook, so the meals are finished one after the other and the table is never complete.
+ * A/B probes (Sep 21, after the office hour) for the two waiting windows of a partly cooked table.
+ * Three customers order mealA (30 min), mealB and mealC (40 min each) from a single TOURNANT cook,
+ * so the meals finish one after another. mealA is finished in tick 3.
  *
- * mealA is finished in tick 3, two ticks after the order of tick 1.
- *
- * The fixture is a copy of the one
- * [de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CorrectPartialServing1] uses. It is
- * kept separate on purpose: that directory is shared with PartialServiceTimeoutTest and has already
- * been rewritten once under a test that depended on it, which is what broke PartialServiceSuccessTest.
- * The four probes below read exact tick numbers, so they must own their scenario.
+ * The fixture is a private copy of the one CorrectPartialServing1 uses. That directory is shared
+ * with other tests and was rewritten once already, which broke PartialServiceSuccessTest. These
+ * probes assert exact ticks, so they need their own copy.
  */
 abstract class PartialServingScenario : ExampleSystemTestExtension() {
     override val restaurants = "officehourjson/partialserving/restaurants.json"
@@ -42,9 +38,9 @@ abstract class PartialServingScenario : ExampleSystemTestExtension() {
 }
 
 /**
- * Reading A of specification page 15: "after the first meal has been cooked, the table is not SERVED
- * for this and the following tick", so the cooking tick 3 and tick 4 are both blocked and the waiter
- * serves mealA in tick 5, four ticks after the order. This is what we implement.
+ * Reading A (the reference's, runs 4-12) of specification page 15: "after the first meal has been
+ * cooked, the table is not SERVED for this and the following tick". Ticks 3 and 4 log "FOH No
+ * Serving", and mealA is served in tick 5. The "4 ticks after ordering" in that line fixes the tick.
  */
 class PartialServingWaitsForTwoTicksSystemTest : PartialServingScenario() {
     override val name = "PartialServingWaitsForTwoTicksSystemTest"
@@ -62,8 +58,8 @@ class PartialServingWaitsForTwoTicksSystemTest : PartialServingScenario() {
 }
 
 /**
- * Reading B: only the cooking tick itself is blocked, so the waiter already serves mealA in tick 4,
- * three ticks after the order.
+ * Reading B (rejected by the reference, fails by design): only the cooking tick is blocked, so
+ * mealA would be served in tick 4, three ticks after the order.
  */
 class PartialServingWaitsForOneTickSystemTest : PartialServingScenario() {
     override val name = "PartialServingWaitsForOneTickSystemTest"
@@ -80,16 +76,14 @@ class PartialServingWaitsForOneTickSystemTest : PartialServingScenario() {
 /**
  * The two extra ticks a table gets once one of its customers has been served (specification page
  * 21): "If at least one person on the table has received their meal, they wait for 2 more ticks."
+ * The question is in which tick the customer still waiting for mealC walks out.
  *
- * The first pair of probes for this asserted a follow-up status line to pin the tick down and was
- * mis-specified: both readings failed against the reference and against our own implementation, so
- * the run said nothing. These five say only which tick the walk-out happens in, one candidate each,
- * so exactly one of them can pass and the next run names the tick outright.
+ * A first pair of probes (Sep 21) also asserted a status line after the walk-out. That line was
+ * wrong, so both failed on the reference and the run gave no answer. These five (Sep 22) assert
+ * only the walk-out tick, one candidate reading each, so exactly one can pass. The reference chose
+ * tick 7 (runs 6-12), which matches forum topic 227.
  *
- * The scenario is identical up to tick 5 on both implementations: mealA is cooked in tick 3 and,
- * after the two blocked ticks, served in tick 5 (confirmed by [PartialServingWaitsForTwoTicksSystemTest]).
- * From there the last customer, whose mealC is still not cooked, waits out the extension.
- * Our implementation leaves in tick 7, six ticks after the order of tick 1.
+ * mealA is served in tick 5 (see [PartialServingWaitsForTwoTicksSystemTest]).
  */
 abstract class ExtendedPatienceScenario : ExampleSystemTestExtension() {
     override val restaurants = "officehourjson/partialserving/restaurants.json"
@@ -114,7 +108,7 @@ abstract class ExtendedPatienceScenario : ExampleSystemTestExtension() {
     }
 }
 
-/** the extension is ignored and the base window of four ticks decides */
+/** Candidate (rejected, fails by design): the extension is ignored, four ticks after ordering. */
 class ExtendedPatienceLeavesInTickFiveSystemTest : ExtendedPatienceScenario() {
     override val name = "ExtendedPatienceLeavesInTickFiveSystemTest"
     override val description = "The last customer of a partly served table leaves in tick 5"
@@ -122,7 +116,7 @@ class ExtendedPatienceLeavesInTickFiveSystemTest : ExtendedPatienceScenario() {
     override suspend fun run() = assertLastCustomerLeavesInTick(5)
 }
 
-/** five ticks after ordering */
+/** Candidate (rejected, fails by design): five ticks after ordering, without the extension. */
 class ExtendedPatienceLeavesInTickSixSystemTest : ExtendedPatienceScenario() {
     override val name = "ExtendedPatienceLeavesInTickSixSystemTest"
     override val description = "The last customer of a partly served table leaves in tick 6"
@@ -130,7 +124,7 @@ class ExtendedPatienceLeavesInTickSixSystemTest : ExtendedPatienceScenario() {
     override suspend fun run() = assertLastCustomerLeavesInTick(6)
 }
 
-/** six ticks after ordering, the base window of four plus the two extra ticks: what we implement */
+/** The reference's tick: six ticks after ordering, the base window of four plus the two extra ticks. */
 class ExtendedPatienceLeavesInTickSevenSystemTest : ExtendedPatienceScenario() {
     override val name = "ExtendedPatienceLeavesInTickSevenSystemTest"
     override val description = "The last customer of a partly served table leaves in tick 7"
@@ -138,7 +132,7 @@ class ExtendedPatienceLeavesInTickSevenSystemTest : ExtendedPatienceScenario() {
     override suspend fun run() = assertLastCustomerLeavesInTick(7)
 }
 
-/** seven ticks after ordering, the two extra ticks counted on the old five tick base window */
+/** Candidate (rejected, fails by design): the two extra ticks added to a five tick base window. */
 class ExtendedPatienceLeavesInTickEightSystemTest : ExtendedPatienceScenario() {
     override val name = "ExtendedPatienceLeavesInTickEightSystemTest"
     override val description = "The last customer of a partly served table leaves in tick 8"
@@ -146,7 +140,7 @@ class ExtendedPatienceLeavesInTickEightSystemTest : ExtendedPatienceScenario() {
     override suspend fun run() = assertLastCustomerLeavesInTick(8)
 }
 
-/** the two extra ticks counted from the tick mealA was served rather than from the order */
+/** Candidate (rejected, fails by design): the extra ticks counted from the serving tick 5. */
 class ExtendedPatienceLeavesInTickNineSystemTest : ExtendedPatienceScenario() {
     override val name = "ExtendedPatienceLeavesInTickNineSystemTest"
     override val description = "The last customer of a partly served table leaves in tick 9"

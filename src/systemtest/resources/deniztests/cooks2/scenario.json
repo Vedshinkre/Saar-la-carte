@@ -1,0 +1,51 @@
+{
+  "customerGroups": [
+    {
+      "id": 1,
+      "type": "REGULAR",
+      "size": 1,
+      "tableType": "COMMON",
+      "restaurant": 1,
+      "visitingStart": 1,
+      "visitingPeriod": 1,
+      "visitingTick": 1,
+      "foodPreferences": [
+        {
+          "size": 1,
+          "favoriteDishes": [
+            "steak"
+          ]
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "CASUAL",
+      "size": 2,
+      "restaurantTypes": [
+        "EUROPEAN"
+      ],
+      "deliveryDistance": 5,
+      "visitingEvenings": [
+        1
+      ],
+      "visitingTick": 5,
+      "ratingLikelihood": "ALWAYS",
+      "foodPreferences": [
+        {
+          "size": 1,
+          "favoriteDishes": [
+            "potato soup"
+          ]
+        },
+        {
+          "size": 1,
+          "favoriteDishes": [
+            "salad"
+          ]
+        }
+      ]
+    }
+  ],
+  "incidents": []
+}

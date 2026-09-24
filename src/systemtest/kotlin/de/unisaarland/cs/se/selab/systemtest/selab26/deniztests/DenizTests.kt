@@ -15,4 +15,5 @@ fun denizTests(): List<SystemTestSELab26> = listOf(
     CasualBrowsingSystemTest(),
     EventBrowsingSystemTest(),
     EventVisitSystemTest(),
+    DeliveryImpatienceCookBottleneckTest()
 )

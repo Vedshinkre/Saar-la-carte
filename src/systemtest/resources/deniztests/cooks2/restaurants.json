@@ -1,0 +1,38 @@
+{
+  "restaurants": [
+    {
+      "id": 1,
+      "name": "Bistro",
+      "type": "EUROPEAN",
+      "openingTickStart": 1,
+      "openingTickEnd": 24,
+      "deliveryDrivers": 1,
+      "event": false,
+      "positiveRatings": 10,
+      "negativeRatings": 5,
+      "recipes": [
+        1,
+        2,
+        3
+      ],
+      "kitchenStaff": {
+        "EXEC": 0,
+        "SOUS": 0,
+        "TOURNANT": 1,
+        "SAUCE": 0,
+        "FISH": 0,
+        "ROAST": 0,
+        "VEGETABLE": 0,
+        "PASTRY": 0
+      },
+      "waitstaff": 1,
+      "tables": [
+        {
+          "id": 1,
+          "type": "COMMON",
+          "size": 4
+        }
+      ]
+    }
+  ]
+}

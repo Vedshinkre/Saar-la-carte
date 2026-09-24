@@ -375,6 +375,8 @@ class FrontOfHouse(
      * A driver that has already been claimed for an order is busy even while it is still waiting
      * outside for the rest of that order, so only IDLE drivers count
      * (PartiallyLoadedDriverIsBusySystemTest).
+     *
+     * @return the number of currently idle drivers
      */
     fun getAvailableDrivers(): Int {
         return drivers.count {
@@ -385,6 +387,8 @@ class FrontOfHouse(
     /**
      * Sums the seat capacity of all free tables, grouped by table type.
      * Needed to set available seats in restaurant Stats.
+     *
+     * @return free seat capacity per [TableType], including zero for types with no free tables
      */
     fun getAvailableSeats(): Map<TableType, Int> {
         val result = mutableMapOf<TableType, Int>()
@@ -399,6 +403,11 @@ class FrontOfHouse(
         return result
     }
 
-    /** Returns the number of reserved seats for customer group. */
+    /**
+     * Returns the number of reserved seats for customer group.
+     *
+     * @param customerGroup the group whose reserved seats to look up
+     * @return the total size of tables reserved for [customerGroup], or `0` if it has none
+     */
     fun getReservedSeats(customerGroup: CustomerGroup): Int = customerToTable[customerGroup]?.sumOf { it.size } ?: 0
 }

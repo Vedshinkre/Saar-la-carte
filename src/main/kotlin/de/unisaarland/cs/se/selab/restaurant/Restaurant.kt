@@ -45,14 +45,18 @@ class Restaurant(
     }, { it.id })
 
     /**
-     * sake of detect
+     * The restaurant's live capacity and rating statistics.
+     *
+     * @return this restaurant's [RestaurantStats]
      */
     fun getRestaurantStats(): RestaurantStats {
         return restaurantStats
     }
 
     /**
-     * sake of detect
+     * The restaurant's front-of-house and kitchen staff.
+     *
+     * @return this restaurant's [RestaurantStaff]
      */
     fun getRestaurantStaff(): RestaurantStaff {
         return staff

@@ -12,6 +12,15 @@ const val TWENTY_FOUR = 24
 
 /**
  * class shared between restaurant and browsing service
+ *
+ * @property restaurantId the restaurant's unique id
+ * @property restaurantType the restaurant's cuisine/type
+ * @property openingTickStart the first tick of the evening the restaurant is open
+ * @property openingTickEnd the tick at which the restaurant closes for the evening
+ * @property event whether the restaurant hosts an event tonight
+ * @property positiveRatings positive ratings collected before this simulation run
+ * @property negativeRatings negative ratings collected before this simulation run
+ * @property menu the recipes this restaurant currently serves
  */
 class RestaurantStats(
     val restaurantId: Id,
@@ -30,14 +39,21 @@ class RestaurantStats(
     val availableEventSeats: MutableMap<TableType, Int> = mutableMapOf()
 
     /**
-     * sake of detect
+     * Whether the restaurant is open at [tick], allowing for the buffer before closing, and can
+     * still take an event booking for [eventEvening].
+     *
+     * @param tick the tick to check
+     * @param eventEvening the evening the event visit would take place on
+     * @return `true` if the restaurant is open at [tick]
      */
     fun isOpenAt(tick: Tick, eventEvening: Evening): Boolean {
         return tick in openingTickStart..openingTickEnd - 3 && openingTickStart <= TWENTY_FOUR * eventEvening
     }
 
     /**
-     * sake of detect
+     * Whether the restaurant is open right now, allowing for the buffer before closing.
+     *
+     * @return `true` if the current tick falls within the restaurant's opening hours
      */
     fun isOpen(): Boolean {
         return Time.tick in openingTickStart..openingTickEnd - 3

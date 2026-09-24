@@ -91,7 +91,9 @@ class Waiter {
     }
 
     /**
-     * To Escort Event Groups
+     * Escorts as many of an event group's remaining customers out of the restaurant as this
+     * tick's escort action limit still allows.
+     * @param eventGroup the event group to escort
      */
     fun escortEventGroups(eventGroup: EventGroup) {
         val customersToEscort = minOf(

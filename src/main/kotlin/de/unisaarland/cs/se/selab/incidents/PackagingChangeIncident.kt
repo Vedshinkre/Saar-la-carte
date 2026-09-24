@@ -5,7 +5,12 @@ import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.food.Ingredient
 
 /**
- * This class handles Packaging Change Incident
+ * Incident that changes an ingredient's packaging volume for the rest of the simulation.
+ *
+ * @property id the incident's unique id
+ * @property evening the evening on which the incident fires
+ * @property ingredient the ingredient whose packaging volume changes
+ * @property packagingVolume the new packaging volume to apply
  */
 class PackagingChangeIncident(
     override val id: Id,
@@ -17,7 +22,7 @@ class PackagingChangeIncident(
     override val type: String = "PACKAGING"
 
     /**
-     * This function Handles the incident
+     * Applies the new packaging volume to [ingredient].
      */
     override fun apply() {
         ingredient.packagingVolume = packagingVolume

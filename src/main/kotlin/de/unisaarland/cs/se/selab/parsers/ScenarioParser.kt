@@ -8,8 +8,10 @@ import de.unisaarland.cs.se.selab.incidents.Incident
 import de.unisaarland.cs.se.selab.restaurant.Restaurant
 
 /**
- * Skeleton implementation for ScenarioParser.
  * High-level coordinator delegating to IncidentParser and CustomerParser.
+ *
+ * @property incidentParser parses the scenario's `incidents` array
+ * @property customerParser parses the scenario's `customerGroups` array
  */
 class ScenarioParser(
     private val incidentParser: IncidentParser = IncidentParser(),
@@ -17,11 +19,15 @@ class ScenarioParser(
 ) {
 
     /**
-     * Reads and parses a scenario JSON file, extracting incidents and customer groups.
+     * Reads and parses a scenario file's incidents and customer groups.
      *
-     * @param filePath Path to the scenario configuration JSON file.
-     * @return Pair containing list of parsed Incidents and list of parsed CustomerGroups,
-     *         or null if parsing/validation fails.
+     * @param incident the raw `incidents` JSON array from the scenario file
+     * @param customer the raw `customerGroups` JSON array from the scenario file
+     * @param restaurants all parsed restaurants, used to resolve incidents and seat customer groups
+     * @param recipes the global recipes, used to resolve incidents and customer food preferences
+     * @param ingredients all known ingredients, used to resolve incidents by ingredient name
+     * @param stock the restaurant's stock, wired into unavailability incidents
+     * @return the parsed incidents and the parsed customer groups
      */
     fun parseScenario(
         incident: kotlinx.serialization.json.JsonArray,

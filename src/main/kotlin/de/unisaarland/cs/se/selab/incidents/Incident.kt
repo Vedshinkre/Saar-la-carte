@@ -4,7 +4,10 @@ import de.unisaarland.cs.se.selab.Evening
 import de.unisaarland.cs.se.selab.Id
 
 /**
- * abstract class for the incident
+ * A scheduled disruption that changes some part of the simulation state when it fires.
+ *
+ * @property id the incident's unique id
+ * @property evening the evening on which the incident fires
  */
 abstract class Incident(open val id: Id, open val evening: Evening) {
 
@@ -14,7 +17,7 @@ abstract class Incident(open val id: Id, open val evening: Evening) {
     abstract val type: String
 
     /**
-     * Application of Incident
+     * Applies this incident's effect to the simulation state.
      */
     abstract fun apply(): Unit
 }

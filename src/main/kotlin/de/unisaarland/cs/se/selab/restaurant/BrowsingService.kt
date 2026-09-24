@@ -7,12 +7,17 @@ import de.unisaarland.cs.se.selab.customer.FoodPreference
 import de.unisaarland.cs.se.selab.food.Recipe
 
 /**
- * manages browsingService
+ * Matches customer groups to an eligible restaurant, reserving the matched restaurant's
+ * capacity as groups are assigned so later lookups see the updated availability.
+ *
+ * @property restaurantStats the live per-restaurant capacity and rating stats to match against
  */
-
 class BrowsingService(private val restaurantStats: List<RestaurantStats>) {
     /**
-     * gives eligible Restaurants
+     * Finds the best eligible restaurant for [group] and reserves its capacity for it.
+     *
+     * @param group the casual or event group looking for a restaurant
+     * @return the id of the chosen restaurant, or `null` if none is eligible
      */
     fun getEligibleRestaurants(group: CustomerGroup): Int? {
         require(group is CasualGroup || group is EventGroup) {

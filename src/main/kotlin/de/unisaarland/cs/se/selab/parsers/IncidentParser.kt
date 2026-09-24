@@ -28,11 +28,20 @@ private const val COOK_TYPE = "cookType"
 private const val NUMBER = "number"
 
 /**
- * sake of detekt
+ * Parses the incidents array of the scenario file into [Incident] instances, wiring each
+ * incident to the ingredient, stock and restaurant objects it affects.
  */
 class IncidentParser {
     /**
-     * sake of detect
+     * Parses every element of [incidentArray] into an [Incident], then cross-validates the
+     * whole batch (unique ids, no overlapping unavailability windows for the same ingredient).
+     *
+     * @param incidentArray the raw `incidents` JSON array from the scenario file
+     * @param ingredients all known ingredients, used to resolve an incident's ingredient by name
+     * @param stock the restaurant's stock, wired into unavailability incidents so they can apply
+     * @param recipes the global recipes, used to resolve recipe-change incidents
+     * @param restaurants all restaurants, used to resolve staff- and recipe-change incidents
+     * @return the parsed incidents, in the order they appeared in [incidentArray]
      */
     fun parseIncidentFile(
         incidentArray: JsonArray,

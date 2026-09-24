@@ -15,6 +15,11 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
+/** Driver Test f 20
+ * DriverTest validates the Driver class individually, verifying null-safety early returns,
+ * travel-tick boundary conditions, preservation of negative customer ratings during handovers,
+ * and clean resets back to IDLE after return trips.
+ */
 class DriverTest {
 
     @BeforeEach
@@ -44,6 +49,7 @@ class DriverTest {
 
     @Test
     fun `driver - return early when id is null`() {
+        //  driving, arrival logging, and handover abort early without changing state when driver ID is null.
         val driver = setupDriver(DriverState.DELIVERING, 5)
         driver.id = null
 
@@ -59,6 +65,7 @@ class DriverTest {
 
     @Test
     fun `logArrival and handOverToCustomer - when targetGroup is null`() {
+//  arrival logging and handover return early without side effects when the target customer group is null
         val driver = setupDriver(DriverState.DELIVERING, 5)
 
         // Remove the target group to trigger the early return safety check
@@ -72,6 +79,7 @@ class DriverTest {
 
     @Test
     fun `logArrival and handOverToCustomer - when currentOrder is null`() {
+        //  arrival logging and handover return early withou effects when the current order reference is null
         val driver = setupDriver(DriverState.DELIVERING, 5)
 
         // Remove the order to trigger the early return safety check
@@ -85,6 +93,8 @@ class DriverTest {
 
     @Test
     fun `driveTowardsCustomer- if ticksToDest is zero or less`() {
+        //  driving towards customer leaves travel ticks and distance driven unchanged when ticksToDest
+        //  is zero or negative
         val driver = setupDriver(DriverState.DELIVERING, 0)
 
         driver.driveTowardsCustomer()
@@ -96,6 +106,7 @@ class DriverTest {
 
     @Test
     fun `driveTowardsRestaurant- if ticksToDest is zero or less`() {
+        // driving towards restaurant leaves travel ticks unchanged when ticksToDest is zero or negative
         val driver = setupDriver(DriverState.RETURNING, 0)
 
         driver.driveTowardsRestaurant()
@@ -107,6 +118,8 @@ class DriverTest {
 
     @Test
     fun `handOverToCustomer - pre-existing NEGATIVE experience is maintained regardless of arrival time`() {
+        // an existing NEGATIVE customer experience remains unchanged upon order delivery
+        // and driver enters RETURNING state.
         val driver = setupDriver(DriverState.DELIVERING, 0)
         val group = driver.targetGroup as? CasualGroup ?: error("targetGroup is null or wrong type")
 
@@ -127,6 +140,7 @@ class DriverTest {
 
     @Test
     fun `finishReturnTrip - reset all driver stats to idle`() {
+        // completing the return trip resets driver state to IDLE and clears all trip counters and references
         val driver = setupDriver(DriverState.RETURNING, 0)
 
         driver.finishReturnTrip()
@@ -142,6 +156,7 @@ class DriverTest {
 
     @Test
     fun `finishReturnTrip- even if id is null`() {
+        // completing the return trip safely resets the driver to IDLE even if the driver ID is null
         val driver = setupDriver(DriverState.RETURNING, 0)
 
         // somehow magically

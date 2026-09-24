@@ -1,0 +1,13 @@
+{
+  "ingredients": [
+    {"name": "onion", "unit": "g", "packagingVolume": 30, "bestBefore": 9},
+    {"name": "carrot", "unit": "g", "packagingVolume": 40, "bestBefore": 9},
+    {"name": "lettuce", "unit": "g", "packagingVolume": 20, "bestBefore": 9}
+  ],
+  "recipes": [
+    {"id": 1, "dishName": "soup", "duration": 10, "cookType": ["EXEC"],
+     "ingredients": [{"name": "onion", "amount": 30}, {"name": "carrot", "amount": 20}], "basicDishFor": "EUROPEAN"},
+    {"id": 2, "dishName": "salad", "duration": 10, "cookType": ["EXEC"],
+     "ingredients": [{"name": "carrot", "amount": 15}, {"name": "lettuce", "amount": 50}]}
+  ]
+}

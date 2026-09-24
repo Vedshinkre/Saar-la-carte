@@ -1,4 +1,5 @@
 package ratingtests
+
 import de.unisaarland.cs.se.selab.Time
 import de.unisaarland.cs.se.selab.customer.EventGroup
 import de.unisaarland.cs.se.selab.customer.RegularGroup
@@ -23,6 +24,11 @@ import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
+/**Regular Event Group Rating Test P 05
+ * RegularEventGroupRatingTest validates rating processing for RegularGroup and EventGroup via RatingProcessor
+ * and FrontOfHouse, verifying negative ratings triggered by insufficient table capacity during reservations,
+ * seating failures due to unavailable waitstaff, food service timeouts, and unfinished orders at closing.
+ */
 class RegularEventGroupRatingTest {
 
     // Helper method to create a dummy EventGroup
@@ -63,6 +69,7 @@ class RegularEventGroupRatingTest {
             removeProcessedGroup = {}
         )
     }
+
     private fun setupFoh(tables: List<Table>): FrontOfHouse {
         return FrontOfHouse(
             tables = tables,
@@ -80,23 +87,19 @@ class RegularEventGroupRatingTest {
         // Provide a default LogLevel so the logger doesn't crash
         Logger.setup(LogLevel.DEBUG)
     }
-    // TABLE SIZE NOT MATCHING - REJECTED
 
+    // Insufficient COMMON tables par EventGroup generates negative ratings
     @Test
     fun `EventGroup fails reservation due to insufficient tables and receives a NEGATIVE rating COMMON`() {
-        //  Setup: A group of 10 people, but the restaurant only has a table for 2
         val massiveEventGroup = createEventGroup(10, TableType.COMMON)
         val tinyTable = Table(id = 1, size = 2, tableType = TableType.COMMON)
         val foh = setupFoh(listOf(tinyTable))
 
-        // Initial restaurant ratings before the group rates
         val initialPositiveRatings = 10
         val initialNegativeRatings = 5
 
-        // The manager attempts to reserve tables during the preparation phase
         val reservationSuccess = foh.reserveTables(massiveEventGroup)
 
-        // Integration Logic: In your simulation, if reservation fails, the group is turned away
         if (!reservationSuccess) {
             massiveEventGroup.experience = ExperienceType.NEGATIVE
         }
@@ -108,29 +111,25 @@ class RegularEventGroupRatingTest {
             closing = false
         )
 
-        // Assertions: Prove the cause and effect
         assertFalse(reservationSuccess, "The reservation should fail because the table is too small")
         assertEquals(ExperienceType.NEGATIVE, massiveEventGroup.experience, "Experience must update to NEGATIVE")
         assertEquals(RatingType.NEGATIVE, massiveEventGroup.determineRating(), "Group must generate a NEGATIVE rating")
-        assertEquals(10, updatedPositive) // Positive ratings should stay exactly the same
-        assertEquals(6, updatedNegative) // Negative ratings should increase by exactly 1
+        assertEquals(10, updatedPositive)
+        assertEquals(6, updatedNegative)
     }
 
+    // Insufficient SEPARATED tables par EventGroup generates negative rating
     @Test
     fun `EventGroup fails reservation due to insufficient tables and receives a NEGATIVE rating SEPARATED`() {
-        //  Setup: A group of 10 people, but the restaurant only has a table for 2
         val massiveEventGroup = createEventGroup(10, TableType.SEPARATED)
         val tinyTable = Table(id = 1, size = 2, tableType = TableType.SEPARATED)
         val foh = setupFoh(listOf(tinyTable))
 
-        // Initial restaurant ratings before the group rates
         val initialPositiveRatings = 10
         val initialNegativeRatings = 5
 
-        // The manager attempts to reserve tables during the preparation phase
         val reservationSuccess = foh.reserveTables(massiveEventGroup)
 
-        // Integration Logic: In your simulation, if reservation fails, the group is turned away
         if (!reservationSuccess) {
             massiveEventGroup.experience = ExperienceType.NEGATIVE
         }
@@ -142,29 +141,25 @@ class RegularEventGroupRatingTest {
             closing = false
         )
 
-        // Assertions: Prove the cause and effect
         assertFalse(reservationSuccess, "The reservation should fail because the table is too small")
         assertEquals(ExperienceType.NEGATIVE, massiveEventGroup.experience, "Experience must update to NEGATIVE")
         assertEquals(RatingType.NEGATIVE, massiveEventGroup.determineRating(), "Group must generate a NEGATIVE rating")
-        assertEquals(10, updatedPositive) // Positive ratings should stay exactly the same
-        assertEquals(6, updatedNegative) // Negative ratings should increase by exactly 1
+        assertEquals(10, updatedPositive)
+        assertEquals(6, updatedNegative)
     }
 
+    // Insufficient BAR tables par EventGroup generates negative ratings
     @Test
     fun `EventGroup fails reservation due to insufficient tables and receives a NEGATIVE rating BAR`() {
-        //  Setup: A group of 10 people, but the restaurant only has a table for 2
         val massiveEventGroup = createEventGroup(10, TableType.BAR)
         val tinyTable = Table(id = 1, size = 2, tableType = TableType.BAR)
         val foh = setupFoh(listOf(tinyTable))
 
-        // Initial restaurant ratings before the group rates
         val initialPositiveRatings = 10
         val initialNegativeRatings = 5
 
-        // The manager attempts to reserve tables during the preparation phase
         val reservationSuccess = foh.reserveTables(massiveEventGroup)
 
-        // Integration Logic: In your simulation, if reservation fails, the group is turned away
         if (!reservationSuccess) {
             massiveEventGroup.experience = ExperienceType.NEGATIVE
         }
@@ -176,29 +171,25 @@ class RegularEventGroupRatingTest {
             closing = false
         )
 
-        // Assertions: Prove the cause and effect
         assertFalse(reservationSuccess, "The reservation should fail because the table is too small")
         assertEquals(ExperienceType.NEGATIVE, massiveEventGroup.experience, "Experience must update to NEGATIVE")
         assertEquals(RatingType.NEGATIVE, massiveEventGroup.determineRating(), "Group must generate a NEGATIVE rating")
-        assertEquals(10, updatedPositive) // Positive ratings should stay exactly the same
-        assertEquals(6, updatedNegative) // Negative ratings should increase by exactly 1
+        assertEquals(10, updatedPositive)
+        assertEquals(6, updatedNegative)
     }
 
+    // Insufficient COMMON tables par RegularGroup geenrates negative ratings
     @Test
     fun `RegularGroup fails reservation due to insufficient tables and receives a NEGATIVE rating COMMON`() {
-        //  Setup: A group of 10 people, but the restaurant only has a table for 2
         val massiveEventGroup = createRegularGroup(10, TableType.COMMON)
         val tinyTable = Table(id = 1, size = 2, tableType = TableType.COMMON)
         val foh = setupFoh(listOf(tinyTable))
 
-        // Initial restaurant ratings before the group rates
         val initialPositiveRatings = 10
         val initialNegativeRatings = 5
 
-        // The manager attempts to reserve tables during the preparation phase
         val reservationSuccess = foh.reserveTables(massiveEventGroup)
 
-        // Integration Logic: In your simulation, if reservation fails, the group is turned away
         if (!reservationSuccess) {
             massiveEventGroup.experience = ExperienceType.NEGATIVE
         }
@@ -210,29 +201,25 @@ class RegularEventGroupRatingTest {
             closing = false
         )
 
-        // Assertions: Prove the cause and effect
         assertFalse(reservationSuccess, "The reservation should fail because the table is too small")
         assertEquals(ExperienceType.NEGATIVE, massiveEventGroup.experience, "Experience must update to NEGATIVE")
         assertEquals(RatingType.NEGATIVE, massiveEventGroup.determineRating(), "Group must generate a NEGATIVE rating")
-        assertEquals(10, updatedPositive) // Positive ratings should stay exactly the same
-        assertEquals(6, updatedNegative) // Negative ratings should increase by exactly 1
+        assertEquals(10, updatedPositive)
+        assertEquals(6, updatedNegative)
     }
 
+    // Insufficient SEPARATED tables par RegularGroup generates negative ratings
     @Test
     fun `RegularGroup fails reservation due to insufficient tables and receives a NEGATIVE rating SEPARATED`() {
-        //  Setup: A group of 10 people, but the restaurant only has a table for 2
         val massiveEventGroup = createRegularGroup(10, TableType.SEPARATED)
         val tinyTable = Table(id = 1, size = 2, tableType = TableType.SEPARATED)
         val foh = setupFoh(listOf(tinyTable))
 
-        // Initial restaurant ratings before the group rates
         val initialPositiveRatings = 10
         val initialNegativeRatings = 5
 
-        // The manager attempts to reserve tables during the preparation phase
         val reservationSuccess = foh.reserveTables(massiveEventGroup)
 
-        // Integration Logic: In your simulation, if reservation fails, the group is turned away
         if (!reservationSuccess) {
             massiveEventGroup.experience = ExperienceType.NEGATIVE
         }
@@ -244,29 +231,25 @@ class RegularEventGroupRatingTest {
             closing = false
         )
 
-        // Assertions: Prove the cause and effect
         assertFalse(reservationSuccess, "The reservation should fail because the table is too small")
         assertEquals(ExperienceType.NEGATIVE, massiveEventGroup.experience, "Experience must update to NEGATIVE")
         assertEquals(RatingType.NEGATIVE, massiveEventGroup.determineRating(), "Group must generate a NEGATIVE rating")
-        assertEquals(10, updatedPositive) // Positive ratings should stay exactly the same
-        assertEquals(6, updatedNegative) // Negative ratings should increase by exactly 1
+        assertEquals(10, updatedPositive)
+        assertEquals(6, updatedNegative)
     }
 
+    // Insufficient BAR tables par RegularGroup generates negative ratings
     @Test
     fun `RegularGroup fails reservation due to insufficient tables and receives a NEGATIVE rating BAR`() {
-        //  Setup: A group of 10 people, but the restaurant only has a table for 2
         val massiveEventGroup = createRegularGroup(10, TableType.BAR)
         val tinyTable = Table(id = 1, size = 2, tableType = TableType.BAR)
         val foh = setupFoh(listOf(tinyTable))
 
-        // Initial restaurant ratings before the group rates
         val initialPositiveRatings = 10
         val initialNegativeRatings = 5
 
-        // The manager attempts to reserve tables during the preparation phase
         val reservationSuccess = foh.reserveTables(massiveEventGroup)
 
-        // Integration Logic: In your simulation, if reservation fails, the group is turned away
         if (!reservationSuccess) {
             massiveEventGroup.experience = ExperienceType.NEGATIVE
         }
@@ -278,21 +261,18 @@ class RegularEventGroupRatingTest {
             closing = false
         )
 
-        // Assertions: Prove the cause and effect
         assertFalse(reservationSuccess, "The reservation should fail because the table is too small")
         assertEquals(ExperienceType.NEGATIVE, massiveEventGroup.experience, "Experience must update to NEGATIVE")
         assertEquals(RatingType.NEGATIVE, massiveEventGroup.determineRating(), "Group must generate a NEGATIVE rating")
-        assertEquals(10, updatedPositive) // Positive ratings should stay exactly the same
-        assertEquals(6, updatedNegative) // Negative ratings should increase by exactly 1
+        assertEquals(10, updatedPositive)
+        assertEquals(6, updatedNegative)
     }
-// ------------------------------------------------------------------------------------------------
 
+    // lack of Waitstaff for RegularGroup fails seating and generates negative rating
     @Test
     fun `RegularGroup fails seating due to no waitstaff, gets negative experience, and increases negative ratings`() {
-        // A Regular group arrives, but the restaurant has ZERO waitstaff
         val regularGroup = createRegularGroup(4, TableType.COMMON)
 
-        // We provide a valid table, but an empty list of waiters
         val validTable = Table(id = 1, size = 4, tableType = TableType.COMMON)
         val foh = FrontOfHouse(
             tables = listOf(validTable),
@@ -304,16 +284,13 @@ class RegularEventGroupRatingTest {
         val initialPositiveRatings = 10
         val initialNegativeRatings = 5
 
-        //  The FOH attempts to assign a waiter and seat the group
         val menu = emptyList<Recipe>()
         val seatingSuccess = foh.processArrival(regularGroup, menu)
 
-        // In case there is no free waiter... an experience counts as negative
         if (!seatingSuccess) {
             regularGroup.experience = ExperienceType.NEGATIVE
         }
 
-        //  Process the rating for the turned-away group
         val processor = createProcessor()
         val (updatedPositive, updatedNegative) = processor.rate(
             group = regularGroup,
@@ -322,24 +299,21 @@ class RegularEventGroupRatingTest {
             closing = false
         )
 
-        //  Prove the entire chain of events works
         assertFalse(seatingSuccess, "Seating should fail because there are no waitstaff")
         assertEquals(ExperienceType.NEGATIVE, regularGroup.experience, "Experience must update to NEGATIVE")
         assertEquals(RatingType.NEGATIVE, regularGroup.determineRating(), "Group must generate a NEGATIVE rating")
-        // Prove the restaurant's rating counts took the hit
         assertEquals(10, updatedPositive, "Positive ratings should remain unchanged")
         assertEquals(6, updatedNegative, "Negative ratings should increase by 1")
     }
 
-    @Test
+    // lack of Waitstaff for EventGroup fails seating and generates negative rating    @Test
     fun `EventGroup fails seating due to no waitstaff, gets negative experience, and increases negative ratings`() {
-        // 1. Setup: An Event group arrives, but the restaurant has ZERO waitstaff
         val eventGroup = createEventGroup(4, TableType.COMMON)
 
         val validTable = Table(id = 1, size = 4, tableType = TableType.COMMON)
         val foh = FrontOfHouse(
             tables = listOf(validTable),
-            waiters = emptyList(), // <-- No waitstaff available!
+            waiters = emptyList(),
             drivers = emptyList(),
             countertop = mock()
         )
@@ -348,39 +322,27 @@ class RegularEventGroupRatingTest {
         val initialNegativeRatings = 5
         val menu = emptyList<Recipe>()
 
-        //  The FOH attempts to assign a waiter and seat the group
         val isProcessed = foh.processArrival(eventGroup, menu)
 
-        // At the end of the tick, the restaurant processes ratings
-        // FOH already knows the group failed and left, so it will rate them automatically!
         val (updatedPositive, updatedNegative) = foh.processRatings(
             positiveRatings = initialPositiveRatings,
             negativeRatings = initialNegativeRatings
         )
 
-        // Prove the entire chain of events works exactly per specification
-
-        //  The group is completely processed (removed from queue)
-        // because Event groups leave immediately if seating fails
         assertTrue(isProcessed, "EventGroup should be removed from queue after failing to seat")
-
-        // The system must have automatically updated their experience to NEGATIVE
         assertEquals(ExperienceType.NEGATIVE, eventGroup.experience, "Experience must automatically update to NEGATIVE")
         assertEquals(RatingType.NEGATIVE, eventGroup.determineRating(), "Group must generate a NEGATIVE rating")
-
-        // The restaurant's global rating counts must take the hit
         assertEquals(10, updatedPositive, "Positive ratings should remain unchanged")
         assertEquals(6, updatedNegative, "Negative ratings should increase by exactly 1")
     }
 
+    // Negative ratings if the food is late or did not appear at all
     @Test
     fun `RegularGroup gets negative experience and rating when food arrives too late or not at all`() {
         val regularGroup = createRegularGroup(4, TableType.COMMON)
         val initialPositive = 10
         val initialNegative = 5
 
-        // Simulate the specification rule: food arrives too late or not at all
-        // leading to a negative experience
         regularGroup.experience = ExperienceType.NEGATIVE
 
         val processor = createProcessor()
@@ -391,20 +353,19 @@ class RegularEventGroupRatingTest {
             closing = false
         )
 
-        // Assertions
         assertEquals(ExperienceType.NEGATIVE, regularGroup.experience, "Experience must be negative due to food delay")
         assertEquals(RatingType.NEGATIVE, regularGroup.determineRating(), "Group must generate a negative rating")
         assertEquals(10, updatedPositive, "Positive ratings should remain unchanged")
         assertEquals(6, updatedNegative, "Negative ratings should increase by 1")
     }
 
+    // negative ratings from the event at service timeout(end of evening) for event groups
     @Test
     fun `EventGroup gets negative rating due to service timeout`() {
         val eventGroup = createEventGroup(4, TableType.COMMON)
         val initialPositive = 20
         val initialNegative = 2
 
-        // Simulate a timeout where the event group experiences a delay
         eventGroup.experience = ExperienceType.NEGATIVE
 
         val processor = createProcessor()
@@ -415,21 +376,19 @@ class RegularEventGroupRatingTest {
             closing = false
         )
 
-        // Assertions
         assertEquals(ExperienceType.NEGATIVE, eventGroup.experience)
         assertEquals(RatingType.NEGATIVE, eventGroup.determineRating())
         assertEquals(20, updatedPositive)
         assertEquals(3, updatedNegative, "Negative ratings should increase due to timeout")
     }
 
+    // negative ratings from the event at service timeout(end of evening) for regular groups
     @Test
     fun `RegularGroup at closing with no order receives NEGATIVE experience`() {
-        // Setup: A regular group that never successfully placed an order (order is null)
         val regularGroup = createRegularGroup(2, TableType.COMMON)
         val initialPositive = 10
         val initialNegative = 5
 
-        // Action: Process rating at closing time
         val processor = createProcessor()
         val (updatedPositive, updatedNegative) = processor.rate(
             group = regularGroup,
@@ -438,13 +397,13 @@ class RegularEventGroupRatingTest {
             closing = true
         )
 
-        // Assertions: The null order must force a NEGATIVE experience
         assertEquals(ExperienceType.NEGATIVE, regularGroup.experience, "negative stuff")
         assertEquals(RatingType.NEGATIVE, regularGroup.determineRating(), "Must generate a NEGATIVE rating")
         assertEquals(10, updatedPositive)
         assertEquals(6, updatedNegative)
     }
 
+// negative ratings for closing of evening and order is  incomplete
     @Test
     fun `EventGroup at closing with unfinished order receives NEGATIVE experience`() {
         val eventGroup = mock<EventGroup>()
@@ -453,12 +412,10 @@ class RegularEventGroupRatingTest {
 
         val mockOrder = mock<Order>()
 
-        // Setup Mock Behaviors
         whenever(mockOrder.areAllDishesEaten()).thenReturn(false)
         whenever(eventGroup.currentOrder).thenReturn(mockOrder)
         whenever(eventGroup.determineRating()).thenReturn(RatingType.NEGATIVE)
 
-        // Action: Process rating at closing time
         val processor = createProcessor()
         val (updatedPositive, updatedNegative) = processor.rate(
             group = eventGroup,
@@ -467,20 +424,17 @@ class RegularEventGroupRatingTest {
             closing = true
         )
 
-        // to check the experience
         verify(eventGroup).experience = ExperienceType.NEGATIVE
-
-        // Assert the rating counts updated correctly
         assertEquals(10, updatedPositive)
         assertEquals(6, updatedNegative)
     }
 
+    // food was finished eating at the end of the evening and we register positive rating
     @Test
     fun `RegularGroup at closing with completely eaten order avoids NEGATIVE experience penalty`() {
         val regularGroup = mock<RegularGroup>()
         val mockOrder = mock<Order>()
 
-        // order.areAllDishesEaten() == true
         whenever(mockOrder.areAllDishesEaten()).thenReturn(true)
         whenever(regularGroup.currentOrder).thenReturn(mockOrder)
         whenever(regularGroup.determineRating()).thenReturn(RatingType.POSITIVE)
@@ -493,7 +447,6 @@ class RegularEventGroupRatingTest {
             closing = true
         )
 
-        // Assert that the processor NEVER tried to set a NEGATIVE experience
         verify(regularGroup, org.mockito.kotlin.never()).experience = ExperienceType.NEGATIVE
     }
 }

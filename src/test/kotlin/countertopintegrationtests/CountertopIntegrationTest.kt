@@ -16,9 +16,14 @@ import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
+/** Countertop Integration Test F13
+ * CountertopIntegrationTest validates in Countertop.getAvailableRecipes(), ensuring that dishes are only marked
+ * available for customer ordering when kitchen staff  exists
+ * and non-expired pantry ingredients meet or exceed required quantities across all recipe ingredients and packages.
+ */
 class CountertopIntegrationTest {
 
-    // --- Helpers ---
+    //  Helpers
 
     private val testIngredient = Ingredient("tomato", MeasurementUnit.G, 10, 100)
 
@@ -65,10 +70,11 @@ class CountertopIntegrationTest {
         )
     }
 
-    // --- Tests ---
+    // Tests
 
     @Test
     fun `getAvailableRecipes-Eligible Cook Is Free-Succeeds`() {
+        //  a recipe is available when an eligible cook is idle and required ingredients are present
         val recipe = createDummyRecipe(requiredAmount = 50)
         val pkg = IngredientPackage(testIngredient)
 
@@ -82,7 +88,8 @@ class CountertopIntegrationTest {
     }
 
     @Test
-    fun `getAvailableRecipes- Eligible Cook Is Busy -fails`() {
+    fun `getAvailableRecipes- Eligible Cook Is Busy -Succeeds`() {
+        // a recipe remains available to order even when the eligible cook is currently busy cooking
         val recipe = createDummyRecipe(requiredAmount = 50)
         val pkg = IngredientPackage(testIngredient)
 
@@ -97,6 +104,7 @@ class CountertopIntegrationTest {
 
     @Test
     fun `getAvailableRecipes-No Cook Of Required Type-fails`() {
+        // a recipe is unavailable when no cook on staff possesses the required cook qualties
         val recipe = createDummyRecipe(requiredAmount = 50)
         val pkg = IngredientPackage(testIngredient)
 
@@ -111,6 +119,7 @@ class CountertopIntegrationTest {
 
     @Test
     fun `getAvailableRecipes-One Busy One Free Eligible Cook-Succeeds`() {
+        // a recipe is available when multiple cooks of the required type exist and at least one is free
         val recipe = createDummyRecipe(requiredAmount = 50)
         val pkg = IngredientPackage(testIngredient)
 
@@ -126,6 +135,7 @@ class CountertopIntegrationTest {
 
     @Test
     fun `getAvailableRecipes-Insufficient Ingredients-fails`() {
+        // a recipe is unavailable when the pantry stock is strictly less than the recipe requirement
         val recipe = createDummyRecipe(requiredAmount = 50)
         // Only 40g available, recipe needs 50g
         val pkg = IngredientPackage(testIngredient, 40, Int.MAX_VALUE, true)
@@ -139,6 +149,7 @@ class CountertopIntegrationTest {
 
     @Test
     fun `getAvailableRecipes-Zero Inventory-fails`() {
+        // a recipe is unavailable when the pantry inventory is completely empty
         val recipe = createDummyRecipe(requiredAmount = 50)
         val cook = createDummyCook(CookType.TOURNANT, isCooking = false)
 
@@ -151,10 +162,11 @@ class CountertopIntegrationTest {
 
     @Test
     fun `getAvailableRecipes-Splitting Across Packages-Succeeds`() {
+        //  ingredient quantities across multiple packages are combined to satisfy recipe requirements
         val recipe = createDummyRecipe(requiredAmount = 50)
-        // Two separate packages of 25g each
+        // Two separate packages (25g and 40g), neither alone is enough for 50g
         val pkg1 = IngredientPackage(testIngredient, 25, Int.MAX_VALUE, true)
-        val pkg2 = IngredientPackage(testIngredient, 100, Int.MAX_VALUE, false)
+        val pkg2 = IngredientPackage(testIngredient, 40, Int.MAX_VALUE, false)
         val cook = createDummyCook(CookType.TOURNANT, isCooking = false)
 
         val countertop = setupCountertop(listOf(pkg1, pkg2), listOf(cook))
@@ -165,6 +177,7 @@ class CountertopIntegrationTest {
 
     @Test
     fun `getAvailableRecipes- Missing One Ingredient -ExcludesRecipe`() {
+        //  a multi-ingredient recipe is unavailable if even one required ingredient is absent from stock
         val beefIngredient = Ingredient("beef", MeasurementUnit.G, 5, 100)
         val complexRecipe = Recipe(
             id = 2,
@@ -187,6 +200,7 @@ class CountertopIntegrationTest {
 
     @Test
     fun `getAvailableRecipes-Expired Ingredients Are Not Counted-fails`() {
+        // expired ingredient packages are ignored when evaluating total available stock
         val recipe = createDummyRecipe(requiredAmount = 50)
 
         // to mock expired ingredients

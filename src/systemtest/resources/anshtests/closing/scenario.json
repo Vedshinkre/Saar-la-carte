@@ -1,0 +1,39 @@
+{
+  "customerGroups": [
+    {
+      "id": 1,
+      "type": "REGULAR",
+      "size": 2,
+      "visitingTick": 5,
+      "foodPreferences": [
+        {
+          "size": 2,
+          "favoriteDishes": [
+            "stew"
+          ]
+        }
+      ],
+      "visitingStart": 1,
+      "visitingPeriod": 10,
+      "restaurant": 1
+    },
+    {
+      "id": 2,
+      "type": "REGULAR",
+      "size": 2,
+      "visitingTick": 5,
+      "foodPreferences": [
+        {
+          "size": 2,
+          "favoriteDishes": [
+            "roast"
+          ]
+        }
+      ],
+      "visitingStart": 1,
+      "visitingPeriod": 10,
+      "restaurant": 1
+    }
+  ],
+  "incidents": []
+}

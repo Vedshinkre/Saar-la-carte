@@ -1,0 +1,10 @@
+{
+  "customerGroups": [
+    {"id": 1, "type": "REGULAR", "size": 1, "visitingTick": 1,
+     "foodPreferences": [{"size": 1, "favoriteDishes": ["paella"]}],
+     "visitingStart": 1, "visitingPeriod": 1, "restaurant": 1}
+  ],
+  "incidents": [
+    {"id": 1, "type": "UNAVAILABLE", "evening": 2, "ingredient": "saffron", "duration": 1}
+  ]
+}

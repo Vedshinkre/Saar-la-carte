@@ -1,0 +1,68 @@
+{
+  "customerGroups": [
+    {
+      "id": 1,
+      "type": "EVENT",
+      "size": 6,
+      "tableType": "COMMON",
+      "visitingTick": 3,
+      "foodPreferences": [
+        {
+          "size": 1,
+          "excludedIngredients": [
+            "tomato"
+          ],
+          "favoriteDishes": [
+            "stew"
+          ]
+        }
+      ],
+      "restaurantTypes": [
+        "EUROPEAN"
+      ],
+      "eventEvening": 4,
+      "favoriteDishes": {
+        "EUROPEAN": "soup"
+      }
+    },
+    {
+      "id": 2,
+      "type": "EVENT",
+      "size": 4,
+      "tableType": "BAR",
+      "visitingTick": 3,
+      "foodPreferences": [],
+      "restaurantTypes": [
+        "EUROPEAN"
+      ],
+      "eventEvening": 4,
+      "favoriteDishes": {
+        "EUROPEAN": "soup"
+      }
+    },
+    {
+      "id": 3,
+      "type": "EVENT",
+      "size": 4,
+      "tableType": "COMMON",
+      "visitingTick": 3,
+      "foodPreferences": [
+        {
+          "size": 4,
+          "excludedIngredients": [
+            "beef",
+            "tomato"
+          ]
+        }
+      ],
+      "restaurantTypes": [
+        "EUROPEAN"
+      ],
+      "eventEvening": 4,
+      "favoriteDishes": {
+        "EUROPEAN": "soup"
+      }
+    }
+  ],
+  "incidents": []
+}

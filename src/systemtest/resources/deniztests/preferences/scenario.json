@@ -1,0 +1,45 @@
+{
+  "customerGroups": [
+    {
+      "id": 1,
+      "type": "REGULAR",
+      "size": 5,
+      "visitingTick": 1,
+      "foodPreferences": [
+        {
+          "size": 1,
+          "favoriteDishes": [
+            "gratin",
+            "pie"
+          ]
+        },
+        {
+          "size": 1,
+          "excludedIngredients": [
+            "cheese"
+          ],
+          "favoriteDishes": [
+            "gratin"
+          ]
+        },
+        {
+          "size": 1,
+          "preferredIngredients": [
+            "tomato",
+            "basil"
+          ]
+        },
+        {
+          "size": 1,
+          "preferredIngredients": [
+            "potato"
+          ]
+        }
+      ],
+      "visitingStart": 1,
+      "visitingPeriod": 10,
+      "restaurant": 1
+    }
+  ],
+  "incidents": []
+}

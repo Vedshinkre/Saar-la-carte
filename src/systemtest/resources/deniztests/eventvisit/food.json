@@ -1,0 +1,53 @@
+{
+  "ingredients": [
+    {
+      "name": "tomato",
+      "unit": "g",
+      "packagingVolume": 10,
+      "bestBefore": 1
+    },
+    {
+      "name": "beef",
+      "unit": "g",
+      "packagingVolume": 10,
+      "bestBefore": 1
+    },
+    {
+      "name": "salt",
+      "unit": "g",
+      "packagingVolume": 10,
+      "bestBefore": 1
+    }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "soup",
+      "duration": 10,
+      "cookType": [
+        "EXEC"
+      ],
+      "ingredients": [
+        {
+          "name": "tomato",
+          "amount": 10
+        }
+      ],
+      "basicDishFor": "EUROPEAN"
+    },
+    {
+      "id": 2,
+      "dishName": "stew",
+      "duration": 10,
+      "cookType": [
+        "EXEC"
+      ],
+      "ingredients": [
+        {
+          "name": "beef",
+          "amount": 10
+        }
+      ]
+    }
+  ]
+}

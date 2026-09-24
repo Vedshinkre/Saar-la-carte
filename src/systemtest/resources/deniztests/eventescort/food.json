@@ -1,0 +1,41 @@
+{
+  "ingredients": [
+    {
+      "name": "rice",
+      "unit": "g",
+      "packagingVolume": 1000,
+      "bestBefore": 9
+    }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "soup",
+      "duration": 10,
+      "cookType": [
+        "SOUS"
+      ],
+      "ingredients": [
+        {
+          "name": "rice",
+          "amount": 1
+        }
+      ],
+      "basicDishFor": "EUROPEAN"
+    },
+    {
+      "id": 2,
+      "dishName": "stew",
+      "duration": 20,
+      "cookType": [
+        "EXEC"
+      ],
+      "ingredients": [
+        {
+          "name": "rice",
+          "amount": 1
+        }
+      ]
+    }
+  ]
+}

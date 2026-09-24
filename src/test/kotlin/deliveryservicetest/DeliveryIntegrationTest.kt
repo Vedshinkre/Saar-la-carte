@@ -28,6 +28,16 @@ import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
+/** Delivery Integration Test F 20 and F 29
+ * DeliveryIntegrationTest validates the complete delivery cycle between FrontOfHouse and DeliveryProcessor:
+ * Order Reception & Handover: Verifies driver assignment during serving, partial handoffs for multi-dish orders,
+ * and rejection of incomplete or unassignable orders.
+ * Driver State Transitions: Confirms drivers transition correctly between IDLE, WAITING, and DELIVERING,
+ * while releasing stranded drivers when orders are aborted.
+ * Delivery Execution & Eating: Ensures distance-based travel ticks are calculated accurately,
+ * delivery timeouts abort orders with negative ratings, customer eating states update on arrival,
+ * and drivers reset properly upon restaurant closure.
+ */
 class DeliveryIntegrationTest {
 
     private lateinit var foh: FrontOfHouse
@@ -50,6 +60,7 @@ class DeliveryIntegrationTest {
 
     @Test
     fun `processArrival - delivery group successfully and add to delivery system`() {
+        // a delivery group waiting beyond the allowed tick threshold aborts with negative experience
         val casualGroup = mock<CasualGroup>()
         val order = Order(dishes = emptyList())
 
@@ -74,6 +85,7 @@ class DeliveryIntegrationTest {
 
     @Test
     fun `isDriverAvailable returns correct availability based on driver states`() {
+        //  driver availability returns true only when at least one driver is in the IDLE state
         val driver1 = Driver().apply { state = DriverState.DELIVERING }
         val driver2 = Driver().apply { state = DriverState.RETURNING }
 
@@ -88,6 +100,7 @@ class DeliveryIntegrationTest {
 
     @Test
     fun `resetDrivers- what happens to drivers when the restaurant closes`() {
+        //  closing the restaurant resets delivering drivers to IDLE while leaving returning drivers unaffected
         val recipe = mock<Recipe>()
         val dish1 = Dish(recipe).apply { status = DishStatus.COOKED }
         val dish2 = Dish(recipe).apply { status = DishStatus.EATEN }
@@ -130,6 +143,7 @@ class DeliveryIntegrationTest {
 
     @Test
     fun `processEating - covers all delivery eating scenarios`() {
+        //  customer eating updates and delivery count increments across all deliveredAt and dish status combinations
         de.unisaarland.cs.se.selab.Time.tick = 10
 
         val groupNotDelivered = mock<CasualGroup>()
@@ -184,6 +198,7 @@ class DeliveryIntegrationTest {
 
     @Test
     fun `serveDeliveryGroups - reuses already assigned driver and handles partial cooking handover`() {
+        //  a partially cooked delivery order retains its assigned waiting driver during partial meal handoffs
         val waiter = Waiter().apply { id = 1 }
         val recipe = mock<Recipe> { whenever(it.name).thenReturn("Soup") }
         val dish = Dish(recipe).apply { status = DishStatus.COOKED }
@@ -224,6 +239,7 @@ class DeliveryIntegrationTest {
 
     @Test
     fun `serveDeliveryGroups - no free driver and order becoming null`() {
+        //  serving aborts when no idle drivers exist or when an order evaluates to null
         val busyDriver = Driver().apply { state = DriverState.DELIVERING }
         drivers.add(busyDriver)
 
@@ -261,6 +277,7 @@ class DeliveryIntegrationTest {
 
     @Test
     fun `isReadyForHandOver - reject orders that are uncooked, empty, or null`() {
+        //  delivery orders with uncooked dishes, empty dishes, or missing drivers are rejected from handover
         val localFoh = FrontOfHouse(
             tables = emptyList(),
             waiters = emptyList(),
@@ -287,10 +304,9 @@ class DeliveryIntegrationTest {
         assertTrue(drivers.isEmpty())
     }
 
-    // --- NAYE COVERAGE TESTS ---
-
     @Test
     fun `releaseStrandedDrivers - releases driver when order has aborted dishes`() {
+        //  a waiting driver is released back to IDLE when any dish in their assigned order is aborted
         val strandedDriver = Driver().apply {
             state = DriverState.WAITING
             id = 1
@@ -315,6 +331,7 @@ class DeliveryIntegrationTest {
 
     @Test
     fun `releaseStrandedDrivers - skips drivers with null order or without aborted dishes`() {
+        // waiting drivers without aborted dishes or with null orders remain waiting
         val driverNullOrder = Driver().apply {
             state = DriverState.WAITING
             currentOrder = null
@@ -340,6 +357,7 @@ class DeliveryIntegrationTest {
 
     @Test
     fun `prepareDelivery - safely returns when driver fields are missing`() {
+        // delivery preparation returns early without state changes when driver attributes are missing
         val driverNoId = Driver().apply {
             state = DriverState.WAITING
             id = null
@@ -378,6 +396,7 @@ class DeliveryIntegrationTest {
 
     @Test
     fun `prepareDelivery - successfully prepares delivery for valid waiting driver`() {
+        // a valid waiting driver with a fully served order transitions to DELIVERING with correct trip calculations.
         val casualGroup = mock<CasualGroup>()
         whenever(casualGroup.id).thenReturn(10)
         whenever(casualGroup.deliveryDistance).thenReturn(15)

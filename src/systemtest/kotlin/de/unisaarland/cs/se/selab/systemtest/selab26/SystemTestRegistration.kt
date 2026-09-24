@@ -13,6 +13,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.PatienceLeavesFiveT
 import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.PatienceLeavesFourTicksAfterOrderSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.ServedOnFourthTickIsNeutralSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.ServedOnFourthTickIsPositiveSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.anshtests.anshTests
 import de.unisaarland.cs.se.selab.systemtest.selab26.basicdishtests.AdaptedBasicDishAcceptedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.basicdishtests.AdaptedBasicDishOnlyAdapterAffectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.basicdishtests.AdaptedBasicDishRecipeChangeSystemTest
@@ -25,6 +26,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExampleEmptyTick
 import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExamplePreparationAndServingStartTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExampleSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.customerparsertests.customerParserSystemTests
+import de.unisaarland.cs.se.selab.systemtest.selab26.deniztests.denizTests
 import de.unisaarland.cs.se.selab.systemtest.selab26.eventtests.EventArrivalCasualTurnedAwaySystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.eventtests.EventArrivalCurrentLoadIgnoresEventSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.eventtests.EventArrivalRegularGroupsSeatedFirstSystemTest
@@ -284,6 +286,7 @@ object SystemTestRegistration {
         registerSkerdiReferenceTests(testSuite)
         registeratharvaRefrenceTests(testSuite)
         fullScenarioSystemTests(false).forEach { testSuite.registerTest(it) }
+        anshTests().forEach { testSuite.registerTest(it) }
         testSuite.registerTest(DeliveryOrderSuccessTestA())
         testSuite.registerTest(PartialServiceSuccessTest())
         testSuite.registerTest(PartialDeliveryHandoverSystemTest())
@@ -298,6 +301,7 @@ object SystemTestRegistration {
         testSuite.registerTest(CookIdTieBreakLowestIdA())
         testSuite.registerTest(KitchenCookAssignmentSystemTest())
         testSuite.registerTest(CorrectPartialServing2())
+        denizTests().forEach { testSuite.registerTest(it) }
     }
 
     /** AB tests for the two tick windows fo the serving phase */

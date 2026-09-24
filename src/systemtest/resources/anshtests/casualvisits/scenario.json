@@ -1,0 +1,97 @@
+{
+  "customerGroups": [
+    {
+      "id": 1,
+      "type": "CASUAL",
+      "size": 4,
+      "visitingTick": 1,
+      "foodPreferences": [
+        {
+          "size": 4,
+          "favoriteDishes": [
+            "stew"
+          ]
+        }
+      ],
+      "restaurantTypes": [
+        "EUROPEAN"
+      ],
+      "visitingEvenings": [
+        1
+      ],
+      "ratingLikelihood": "SOME"
+    },
+    {
+      "id": 2,
+      "type": "CASUAL",
+      "size": 3,
+      "visitingTick": 1,
+      "foodPreferences": [
+        {
+          "size": 3,
+          "favoriteDishes": [
+            "tea"
+          ]
+        }
+      ],
+      "restaurantTypes": [
+        "EUROPEAN"
+      ],
+      "visitingEvenings": [
+        1,
+        3
+      ],
+      "ratingLikelihood": "ALWAYS"
+    },
+    {
+      "id": 3,
+      "type": "CASUAL",
+      "size": 3,
+      "visitingTick": 1,
+      "foodPreferences": [
+        {
+          "size": 3,
+          "favoriteDishes": [
+            "tea"
+          ]
+        }
+      ],
+      "restaurantTypes": [
+        "EUROPEAN"
+      ],
+      "visitingEvenings": [
+        1
+      ],
+      "ratingLikelihood": "SOME"
+    },
+    {
+      "id": 4,
+      "type": "CASUAL",
+      "size": 1,
+      "visitingTick": 2,
+      "foodPreferences": [],
+      "restaurantTypes": [
+        "EUROPEAN"
+      ],
+      "visitingEvenings": [
+        1
+      ],
+      "ratingLikelihood": "NEVER"
+    },
+    {
+      "id": 5,
+      "type": "CASUAL",
+      "size": 1,
+      "visitingTick": 2,
+      "foodPreferences": [],
+      "restaurantTypes": [
+        "EUROPEAN"
+      ],
+      "visitingEvenings": [
+        1
+      ],
+      "ratingLikelihood": "SOME"
+    }
+  ],
+  "incidents": []
+}

@@ -1,0 +1,76 @@
+{
+  "customerGroups": [
+    {
+      "id": 1,
+      "type": "REGULAR",
+      "size": 4,
+      "visitingTick": 1,
+      "foodPreferences": [
+        {
+          "size": 1,
+          "favoriteDishes": [
+            "cake",
+            "bread"
+          ]
+        },
+        {
+          "size": 1,
+          "favoriteDishes": [
+            "cake"
+          ],
+          "preferredIngredients": [
+            "basil"
+          ]
+        },
+        {
+          "size": 1,
+          "excludedIngredients": [
+            "nuts"
+          ],
+          "favoriteDishes": [
+            "cake"
+          ]
+        },
+        {
+          "size": 1,
+          "excludedIngredients": [
+            "flour",
+            "basil"
+          ]
+        }
+      ],
+      "visitingStart": 1,
+      "visitingPeriod": 10,
+      "restaurant": 1
+    },
+    {
+      "id": 2,
+      "type": "REGULAR",
+      "size": 1,
+      "visitingTick": 2,
+      "foodPreferences": [
+        {
+          "size": 1,
+          "excludedIngredients": [
+            "basil",
+            "flour"
+          ]
+        }
+      ],
+      "visitingStart": 1,
+      "visitingPeriod": 10,
+      "restaurant": 1
+    },
+    {
+      "id": 3,
+      "type": "REGULAR",
+      "size": 1,
+      "visitingTick": 3,
+      "foodPreferences": [],
+      "visitingStart": 1,
+      "visitingPeriod": 1,
+      "restaurant": 2
+    }
+  ],
+  "incidents": []
+}

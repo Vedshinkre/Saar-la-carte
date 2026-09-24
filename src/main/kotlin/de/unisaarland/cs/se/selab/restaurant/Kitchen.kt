@@ -23,7 +23,18 @@ private const val CEIL_TOP = 9
 private const val CEIL_DENOMINATOR = 10
 
 /**
- * Kitchen class where all the cooking and chef handling happens .
+ * Manages kitchen operations, staff scheduling, recipe execution, and ingredient planning.
+ *
+ * Manages cook assignments based on qualification hierarchies and lowest-rank priority, batches
+ * identical dishes across pending customer orders, reduces tick-by-tick cooking countdowns, coordinates
+ * inventory replenishment with the [Pantry], and resets kitchen resources at the end of each evening.
+ *
+ * @property cooks the list of [Cook] staff employed in the kitchen.
+ * @property pantry the restaurant's storage repository holding ingredient packages.
+ * @property orderQueue the active queue of pending customer orders awaiting preparation or serving.
+ * @property finishedNumberOfMeals the count of meals completed during the active evaluation step.
+ * @property numberOfCookedMeals the cumulative count of successfully cooked meals, tracked for statistics.
+ * @property restaurantType the culinary category of the restaurant, used to evaluate basic dish rules.
  */
 class Kitchen(
     private var cooks: List<Cook>,
@@ -50,13 +61,19 @@ class Kitchen(
             numberOfCookedMeals = 0
         )
 
-    // Add these helper functions:
+    // helper functions:
+    /**
+     * Caches the placement tick of all currently queued orders to track preparation upon completion.
+     */
     private fun rememberOrderTicks() {
         for (order in orderQueue) {
             orderedAtByOrderId[order.id] = order.orderedAt
         }
     }
 
+    /**
+     * Records the current simulation tick as the first-cooked timestamp on an order once any dish finishes cooking.
+     */
     private fun recordFirstCookedTicks() {
         for (order in orderQueue) {
             if (order.firstDishCookedAt != null) {
@@ -70,6 +87,7 @@ class Kitchen(
     // sorting function
     /**
      * Sorts the cooks ONLY on the basis of their ids, null id is put at last .
+     * @return the sorted list of cooks.
      */
     fun getCooksSorted(): List<Cook> {
         // copy  of mutable list of cooks
@@ -87,6 +105,8 @@ class Kitchen(
 
     /**
      * Sorts the recipes first by basicness first and then by id  .
+     * @param recipes the collection of candidate recipes to sort.
+     * @return the ordered list of recipes with basic dishes prioritized.
      */
     fun sortRecipesByBasicnessAndId(recipes: List<Recipe>): List<Recipe> {
         val basicRecipes = mutableListOf<Recipe>()
@@ -147,6 +167,7 @@ class Kitchen(
 
     /**
      * Generate ids for the cooks that don't have one already.
+     * @return the dispensed numeric ID.
      */
     fun getNextCookId(): Int {
         val allocatedId = nextAvailableCookId
@@ -155,7 +176,10 @@ class Kitchen(
     }
 
     /**
-     * gets unique recipes from the dishes that can be cooked  .
+     * Extracts unique recipes from a list of dishes, deduplicated by recipe name.
+     *
+     * @param currentDishes the list of dishes to inspect.
+     * @return a list containing distinct [Recipe] instances.
      */
     fun getUniqueRecipes(currentDishes: List<Dish>): List<Recipe> {
         val uniqueRecipes = mutableListOf<Recipe>()
@@ -182,7 +206,8 @@ class Kitchen(
     }
 
     /**
-     * gets number of servable dishes in that tick .
+     * Counts the total number of dishes across all queued orders that are fully cooked and ready to be served.
+     * @return the number of cooked, servable dishes.
      */
     fun getServableDishesNumber(): Int {
         var servableCount = 0
@@ -201,7 +226,13 @@ class Kitchen(
     }
 
     /**
-     * Choose the perfect cook for a given recipe.
+     * Selects the most appropriate available cook to prepare the given recipe.
+     *
+     * Filters for idle cooks qualified for the recipe, selects the lowest-ranking candidate (tie-breaking
+     * by lowest ID), and assigns a new cook ID if the selected cook lacks one.
+     *(kept the tie breaking consistent with the project specification, although the server seems to do it vice versa)
+     * @param recipe the recipe needing preparation.
+     * @return the chosen [Cook], or `null` if no qualified cook is currently free.
      */
     fun chooseCook(recipe: Recipe): Cook? {
         val eligibleCooks = mutableListOf<Cook>()
@@ -230,9 +261,11 @@ class Kitchen(
     }
 
     /**
-     * Gives every cook type a rank for selection purposes.
+     * Maps a [CookType] to an integer rank value where
+     * 1 is highest ([CookType.EXEC]) and 8 is lowest ([CookType.PASTRY]).
+     * @param type the cook role to rank.
+     * @return the numeric rank value.
      */
-    // Helper to give the cook types rank (1 is highest rank, 8 is lowest rank)
     private fun getNumericalRank(type: CookType): Int {
         return when (type) {
             CookType.EXEC -> EXEC
@@ -247,7 +280,10 @@ class Kitchen(
     }
 
     /**
-     * Helper to check if a cook is free and allowed to cook the recipe(needed due to detekt tests).
+     * Helper to check if a cook is free and allowed to cook the recipe.
+     *  @param cook the cook being evaluated.
+     *  @param recipe the target recipe.
+     *  @return `true` if the cook is not cooking and their role is included in [Recipe.cookType], `false` otherwise.
      */
     private fun isCookEligible(cook: Cook, recipe: Recipe): Boolean {
         // If they are already cooking, they are not eligible
@@ -266,7 +302,10 @@ class Kitchen(
     }
 
     /**
-     * Helper function to find the lowest ranking eligible cook(needed due to detekt tests) .
+     * Locates the lowest-ranking cook among eligible candidates, resolving ties by lowest ID.
+     *
+     * @param eligibleCooks the non-empty list of available and qualified cooks.
+     * @return the cook with the lowest rank (highest numerical value) and lowest ID.
      */
     private fun findLowestRankingCook(eligibleCooks: List<Cook>): Cook {
         var chosenCook = eligibleCooks[0]
@@ -300,7 +339,11 @@ class Kitchen(
     }
 
     /**
-     * Collects all dishes from an order that match the given recipe.
+     * Collects all uncooked dishes from an order that match the given recipe.
+     *
+     * @param recipe the recipe blueprint to match against.
+     * @param order the order whose dishes are inspected.
+     * @return a pair containing the order ID and the list of matching uncooked dishes.
      */
     fun collectRecipes(recipe: Recipe, order: Order): Pair<Int, List<Dish>> {
         val matchingDishes = mutableListOf<Dish>()
@@ -318,8 +361,17 @@ class Kitchen(
     }
 
     /**
-     * Creates the total shopping list for the evening.
+     * Constructs a ingredient shopping list for the upcoming evening.
+     *
+     * Aggregates ingredient amounts from historical/pre-ordered dishes and calculates estimated
+     * ingredient requirements for remaining front-of-house capacity using ceiling integer division.
+     *
+     * @param ingredientsFromHistory a map of recipes to pre-ordered/historical demand counts.
+     * @param frontCapacity the remaining guest capacity in front of house.
+     * @param menu the collection of available recipes on the restaurant menu.
+     * @return a map specifying total required ingredient quantities.
      */
+
     fun createShoppingList(
         ingredientsFromHistory: Map<Recipe, Int>,
         frontCapacity: Int,
@@ -347,6 +399,9 @@ class Kitchen(
 
     /**
      * Helper function to multiply and add ingredients to the map for dishes from order history(detekt tests).
+     * @param recipe the recipe whose ingredients are being added.
+     * @param multiplier the number of portions required.
+     * @param shoppingList the mutable ingredient accumulator map.
      */
     private fun addRecipeToShoppingList(
         recipe: Recipe,
@@ -370,6 +425,12 @@ class Kitchen(
 
     /**
      * Plans and procures the ingredients required for the upcoming evening.
+     * Discards expired pantry stock, totals historical demand from regular guests and event favorites,
+     * builds the final shopping list including capacity estimates, and delegates inventory procurement to the [Pantry].
+     * @param orderHistory previously known orders from regular groups.
+     * @param frontCapacity remaining guest capacity in front of house.
+     * @param menu the current active menu recipes.
+     * @param eventGroupFavDishes pre-ordered favorite recipes and customer counts for event groups.
      */
     fun planForIngredients(
         orderHistory: List<Order>,
@@ -444,7 +505,9 @@ class Kitchen(
     }
 
     /**
-     * Find uncooked recipes and assigns them to eligible cooks.
+     * Scans pending orders in the queue and assigns their uncooked dishes to qualified idle cooks.
+     * For each order, recipes are sorted prioritizing basic dishes, and each recipe is assigned
+     * to the lowest-ranking qualified cook available.
      */
     private fun assignRecipesToCooks() {
         // get all uncooked dishes from the orders in the order queue
@@ -472,7 +535,10 @@ class Kitchen(
     }
 
     /**
-     * Helper to collect all dishes of a specific recipe across all orders and assign to a cook.
+     * Aggregates all matching uncooked dishes for a recipe across the entire order queue
+     * and dispatches them to the cook.
+     * @param recipe the recipe to prepare.
+     * @param cook the assigned cook.
      */
     private fun findDishesForRecipe(recipe: Recipe, cook: Cook) {
         val allDishes = mutableListOf<Dish>()
@@ -555,6 +621,10 @@ class Kitchen(
 
     /**
      * Helper function to find the base order and log finished meals (to solve detekt issue).
+     * @param cook the cook who completed the dish batch.
+     * @param finished the number of finished meals.
+     * @param dishNameBeforeCooking the name of the prepared dish captured prior to state reset.
+     * @param baseOrderId the initiating order ID captured prior to state reset.
      */
     private fun logFinishedMeals(cook: Cook, finished: Int, dishNameBeforeCooking: String?, baseOrderId: Int?) {
         val cookId = cook.id ?: -1

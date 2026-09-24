@@ -19,6 +19,10 @@ import java.io.StringWriter
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 
+/**  Recipe Change Integration Test f 32
+ * RecipeChangeIntegrationTest validates that the Simulation orchestration loop
+ * correctly triggers and executes RecipeChangeIncident events properly.
+ */
 class RecipeChangeIntegrationTest {
 
     @BeforeTest
@@ -41,6 +45,7 @@ class RecipeChangeIntegrationTest {
         Time.ticksElapsed = 0
     }
 
+    // the simulation evening loop triggers recipe change incidents and scales recipe ingredient amounts
     @Test
     fun `simulation correctly executes recipe change incident in the evening loop`() {
         // real tomato
@@ -81,6 +86,7 @@ class RecipeChangeIntegrationTest {
         assertEquals(150, recipe.ingredients[tomato])
     }
 
+    //  the simulation processes incidents across multiple dishes sharing an ingredient and floors fractional values
     @Test
     fun `recipe change - multiple dishes sharing the same ingredient`() {
         // one shared onion

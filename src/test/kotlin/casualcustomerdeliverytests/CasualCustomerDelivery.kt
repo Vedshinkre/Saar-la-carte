@@ -22,6 +22,14 @@ import org.junit.jupiter.api.assertThrows
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
+/** CasualCustomerDelivery F 24
+ * CasualCustomerDelivery validates the behaviors of casual delivery groups and their interaction with BrowsingService.
+ * It verifies that rating generation accurately maps experience levels based on RatingLikelihood (NEVER, SOME, ALWAYS);
+ * ensures the delivery group are added in the right tick and ceiling-divided travel distance;
+ * confirms that BrowsingService selects restaurants based on net ratings, available drivers, and
+ * dietary compatibility while decrementing available driver capacity;
+ * and validates dish selection fallbacks when available menus conflict with customer food preferences.
+ */
 class CasualCustomerDelivery {
 
     @BeforeEach
@@ -83,6 +91,7 @@ class CasualCustomerDelivery {
 
     @Test
     fun `determineRating-NEVER rating likelihood -always returns NO_RATING`() {
+        //  a casual group with NEVER rating likelihood always produces NO_RATING across all experiences
         val group = createGroup(10, 10, RatingLikelihood.NEVER)
 
         group.experience = ExperienceType.POSITIVE
@@ -97,6 +106,7 @@ class CasualCustomerDelivery {
 
     @Test
     fun `determineRating-SOME rating likelihood-returns correct ratings`() {
+        // a casual group with SOME rating likelihood maps experiences to POSITIVE, NO_RATING, and NEGATIVE ratings
         val group = createGroup(15, 15, RatingLikelihood.SOME)
 
         group.experience = ExperienceType.POSITIVE
@@ -111,6 +121,7 @@ class CasualCustomerDelivery {
 
     @Test
     fun `determineRating-ALWAYS rating likelihood-returns correct ratings`() {
+        //  a casual group with ALWAYS rating likelihood promotes NEUTRAL and POSITIVE experiences to POSITIVE ratings
         val group = createGroup(12, 7, RatingLikelihood.ALWAYS)
 
         group.experience = ExperienceType.POSITIVE
@@ -127,6 +138,7 @@ class CasualCustomerDelivery {
 
     @Test
     fun `isVisitingThisTick-no delivery uses-visitingAt directly`() {
+        //  an in-restaurant group without delivery visit status visit  directly at visitingAt
         val group = createGroup(visitingAt = 10, deliveryDistance = 0, RatingLikelihood.NEVER)
         assertFalse(group.wantsDelivery)
 
@@ -139,6 +151,7 @@ class CasualCustomerDelivery {
 
     @Test
     fun `isVisitingThisTick- delivery distance 5 uses-correct ordering tick`() {
+//  a delivery group calculates ordering tick by subtracting cooking ticks and exact travel ticks from visitingAt
         val group = createGroup(visitingAt = 12, deliveryDistance = 5, RatingLikelihood.NEVER)
         assertTrue(group.wantsDelivery)
 
@@ -151,6 +164,7 @@ class CasualCustomerDelivery {
 
     @Test
     fun `isVisitingThisTick- delivery distance 7-test private ceil function`() {
+        //  delivery ordering tick calculations happens correctly, ceiling non-multiple travel distances
         val group = createGroup(visitingAt = 15, deliveryDistance = 7, RatingLikelihood.NEVER)
 
         Time.tick = 9
@@ -164,6 +178,7 @@ class CasualCustomerDelivery {
 
     @Test
     fun `getEligibleRestaurants - casual delivery- highest rating and decrement driver`() {
+        // browsing selects the highest net-rated restaurant with available drivers and decrements its driver count
         val rest1 = createRestaurant(id = 1, positive = 10, negative = 2, drivers = 1) // Net: +8
         val rest2 = createRestaurant(id = 2, positive = 50, negative = 0, drivers = 0) // Net: +50, but no drivers
 
@@ -178,6 +193,7 @@ class CasualCustomerDelivery {
 
     @Test
     fun `getEligibleRestaurants - casual delivery - null when no drivers available`() {
+        //   browsing returns null when candidate restaurants have zero available delivery drivers
         val rest = createRestaurant(id = 1, positive = 10, negative = 2, drivers = 0)
         val browsingService = BrowsingService(listOf(rest))
 
@@ -188,6 +204,7 @@ class CasualCustomerDelivery {
 
     @Test
     fun `getEligibleRestaurants - casual delivery compares ratings and handles tie breaker`() {
+        //  browsing compares net ratings between restaurants with available drivers to pick the higher-rated option.
         val rest1 = createRestaurant(id = 1, positive = 5, negative = 0, drivers = 2) // Net: +5
         val rest2 = createRestaurant(id = 2, positive = 15, negative = 5, drivers = 2) // Net: +10
 
@@ -200,6 +217,7 @@ class CasualCustomerDelivery {
 
     @Test
     fun `getEligibleRestaurants - casual delivery filters out restaurants violating dietary preferences`() {
+        //  browsing eliminates restaurants whose menus contain ingredients excluded by the group's food preferences
         val ingredientX = mock<Ingredient> { whenever(it.name).thenReturn("Peanuts") }
 
         val safeRecipe = mock<Recipe> {
@@ -226,6 +244,7 @@ class CasualCustomerDelivery {
 
     @Test
     fun `getEligibleRestaurants throws exception for unsupported group type`() {
+//  browsing throws an IllegalArgumentException when called with an unsupported customer group type
         val group = mock<RegularGroup>()
         val browsingService = BrowsingService(emptyList())
 
@@ -261,6 +280,7 @@ class CasualCustomerDelivery {
 
     @Test
     fun `decideDish - delivery group excludes all available recipes returns null`() {
+        //  dish selection returns null when all candidate recipes contain excluded ingredients for delivery customers
         val mushroom = mock<Ingredient> { whenever(it.name).thenReturn("Mushroom") }
         val mushroomSoup = mock<Recipe> {
             whenever(it.ingredients).thenReturn(mutableMapOf(mushroom to 10))
@@ -281,6 +301,7 @@ class CasualCustomerDelivery {
 
     @Test
     fun `decideDish - delivery group - matches favourite dish`() {
+        //  dish selection selects personal favorite recipes over non-favorites for delivery customers
         val pizzaRecipe = mock<Recipe> {
             whenever(it.name).thenReturn("Pizza")
             whenever(it.ingredients).thenReturn(mutableMapOf())
@@ -305,6 +326,7 @@ class CasualCustomerDelivery {
 
     @Test
     fun `isVisitingThisTick - delivery distance with exact multiple `() {
+        //  delivery ordering ticks strictly trigger at the exact tick
         // To arrive at visitingTick 12, the group must order at tick 7 (12 - 2 - 3).
         val group = createGroup(visitingAt = 12, deliveryDistance = 10, RatingLikelihood.NEVER)
 

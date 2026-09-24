@@ -20,8 +20,10 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.whenever
 
-/**
- * tests the dish selection (f13 and f 26 of only casuals)
+/** Casual Dish Selection Test (f13 and f 26 of only casuals)
+ * CasualDishSelectionTest checks the complete dish selection process for casual customers,
+ * confirming that excluded ingredients are filtered out, personal favorites are chosen in list order,
+ * tie breakers and ordering failures assign negative experience.
  */
 class CasualDishSelectionTest {
 
@@ -48,6 +50,8 @@ class CasualDishSelectionTest {
 
     @Test
     fun `casual customer rejects dishes with excluded ingredients and selects highest ID on tie`() {
+        // dishes with excluded ingredients are not considered
+        // and highest recipe ID is preferred in ties
         val tomato = mockIngredient("Tomato")
         val pasta = mockIngredient("Pasta")
         val cheese = mockIngredient("Cheese")
@@ -62,7 +66,6 @@ class CasualDishSelectionTest {
             favouriteDishes = emptyList()
         )
 
-        // Event favorite is passed as empty string for casual groups
         val dish = preference.decideDish(
             availableMenu = listOf(recipe1, recipe2, recipe5),
             eventFavourite = "",
@@ -74,7 +77,8 @@ class CasualDishSelectionTest {
     }
 
     @Test
-    fun `casual customer picks personal favourite in defined order`() {
+    fun `casual customer picks favourite dish in defined order`() {
+        //  a casual customer selects their favorite dish following the defined customer preference list order
         val pasta = mockIngredient("Pasta")
         val beef = mockIngredient("Beef")
 
@@ -98,11 +102,12 @@ class CasualDishSelectionTest {
     }
 
     @Test
-    fun `casual group receives negative experience when a member cannot order a dish`() {
+    fun `casual group - negative experience when a member cannot order a dish`() {
+        // a casual group registers negative experience when a member cannot find any dish.
         val tomato = mockIngredient("Tomato")
         val recipe1 = mockRecipe(1, "Tomato Soup", listOf(tomato))
 
-        // Member cannot eat tomatoes; menu only has Tomato Soup
+        // Member cannot eat tomatoes,menu only has Tomato Soup
         val strictPref = FoodPreference(
             excludedIngredients = listOf(tomato),
             preferredIngredients = emptyList(),
@@ -126,14 +131,18 @@ class CasualDishSelectionTest {
         whenever(countertop.getAvailableRecipes(any())).thenReturn(listOf(recipe1))
 
         val placed = casualGroup.placeOrder(listOf(mockWaiter()), listOf(recipe1), countertop)
-
+        // no order should be placed
         assertFalse(placed, "Order should fail when 0 dishes could be ordered")
+        // no customer remaining in restaurant
         assertEquals(0, casualGroup.customersRemainingInRestaurant)
+        // negative rating
         assertEquals(ExperienceType.NEGATIVE, casualGroup.experience)
     }
 
     @Test
     fun `casual group orders in sequence of most excluded ingredients then fewest favourites`() {
+        // casual group members order sequentially based
+        // on highest number of excluded ingredients and then by fewest favorites.
         val tomato = mockIngredient("Tomato")
         val cheese = mockIngredient("Cheese")
         val beef = mockIngredient("Beef")
@@ -172,18 +181,21 @@ class CasualDishSelectionTest {
         whenever(countertop.getAvailableRecipes(any())).thenReturn(listOf(beefDish, chickenDish))
 
         val placed = casualGroup.placeOrder(listOf(mockWaiter()), listOf(beefDish, chickenDish), countertop)
-
+        // we have an order
         assertTrue(placed)
         val dishes = casualGroup.currentOrder?.dishes.orEmpty()
+        // both customers should get their order
         assertEquals(2, dishes.size)
 
-        // PROOF OF SEQUENCE: Customer B (Chicken) ordered first, Customer A (Beef) ordered second
+        // Customer B (Chicken) ordered first, Customer A (Beef) ordered second
         assertEquals("Chicken Dish", dishes[0].recipe.name, "Customer B with 2 exclusions must order first")
         assertEquals("Beef Dish", dishes[1].recipe.name, "Customer A with 1 exclusion must order second")
     }
 
     @Test
-    fun `casual customer falls back to recipe with the highest count of preferred ingredients`() {
+    fun `casual customer - chooses recipe with the highest count of preferred ingredients`() {
+        // dish selection in end comes to the recipe with the highest count of
+        // preferred ingredients when no favorites match.
         val garlic = mockIngredient("Garlic")
         val onion = mockIngredient("Onion")
         val chicken = mockIngredient("Chicken")

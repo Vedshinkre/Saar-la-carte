@@ -1,0 +1,83 @@
+{
+  "ingredients": [
+    {
+      "name": "rice",
+      "unit": "g",
+      "packagingVolume": 1000,
+      "bestBefore": 9
+    }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "soup",
+      "duration": 30,
+      "cookType": [
+        "SOUS"
+      ],
+      "ingredients": [
+        {
+          "name": "rice",
+          "amount": 10
+        }
+      ],
+      "basicDishFor": "EUROPEAN"
+    },
+    {
+      "id": 2,
+      "dishName": "tart",
+      "duration": 30,
+      "cookType": [
+        "TOURNANT"
+      ],
+      "ingredients": [
+        {
+          "name": "rice",
+          "amount": 10
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "dishName": "pie",
+      "duration": 30,
+      "cookType": [
+        "SAUCE"
+      ],
+      "ingredients": [
+        {
+          "name": "rice",
+          "amount": 10
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "dishName": "salad",
+      "duration": 20,
+      "cookType": [
+        "FISH"
+      ],
+      "ingredients": [
+        {
+          "name": "rice",
+          "amount": 10
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "dishName": "stew",
+      "duration": 20,
+      "cookType": [
+        "ROAST"
+      ],
+      "ingredients": [
+        {
+          "name": "rice",
+          "amount": 10
+        }
+      ]
+    }
+  ]
+}

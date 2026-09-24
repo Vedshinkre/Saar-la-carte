@@ -1,0 +1,81 @@
+{
+  "ingredients": [
+    {
+      "name": "basil",
+      "unit": "g",
+      "packagingVolume": 1000,
+      "bestBefore": 9
+    },
+    {
+      "name": "truffle",
+      "unit": "g",
+      "packagingVolume": 50,
+      "bestBefore": 9
+    },
+    {
+      "name": "sugar",
+      "unit": "g",
+      "packagingVolume": 1000,
+      "bestBefore": 9
+    }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "tomato soup",
+      "duration": 10,
+      "cookType": [
+        "EXEC"
+      ],
+      "ingredients": [
+        {
+          "name": "basil",
+          "amount": 10
+        }
+      ],
+      "basicDishFor": "EUROPEAN"
+    },
+    {
+      "id": 2,
+      "dishName": "truffle pasta",
+      "duration": 10,
+      "cookType": [
+        "EXEC"
+      ],
+      "ingredients": [
+        {
+          "name": "truffle",
+          "amount": 20
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "dishName": "sorbet",
+      "duration": 10,
+      "cookType": [
+        "PASTRY"
+      ],
+      "ingredients": [
+        {
+          "name": "sugar",
+          "amount": 10
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "dishName": "tiramisu",
+      "duration": 10,
+      "cookType": [
+        "EXEC"
+      ],
+      "ingredients": [
+        {
+          "name": "sugar",
+          "amount": 10
+        }
+      ]
+    }
+  ]
+}

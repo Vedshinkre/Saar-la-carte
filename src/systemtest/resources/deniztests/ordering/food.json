@@ -1,0 +1,81 @@
+{
+  "ingredients": [
+    {
+      "name": "basil",
+      "unit": "g",
+      "packagingVolume": 1000,
+      "bestBefore": 9
+    },
+    {
+      "name": "cocoa",
+      "unit": "g",
+      "packagingVolume": 20,
+      "bestBefore": 9
+    },
+    {
+      "name": "flour",
+      "unit": "g",
+      "packagingVolume": 1000,
+      "bestBefore": 9
+    },
+    {
+      "name": "nuts",
+      "unit": "g",
+      "packagingVolume": 1000,
+      "bestBefore": 9
+    }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "soup",
+      "duration": 10,
+      "cookType": [
+        "EXEC"
+      ],
+      "ingredients": [
+        {
+          "name": "basil",
+          "amount": 10
+        }
+      ],
+      "basicDishFor": "EUROPEAN"
+    },
+    {
+      "id": 2,
+      "dishName": "cake",
+      "duration": 10,
+      "cookType": [
+        "EXEC"
+      ],
+      "ingredients": [
+        {
+          "name": "cocoa",
+          "amount": 10
+        },
+        {
+          "name": "flour",
+          "amount": 10
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "dishName": "bread",
+      "duration": 10,
+      "cookType": [
+        "EXEC"
+      ],
+      "ingredients": [
+        {
+          "name": "flour",
+          "amount": 10
+        },
+        {
+          "name": "nuts",
+          "amount": 10
+        }
+      ]
+    }
+  ]
+}

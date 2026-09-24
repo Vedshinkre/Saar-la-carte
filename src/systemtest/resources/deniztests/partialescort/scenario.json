@@ -1,0 +1,91 @@
+{
+  "customerGroups": [
+    {
+      "id": 1,
+      "type": "REGULAR",
+      "size": 2,
+      "visitingTick": 1,
+      "foodPreferences": [
+        {
+          "size": 2,
+          "favoriteDishes": [
+            "tart"
+          ]
+        }
+      ],
+      "visitingStart": 1,
+      "visitingPeriod": 10,
+      "restaurant": 1
+    },
+    {
+      "id": 2,
+      "type": "CASUAL",
+      "size": 8,
+      "visitingTick": 1,
+      "foodPreferences": [
+        {
+          "size": 6,
+          "favoriteDishes": [
+            "soup"
+          ]
+        },
+        {
+          "size": 2,
+          "favoriteDishes": [
+            "cake"
+          ]
+        }
+      ],
+      "restaurantTypes": [
+        "EUROPEAN"
+      ],
+      "visitingEvenings": [
+        1
+      ],
+      "ratingLikelihood": "NEVER"
+    },
+    {
+      "id": 3,
+      "type": "CASUAL",
+      "size": 4,
+      "visitingTick": 10,
+      "foodPreferences": [],
+      "restaurantTypes": [
+        "EUROPEAN"
+      ],
+      "visitingEvenings": [
+        1
+      ],
+      "ratingLikelihood": "NEVER"
+    },
+    {
+      "id": 4,
+      "type": "CASUAL",
+      "size": 4,
+      "visitingTick": 10,
+      "foodPreferences": [],
+      "restaurantTypes": [
+        "EUROPEAN"
+      ],
+      "visitingEvenings": [
+        1
+      ],
+      "ratingLikelihood": "NEVER"
+    },
+    {
+      "id": 5,
+      "type": "CASUAL",
+      "size": 2,
+      "visitingTick": 10,
+      "foodPreferences": [],
+      "restaurantTypes": [
+        "EUROPEAN"
+      ],
+      "visitingEvenings": [
+        1
+      ],
+      "ratingLikelihood": "NEVER"
+    }
+  ],
+  "incidents": []
+}

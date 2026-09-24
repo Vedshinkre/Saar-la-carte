@@ -1,0 +1,199 @@
+{
+  "restaurants": [
+    {
+      "id": 1,
+      "name": "Popular",
+      "type": "EUROPEAN",
+      "openingTickStart": 1,
+      "openingTickEnd": 24,
+      "deliveryDrivers": 0,
+      "event": false,
+      "positiveRatings": 9,
+      "negativeRatings": 8,
+      "recipes": [],
+      "kitchenStaff": {
+        "EXEC": 1,
+        "SOUS": 0,
+        "TOURNANT": 0,
+        "SAUCE": 0,
+        "FISH": 0,
+        "ROAST": 0,
+        "VEGETABLE": 0,
+        "PASTRY": 0
+      },
+      "waitstaff": 2,
+      "tables": [
+        {
+          "id": 1,
+          "type": "COMMON",
+          "size": 2
+        },
+        {
+          "id": 2,
+          "type": "COMMON",
+          "size": 2
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Corner",
+      "type": "EUROPEAN",
+      "openingTickStart": 1,
+      "openingTickEnd": 24,
+      "deliveryDrivers": 0,
+      "event": false,
+      "positiveRatings": 3,
+      "negativeRatings": 0,
+      "recipes": [],
+      "kitchenStaff": {
+        "EXEC": 1,
+        "SOUS": 0,
+        "TOURNANT": 0,
+        "SAUCE": 0,
+        "FISH": 0,
+        "ROAST": 0,
+        "VEGETABLE": 0,
+        "PASTRY": 0
+      },
+      "waitstaff": 2,
+      "tables": [
+        {
+          "id": 1,
+          "type": "COMMON",
+          "size": 4
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Harbor",
+      "type": "EUROPEAN",
+      "openingTickStart": 1,
+      "openingTickEnd": 24,
+      "deliveryDrivers": 1,
+      "event": false,
+      "positiveRatings": 3,
+      "negativeRatings": 0,
+      "recipes": [],
+      "kitchenStaff": {
+        "EXEC": 1,
+        "SOUS": 0,
+        "TOURNANT": 0,
+        "SAUCE": 0,
+        "FISH": 0,
+        "ROAST": 0,
+        "VEGETABLE": 0,
+        "PASTRY": 0
+      },
+      "waitstaff": 2,
+      "tables": [
+        {
+          "id": 1,
+          "type": "COMMON",
+          "size": 2
+        },
+        {
+          "id": 2,
+          "type": "COMMON",
+          "size": 2
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Late",
+      "type": "EUROPEAN",
+      "openingTickStart": 15,
+      "openingTickEnd": 24,
+      "deliveryDrivers": 0,
+      "event": false,
+      "positiveRatings": 10,
+      "negativeRatings": 0,
+      "recipes": [],
+      "kitchenStaff": {
+        "EXEC": 1,
+        "SOUS": 0,
+        "TOURNANT": 0,
+        "SAUCE": 0,
+        "FISH": 0,
+        "ROAST": 0,
+        "VEGETABLE": 0,
+        "PASTRY": 0
+      },
+      "waitstaff": 2,
+      "tables": [
+        {
+          "id": 1,
+          "type": "COMMON",
+          "size": 4
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Wok",
+      "type": "ASIAN",
+      "openingTickStart": 1,
+      "openingTickEnd": 24,
+      "deliveryDrivers": 0,
+      "event": false,
+      "positiveRatings": 20,
+      "negativeRatings": 0,
+      "recipes": [],
+      "kitchenStaff": {
+        "EXEC": 1,
+        "SOUS": 0,
+        "TOURNANT": 0,
+        "SAUCE": 0,
+        "FISH": 0,
+        "ROAST": 0,
+        "VEGETABLE": 0,
+        "PASTRY": 0
+      },
+      "waitstaff": 2,
+      "tables": [
+        {
+          "id": 1,
+          "type": "COMMON",
+          "size": 4
+        },
+        {
+          "id": 2,
+          "type": "COMMON",
+          "size": 4
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Early",
+      "type": "EUROPEAN",
+      "openingTickStart": 1,
+      "openingTickEnd": 3,
+      "deliveryDrivers": 0,
+      "event": false,
+      "positiveRatings": 15,
+      "negativeRatings": 0,
+      "recipes": [],
+      "kitchenStaff": {
+        "EXEC": 1,
+        "SOUS": 0,
+        "TOURNANT": 0,
+        "SAUCE": 0,
+        "FISH": 0,
+        "ROAST": 0,
+        "VEGETABLE": 0,
+        "PASTRY": 0
+      },
+      "waitstaff": 2,
+      "tables": [
+        {
+          "id": 1,
+          "type": "COMMON",
+          "size": 4
+        }
+      ]
+    }
+  ]
+}

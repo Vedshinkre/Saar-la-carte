@@ -1,0 +1,57 @@
+{
+  "ingredients": [
+    {
+      "name": "flour",
+      "unit": "g",
+      "packagingVolume": 1000,
+      "bestBefore": 9
+    }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "soup",
+      "duration": 30,
+      "cookType": [
+        "EXEC",
+        "SOUS"
+      ],
+      "ingredients": [
+        {
+          "name": "flour",
+          "amount": 10
+        }
+      ],
+      "basicDishFor": "EUROPEAN"
+    },
+    {
+      "id": 2,
+      "dishName": "pie",
+      "duration": 30,
+      "cookType": [
+        "SOUS",
+        "EXEC"
+      ],
+      "ingredients": [
+        {
+          "name": "flour",
+          "amount": 10
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "dishName": "roast",
+      "duration": 30,
+      "cookType": [
+        "ROAST"
+      ],
+      "ingredients": [
+        {
+          "name": "flour",
+          "amount": 10
+        }
+      ]
+    }
+  ]
+}

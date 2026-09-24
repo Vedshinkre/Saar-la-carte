@@ -2,6 +2,11 @@ package de.unisaarland.cs.se.selab.food
 
 /**
  * Represents what ingredients are available and what's not .
+ * Tracks ingredients using an unavailability counter where a value of `0` denotes that
+ *  the ingredient is currently available for ordering and preparation, while any positive
+ *  integer represents the remaining number of evenings it remains unavailable.
+ *  @param ingredients a mutable mapping of registered [Ingredient] instances to their
+ *  remaining evenings of unavailability.
  */
 class Stock( // 0 means available, > 0 means the number of evenings it remains unavailable
     private val ingredients: MutableMap<Ingredient, Int>

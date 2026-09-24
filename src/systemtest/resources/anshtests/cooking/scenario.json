@@ -1,0 +1,90 @@
+{
+  "customerGroups": [
+    {
+      "id": 1,
+      "type": "REGULAR",
+      "size": 1,
+      "visitingTick": 1,
+      "foodPreferences": [
+        {
+          "size": 1,
+          "favoriteDishes": [
+            "long stew"
+          ]
+        }
+      ],
+      "visitingStart": 1,
+      "visitingPeriod": 1,
+      "restaurant": 1
+    },
+    {
+      "id": 2,
+      "type": "REGULAR",
+      "size": 1,
+      "visitingTick": 2,
+      "foodPreferences": [
+        {
+          "size": 1,
+          "favoriteDishes": [
+            "long stew"
+          ]
+        }
+      ],
+      "visitingStart": 1,
+      "visitingPeriod": 1,
+      "restaurant": 1
+    },
+    {
+      "id": 3,
+      "type": "REGULAR",
+      "size": 1,
+      "visitingTick": 3,
+      "foodPreferences": [
+        {
+          "size": 1,
+          "favoriteDishes": [
+            "quick bowl"
+          ]
+        }
+      ],
+      "visitingStart": 1,
+      "visitingPeriod": 1,
+      "restaurant": 1
+    },
+    {
+      "id": 4,
+      "type": "REGULAR",
+      "size": 1,
+      "visitingTick": 4,
+      "foodPreferences": [
+        {
+          "size": 1,
+          "favoriteDishes": [
+            "slow curry"
+          ]
+        }
+      ],
+      "visitingStart": 1,
+      "visitingPeriod": 1,
+      "restaurant": 1
+    },
+    {
+      "id": 5,
+      "type": "REGULAR",
+      "size": 1,
+      "visitingTick": 5,
+      "foodPreferences": [
+        {
+          "size": 1,
+          "favoriteDishes": [
+            "quick bowl"
+          ]
+        }
+      ],
+      "visitingStart": 1,
+      "visitingPeriod": 1,
+      "restaurant": 1
+    }
+  ],
+  "incidents": []
+}

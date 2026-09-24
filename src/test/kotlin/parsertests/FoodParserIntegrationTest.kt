@@ -6,7 +6,6 @@ import de.unisaarland.cs.se.selab.enums.RestaurantType
 import de.unisaarland.cs.se.selab.loggers.Logger
 import de.unisaarland.cs.se.selab.parsers.ParserController
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.PrintWriter
@@ -16,11 +15,10 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
-private const val RESTAURANT_FIXTURES =
-    "src/systemtest/kotlin/de/unisaarland/cs/se/selab/systemtest/selab26/restaurantparsertests/"
+private const val RESTAURANT_FIXTURES = "src/systemtest/resources/RestaurantParserTests/"
 private const val FIXTURES = "src/test/kotlin/parsertests/fixtures/"
 
-private const val RESTAURANTS_VALID = RESTAURANT_FIXTURES + "restaurants.json"
+private const val RESTAURANTS_VALID = RESTAURANT_FIXTURES + "Restaurants.json"
 private const val SCENARIO_VALID = FIXTURES + "scenarioValid.json"
 
 /**
@@ -46,7 +44,6 @@ class FoodParserIntegrationTest {
     private fun parse(food: String) =
         ParserController().parseFiles(food, RESTAURANTS_VALID, SCENARIO_VALID)
 
-    @Disabled
     @Test
     fun `a food file with several ingredients and recipes is parsed with correct values end-to-end`() {
         val result = parse(FIXTURES + "foodMultipleIngredientsAndRecipes.json")

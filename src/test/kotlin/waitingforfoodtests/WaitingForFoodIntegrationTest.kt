@@ -16,7 +16,6 @@ import de.unisaarland.cs.se.selab.loggers.Logger
 import de.unisaarland.cs.se.selab.restaurant.FrontOfHouse
 import eventorderingtests.EventOrderingFixtures
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -185,11 +184,9 @@ class WaitingForFoodIntegrationTest {
         assertEquals(1, lines("FOH Escorting").filter { it.contains("group 1") || it.contains("Group 1") }.size)
     }
 
-    // EatingProcessor uses `< EXPECTATION_WINDOW_TICKS`, so exactly 4 ticks is NEUTRAL there. Whether the
-    // spec makes it POSITIVE (<=) or NEUTRAL (<) is not confirmed against the reference yet.
-    @Disabled("unconfirmed: is food served exactly 4 ticks after ordering POSITIVE (<=) or NEUTRAL (<)?")
+    // "before the 4 tick expectation window is over": exactly 4 ticks after ordering is only neutral
     @Test
-    fun `food served four ticks after ordering is still a positive experience`() {
+    fun `food served four ticks after ordering is a neutral experience`() {
         val group = casual(1, size = 2)
         arrive(group)
 
@@ -197,7 +194,7 @@ class WaitingForFoodIntegrationTest {
         cook(group)
         tick() // tick 5: four ticks after ordering
 
-        assertEquals(ExperienceType.POSITIVE, group.experience)
+        assertEquals(ExperienceType.NEUTRAL, group.experience)
         assertTrue(lines("Restaurant No Eating").isEmpty())
     }
 

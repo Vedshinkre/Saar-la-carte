@@ -1,6 +1,6 @@
 {
   "ingredients": [
-    { "name": "rice", "unit": "g", "packagingVolume": 20, "bestBefore": 5 },
+    { "name": "rice", "unit": "g", "packagingVolume": 500, "bestBefore": 5 },
     { "name": "oil", "unit": "mL", "packagingVolume": 500, "bestBefore": 3 },
     { "name": "onion", "unit": "X", "packagingVolume": 10, "bestBefore": 2 }
   ],

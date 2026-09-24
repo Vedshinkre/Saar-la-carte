@@ -8,6 +8,8 @@ import de.unisaarland.cs.se.selab.enums.LogLevel
 object FohReceptionLogger {
     /**
      * Logs a group's arrival.
+     *
+     * @param groupId the id of the customer group
      */
     fun logRestaurantArrival(groupId: Id) {
         Logger.log(
@@ -19,6 +21,10 @@ object FohReceptionLogger {
 
     /**
      * Logs a group being seated.
+     *
+     * @param groupId the id of the customer group
+     * @param tableId the id of the table
+     * @param waitstaffIds the ids of the waiters
      */
     fun logFohSeating(
         groupId: Id,
@@ -34,6 +40,10 @@ object FohReceptionLogger {
 
     /**
      * Logs tables being merged.
+     *
+     * @param groupId the id of the customer group
+     * @param oldTableIds the ids of the tables that were merged
+     * @param mergedTableId the id of the merged table
      */
     fun logFohMergingTables(
         groupId: Id,
@@ -49,6 +59,8 @@ object FohReceptionLogger {
 
     /**
      * Logs when no waitstaff is available.
+     *
+     * @param groupId the id of the customer group
      */
     fun logFohNoSeatingNoWaitstaff(groupId: Id) {
         Logger.log(
@@ -60,6 +72,9 @@ object FohReceptionLogger {
 
     /**
      * Logs when no table is available.
+     *
+     * @param groupId the id of the customer group
+     * @param waitstaffId the id of the waiter
      */
     fun logFohNoSeating(
         groupId: Id,
@@ -74,6 +89,11 @@ object FohReceptionLogger {
 
     /**
      * Logs an order being placed.
+     *
+     * @param groupId the id of the customer group
+     * @param orderId the id of the order
+     * @param dishNameToAmount the ordered amount per dish name
+     * @param waitstaffId the id of the waiter
      */
     fun logFohOrdering(
         groupId: Id,
@@ -93,6 +113,9 @@ object FohReceptionLogger {
 
     /**
      * Logs when a group cannot place an order.
+     *
+     * @param groupId the id of the customer group
+     * @param customerNumber the number of customers
      */
     fun logFohNoOrdering(
         groupId: Id,
@@ -108,6 +131,10 @@ object FohReceptionLogger {
 
     /**
      * Logs the seating status.
+     *
+     * @param waitstaffNumber the number of waiters
+     * @param customerNumber the number of customers
+     * @param tableNumber the number of tables
      */
     fun logSeatingStatus(
         waitstaffNumber: Int,
@@ -123,6 +150,9 @@ object FohReceptionLogger {
 
     /**
      * Logs the ordering status.
+     *
+     * @param customerNumber the number of customers
+     * @param waitstaffNumber the number of waiters
      */
     fun logOrderingStatus(
         customerNumber: Int,

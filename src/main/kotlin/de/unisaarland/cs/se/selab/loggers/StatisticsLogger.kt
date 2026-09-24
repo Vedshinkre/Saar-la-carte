@@ -14,6 +14,8 @@ object StatisticsLogger {
 
     /**
      * Logs the number of cooked meals.
+     *
+     * @param numberOfCookedMeals the number of cooked meals
      */
     fun logSimulationStatsCooked(numberOfCookedMeals: Int) {
         Logger.log(
@@ -25,6 +27,8 @@ object StatisticsLogger {
 
     /**
      * Logs the number of served customers.
+     *
+     * @param numberOfCustomersServed the number of customers served
      */
     fun logSimulationStatsServed(numberOfCustomersServed: Int) {
         Logger.log(
@@ -36,6 +40,8 @@ object StatisticsLogger {
 
     /**
      * Logs the number of delivered customers.
+     *
+     * @param numberOfCustomersDelivered the number of customers delivered
      */
     fun logSimulationStatsDelivered(numberOfCustomersDelivered: Int) {
         Logger.log(
@@ -47,6 +53,8 @@ object StatisticsLogger {
 
     /**
      * Logs the number of groups that gave ratings.
+     *
+     * @param numberOfCustomersGivingRatings the number of customers giving ratings
      */
     fun logSimulationStatsRatingsGiven(numberOfCustomersGivingRatings: Int) {
         Logger.log(

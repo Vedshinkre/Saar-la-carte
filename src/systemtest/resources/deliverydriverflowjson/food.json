@@ -1,0 +1,11 @@
+{
+  "ingredients": [
+    { "name": "Tomato", "unit": "g", "packagingVolume": 1000, "bestBefore": 3 }
+  ],
+  "recipes": [
+    {
+      "id": 1, "dishName": "Tomato Soup", "duration": 10, "basicDishFor": "EUROPEAN",
+      "cookType": ["EXEC"], "ingredients": [{ "name": "Tomato", "amount": 1 }]
+    }
+  ]
+}

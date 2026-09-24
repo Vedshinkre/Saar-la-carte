@@ -19,7 +19,6 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -418,15 +417,9 @@ class KitchenCookingProcessTest {
         assertTrue(logContains(expected))
     }
 
-    // --- fallback in logFinishedMeals when the originating order can no longer be found ---
-    // Still fails (checked): Kitchen.rememberOrderTicks() now caches every queued order's orderedAt in
-    // orderedAtByOrderId on each processCooking() and never evicts it, so an order removed from the queue
-    // mid-cook is still found and the log reports 4 ticks after ordering (tick 5 - tick 1), not the 0
-    // fallback this test expects. The 0 fallback is only reachable for an order that was never in the queue
-    // during any processCooking() call. Fix: change the expected text to "4 ticks after ordering"
-    @Disabled("stale expectation, see comment above")
+    // --- an order removed from the queue mid-cook is still timed from its remembered orderedAt ---
     @Test
-    fun `processCooking - order gone when meal finishes - logs zero ticks after ordering`() {
+    fun `processCooking - order gone when meal finishes - still logs ticks since its order`() {
         val recipe = recipe(duration = 30, name = "Chicken Rice") // needs 2 more ticks after this one
         val dish = Dish(recipe)
         val order = Order(listOf(dish)) // orderedAt = tick 1
@@ -443,12 +436,12 @@ class KitchenCookingProcessTest {
         queue.remove(order)
 
         Time.tick = 5
-        k.processCooking() // tick 5: finishes, but its order can no longer be located
+        k.processCooking() // tick 5: finishes, the kitchen remembered the order was placed in tick 1
 
         assertEquals(DishStatus.COOKED, dish.status)
         val expected = "Kitchen Meal Cooked (R 1): Cook 1 finished cooking 1 meals " +
-            "of dish Chicken Rice 0 ticks after ordering."
-        assertTrue(logContains(expected), "expected the fallback duration of 0, got:\n$output")
+            "of dish Chicken Rice 4 ticks after ordering."
+        assertTrue(logContains(expected), "expected a duration of 4 ticks, got:\n$output")
     }
 
     @Test

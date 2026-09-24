@@ -1,0 +1,67 @@
+{
+  "customerGroups": [
+    {
+      "id": 1,
+      "type": "REGULAR",
+      "size": 2,
+      "visitingTick": 2,
+      "foodPreferences": [{ "size": 2, "favoriteDishes": ["soup"] }],
+      "visitingStart": 1,
+      "visitingPeriod": 2,
+      "restaurant": 1
+    },
+    {
+      "id": 2,
+      "type": "REGULAR",
+      "size": 2,
+      "visitingTick": 1,
+      "foodPreferences": [{ "size": 2, "favoriteDishes": ["soup"] }],
+      "visitingStart": 1,
+      "visitingPeriod": 1,
+      "restaurant": 2
+    },
+    {
+      "id": 3,
+      "type": "REGULAR",
+      "size": 2,
+      "visitingTick": 1,
+      "foodPreferences": [{ "size": 2, "favoriteDishes": ["stew"] }],
+      "visitingStart": 1,
+      "visitingPeriod": 5,
+      "restaurant": 2
+    },
+    {
+      "id": 4,
+      "type": "CASUAL",
+      "size": 2,
+      "visitingTick": 3,
+      "foodPreferences": [{ "size": 2, "favoriteDishes": ["salad"] }],
+      "restaurantTypes": ["EUROPEAN"],
+      "visitingEvenings": [1, 2],
+      "ratingLikelihood": "ALWAYS"
+    },
+    {
+      "id": 5,
+      "type": "CASUAL",
+      "size": 3,
+      "visitingTick": 6,
+      "foodPreferences": [{ "size": 3, "excludedIngredients": ["beef"] }],
+      "deliveryDistance": 5,
+      "restaurantTypes": ["EUROPEAN"],
+      "visitingEvenings": [1],
+      "ratingLikelihood": "SOME"
+    },
+    {
+      "id": 6,
+      "type": "EVENT",
+      "size": 5,
+      "tableType": "COMMON",
+      "visitingTick": 2,
+      "foodPreferences": [{ "size": 5, "excludedIngredients": ["beef"], "favoriteDishes": ["salad"] }],
+      "restaurantTypes": ["EUROPEAN"],
+      "eventEvening": 4,
+      "favoriteDishes": { "EUROPEAN": "soup" }
+    }
+  ],
+  "incidents": []
+}

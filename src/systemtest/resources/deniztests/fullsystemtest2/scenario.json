@@ -1,0 +1,78 @@
+{
+  "customerGroups": [
+    {
+      "id": 1,
+      "type": "REGULAR",
+      "size": 2,
+      "visitingTick": 2,
+      "foodPreferences": [{ "size": 2, "favoriteDishes": ["stew"] }],
+      "visitingStart": 1,
+      "visitingPeriod": 1,
+      "restaurant": 1
+    },
+    {
+      "id": 2,
+      "type": "CASUAL",
+      "size": 2,
+      "visitingTick": 3,
+      "foodPreferences": [{ "size": 2, "favoriteDishes": ["salad"] }],
+      "restaurantTypes": ["EUROPEAN"],
+      "visitingEvenings": [2],
+      "ratingLikelihood": "ALWAYS"
+    },
+    {
+      "id": 3,
+      "type": "CASUAL",
+      "size": 2,
+      "visitingTick": 6,
+      "foodPreferences": [{ "size": 2, "favoriteDishes": ["salad"] }],
+      "deliveryDistance": 5,
+      "restaurantTypes": ["EUROPEAN"],
+      "visitingEvenings": [2],
+      "ratingLikelihood": "SOME"
+    },
+    {
+      "id": 4,
+      "type": "EVENT",
+      "size": 4,
+      "tableType": "COMMON",
+      "visitingTick": 2,
+      "foodPreferences": [{ "size": 4, "excludedIngredients": ["lettuce"] }],
+      "restaurantTypes": ["EUROPEAN"],
+      "eventEvening": 4,
+      "favoriteDishes": { "EUROPEAN": "soup" }
+    }
+  ],
+  "incidents": [
+    {
+      "id": 1,
+      "type": "PACKAGING",
+      "evening": 1,
+      "ingredient": "beef",
+      "packagingVolume": 100
+    },
+    {
+      "id": 2,
+      "type": "STAFF",
+      "evening": 2,
+      "restaurant": 1,
+      "number": -1,
+      "staffType": "COOK",
+      "cookType": "SOUS"
+    },
+    {
+      "id": 3,
+      "type": "UNAVAILABLE",
+      "evening": 2,
+      "ingredient": "tomato",
+      "duration": 2
+    },
+    {
+      "id": 4,
+      "type": "RECIPE",
+      "evening": 3,
+      "ingredient": "beef",
+      "adaptation": -50
+    }
+  ]
+}

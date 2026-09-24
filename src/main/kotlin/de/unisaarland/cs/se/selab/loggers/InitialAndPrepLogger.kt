@@ -9,6 +9,9 @@ import de.unisaarland.cs.se.selab.enums.MeasurementUnit
 object InitialAndPrepLogger {
     /**
      * Logs the result of parsing a file.
+     *
+     * @param success whether it succeeded
+     * @param filename the name of the file
      */
     fun logInitialization(
         success: Boolean,
@@ -35,6 +38,9 @@ object InitialAndPrepLogger {
 
     /**
      * Logs an incident.
+     *
+     * @param incidentId the id of the incident
+     * @param incidentType the type of the incident
      */
     fun logIncident(incidentId: Id, incidentType: String) {
         Logger.log(
@@ -53,6 +59,8 @@ object InitialAndPrepLogger {
 
     /**
      * Logs when a group has no reservation.
+     *
+     * @param groupId the id of the customer group
      */
     fun logFohNoReservation(groupId: Id) {
         Logger.log(
@@ -64,6 +72,10 @@ object InitialAndPrepLogger {
 
     /**
      * Logs ingredients procured from the supplier.
+     *
+     * @param amount the amount of the ingredient that was procured
+     * @param unit the unit of measurement
+     * @param name the name of the ingredient
      */
     fun logPantryProcured(
         amount: Int,
@@ -89,6 +101,10 @@ object InitialAndPrepLogger {
 
     /**
      * Logs an ingredient removed from the pantry.
+     *
+     * @param removedIngredientAmount the amount of the ingredient that was removed from the pantry
+     * @param unit the unit of measurement
+     * @param ingredientName the name of the ingredient
      */
     fun logPantryRemovedIngredient(
         removedIngredientAmount: Int,

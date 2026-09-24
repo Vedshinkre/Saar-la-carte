@@ -28,7 +28,6 @@ import de.unisaarland.cs.se.selab.restaurant.Countertop
 import de.unisaarland.cs.se.selab.restaurant.FrontOfHouse
 import de.unisaarland.cs.se.selab.restaurant.Pantry
 import de.unisaarland.cs.se.selab.restaurant.Table
-import org.junit.jupiter.api.Disabled
 import java.io.PrintWriter
 import java.io.StringWriter
 import kotlin.test.AfterTest
@@ -125,19 +124,23 @@ class EventSeatingIntegrationTest {
      * preserve capacity elsewhere), and the event that follows must still prioritize
      * busier waiter first, (as it would if the load had been preset directly)
      */
-    @Disabled
     @Test
     fun `waiters busied by earlier regular groups are still recruited in the right order for an event`() {
         val w1 = Waiter()
         val w2 = Waiter()
         val eventTable = Table(3, 12, TableType.COMMON)
-        val foh = frontOfHouse(listOf(eventTable), listOf(w1, w2))
+        val foh = frontOfHouse(
+            listOf(Table(1, 3, TableType.COMMON), Table(2, 4, TableType.COMMON), eventTable),
+            listOf(w1, w2)
+        )
 
-        // two REGULAR groups are seated without a prior reservation: seating is a no-op for the
-        // table but the waiter bookkeeping under test still runs (see ArrivalProcessor.
-        // seatRegularOrCasualGroup), which is all this test needs
-        assertTrue(foh.processArrival(regularGroup(1, 3), menu))
-        assertTrue(foh.processArrival(regularGroup(2, 4), menu))
+        // a REGULAR group is only seated at the tables it reserved beforehand
+        val firstRegular = regularGroup(1, 3)
+        val secondRegular = regularGroup(2, 4)
+        assertTrue(foh.reserveTables(firstRegular))
+        assertTrue(foh.reserveTables(secondRegular))
+        assertTrue(foh.processArrival(firstRegular, menu))
+        assertTrue(foh.processArrival(secondRegular, menu))
 
         val busier = if (w1.currentLoad > w2.currentLoad) w1 else w2
         val idler = if (busier === w1) w2 else w1
@@ -228,22 +231,12 @@ class EventSeatingIntegrationTest {
     }
 
     /**
-     * SEATING and TAKE_ORDER must go through walk the same waiter list in the same order (`consumedWaiters`)
-     * so the waiter recruited first for SEATING is also the first one handed customers for TAKE_ORDER
-     * TAKE_ORDER has an independent 10-action limit though, so its split does not have to mirror the (10/4/1) SEATING
-     * split the first waiter still takes 10 orders, but the leftover 5 all fit within
-     * the second waiter's own limit, so the third waiter, despite having seated one customer, never takes an order
+     * SEATING and TAKE_ORDER walk the same waiter list in the same order (`consumedWaiters`), and each
+     * waiter takes the orders of exactly as many customers as they seated, so the TAKE_ORDER split mirrors
+     * the (10/4/1) SEATING split: the third waiter, having seated one customer, also takes one order
      */
-    // CONFIRMED BUG, not fixed here because EventGroup is not my code (git blame: Atharva Kore).
-    // EventGroup.placeOrder adds customerDish to listOfDishes even when currentWaiter is null, i.e.
-    // when every recruited waiter has already reached Constants.ACTION_LIMIT for TAKE_ORDER. The
-    // TAKE_ORDER tick load is therefore never a limit for EVENT groups: a group of 15 orders 15
-    // dishes in one tick with one waiter instead of 10, and the rest never wait for the next tick.
-    // Fix: only add the dish when a waiter with spare TAKE_ORDER capacity was found, and leave the
-    // remaining customers in the group so they order in a following tick.
-    @Disabled("EventGroup.placeOrder ignores the TAKE_ORDER tick load limit")
     @Test
-    fun `the seating order determines which waiter is offered orders first, independent of the seating split`() {
+    fun `the seating order determines which waiter is offered orders first, mirroring the seating split`() {
         val first = Waiter().also { it.currentLoad = 15 }
         val second = Waiter().also {
             it.currentLoad = 11
@@ -261,17 +254,12 @@ class EventSeatingIntegrationTest {
         assertEquals(10, second.getTickLoad(ActionType.SEAT), "6 preexisting + 4 newly assigned")
         assertEquals(1, third.getTickLoad(ActionType.SEAT))
 
-        // TAKE_ORDER is a separate, independently counted action: the first waiter still fills up
-        // to 10, but the remaining 5 all fit under the second waiter's own limit
+        // every waiter takes the orders of the customers they seated
         assertEquals(10, first.getTickLoad(ActionType.TAKE_ORDER), "waiter 1 takes the first 10 orders")
-        assertEquals(5, second.getTickLoad(ActionType.TAKE_ORDER), "waiter 2 takes all 5 remaining orders")
-        assertEquals(
-            0,
-            third.getTickLoad(ActionType.TAKE_ORDER),
-            "waiter 3 seated one customer but never takes an order"
-        )
+        assertEquals(4, second.getTickLoad(ActionType.TAKE_ORDER), "waiter 2 takes the 4 orders of its seats")
+        assertEquals(1, third.getTickLoad(ActionType.TAKE_ORDER), "waiter 3 takes the order of its one seat")
 
-        // the FOH Ordering line still names every waiter that took part in seating, not just the ones who took orders
+        // the FOH Ordering line names every waiter that took part
         val orderingLine = lines().first { it.contains("FOH Ordering (R 1): Group 1 placed") }
         val ids = listOfNotNull(first.id, second.id, third.id).sorted().joinToString(",")
         assertTrue(orderingLine.endsWith("with waitstaff $ids."))

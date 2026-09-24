@@ -3,7 +3,6 @@ package waitingforfoodtests
 import de.unisaarland.cs.se.selab.enums.DishStatus
 import de.unisaarland.cs.se.selab.enums.ExperienceType
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -310,20 +309,28 @@ class WaitingForFoodTest {
 
     // ---- experience once everything is served
 
-    // EatingProcessor.handleFullyServedOrder uses `< EXPECTATION_WINDOW_TICKS`, so being served exactly
-    // 4 ticks after ordering is NEUTRAL there. Whether the spec's "before the 4 tick expectation window is
-    // over" makes tick 4 POSITIVE or NEUTRAL is still not confirmed against the reference (the patience
-    // question is settled, this one is not).
-    @Disabled("unconfirmed: is food served exactly 4 ticks after ordering POSITIVE (<=) or NEUTRAL (<)?")
     @Test
-    fun `everything served within four ticks is a positive experience`() {
+    fun `everything served within three ticks is a positive experience`() {
+        val group = fx.casual(1, fx.order(DishStatus.SERVED, DishStatus.SERVED))
+        val processor = fx.eating(listOf(group))
+
+        fx.atTicksSinceOrder(3)
+        processor.processEating()
+
+        assertEquals(ExperienceType.POSITIVE, group.experience)
+        assertEquals(fx.orderTick + 3, group.currentOrder!!.lastDishServedAt)
+    }
+
+    // "before the 4 tick expectation window is over": exactly 4 ticks after ordering is only neutral
+    @Test
+    fun `everything served exactly four ticks after ordering is a neutral experience`() {
         val group = fx.casual(1, fx.order(DishStatus.SERVED, DishStatus.SERVED))
         val processor = fx.eating(listOf(group))
 
         fx.atTicksSinceOrder(4)
         processor.processEating()
 
-        assertEquals(ExperienceType.POSITIVE, group.experience)
+        assertEquals(ExperienceType.NEUTRAL, group.experience)
         assertEquals(fx.orderTick + 4, group.currentOrder!!.lastDishServedAt)
     }
 

@@ -9,7 +9,6 @@ import de.unisaarland.cs.se.selab.parsers.FoodParser
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.jsonArray
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -36,7 +35,6 @@ class FoodParserTest {
     """
 
     // INGREDIENTS
-    @Disabled
     @Test
     fun `valid ingredients are parsed with correct name, unit, packaging volume, and best-before`() {
         val ingredients = jsonArrayOf("[$riceIngredient, $oilIngredient, $onionIngredient]")
@@ -172,21 +170,14 @@ class FoodParserTest {
         assertEquals(150, parsedRecipes.single().ingredients.values.single())
     }
 
-    // CONFIRMED BUG, not fixed here because the schema is not my code
-    // (git blame src/main/resources/schema/recipe.schema: Youssef Abdelsalam, Ansh Tiwatne).
-    // A recipe ingredient may carry any extra key: recipe.schema is the only object in all of our
-    // schemas whose nested "ingredients/items" lacks "additionalProperties": false. The reference
-    // rejects such a file - the tutors named exactly this ("unknown key unit") as the reason
-    // CasualNoDecisionNoSpaceTest fails against the reference, whose food.json had the same typo.
-    // Fix: add "additionalProperties": false to $defs/recipe/properties/ingredients/items.
-    // Note this test drives FoodParser directly, so it can only pass once the check also exists in
-    // the parser, or it has to be rewritten to go through ParserController like FoodParserIntegrationTest.
-    @Disabled("recipe.schema accepts unknown keys inside a recipe ingredient")
     @Test
-    fun `recipe ingredient unit mismatching the ingredient's defined unit is rejected`() {
+    fun `recipe ingredient unit mismatching the ingredient's defined unit is ignored`() {
         val recipes = """[{"id": 1, "dishName": "Rice Bowl", "duration": 20, "cookType": ["EXEC"],
             "ingredients": [{"name": "rice", "unit": "mL", "amount": 150}]}]"""
-        assertFailsWith<IllegalArgumentException> { parseWithRice(recipes) }
+        val (_, parsedRecipes) = parseWithRice(recipes)
+        val (ingredient, amount) = parsedRecipes.single().ingredients.entries.single()
+        assertEquals(MeasurementUnit.G, ingredient.unit)
+        assertEquals(150, amount)
     }
 
     @Test

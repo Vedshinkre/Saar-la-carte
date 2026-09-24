@@ -14,12 +14,16 @@ object Logger {
     /**
      *  In case a list of Ids must be
      * logged, output string of a comma-separated list of Ids, (e.g., 3,5,7,8).
+     *
+     * @param ids the ids that are formatted into one comma separated list
      */
     fun formatIds(ids: List<Id>): String = ids.sorted().joinToString(",")
 
     /**
      *  In case key-value mapping must be
      * logged, output string of a comma-separated list of key:value pairs, (e.g., A:3,B:5,C:7,D:8).
+     *
+     * @param values the values that are formatted into one comma separated list
      */
     fun formatKeyValueMap(values: Map<String, Int>): String = values.entries
         .sortedBy { it.key }
@@ -36,6 +40,8 @@ object Logger {
 
     /**
      * Sets the current log level.
+     *
+     * @param level the log level
      */
     fun setup(level: LogLevel) {
         currentLevel = level
@@ -43,6 +49,8 @@ object Logger {
 
     /**
      * Sets the output writer.
+     *
+     * @param writer the writer the log lines are written to
      */
     fun setup(writer: PrintWriter) {
         outputHandle = writer
@@ -50,6 +58,9 @@ object Logger {
 
     /**
      * Logs a message at the given level.
+     *
+     * @param level the log level
+     * @param message the text to log
      */
     fun log(level: LogLevel, message: String) {
         if (shouldLog(level)) {

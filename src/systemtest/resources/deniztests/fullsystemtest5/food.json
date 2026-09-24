@@ -1,0 +1,30 @@
+{
+  "ingredients": [
+    { "name": "tomato", "unit": "g", "packagingVolume": 40, "bestBefore": 5 },
+    { "name": "beef", "unit": "g", "packagingVolume": 100, "bestBefore": 5 }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "soup",
+      "duration": 10,
+      "cookType": ["EXEC"],
+      "ingredients": [{ "name": "tomato", "amount": 5 }],
+      "basicDishFor": "EUROPEAN"
+    },
+    {
+      "id": 2,
+      "dishName": "stew",
+      "duration": 30,
+      "cookType": ["TOURNANT"],
+      "ingredients": [{ "name": "beef", "amount": 8 }]
+    },
+    {
+      "id": 3,
+      "dishName": "roast platter",
+      "duration": 20,
+      "cookType": ["TOURNANT", "ROAST"],
+      "ingredients": [{ "name": "beef", "amount": 10 }]
+    }
+  ]
+}

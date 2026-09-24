@@ -13,7 +13,9 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.PatienceLeavesFiveT
 import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.PatienceLeavesFourTicksAfterOrderSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.ServedOnFourthTickIsNeutralSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.ServedOnFourthTickIsPositiveSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.anshtests.anshSimulationMutantTests
 import de.unisaarland.cs.se.selab.systemtest.selab26.anshtests.anshTests
+import de.unisaarland.cs.se.selab.systemtest.selab26.anshtests.anshValidationMutantTests
 import de.unisaarland.cs.se.selab.systemtest.selab26.basicdishtests.AdaptedBasicDishAcceptedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.basicdishtests.AdaptedBasicDishOnlyAdapterAffectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.basicdishtests.AdaptedBasicDishRecipeChangeSystemTest
@@ -26,7 +28,8 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExampleEmptyTick
 import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExamplePreparationAndServingStartTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExampleSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.customerparsertests.customerParserSystemTests
-import de.unisaarland.cs.se.selab.systemtest.selab26.deniztests.denizTests
+import de.unisaarland.cs.se.selab.systemtest.selab26.deniztests.denizTestsForReference
+import de.unisaarland.cs.se.selab.systemtest.selab26.deniztests.denizTestsPassing
 import de.unisaarland.cs.se.selab.systemtest.selab26.eventtests.EventArrivalCasualTurnedAwaySystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.eventtests.EventArrivalCurrentLoadIgnoresEventSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.eventtests.EventArrivalRegularGroupsSeatedFirstSystemTest
@@ -61,6 +64,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualMergeTri
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualNoDecisionNoSpaceTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualTableExclusionSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualTableNoLiftSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualTableTypesNeverMixSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CasualTiebreakLowestIdTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CookChangeNoOrderTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.CorrectPartialServing1
@@ -107,7 +111,6 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.PantryExpiryAl
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.PantryExpirySystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.PartialDeliveryHandoverSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.PartialLeaverEscortedSystemTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.PartialServiceSuccessTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RecipeChangeAcrossRestaurantsTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RecipeChangeMinimumAmountSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RecipeChangeRoundingSystemTest
@@ -132,6 +135,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.UnavailableInc
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.WaiterLoadReleasedOnLeavingSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.WaitingForFoodSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.WaitstaffExhaustionTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.deliveryDriverFlowSystemTests
 import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentNegativePackagingVolumeRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentNoNameRejectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.incidentparsersystemtests.IncidentNonUniqueIdsRejectedSystemTest
@@ -288,7 +292,6 @@ object SystemTestRegistration {
         fullScenarioSystemTests(false).forEach { testSuite.registerTest(it) }
         anshTests().forEach { testSuite.registerTest(it) }
         testSuite.registerTest(DeliveryOrderSuccessTestA())
-        testSuite.registerTest(PartialServiceSuccessTest())
         testSuite.registerTest(PartialDeliveryHandoverSystemTest())
         testSuite.registerTest(CookChangeNoOrderTest())
         testSuite.registerTest(RecipeChangeAcrossRestaurantsTest())
@@ -301,7 +304,7 @@ object SystemTestRegistration {
         testSuite.registerTest(CookIdTieBreakLowestIdA())
         testSuite.registerTest(KitchenCookAssignmentSystemTest())
         testSuite.registerTest(CorrectPartialServing2())
-        denizTests().forEach { testSuite.registerTest(it) }
+        denizTestsForReference().forEach { testSuite.registerTest(it) }
     }
 
     /** AB tests for the two tick windows fo the serving phase */
@@ -343,6 +346,7 @@ object SystemTestRegistration {
         registerVladValidationMutantTests(testSuite)
         fullScenarioSystemTests(true).forEach { testSuite.registerTest(it) }
         testSuite.registerTest(IncidentNoNameRejectedSystemTest())
+        anshValidationMutantTests().forEach { testSuite.registerTest(it) }
     }
 
     /**
@@ -378,7 +382,9 @@ object SystemTestRegistration {
         fullScenarioSystemTests(true).forEach { testSuite.registerTest(it) }
         testSuite.registerTest(CasualGroupRatingSystemTest())
         testSuite.registerTest(RegularFailedTest())
+        anshSimulationMutantTests().forEach { testSuite.registerTest(it) }
         testSuite.registerTest(KitchenCookAssignmentSystemTest())
+        denizTestsPassing().forEach { testSuite.registerTest(it) }
     }
 
     /**
@@ -463,8 +469,6 @@ object SystemTestRegistration {
         testSuite.registerTest(EventSeatingCapacityCasualRetryTest())
         testSuite.registerTest(EventSeatingCapacityOneTooManyTest())
         testSuite.registerTest(EventSeatingCapacityFailedEventRatingTest())
-        /** testSuite.registerTest(EventSeatingCapacityFailedKeepsTickLoadTest())
-         // testSuite.registerTest(EventSeatingCapacityFailedThenRetryTest())**/
         testSuite.registerTest(EventSeatingSharedCapacityFirstEventTest())
         testSuite.registerTest(EventSeatingSharedCapacitySecondEventTest())
         testSuite.registerTest(EventSeatingSharedCapacityNoCapacityLeftTest())
@@ -507,6 +511,8 @@ object SystemTestRegistration {
         testSuite.registerTest(TableReservationSingleTableSystemTest())
         testSuite.registerTest(TableReservationMergeSystemTest())
         testSuite.registerTest(TableTypeRestrictionsSystemTest())
+        testSuite.registerTest(CasualTableTypesNeverMixSystemTest())
+        deliveryDriverFlowSystemTests().forEach { testSuite.registerTest(it) }
         testSuite.registerTest(TableReservationConflictsSystemTest())
         testSuite.registerTest(EventTableMergingSystemTest())
         testSuite.registerTest(CasualTableNoLiftSystemTest())
@@ -613,36 +619,30 @@ object SystemTestRegistration {
      * All of Skerdi's system tests, to run against the reference implementation. The negative control
      * EatingOrderIsPerGroupSystemTest is left out on purpose: it is wrong against the reference by design.
      */
-    private fun registerSkerdiReferenceTests(testSuite: SELab26TestSuite) {
-        // simulation and statistics
+    private fun registerSkerdiReferenceTests(testSuite: SELab26TestSuite) { // simulation and statistics
         testSuite.registerTest(SimulationLifecycleSystemTest())
-        testSuite.registerTest(StatisticsOrderingSystemTest())
-        // supplier and pantry
+        testSuite.registerTest(StatisticsOrderingSystemTest()) // supplier and pantry
         testSuite.registerTest(SupplierProcurementSystemTest())
         testSuite.registerTest(UnavailableIncidentSupplierProcurementSystemTest())
         testSuite.registerTest(UnavailabilityDurationExpirySystemTest())
         testSuite.registerTest(PantryExpirySystemTest())
         testSuite.registerTest(PantryExpiryAlphabeticalOrderSystemTest())
         testSuite.registerTest(PantryAbandonedDishIngredientsNotRefundedSystemTest())
-        // restaurant decision and browsing
         testSuite.registerTest(CustomerBehaviourDecisionSystemTest())
         testSuite.registerTest(BrowsingRefusesDineInInLastThreeTicksSystemTest())
         testSuite.registerTest(CasualBarRestaurantChoiceSystemTest())
         testSuite.registerTest(CasualBarExactFitNoMergeSystemTest())
         testSuite.registerTest(DriverIncidentReducesBrowsingAvailabilitySystemTest())
-        // waiting for food, leaving, escorting, serving capacity
         testSuite.registerTest(LateCasualNoWaiterSystemTest())
         testSuite.registerTest(WaitingForFoodSystemTest())
         testSuite.registerTest(WaiterLoadReleasedOnLeavingSystemTest())
         testSuite.registerTest(PartialLeaverEscortedSystemTest())
         testSuite.registerTest(EatingOrderIsTwoPassesSystemTest())
-        testSuite.registerTest(RegularCapacityBlockedOrderNotLostSystemTest())
-        // delivery
+        testSuite.registerTest(RegularCapacityBlockedOrderNotLostSystemTest()) // delivery
         testSuite.registerTest(DeliveryQueueDelayTimeoutSystemTest())
         testSuite.registerTest(DeliveryQueueDelayFailedReturnSystemTest())
         testSuite.registerTest(DeliveryMultipleWaitersServeOneOrderSystemTest())
         testSuite.registerTest(DeliveryEveningBoundaryNeverRatesSystemTest())
-        // REGULAR reservations and ratings (probes for the mandatory ReservedForMe test)
         testSuite.registerTest(RegularFailedAttemptsNotResetByInterveningSuccessSystemTest())
         testSuite.registerTest(RegularReservationOrderIsAscendingIdNotFileOrderSystemTest())
         testSuite.registerTest(RegularUneventfulVisitRatesPositiveSystemTest())

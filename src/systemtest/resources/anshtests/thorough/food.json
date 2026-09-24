@@ -1,0 +1,28 @@
+{
+  "ingredients": [
+    {"name": "beef", "unit": "g", "packagingVolume": 1000, "bestBefore": 3},
+    {"name": "chicken", "unit": "g", "packagingVolume": 500, "bestBefore": 2},
+    {"name": "cream", "unit": "mL", "packagingVolume": 1000, "bestBefore": 2},
+    {"name": "lentils", "unit": "g", "packagingVolume": 500, "bestBefore": 6},
+    {"name": "noodles", "unit": "g", "packagingVolume": 500, "bestBefore": 5},
+    {"name": "rice", "unit": "g", "packagingVolume": 1000, "bestBefore": 3},
+    {"name": "spice", "unit": "g", "packagingVolume": 100, "bestBefore": 10},
+    {"name": "tomato", "unit": "X", "packagingVolume": 10, "bestBefore": 4}
+  ],
+  "recipes": [
+    {"id": 1, "dishName": "chicken rice", "duration": 30, "cookType": ["TOURNANT", "ROAST"],
+     "ingredients": [{"name": "rice", "amount": 100}, {"name": "chicken", "amount": 150}], "basicDishFor": "ASIAN"},
+    {"id": 2, "dishName": "noodle soup", "duration": 20, "cookType": ["SOUS", "TOURNANT"],
+     "ingredients": [{"name": "noodles", "amount": 100}, {"name": "tomato", "amount": 1}]},
+    {"id": 3, "dishName": "tomato soup", "duration": 10, "cookType": ["SAUCE", "VEGETABLE"],
+     "ingredients": [{"name": "tomato", "amount": 2}, {"name": "cream", "amount": 50}], "basicDishFor": "EUROPEAN"},
+    {"id": 4, "dishName": "beef stew", "duration": 40, "cookType": ["ROAST"],
+     "ingredients": [{"name": "beef", "amount": 200}, {"name": "tomato", "amount": 1}]},
+    {"id": 5, "dishName": "lentil curry", "duration": 20, "cookType": ["VEGETABLE"],
+     "ingredients": [{"name": "lentils", "amount": 100}, {"name": "spice", "amount": 5}], "basicDishFor": "AFRICAN"},
+    {"id": 6, "dishName": "cream cake", "duration": 30, "cookType": ["PASTRY"],
+     "ingredients": [{"name": "cream", "amount": 100}]},
+    {"id": 7, "dishName": "spicy noodles", "duration": 10, "cookType": ["TOURNANT"],
+     "ingredients": [{"name": "noodles", "amount": 100}, {"name": "spice", "amount": 10}, {"name": "chicken", "amount": 50}]}
+  ]
+}

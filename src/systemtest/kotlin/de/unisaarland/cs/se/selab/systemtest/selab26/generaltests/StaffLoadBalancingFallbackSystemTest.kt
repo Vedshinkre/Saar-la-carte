@@ -5,12 +5,13 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.utils.FohArrivalTestLogs
 import de.unisaarland.cs.se.selab.systemtest.selab26.utils.TickStatusTestLogs
 
 /**
- * F17 (FOH - Staff Management): when every waiter's current load has reached the action
- * limit (10),
+ * F17 (FOH - Staff Management): when every waiter's current load has already reached the action
+ * limit (10), seating does not fail - the manager falls back to that same overloaded pool and
+ * seats the group anyway, breaking the tie by the lowest waiter id.
  */
 class StaffLoadBalancingFallbackSystemTest : ExampleSystemTestExtension() {
     override val name = "StaffLoadBalancingFallbackSystemTest"
-    override val description = "SEATING still succeeds via the fallback "
+    override val description = "SEATING still succeeds via the fallback pool of waiters already at the load limit"
     override val restaurants = "staffloadbalancingfallbackjson/restaurants.json"
     override val scenario = "staffloadbalancingfallbackjson/scenario.json"
     override val food = "staffloadbalancingfallbackjson/food.json"

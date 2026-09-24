@@ -11,7 +11,9 @@ private fun successLine(file: String) = "[INFO] Initialization Info: $file succe
 private fun failLine(file: String) = "[IMPORTANT] Initialization Info: $file is invalid."
 
 /**
- * To Test the Parsers
+ * Shared fixtures and defaults for the ParserController log system tests below: food, restaurants
+ * and scenario all default to the valid files in [RESOURCE_DIR], so each concrete test only
+ * overrides the one file it wants to make invalid.
  */
 abstract class ParserControllerLogSystemTest : ExampleSystemTestExtension() {
     override val logLevel: String = "DEBUG"

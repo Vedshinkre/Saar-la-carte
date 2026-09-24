@@ -15,7 +15,8 @@ private const val STEAK = "Steak"
  */
 class StaffLoadConcentrationSystemTest : ExampleSystemTestExtension() {
     override val name = "StaffLoadConcentrationSystemTest"
-    override val description = "Two idle waiters"
+    override val description = "The manager tops up the busier idle waiter first" +
+        ", until it would exceed the tick's SEAT limit"
     override val restaurants = "staffloadconcentrationjson/restaurants.json"
     override val scenario = "staffloadconcentrationjson/scenario.json"
     override val food = "staffloadconcentrationjson/food.json"

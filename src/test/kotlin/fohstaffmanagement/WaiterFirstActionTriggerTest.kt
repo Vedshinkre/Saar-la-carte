@@ -22,7 +22,9 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
- *To Test id upon action
+ * Unit tests confirming a waiter's id is assigned lazily, on whichever action (SEATING, TAKING
+ * ORDERS, SERVING or ESCORTING) they perform first, and not before - a waiter that does not act,
+ * or has nothing to do in a given step, is never assigned an id by that step.
  */
 class WaiterFirstActionTriggerTest {
     private lateinit var log: LogCapture

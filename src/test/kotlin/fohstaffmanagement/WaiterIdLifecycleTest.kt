@@ -17,7 +17,7 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
- * Lifecycle of the lazily assigned waiter ids over an evening and across evenings,
+ * Lifecycle of the lazily assigned waiter ids over an evening and across evenings.
  */
 class WaiterIdLifecycleTest {
     private lateinit var log: LogCapture

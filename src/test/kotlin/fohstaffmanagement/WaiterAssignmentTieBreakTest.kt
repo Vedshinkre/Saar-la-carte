@@ -14,7 +14,12 @@ import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 /**
- * Test for tiebreakers
+ * Unit tests for the priority rules the manager uses to pick which waiter seats an arriving group
+ * (F17, FOH - Staff Management): skip a waiter who would exceed the SEATING action limit for the
+ * tick (rule 1), otherwise prefer the waiter with the most customers below a current load of 10
+ * (rule 2), fall back to the least-loaded waiter once everybody is at or above 10 (rule 3), and
+ * break every remaining tie by the lowest id, with a waiter that already has an id beating one
+ * that has never acted (rule 4).
  */
 class WaiterAssignmentTieBreakTest {
     private lateinit var log: LogCapture

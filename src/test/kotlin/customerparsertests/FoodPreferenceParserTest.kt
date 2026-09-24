@@ -125,7 +125,7 @@ class FoodPreferenceParserTest {
     }
 
     @Test
-    fun `favorite dishes are kept as names in json order`() {
+    fun `favorite dishes are kept as dish names`() {
         val result = parse(1, preference(favorites = listOf(GARLIC_SOUP))).single()
 
         assertEquals(listOf(GARLIC_SOUP), result.favouriteDishes)

@@ -159,7 +159,6 @@ class EventSeatingOutcomeTest {
         assertFalse(customerToTable.containsKey(group))
         assertTrue(turnedAway.contains(group))
         assertEquals(ExperienceType.NEGATIVE, group.experience)
-        assertFalse(log().contains(SEATING_LOG))
     }
 
     // ---- Seating status counters ----

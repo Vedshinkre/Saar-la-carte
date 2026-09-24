@@ -92,12 +92,8 @@ class WaitingForFoodTest {
         assertEquals(0, group.customersRemainingInRestaurant)
     }
 
-    // CONFIRMED BUG, not fixed here because EatingProcessor is not my code (git blame: Ansh Tiwatne).
-    // EatingProcessor.handleLeavingCustomers only treats UNCOOKED and COOKING dishes as unserved, so
-    // a dish that is COOKED but still waiting in the kitchen keeps its customer at the table forever.
-    // The specification (page 21) counts the wait until the meal is SERVED, not until it is cooked:
-    // "customers expect food within 4 ticks but wait for up to 5 ticks for their food to be SERVED".
-    // Fix: include DishStatus.COOKED in the unservedDishes filter of handleLeavingCustomers.
+    // The wait counts until the meal is SERVED, not until it is cooked (specification page 21), so a dish that
+    // is COOKED but still waiting in the kitchen does not keep its customer at the table.
     @Test
     fun `a cooked but not yet served dish counts as unserved and its customer leaves`() {
         val order = fx.order(DishStatus.COOKED)

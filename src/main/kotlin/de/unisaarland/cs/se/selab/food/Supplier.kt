@@ -1,6 +1,9 @@
 package de.unisaarland.cs.se.selab.food
 /**
  * Represents the supplier that has stock .
+ * Interacts directly with the global [Stock] registry to evaluate ingredient availability
+ * and manufactures packaged inventory units in discrete batch sizes determined by packaging volume.
+ * @property stock the global [Stock] inventory registry tracking ingredient availability.
  */
 class Supplier(
     val stock: Stock
@@ -14,7 +17,16 @@ class Supplier(
     }
 
     /**
-     * gets the ingredient package from the stock
+     * Procures ingredient packages in discrete packaging units to satisfy a requested quantity.
+     *
+     * Produces newly sealed [IngredientPackage] instances until the cumulative volume meets
+     * or exceeds the target amount. If the ingredient is marked unavailable or the requested
+     * amount is non-positive, procurement immediately yields an empty list.
+     *
+     * @param ingredient the target ingredient to procure.
+     * @param amount the minimum quantity of the ingredient required.
+     * @return a list of freshly sealed [IngredientPackage] units fulfilling the request,
+     * or an empty list if unavailable or if amount is less than or equal to 0.
      */
     fun procure(ingredient: Ingredient, amount: Int): List<IngredientPackage> {
         //  check if the ingredient is available in stock

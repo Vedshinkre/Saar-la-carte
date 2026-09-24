@@ -4,6 +4,12 @@ import de.unisaarland.cs.se.selab.enums.DishStatus
 import de.unisaarland.cs.se.selab.enums.RestaurantType
 /**
  * Represents the Dish made of a certain recipe.
+ * @property recipe the [Recipe] from which this dish is prepared.
+ * @property isBasic indicates whether this dish qualifies as a basic dish for a restaurant type.
+ * @property eatingProgress the remaining simulation ticks required for a guest to consume the dish.
+ * @property status the current lifecycle state of the dish.
+ * @property abandoned flags whether the customer group departed before serving, allowing the kitchen
+ * to continue cooking without routing to a table.
  */
 class Dish(
     val recipe: Recipe,
@@ -23,7 +29,7 @@ class Dish(
     )
 
     /**
-     * explicit constructor 2 , lets see which works better
+     * explicit constructor 2
      */
     constructor(recipe: Recipe, restaurantType: RestaurantType) : this(
         recipe = recipe,
@@ -35,6 +41,8 @@ class Dish(
     // functions with logic
     /**
      * to update eating action per tick.
+     *  When [eatingProgress] reaches 0, transitions [status] to [DishStatus.EATEN].
+     *  If consumption ticks remain, decrements [eatingProgress] by 1.
      */
     fun updateEating() {
         // If the progress hits 0, the guest has finished eating the dish

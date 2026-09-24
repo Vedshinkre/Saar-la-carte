@@ -10,6 +10,12 @@ private const val MINUTES_PER_TICK = 10.0
 
 /**
  * Represents the cook in a kitchen .
+ *   @property id the unique numeric identifier of the cook, or `null` if unassigned.
+ *   @property orderId the primary base order identifier associated with the active cooking task.
+ *   @property type the culinary specialty and qualification rank ([CookType]) of this cook.
+ *   @property currentRecipe the recipe currently being prepared, or `null` when idle.
+ *   @param remainingTicks the initial remaining simulation ticks needed to finish cooking.
+ *   @property isCooking indicates whether the cook is actively engaged in cooking dishes
  */
 
 class Cook(
@@ -52,6 +58,7 @@ class Cook(
 
     /**
      * Read-only exposure of assigned dishes.
+     * @return the list of dishes being prepared.
      */
     fun getDishes(): List<Dish> {
         return assignedDishes
@@ -59,6 +66,7 @@ class Cook(
 
     /**
      * How many of the dishes currently with the cook belong to each order, by ascending order `id`.
+     * @return a sorted map mapping each customer order ID to its count of assigned dishes.
      */
     fun getAssignedCountsByOrder(): Map<Int, Int> {
         val result = sortedMapOf<Int, Int>()
@@ -69,15 +77,26 @@ class Cook(
     }
 
     /**
-     * Read-only exposure of assigned dishes.
+     * Overrides the remaining ticks countdown for the cook's active task.
+     * @param numm the new remaining duration in simulation ticks.
      */
     fun setRemainingTicks(numm: Int) {
         remainingTicks = numm
     }
 
     // functions with logic
+
     /**
-     * function to start cooking with .
+     * Assigns a recipe and dish batch to the cook and begins the cooking countdown.
+     *
+     * Translates preparation duration into simulation ticks ,
+     * registers all assigned dishes partitioned by order, and transitions each dish status
+     * to [DishStatus.COOKING].
+     *
+     * @param recipe the recipe being prepared.
+     * @param dishes the flattened list of all dishes to cook in this batch.
+     * @param baseOrderId the primary initiating customer order ID.
+     * @param dishesByOrder a mapping of order IDs to their respective subset of dishes in this batch.
      */
     fun startCooking(
         recipe: Recipe,
@@ -112,7 +131,13 @@ class Cook(
     }
 
     /**
-     * logs the cook status and sets dishes to cooked if finished cooking .
+     * Advances cooking progress by one simulation tick, transitioning dishes to cooked upon completion.
+     *
+     * When [remainingTicks] reaches 0, transitions all assigned dishes to [DishStatus.COOKED],
+     * resets the cook's state back to idle, clears order mappings, and returns a [CookResult]
+     * reflecting the number of finished meals.
+     *
+     * @return a [CookResult] summarizing active cooking state, assigned meals, and finished count.
      */
     fun cookDishes(): CookResult {
         if (!isCooking) {

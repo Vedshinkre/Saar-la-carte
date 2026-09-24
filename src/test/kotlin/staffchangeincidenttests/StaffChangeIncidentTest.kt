@@ -10,6 +10,11 @@ import de.unisaarland.cs.se.selab.incidents.StaffChangeIncident
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
+/** Staff Change Incident Test f 31
+ * StaffChangeIncidentTest validates StaffChangeIncident, verifying the complete staff group (Cook, Waiter, Driver)
+ * correctly across positive and negative counts, cook adjustments filter strictly by CookType,
+ * over-removal safely bounds at zero, and missing cook types abort without any effects.
+ */
 class StaffChangeIncidentTest {
 
     //  Helpers
@@ -37,6 +42,7 @@ class StaffChangeIncidentTest {
         )
     }
 
+    //  applying a staff change adds the specified number of TOURNANT cooks to the staff list
     @Test
     fun `apply - Add Cooks - Increases Cook List-TOURNANT`() {
         val staff = createDummyStaff()
@@ -52,6 +58,7 @@ class StaffChangeIncidentTest {
         assertEquals(3, tournantCount)
     }
 
+    //  applying a staff change adds the specified number of SOUS cooks to the staff list
     @Test
     fun `apply - Add Cooks - Increases Cook List-SOUS`() {
         val staff = createDummyStaff()
@@ -67,6 +74,7 @@ class StaffChangeIncidentTest {
         assertEquals(3, tournantCount)
     }
 
+    //  applying a staff change adds the specified number of EXEC cooks to the staff list
     @Test
     fun `apply - Add Cooks - Increases Cook List-EXEC`() {
         val staff = createDummyStaff()
@@ -82,6 +90,7 @@ class StaffChangeIncidentTest {
         assertEquals(1, tournantCount)
     }
 
+    //  applying a staff change adds the specified number of SAUCE cooks to the staff list
     @Test
     fun `apply - Add Cooks - Increases Cook List-SAUCE`() {
         val staff = createDummyStaff()
@@ -97,6 +106,7 @@ class StaffChangeIncidentTest {
         assertEquals(4, tournantCount)
     }
 
+    //  applying a staff change adds the specified number of FISH cooks to the staff list
     @Test
     fun `apply - Add Cooks - Increases Cook List-FISH`() {
         val staff = createDummyStaff()
@@ -112,6 +122,7 @@ class StaffChangeIncidentTest {
         assertEquals(2, tournantCount)
     }
 
+    // applying a staff change adds the specified number of ROAST cooks to the staff list
     @Test
     fun `apply - Add Cooks - Increases Cook List-ROAST`() {
         val staff = createDummyStaff()
@@ -127,6 +138,7 @@ class StaffChangeIncidentTest {
         assertEquals(2, tournantCount)
     }
 
+    //  applying a staff change adds the specified number of VEGETABLE cooks to the staff list
     @Test
     fun `apply - Add Cooks - Increases Cook List-VEETABLE`() {
         val staff = createDummyStaff()
@@ -142,6 +154,7 @@ class StaffChangeIncidentTest {
         assertEquals(1, tournantCount)
     }
 
+    // applying a staff change adds the specified number of PASTRY cooks to the staff list
     @Test
     fun `apply - Add Cooks - Increases Cook List-PASTRY`() {
         val staff = createDummyStaff()
@@ -157,6 +170,7 @@ class StaffChangeIncidentTest {
         assertEquals(1, tournantCount)
     }
 
+    //  applying a negative count staff change removes the specified number of TOURNANT cooks
     @Test
     fun `apply - Remove Cooks - Decreases Cook List- TOURNANT`() {
         val staff = createDummyStaff()
@@ -172,6 +186,7 @@ class StaffChangeIncidentTest {
         assertEquals(0, tournantCount)
     }
 
+    // applying a negative count staff change removes the specified number of SOUS cooks
     @Test
     fun `apply - Remove Cooks - Decreases Cook List- SOUS`() {
         val staff = createDummyStaff()
@@ -190,6 +205,7 @@ class StaffChangeIncidentTest {
         assertEquals(1, tournantCount)
     }
 
+    //  applying a negative count staff change removes the specified number of SAUCE cooks
     @Test
     fun `apply - Remove Cooks - Decreases Cook List- SAUCE`() {
         val staff = createDummyStaff()
@@ -208,6 +224,7 @@ class StaffChangeIncidentTest {
         assertEquals(1, tournantCount)
     }
 
+    //  applying a negative count staff change removes the specified number of FISH cooks
     @Test
     fun `apply - Remove Cooks - Decreases Cook List- FISH`() {
         val staff = createDummyStaff()
@@ -226,6 +243,7 @@ class StaffChangeIncidentTest {
         assertEquals(1, tournantCount)
     }
 
+    // applying a negative count staff change removes the specified number of VEGETABLE cooks
     @Test
     fun `apply - Remove Cooks - Decreases Cook List- VEGETABLE`() {
         val staff = createDummyStaff()
@@ -244,6 +262,7 @@ class StaffChangeIncidentTest {
         assertEquals(1, tournantCount)
     }
 
+    // applying a negative count staff change removes the specified number of PASTRY cooks
     @Test
     fun `apply - Remove Cooks - Decreases Cook List- PASTRY`() {
         val staff = createDummyStaff()
@@ -262,6 +281,7 @@ class StaffChangeIncidentTest {
         assertEquals(1, tournantCount)
     }
 
+    //  applying a positive staff change incident correctly increases the waiter staff list
     @Test
     fun `apply - Add Waitstaff - Increases Waiter List`() {
         val staff = createDummyStaff()
@@ -273,6 +293,7 @@ class StaffChangeIncidentTest {
         assertEquals(5, staff.waiters.size)
     }
 
+    //  applying a negative staff change incident correctly decreases the waiter staff list
     @Test
     fun `apply - Remove Waitstaff - Decreases Waiter List`() {
         val staff = createDummyStaff()
@@ -284,6 +305,7 @@ class StaffChangeIncidentTest {
         assertEquals(1, staff.waiters.size)
     }
 
+    //  removing more waiters than currently available clamps the waiter list safely to zero
     @Test
     fun `apply - Remove More Waitstaff Than Available - Bounds at Zero`() {
         val staff = createDummyStaff()
@@ -296,6 +318,7 @@ class StaffChangeIncidentTest {
         assertEquals(0, staff.waiters.size)
     }
 
+    //  applying a positive staff change incident correctly increases the driver staff list
     @Test
     fun `apply - Add Drivers - Increases Driver List`() {
         val staff = createDummyStaff()
@@ -307,6 +330,7 @@ class StaffChangeIncidentTest {
         assertEquals(3, staff.drivers.size)
     }
 
+    //  applying a negative staff change incident correctly decreases the driver staff list
     @Test
     fun `apply - Remove Drivers - Decreases Driver List`() {
         val staff = createDummyStaff()
@@ -318,6 +342,7 @@ class StaffChangeIncidentTest {
         assertEquals(0, staff.drivers.size)
     }
 
+    //  a cook change incident returns early without modifying staff when cookType is null
     @Test
     fun `apply- Cook Change with null cookType -Returns Early`() {
         val staff = createDummyStaff()
@@ -330,6 +355,7 @@ class StaffChangeIncidentTest {
         assertEquals(2, staff.cooks.size)
     }
 
+    //  cook removal only removes cooks of matching cookType and leaves other cook types intact
     @Test
     fun `apply - Remove Cooks skip non-matching cook types`() {
         val staff = createDummyStaff() // Current list: [TOURNANT, ROAST]
@@ -343,6 +369,7 @@ class StaffChangeIncidentTest {
         assertEquals(CookType.TOURNANT, staff.cooks.first().type)
     }
 
+    //  removing more cooks of a specific type than available safely removes only existing ones
     @Test
     fun `apply - Remove Cooks- count exceeds available cooks`() {
         val staff = createDummyStaff() // Current list: [TOURNANT, ROAST]

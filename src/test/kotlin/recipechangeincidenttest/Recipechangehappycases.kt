@@ -8,6 +8,11 @@ import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mock
 
+/** Recipe change happy cases F32
+ * Recipechangehappycases validates happy cases of RecipeChangeIncident, confirming positive and negative percentage
+ * adjustments, multi-recipe batch processing, unaffected recipe isolation, lower-bound at 1, and integer management
+ * of fractional amounts.
+ */
 class Recipechangehappycases {
     private fun createDummyIngredient(): Ingredient {
         // Mocking the ingredient constructor
@@ -19,6 +24,7 @@ class Recipechangehappycases {
         return Recipe(id, "Test Dish", 10, listOf(CookType.TOURNANT), ingredients, null)
     }
 
+    //  applying a positive percentage increase correctly scales up the target ingredient amount
     @Test
     fun `apply - increase ingredient amount correctly`() {
         val wheat = createDummyIngredient()
@@ -33,6 +39,7 @@ class Recipechangehappycases {
         assertEquals(125, recipe.ingredients[wheat])
     }
 
+    // applying a negative percentage decrease correctly scales down the target ingredient amount
     @Test
     fun `apply -decrease ingredient amount correctly`() {
         val wheat = createDummyIngredient()
@@ -47,6 +54,7 @@ class Recipechangehappycases {
         assertEquals(80, recipe.ingredients[wheat])
     }
 
+    //  applying an incident across multiple recipes updates each recipe based on its starting ingredient amount
     @Test
     fun `apply - updates multiple recipes in the same list`() {
         val wheat = createDummyIngredient()
@@ -64,6 +72,7 @@ class Recipechangehappycases {
         assertEquals(300, cakeRecipe.ingredients[wheat]) // 200 -> 300
     }
 
+    // severe percentage decreases go to a lower bound of 1 to prevent non-positive ingredient requirements
     @Test
     fun `apply - massive decrease to a minimum of 1`() {
         val salt = createDummyIngredient()
@@ -74,10 +83,11 @@ class Recipechangehappycases {
         val incident = RecipeChangeIncident(1, 1, salt, -99, listOf(recipe))
         incident.apply()
 
-        // Must hit the maxOf(1, ...) limit
+        // Must hit the maxOf(1, x) limit
         assertEquals(1, recipe.ingredients[salt])
     }
 
+    // Verifies that recipes omitting the target ingredient remain completely unaffected during incident application.
     @Test
     fun `apply - skip recipes that do not contain the ingredient`() {
         val wheat = createDummyIngredient()
@@ -95,6 +105,7 @@ class Recipechangehappycases {
         assertEquals(50, mcSundaeRecipe.ingredients[sugar])
     }
 
+    //  ingredient calculation results with fractional values round down via integer truncation
     @Test
     fun `apply - rounds down fractional amounts`() {
         val wheat = createDummyIngredient()

@@ -171,6 +171,16 @@ class FoodParserTest {
     }
 
     @Test
+    fun `recipe ingredient unit mismatching the ingredient's defined unit is ignored`() {
+        val recipes = """[{"id": 1, "dishName": "Rice Bowl", "duration": 20, "cookType": ["EXEC"],
+            "ingredients": [{"name": "rice", "unit": "mL", "amount": 150}]}]"""
+        val (_, parsedRecipes) = parseWithRice(recipes)
+        val (ingredient, amount) = parsedRecipes.single().ingredients.entries.single()
+        assertEquals(MeasurementUnit.G, ingredient.unit)
+        assertEquals(150, amount)
+    }
+
+    @Test
     fun `recipe ingredient without an explicit unit is accepted using the ingredient's defined unit`() {
         val recipes = """[{"id": 1, "dishName": "Rice Bowl", "duration": 20, "cookType": ["EXEC"],
             "ingredients": [{"name": "rice", "amount": 150}]}]"""

@@ -1,0 +1,11 @@
+{
+  "customerGroups": [
+    {"id": 1, "type": "CASUAL", "size": 4, "visitingTick": 1, "foodPreferences": [],
+     "restaurantTypes": ["EUROPEAN"], "visitingEvenings": [1], "ratingLikelihood": "NEVER"},
+    {"id": 2, "type": "REGULAR", "size": 4, "visitingTick": 1, "foodPreferences": [],
+     "visitingStart": 1, "visitingPeriod": 10, "restaurant": 1},
+    {"id": 3, "type": "CASUAL", "size": 4, "visitingTick": 4, "foodPreferences": [],
+     "restaurantTypes": ["EUROPEAN"], "visitingEvenings": [1], "ratingLikelihood": "NEVER"}
+  ],
+  "incidents": []
+}

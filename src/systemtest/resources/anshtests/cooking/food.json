@@ -1,0 +1,13 @@
+{
+  "ingredients": [
+    {"name": "rice", "unit": "g", "packagingVolume": 1000, "bestBefore": 5}
+  ],
+  "recipes": [
+    {"id": 1, "dishName": "quick bowl", "duration": 10, "cookType": ["TOURNANT"],
+     "ingredients": [{"name": "rice", "amount": 100}], "basicDishFor": "ASIAN"},
+    {"id": 2, "dishName": "slow curry", "duration": 11, "cookType": ["TOURNANT"],
+     "ingredients": [{"name": "rice", "amount": 100}]},
+    {"id": 3, "dishName": "long stew", "duration": 30, "cookType": ["TOURNANT"],
+     "ingredients": [{"name": "rice", "amount": 100}]}
+  ]
+}

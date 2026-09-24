@@ -1,0 +1,24 @@
+{
+  "restaurants": [
+    {
+      "id": 1, "name": "Hall", "type": "EUROPEAN",
+      "openingTickStart": 1, "openingTickEnd": 24,
+      "deliveryDrivers": 0, "event": true,
+      "positiveRatings": 0, "negativeRatings": 0,
+      "recipes": [],
+      "kitchenStaff": {"EXEC": 1, "SOUS": 0, "TOURNANT": 0, "SAUCE": 0, "FISH": 0, "ROAST": 0, "VEGETABLE": 0, "PASTRY": 0},
+      "waitstaff": 4,
+      "tables": [
+        {"id": 1, "type": "COMMON", "size": 22},
+        {"id": 2, "type": "COMMON", "size": 25},
+        {"id": 3, "type": "COMMON", "size": 16},
+        {"id": 4, "type": "COMMON", "size": 30},
+        {"id": 5, "type": "BAR", "size": 6},
+        {"id": 6, "type": "SEPARATED", "size": 9},
+        {"id": 7, "type": "SEPARATED", "size": 5},
+        {"id": 8, "type": "SEPARATED", "size": 6},
+        {"id": 9, "type": "SEPARATED", "size": 3}
+      ]
+    }
+  ]
+}

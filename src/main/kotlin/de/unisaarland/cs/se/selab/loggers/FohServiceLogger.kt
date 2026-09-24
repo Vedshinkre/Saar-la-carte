@@ -10,6 +10,11 @@ import de.unisaarland.cs.se.selab.enums.RatingType
 object FohServiceLogger {
     /**
      * Logs a dish being served.
+     *
+     * @param waitstaffId the id of the waiter
+     * @param dishNameToAmount the ordered amount per dish name
+     * @param tableId the id of the table
+     * @param orderDurationTick the number of ticks between the order and the cooked meal
      */
     fun logFohServing(
         waitstaffId: Id,
@@ -27,6 +32,10 @@ object FohServiceLogger {
 
     /**
      * Logs when meals could not be served.
+     *
+     * @param waitstaffId the id of the waiter
+     * @param mealNumber the number of meals
+     * @param tableId the id of the table
      */
     fun logFohNoServing(
         waitstaffId: Id,
@@ -42,6 +51,11 @@ object FohServiceLogger {
 
     /**
      * Logs a delivery being handed to a driver.
+     *
+     * @param waitstaffId the id of the waiter
+     * @param dishNameToAmount the ordered amount per dish name
+     * @param driverId the id of the delivery driver
+     * @param orderId the id of the order
      */
     fun logFohDelivery(
         waitstaffId: Id,
@@ -59,6 +73,9 @@ object FohServiceLogger {
 
     /**
      * Logs the serving status.
+     *
+     * @param waitstaffNumber the number of waiters
+     * @param mealTotalNumber the total number of meals
      */
     fun logFohServingStatus(
         waitstaffNumber: Int,
@@ -73,6 +90,10 @@ object FohServiceLogger {
 
     /**
      * Logs when customers leave without eating.
+     *
+     * @param customerNumber the number of customers
+     * @param groupId the id of the customer group
+     * @param tableId the id of the table
      */
     fun logRestaurantNoEating(
         customerNumber: Int,
@@ -88,6 +109,10 @@ object FohServiceLogger {
 
     /**
      * Logs customers finishing their meal.
+     *
+     * @param customerNumber the number of customers
+     * @param groupId the id of the customer group
+     * @param tableId the id of the table
      */
     fun logFohFinishedEating(
         customerNumber: Int,
@@ -103,6 +128,9 @@ object FohServiceLogger {
 
     /**
      * Logs the eating status.
+     *
+     * @param numberOfEatingCustomers the number of eating customers
+     * @param numberOfFinishedCustomers the number of finished customers
      */
     fun logFohEatingStatus(
         numberOfEatingCustomers: Int,
@@ -118,6 +146,11 @@ object FohServiceLogger {
 
     /**
      * Logs customers being escorted out.
+     *
+     * @param waitstaffId the id of the waiter
+     * @param numberOfCustomers the number of customers
+     * @param groupId the id of the customer group
+     * @param tableId the id of the table
      */
     fun logFohEscorting(
         waitstaffId: Id,
@@ -135,6 +168,11 @@ object FohServiceLogger {
 
     /**
      * Logs a customer rating a restaurant.
+     *
+     * @param groupID the id of the customer group
+     * @param groupRating the rating of the group
+     * @param positiveRatingQuantity the number of positive ratings so far
+     * @param negativeRatingQuantity the number of negative ratings so far
      */
     fun logCustomerRateRestaurant(
         groupID: Id,
@@ -153,6 +191,8 @@ object FohServiceLogger {
 
     /**
      * Logs the rating status.
+     *
+     * @param numberOfGroupsGivingRatings the number of groups giving ratings
      */
     fun logRatingStatus(
         numberOfGroupsGivingRatings: Int
@@ -166,6 +206,9 @@ object FohServiceLogger {
 
     /**
      * Logs the escorting status.
+     *
+     * @param waitstaffNumber the number of waiters
+     * @param customerEscortingNumber the customer escorting number
      */
     fun logFohEscortingStatus(
         waitstaffNumber: Int,

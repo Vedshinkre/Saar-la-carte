@@ -30,6 +30,9 @@ object TickStatusLogger {
 
     /**
      * Logs a group's restaurant decision.
+     *
+     * @param groupId the id of the customer group
+     * @param restId the id of the restaurant
      */
     fun logRestaurantDecision(
         groupId: Id,
@@ -43,6 +46,8 @@ object TickStatusLogger {
 
     /**
      * Logs when a group cannot choose a restaurant.
+     *
+     * @param groupId the id of the customer group
      */
     fun logRestaurantNoDecision(
         groupId: Id

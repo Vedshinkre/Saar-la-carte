@@ -8,6 +8,11 @@ import de.unisaarland.cs.se.selab.enums.LogLevel
 object DeliveryLogger {
     /**
      * Logs a driver preparing a delivery.
+     *
+     * @param driverId the id of the delivery driver
+     * @param orderId the id of the order
+     * @param groupId the id of the customer group
+     * @param ticksRequiredToDeliver the number of ticks the trip to the customer takes
      */
     fun logDeliveryPreparation(
         driverId: Id,
@@ -25,6 +30,10 @@ object DeliveryLogger {
 
     /**
      * Logs a driver during delivery.
+     *
+     * @param driverId the id of the delivery driver
+     * @param distanceCovered the distance in km the driver has driven so far
+     * @param ticksRequiredToDelivers the number of ticks the trip to the customer takes
      */
     fun logDeliveryDriving(
         driverId: Id,
@@ -40,6 +49,10 @@ object DeliveryLogger {
 
     /**
      * Logs a driver arriving at a group.
+     *
+     * @param driverId the id of the delivery driver
+     * @param groupId the id of the customer group
+     * @param orderId the id of the order
      */
     fun logDeliveryArrival(
         driverId: Id,
@@ -55,6 +68,10 @@ object DeliveryLogger {
 
     /**
      * Logs a completed delivery.
+     *
+     * @param driverId the id of the delivery driver
+     * @param orderId the id of the order
+     * @param groupId the id of the customer group
      */
     fun logDeliveryFinished(
         driverId: Id,
@@ -70,6 +87,10 @@ object DeliveryLogger {
 
     /**
      * Logs a failed delivery.
+     *
+     * @param driverId the id of the delivery driver
+     * @param orderId the id of the order
+     * @param groupId the id of the customer group
      */
     fun logDeliveryFailed(
         driverId: Id,
@@ -85,6 +106,9 @@ object DeliveryLogger {
 
     /**
      * Logs when a group gives up waiting.
+     *
+     * @param groupId the id of the customer group
+     * @param orderId the id of the order
      */
     fun logDeliveryGivenUp(
         groupId: Id,
@@ -99,6 +123,8 @@ object DeliveryLogger {
 
     /**
      * Logs a driver returning.
+     *
+     * @param driverId the id of the delivery driver
      */
     fun logDeliveryReturned(
         driverId: Id
@@ -112,6 +138,8 @@ object DeliveryLogger {
 
     /**
      * Logs a group finishing their delivered meal.
+     *
+     * @param groupId the id of the customer group
      */
     fun logDeliveryFinishedEating(
         groupId: Id

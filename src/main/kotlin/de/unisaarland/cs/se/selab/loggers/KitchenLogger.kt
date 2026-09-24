@@ -8,6 +8,13 @@ import de.unisaarland.cs.se.selab.enums.LogLevel
 object KitchenLogger {
     /**
      * Logs a cook starting a dish.
+     *
+     * @param cookId the id of the cook
+     * @param cookType the type of the cook
+     * @param numberOfMeals the number of meals
+     * @param dishName the name of the dish
+     * @param baseOrderId the id of the order the cook started with
+     * @param allOrderIds the ids of all orders
      */
     fun logKitchenDishAssignment(
         cookId: Id,
@@ -27,6 +34,11 @@ object KitchenLogger {
 
     /**
      * Logs finished meals.
+     *
+     * @param cookId the id of the cook
+     * @param numberOfMeals the number of meals
+     * @param dishName the name of the dish
+     * @param cookDurationTick the number of ticks the cook needs for the dish
      */
     fun logKitchenMealCooked(
         cookId: Id,
@@ -44,6 +56,11 @@ object KitchenLogger {
 
     /**
      * Logs the kitchen status.
+     *
+     * @param numberOfCooks the number of cooks
+     * @param totalNumberOfMeals the total number of meals
+     * @param finishedNumberOfMeals the finished number of meals
+     * @param servableMeals the number of meals the waiters can serve
      */
     fun logKitchenStatus(
         numberOfCooks: Int,

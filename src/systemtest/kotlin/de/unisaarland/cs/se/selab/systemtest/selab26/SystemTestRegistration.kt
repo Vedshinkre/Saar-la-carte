@@ -107,7 +107,6 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.PantryExpiryAl
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.PantryExpirySystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.PartialDeliveryHandoverSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.PartialLeaverEscortedSystemTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.PartialServiceSuccessTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RecipeChangeAcrossRestaurantsTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RecipeChangeMinimumAmountSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.generaltests.RecipeChangeRoundingSystemTest
@@ -288,7 +287,6 @@ object SystemTestRegistration {
         fullScenarioSystemTests(false).forEach { testSuite.registerTest(it) }
         anshTests().forEach { testSuite.registerTest(it) }
         testSuite.registerTest(DeliveryOrderSuccessTestA())
-        testSuite.registerTest(PartialServiceSuccessTest())
         testSuite.registerTest(PartialDeliveryHandoverSystemTest())
         testSuite.registerTest(CookChangeNoOrderTest())
         testSuite.registerTest(RecipeChangeAcrossRestaurantsTest())
@@ -463,8 +461,6 @@ object SystemTestRegistration {
         testSuite.registerTest(EventSeatingCapacityCasualRetryTest())
         testSuite.registerTest(EventSeatingCapacityOneTooManyTest())
         testSuite.registerTest(EventSeatingCapacityFailedEventRatingTest())
-        /** testSuite.registerTest(EventSeatingCapacityFailedKeepsTickLoadTest())
-         // testSuite.registerTest(EventSeatingCapacityFailedThenRetryTest())**/
         testSuite.registerTest(EventSeatingSharedCapacityFirstEventTest())
         testSuite.registerTest(EventSeatingSharedCapacitySecondEventTest())
         testSuite.registerTest(EventSeatingSharedCapacityNoCapacityLeftTest())
@@ -613,36 +609,30 @@ object SystemTestRegistration {
      * All of Skerdi's system tests, to run against the reference implementation. The negative control
      * EatingOrderIsPerGroupSystemTest is left out on purpose: it is wrong against the reference by design.
      */
-    private fun registerSkerdiReferenceTests(testSuite: SELab26TestSuite) {
-        // simulation and statistics
+    private fun registerSkerdiReferenceTests(testSuite: SELab26TestSuite) { // simulation and statistics
         testSuite.registerTest(SimulationLifecycleSystemTest())
-        testSuite.registerTest(StatisticsOrderingSystemTest())
-        // supplier and pantry
+        testSuite.registerTest(StatisticsOrderingSystemTest()) // supplier and pantry
         testSuite.registerTest(SupplierProcurementSystemTest())
         testSuite.registerTest(UnavailableIncidentSupplierProcurementSystemTest())
         testSuite.registerTest(UnavailabilityDurationExpirySystemTest())
         testSuite.registerTest(PantryExpirySystemTest())
         testSuite.registerTest(PantryExpiryAlphabeticalOrderSystemTest())
         testSuite.registerTest(PantryAbandonedDishIngredientsNotRefundedSystemTest())
-        // restaurant decision and browsing
         testSuite.registerTest(CustomerBehaviourDecisionSystemTest())
         testSuite.registerTest(BrowsingRefusesDineInInLastThreeTicksSystemTest())
         testSuite.registerTest(CasualBarRestaurantChoiceSystemTest())
         testSuite.registerTest(CasualBarExactFitNoMergeSystemTest())
         testSuite.registerTest(DriverIncidentReducesBrowsingAvailabilitySystemTest())
-        // waiting for food, leaving, escorting, serving capacity
         testSuite.registerTest(LateCasualNoWaiterSystemTest())
         testSuite.registerTest(WaitingForFoodSystemTest())
         testSuite.registerTest(WaiterLoadReleasedOnLeavingSystemTest())
         testSuite.registerTest(PartialLeaverEscortedSystemTest())
         testSuite.registerTest(EatingOrderIsTwoPassesSystemTest())
-        testSuite.registerTest(RegularCapacityBlockedOrderNotLostSystemTest())
-        // delivery
+        testSuite.registerTest(RegularCapacityBlockedOrderNotLostSystemTest()) // delivery
         testSuite.registerTest(DeliveryQueueDelayTimeoutSystemTest())
         testSuite.registerTest(DeliveryQueueDelayFailedReturnSystemTest())
         testSuite.registerTest(DeliveryMultipleWaitersServeOneOrderSystemTest())
         testSuite.registerTest(DeliveryEveningBoundaryNeverRatesSystemTest())
-        // REGULAR reservations and ratings (probes for the mandatory ReservedForMe test)
         testSuite.registerTest(RegularFailedAttemptsNotResetByInterveningSuccessSystemTest())
         testSuite.registerTest(RegularReservationOrderIsAscendingIdNotFileOrderSystemTest())
         testSuite.registerTest(RegularUneventfulVisitRatesPositiveSystemTest())

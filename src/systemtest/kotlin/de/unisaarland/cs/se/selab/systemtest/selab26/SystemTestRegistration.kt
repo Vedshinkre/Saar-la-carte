@@ -13,7 +13,9 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.PatienceLeavesFiveT
 import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.PatienceLeavesFourTicksAfterOrderSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.ServedOnFourthTickIsNeutralSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.abtests.ServedOnFourthTickIsPositiveSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.anshtests.anshSimulationMutantTests
 import de.unisaarland.cs.se.selab.systemtest.selab26.anshtests.anshTests
+import de.unisaarland.cs.se.selab.systemtest.selab26.anshtests.anshValidationMutantTests
 import de.unisaarland.cs.se.selab.systemtest.selab26.basicdishtests.AdaptedBasicDishAcceptedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.basicdishtests.AdaptedBasicDishOnlyAdapterAffectedSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.basicdishtests.AdaptedBasicDishRecipeChangeSystemTest
@@ -341,6 +343,7 @@ object SystemTestRegistration {
         registerVladValidationMutantTests(testSuite)
         fullScenarioSystemTests(true).forEach { testSuite.registerTest(it) }
         testSuite.registerTest(IncidentNoNameRejectedSystemTest())
+        anshValidationMutantTests().forEach { testSuite.registerTest(it) }
     }
 
     /**
@@ -376,6 +379,7 @@ object SystemTestRegistration {
         fullScenarioSystemTests(true).forEach { testSuite.registerTest(it) }
         testSuite.registerTest(CasualGroupRatingSystemTest())
         testSuite.registerTest(RegularFailedTest())
+        anshSimulationMutantTests().forEach { testSuite.registerTest(it) }
         testSuite.registerTest(KitchenCookAssignmentSystemTest())
     }
 

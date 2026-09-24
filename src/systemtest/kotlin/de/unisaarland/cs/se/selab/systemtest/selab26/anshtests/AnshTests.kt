@@ -35,4 +35,8 @@ fun anshSimulationMutantTests(): List<SystemTestSELab26> = listOf(
     StaffChangeSystemTest(),
     UnavailabilitySystemTest(),
     EventsSystemTest(),
+    EventSeatingSystemTest(),
+    ThoroughTest(),
+    EnormousTest(),
+    MeticulousTest(),
 )

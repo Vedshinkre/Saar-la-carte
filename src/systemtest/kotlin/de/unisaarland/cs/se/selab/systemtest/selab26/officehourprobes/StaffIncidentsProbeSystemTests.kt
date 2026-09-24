@@ -11,20 +11,18 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.utils.TickStatusTestLogs
 private const val NEGATIVE = "NEGATIVE"
 
 /**
- * Narrowing probes for FullTest-staff-incidents, which passes on our implementation but fails
- * against the reference (results 10). The full test replays a whole log and cannot say which part
- * the reference disagrees with, so each probe below checks one of the places where that log is
- * asserted line by line instead of skipped over. All of them pass on our implementation, so the
- * one that fails on the next reference run names the divergence.
+ * Narrowing probes (Sep 23) for FullTest-staff-incidents, which passed on our implementation and
+ * failed on the reference (run 10). The full test replays a whole log, so its failure does not say
+ * where the difference is. Each probe checks one of the places where that log is asserted line by
+ * line. On the reference (runs 11-12) six of them pass. Only
+ * [StaffIncidentsLateCasualLeavesSilentlySystemTest] fails, which puts the difference in tick 22
+ * of evening 3.
  *
- * None of the divergences found so far can be the cause: the scenario has no drivers, and only one
- * cook, so neither the delivery rules nor the idle-cook tie-break come into play.
- *
- * The scenario (a private copy of `fulltests/scenarios/staff-incidents`): one restaurant with one
- * SOUS cook, two waiters and two COMMON tables of 4. REGULAR groups 1 and 2 (4 people each) reserve
- * those tables every evening; REGULAR group 3 (5 people) never finds a table. In evening 3, three
- * CASUAL groups arrive at tick 21, and group 10 finds no free waiter. Before evening 4, a staff
- * incident adds a waiter and another removes the only cook, so nobody can order.
+ * Private copy of `fulltests/scenarios/staff-incidents`: one SOUS cook, two waiters, two COMMON
+ * tables of 4. REGULAR groups 1 and 2 (4 people each) reserve them every evening. REGULAR group 3
+ * (5 people) never gets a table. In evening 3, three CASUAL groups arrive at tick 21 and group 10
+ * finds no free waiter. Before evening 4, one STAFF incident adds a waiter and another removes the
+ * only cook.
  */
 abstract class StaffIncidentsScenario : ExampleSystemTestExtension() {
     override val restaurants = "officehourjson/staffincidents/restaurants.json"
@@ -42,7 +40,7 @@ abstract class StaffIncidentsScenario : ExampleSystemTestExtension() {
     }
 }
 
-/** Group 3's failed reservation is rated in tick 1 of the evening, not at its visiting tick 7. */
+/** Group 3's failed reservation is rated NEGATIVE within tick 1, not at its visiting tick 7 (adjustment #25). */
 class StaffIncidentsFailedReservationRatesInTickOneSystemTest : StaffIncidentsScenario() {
     override val name = "StaffIncidentsFailedReservationRatesInTickOneSystemTest"
     override val description = "A REGULAR group without a reserved table rates in tick 1 of the evening"
@@ -54,7 +52,7 @@ class StaffIncidentsFailedReservationRatesInTickOneSystemTest : StaffIncidentsSc
     }
 }
 
-/** After one failure, group 3 still tries to reserve in evening 2, as the first line of that preparation. */
+/** After one failed reservation group 3 tries again: its "No Reserving" line opens the evening 2 preparation. */
 class StaffIncidentsRegularTriesAgainAfterOneFailureSystemTest : StaffIncidentsScenario() {
     override val name = "StaffIncidentsRegularTriesAgainAfterOneFailureSystemTest"
     override val description = "A REGULAR group that failed to reserve once tries again the next evening"
@@ -65,7 +63,10 @@ class StaffIncidentsRegularTriesAgainAfterOneFailureSystemTest : StaffIncidentsS
     }
 }
 
-/** After two failures in a row, group 3 no longer visits, so evening 3 has no failed reservation. */
+/**
+ * After two failed reservations in a row group 3 stops visiting, so the evening 3 preparation does
+ * not start with a "No Reserving" line.
+ */
 class StaffIncidentsRegularStopsAfterTwoFailuresSystemTest : StaffIncidentsScenario() {
     override val name = "StaffIncidentsRegularStopsAfterTwoFailuresSystemTest"
     override val description = "A REGULAR group that failed to reserve twice in a row stops visiting"
@@ -81,8 +82,13 @@ class StaffIncidentsRegularStopsAfterTwoFailuresSystemTest : StaffIncidentsScena
 }
 
 /**
- * Group 10 found no free waiter in tick 21, and from tick 22 the restaurant takes no new customers,
- * so tick 22 starts with an empty seating status and nothing is logged for group 10 before it.
+ * Expects nothing to be logged for CASUAL group 10 in tick 22 of evening 3. The group found no
+ * free waiter in tick 21, and no customers are seated in the last three ticks. So the restaurant
+ * start should be followed directly by an empty seating status.
+ *
+ * This expectation was a guess, not a paired reading. It fails on the reference (runs 11-12), which
+ * logs a line for the waiting group there (adjustments #16 and #17 cover waiting customers in the
+ * last three ticks).
  */
 class StaffIncidentsLateCasualLeavesSilentlySystemTest : StaffIncidentsScenario() {
     override val name = "StaffIncidentsLateCasualLeavesSilentlySystemTest"
@@ -100,7 +106,7 @@ class StaffIncidentsLateCasualLeavesSilentlySystemTest : StaffIncidentsScenario(
     }
 }
 
-/** Both staff incidents are logged between the end of evening 3 and the preparation of evening 4. */
+/** Both STAFF incidents are logged in id order, right after evening 3's serving ends, then evening 4's preparation. */
 class StaffIncidentsIncidentsLoggedBeforePreparationSystemTest : StaffIncidentsScenario() {
     override val name = "StaffIncidentsIncidentsLoggedBeforePreparationSystemTest"
     override val description = "Staff incidents are logged right after the serving of the evening before ends"
@@ -119,8 +125,8 @@ class StaffIncidentsIncidentsLoggedBeforePreparationSystemTest : StaffIncidentsS
 }
 
 /**
- * With its only cook gone, the restaurant still seats REGULAR group 1 at its reserved table, and the
- * group leaves at once because no dish can be ordered.
+ * With its only cook gone in evening 4, REGULAR group 1 is still seated at its reserved table. It
+ * gets "FOH No Ordering" directly after the seating, then rates NEGATIVE.
  */
 class StaffIncidentsNoCookSeatsButCannotOrderSystemTest : StaffIncidentsScenario() {
     override val name = "StaffIncidentsNoCookSeatsButCannotOrderSystemTest"
@@ -141,7 +147,7 @@ class StaffIncidentsNoCookSeatsButCannotOrderSystemTest : StaffIncidentsScenario
     }
 }
 
-/** The totals: 42 meals cooked and served in evenings 1 to 3, nothing delivered, 10 ratings. */
+/** The four statistics lines: 42 meals cooked and served in evenings 1-3, none delivered, 10 ratings. */
 class StaffIncidentsStatisticsSystemTest : StaffIncidentsScenario() {
     override val name = "StaffIncidentsStatisticsSystemTest"
     override val description = "Final statistics of the staff-incidents scenario"

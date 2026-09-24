@@ -9,22 +9,16 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.utils.TickStatusTestLogs
 private const val BOWL = "Bowl"
 
 /**
- * A/B probes for handing a delivery order to its driver when the waitstaff cannot do it in one tick -
- * the area of the DriveMeCrazy failure, and a known gap of the code the reference run was made from.
+ * A/B probes (Sep 23) for handing a delivery order to its driver when the waiter cannot pass all of
+ * it in one tick. Written for the failing DriveMeCrazy full test. The office hour had also noted
+ * that our main branch did not continue a hand-over in the next tick. The specification says the
+ * waiters "deliver meals to the drivers [...] until their limit is reached", and adjustment #8
+ * splits a hand-over across ticks and waiters. The reference passes HandOverContinuesInTheNextTick
+ * and HandOverCountsInTheServingStatus (runs 9-12). The other three fail there by design.
  *
- * The serving section of the specification: "For deliveries, the meals queue until all meals of an
- * order are ready and a driver is free. Then, all waiters with a SERVING tick load below the action
- * limit deliver meals to the drivers [...] until their limit is reached or the condition is negated."
- *
- * The scenario: one waiter, one driver. In tick 2 a dine-in group of eight and a delivery group of
- * four both order the only dish, which is cooked on the spot. Serving goes to the table first, so the
- * waiter spends 8 of their 10 serving actions there and has room for only 2 of the 4 delivery meals.
- *
- * Results 10: HandOverContinuesInTheNextTick and HandOverCountsInTheServingStatus pass on the
- * reference, the same as on our dev branch. The other three fail there by design.
- *
- * Every probe pins its line to one tick: the skip starts at that tick and the start of the next tick
- * must still be ahead of the line.
+ * One waiter, one driver. In tick 2 a dine-in group of eight and a delivery group of four order
+ * the only dish, which is cooked at once. The table is served first, so the waiter has 2 of their
+ * 10 serving actions left for the 4 delivery meals. Every probe pins its line to one tick.
  */
 abstract class SplitHandOverScenario : ExampleSystemTestExtension() {
     override val restaurants = "officehourjson/splithandover/restaurants.json"
@@ -55,8 +49,8 @@ abstract class SplitHandOverScenario : ExampleSystemTestExtension() {
 }
 
 /**
- * Reading A, the specification's: the waiter hands over what fits in tick 2 and the rest in tick 3,
- * and the driver leaves once the order is complete. This is what our dev branch does.
+ * Reading A (the reference's, adjustment #8): 2 meals are handed over in tick 2 and 2 in tick 3.
+ * The driver prepares once the order is complete, before tick 4.
  */
 class HandOverContinuesInTheNextTickSystemTest : SplitHandOverScenario() {
     override val name = "HandOverContinuesInTheNextTickSystemTest"
@@ -72,8 +66,9 @@ class HandOverContinuesInTheNextTickSystemTest : SplitHandOverScenario() {
 }
 
 /**
- * Reading B: nothing is handed over until a waiter can pass the whole order at once, so tick 2 has
- * no hand-over and all four meals go in one line in tick 3.
+ * Reading B (rejected, fails by design): nothing is handed over until one waiter can pass the whole
+ * order, so the first hand-over is all four meals in tick 3. This follows the specification's "the
+ * meals queue until all meals of an order are ready". Adjustment #8 rules it out.
  */
 class HandOverWaitsForTheWholeOrderSystemTest : SplitHandOverScenario() {
     override val name = "HandOverWaitsForTheWholeOrderSystemTest"
@@ -92,8 +87,10 @@ class HandOverWaitsForTheWholeOrderSystemTest : SplitHandOverScenario() {
 }
 
 /**
- * Reading C: the hand-over is never finished, so the driver never leaves - the behaviour the office
- * hour reported for the code the reference run was made from. Kept so a stall is named, not guessed.
+ * Reading C (rejected, fails by design): 2 meals are handed over in tick 2 and the rest never, so
+ * the driver never leaves and the group gives up. This is not a reading of the specification. It
+ * is the behaviour the office hour reported for our main branch, and it checked whether the
+ * reference stalls the same way (it does not).
  */
 class HandOverNeverCompletesSystemTest : SplitHandOverScenario() {
     override val name = "HandOverNeverCompletesSystemTest"
@@ -105,7 +102,10 @@ class HandOverNeverCompletesSystemTest : SplitHandOverScenario() {
     }
 }
 
-/** Handing meals to a driver counts towards the serving status: 8 at the table plus 2 to the driver. */
+/**
+ * The reference's answer to an open question: meals handed to a driver count in the serving status
+ * of tick 2, 8 at the table plus 2 to the driver.
+ */
 class HandOverCountsInTheServingStatusSystemTest : SplitHandOverScenario() {
     override val name = "HandOverCountsInTheServingStatusSystemTest"
     override val description = "Meals handed to a driver are counted in the serving status of the tick"
@@ -119,7 +119,7 @@ class HandOverCountsInTheServingStatusSystemTest : SplitHandOverScenario() {
     }
 }
 
-/** Handing meals to a driver is not serving: the status of tick 2 only counts the 8 at the table. */
+/** Rejected, fails by design: a hand-over is not serving, so the status of tick 2 counts only the 8 at the table. */
 class HandOverIsNotCountedInTheServingStatusSystemTest : SplitHandOverScenario() {
     override val name = "HandOverIsNotCountedInTheServingStatusSystemTest"
     override val description = "Meals handed to a driver are not counted in the serving status"

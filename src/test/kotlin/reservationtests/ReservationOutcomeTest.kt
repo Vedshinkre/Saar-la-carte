@@ -174,7 +174,8 @@ class ReservationOutcomeTest {
     @Test
     fun `a table already reserved by an earlier group cannot be reserved again with no fallback available`() {
         val table = Table(id = 1, size = 4, tableType = TableType.COMMON)
-        val processor = processor(listOf(table))
+        val barTable = Table(id = 2, size = 4, tableType = TableType.BAR) // right size, wrong type
+        val processor = processor(listOf(table, barTable))
 
         val firstReserved = processor.reserveTables(regularGroup(id = 1, size = 4))
         val secondReserved = processor.reserveTables(regularGroup(id = 2, size = 4))
@@ -182,20 +183,24 @@ class ReservationOutcomeTest {
         assertTrue(firstReserved)
         assertFalse(secondReserved)
         assertEquals(TableStatus.RESERVED, table.status)
+        assertEquals(TableStatus.FREE, barTable.status, "a BAR table is no fallback for a COMMON group")
     }
 
     @Test
-    fun `once the preferred table is taken a later group falls through to a smaller still-eligible table`() {
-        val bigTable = Table(id = 1, size = 4, tableType = TableType.COMMON)
-        val smallTable = Table(id = 2, size = 4, tableType = TableType.COMMON)
-        val processor = processor(listOf(bigTable, smallTable))
+    fun `once the perfectly fitting table is taken a later group gets a larger table within the three quarter rule`() {
+        val largerTable = Table(id = 1, size = 5, tableType = TableType.COMMON)
+        val perfectFit = Table(id = 2, size = 4, tableType = TableType.COMMON)
+        val customerToTable = mutableMapOf<CustomerGroup, List<Table>>()
+        val processor = processor(listOf(largerTable, perfectFit), customerToTable = customerToTable)
+        val firstGroup = regularGroup(id = 1, size = 4)
+        val secondGroup = regularGroup(id = 2, size = 4)
 
-        val firstReserved = processor.reserveTables(regularGroup(id = 1, size = 4))
-        val secondReserved = processor.reserveTables(regularGroup(id = 2, size = 4))
+        val firstReserved = processor.reserveTables(firstGroup)
+        val secondReserved = processor.reserveTables(secondGroup)
 
         assertTrue(firstReserved)
         assertTrue(secondReserved)
-        assertEquals(TableStatus.RESERVED, bigTable.status)
-        assertEquals(TableStatus.RESERVED, smallTable.status)
+        assertEquals(listOf(perfectFit), customerToTable[firstGroup], "a perfect fit wins over a lower table id")
+        assertEquals(listOf(largerTable), customerToTable[secondGroup], "4 of 5 seats meets the three quarter rule")
     }
 }

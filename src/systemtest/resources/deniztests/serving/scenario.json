@@ -1,0 +1,61 @@
+{
+  "customerGroups": [
+    {
+      "id": 1,
+      "type": "REGULAR",
+      "size": 3,
+      "visitingTick": 2,
+      "foodPreferences": [
+        {
+          "size": 3,
+          "favoriteDishes": [
+            "salad"
+          ]
+        }
+      ],
+      "visitingStart": 1,
+      "visitingPeriod": 10,
+      "restaurant": 1
+    },
+    {
+      "id": 2,
+      "type": "REGULAR",
+      "size": 7,
+      "visitingTick": 3,
+      "foodPreferences": [],
+      "visitingStart": 1,
+      "visitingPeriod": 10,
+      "restaurant": 1
+    },
+    {
+      "id": 3,
+      "type": "REGULAR",
+      "size": 8,
+      "visitingTick": 1,
+      "foodPreferences": [
+        {
+          "size": 2,
+          "favoriteDishes": [
+            "soup"
+          ]
+        },
+        {
+          "size": 3,
+          "favoriteDishes": [
+            "tart"
+          ]
+        },
+        {
+          "size": 3,
+          "favoriteDishes": [
+            "pie"
+          ]
+        }
+      ],
+      "visitingStart": 1,
+      "visitingPeriod": 10,
+      "restaurant": 1
+    }
+  ],
+  "incidents": []
+}

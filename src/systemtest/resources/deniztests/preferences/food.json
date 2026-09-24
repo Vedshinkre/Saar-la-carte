@@ -1,0 +1,125 @@
+{
+  "ingredients": [
+    {
+      "name": "basil",
+      "unit": "g",
+      "packagingVolume": 1000,
+      "bestBefore": 9
+    },
+    {
+      "name": "beef",
+      "unit": "g",
+      "packagingVolume": 1000,
+      "bestBefore": 9
+    },
+    {
+      "name": "cheese",
+      "unit": "g",
+      "packagingVolume": 1000,
+      "bestBefore": 9
+    },
+    {
+      "name": "flour",
+      "unit": "g",
+      "packagingVolume": 1000,
+      "bestBefore": 9
+    },
+    {
+      "name": "potato",
+      "unit": "g",
+      "packagingVolume": 1000,
+      "bestBefore": 9
+    },
+    {
+      "name": "tomato",
+      "unit": "g",
+      "packagingVolume": 1000,
+      "bestBefore": 9
+    }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "soup",
+      "duration": 10,
+      "cookType": [
+        "EXEC"
+      ],
+      "ingredients": [
+        {
+          "name": "tomato",
+          "amount": 10
+        },
+        {
+          "name": "basil",
+          "amount": 10
+        }
+      ],
+      "basicDishFor": "EUROPEAN"
+    },
+    {
+      "id": 2,
+      "dishName": "gratin",
+      "duration": 10,
+      "cookType": [
+        "EXEC"
+      ],
+      "ingredients": [
+        {
+          "name": "potato",
+          "amount": 10
+        },
+        {
+          "name": "cheese",
+          "amount": 10
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "dishName": "salad",
+      "duration": 10,
+      "cookType": [
+        "EXEC"
+      ],
+      "ingredients": [
+        {
+          "name": "tomato",
+          "amount": 500
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "dishName": "pie",
+      "duration": 10,
+      "cookType": [
+        "EXEC"
+      ],
+      "ingredients": [
+        {
+          "name": "potato",
+          "amount": 10
+        },
+        {
+          "name": "flour",
+          "amount": 10
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "dishName": "stew",
+      "duration": 10,
+      "cookType": [
+        "EXEC"
+      ],
+      "ingredients": [
+        {
+          "name": "beef",
+          "amount": 10
+        }
+      ]
+    }
+  ]
+}

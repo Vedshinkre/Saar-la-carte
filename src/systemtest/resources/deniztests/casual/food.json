@@ -1,0 +1,41 @@
+{
+  "ingredients": [
+    {
+      "name": "beef",
+      "unit": "g",
+      "packagingVolume": 1000,
+      "bestBefore": 9
+    }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "soup",
+      "duration": 10,
+      "cookType": [
+        "EXEC"
+      ],
+      "ingredients": [
+        {
+          "name": "beef",
+          "amount": 1
+        }
+      ],
+      "basicDishFor": "EUROPEAN"
+    },
+    {
+      "id": 2,
+      "dishName": "roast",
+      "duration": 40,
+      "cookType": [
+        "ROAST"
+      ],
+      "ingredients": [
+        {
+          "name": "beef",
+          "amount": 1
+        }
+      ]
+    }
+  ]
+}

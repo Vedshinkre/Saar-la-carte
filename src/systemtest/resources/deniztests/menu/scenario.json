@@ -1,0 +1,30 @@
+{
+  "customerGroups": [
+    {
+      "id": 1,
+      "type": "REGULAR",
+      "size": 4,
+      "visitingTick": 1,
+      "foodPreferences": [
+        {
+          "size": 1,
+          "favoriteDishes": [
+            "tiramisu",
+            "sorbet",
+            "tomato soup"
+          ]
+        },
+        {
+          "size": 3,
+          "favoriteDishes": [
+            "truffle pasta"
+          ]
+        }
+      ],
+      "visitingStart": 1,
+      "visitingPeriod": 10,
+      "restaurant": 1
+    }
+  ],
+  "incidents": []
+}

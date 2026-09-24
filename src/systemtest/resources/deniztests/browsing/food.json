@@ -1,0 +1,48 @@
+{
+  "ingredients": [
+    {
+      "name": "peanuts",
+      "unit": "g",
+      "packagingVolume": 1000,
+      "bestBefore": 9
+    },
+    {
+      "name": "tomato",
+      "unit": "g",
+      "packagingVolume": 1000,
+      "bestBefore": 9
+    }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "tomato soup",
+      "duration": 10,
+      "cookType": [
+        "EXEC"
+      ],
+      "ingredients": [
+        {
+          "name": "tomato",
+          "amount": 1
+        }
+      ],
+      "basicDishFor": "EUROPEAN"
+    },
+    {
+      "id": 2,
+      "dishName": "satay",
+      "duration": 10,
+      "cookType": [
+        "EXEC"
+      ],
+      "ingredients": [
+        {
+          "name": "peanuts",
+          "amount": 1
+        }
+      ],
+      "basicDishFor": "ASIAN"
+    }
+  ]
+}

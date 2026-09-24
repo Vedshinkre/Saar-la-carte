@@ -1,0 +1,32 @@
+{
+  "customerGroups": [
+    {
+      "id": 1,
+      "type": "CASUAL",
+      "size": 2,
+      "visitingTick": 1,
+      "foodPreferences": [
+        {
+          "size": 1,
+          "favoriteDishes": [
+            "soup"
+          ]
+        },
+        {
+          "size": 1,
+          "favoriteDishes": [
+            "salad"
+          ]
+        }
+      ],
+      "restaurantTypes": [
+        "EUROPEAN"
+      ],
+      "visitingEvenings": [
+        1
+      ],
+      "ratingLikelihood": "NEVER"
+    }
+  ],
+  "incidents": []
+}

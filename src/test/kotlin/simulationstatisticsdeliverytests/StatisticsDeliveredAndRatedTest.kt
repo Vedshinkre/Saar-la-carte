@@ -31,6 +31,8 @@ private const val FIRST_TICK_AFTER_HAND_OVER = 6
 private const val HAND_OVER_TICK = 5
 private const val TRIP_TICKS = 5
 private const val MAX_DRIVING_TICKS = 8
+private const val FIVE_TICK_TRIP_KM = 25
+private const val LATE_VISITING_TICK = 9
 private const val THREE = 3
 private const val FIVE = 5
 
@@ -119,11 +121,12 @@ class StatisticsDeliveredAndRatedTest {
 
     @Test
     fun `a delivery the group gave up on does not count even though the driver still arrives`() {
-        // the group wanted the food at tick 1 and gives up three ticks later, before the 5 tick trip is over
-        val group = deliveryGroup(id = 1, visitingAt = 1)
+        // the group wants the food at tick 9 and gives up at tick 12, but the 25 km (5 tick) trip only
+        // starts at tick 10, so the driver arrives at tick 14
+        val group = deliveryGroup(id = 1, distance = FIVE_TICK_TRIP_KM, visitingAt = LATE_VISITING_TICK)
         val driver = drivingDriver(group, order(DishStatus.SERVED), oneWayTicks = TRIP_TICKS)
         val delivering = DeliveryProcessor(listOf(driver), listOf(group))
-        Time.tick = 1
+        Time.tick = LATE_VISITING_TICK
 
         repeat(MAX_DRIVING_TICKS) {
             Time.tick += 1

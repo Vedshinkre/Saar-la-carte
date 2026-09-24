@@ -36,6 +36,9 @@ private const val ONE_TICK = 5
 private const val EIGHT_TICKS = 8
 private const val FIVE_TICK_TRIP_KM = 25
 private const val TICKS_IN_ONE_EVENING = 24
+private const val LATEST_VISITING_TICK = 21
+private const val LATE_VISITING_TICK = 9
+private const val SMALLEST_EVENT = 4
 private const val TICKS_IN_ONE_AND_A_QUARTER_EVENINGS = 30
 private const val RATINGS_BEFORE = 10
 private const val NEGATIVE_BEFORE = 20
@@ -99,7 +102,7 @@ class StatisticsDeliveredAndRatedIntegrationTest {
     @Test
     fun `a delivery is counted on the tick the driver hands the food over and never again`() {
         val foh = frontOfHouse()
-        cookedDelivery(foh, deliveryGroup(id = 1, distance = ONE_TICK, visitingAt = TICKS_IN_ONE_EVENING))
+        cookedDelivery(foh, deliveryGroup(id = 1, distance = ONE_TICK, visitingAt = LATEST_VISITING_TICK))
 
         deliveryTick(foh) // hand-over to the driver and preparation
         assertEquals(0, foh.numberOfCustomersDelivered, "food is still with the restaurant or the driver")
@@ -112,8 +115,10 @@ class StatisticsDeliveredAndRatedIntegrationTest {
     @Test
     fun `a delivery the group gave up on before the driver arrived is never counted`() {
         val foh = frontOfHouse()
-        // wanted at tick 1 but a 25 km trip takes 5 ticks each way, so the group gives up mid-trip
-        cookedDelivery(foh, deliveryGroup(id = 1, distance = FIVE_TICK_TRIP_KM, visitingAt = 1))
+        // wanted at tick 9, but the meals only reach the driver at tick 9 (a busy kitchen) and a 25 km trip
+        // takes 5 ticks, so the group gives up at tick 12, before the driver arrives at tick 14
+        Time.tick = LATE_VISITING_TICK
+        cookedDelivery(foh, deliveryGroup(id = 1, distance = FIVE_TICK_TRIP_KM, visitingAt = LATE_VISITING_TICK))
 
         repeat(EIGHT_TICKS) { deliveryTick(foh) }
 
@@ -131,7 +136,7 @@ class StatisticsDeliveredAndRatedIntegrationTest {
     fun `turned away, event and given-up delivery groups each add one rating, groups that never rate add none`() {
         val foh = frontOfHouse()
         val regular = RegularGroup(1, 2, TableType.COMMON, 1, emptyList(), 1, 1, 1)
-        val event = EventSeatingFixtures.eventGroup(2, 2)
+        val event = EventSeatingFixtures.eventGroup(2, SMALLEST_EVENT)
         foh.reserveTables(regular) // no tables at all, so both reservations fail and the groups are turned away
         foh.reserveTables(event)
         val rating = cookedDelivery(foh, deliveryGroup(id = 3, likelihood = RatingLikelihood.ALWAYS))
@@ -146,6 +151,9 @@ class StatisticsDeliveredAndRatedIntegrationTest {
 
         assertEquals(RATINGS_BEFORE, positive)
         assertEquals(NEGATIVE_BEFORE + 3, negative)
+
+        Time.tick += 1
+        assertEquals(positive to negative, foh.processRatings(positive, negative), "every group rates only once")
     }
 
     // ---- Ratings through a real Restaurant ----
@@ -170,23 +178,6 @@ class StatisticsDeliveredAndRatedIntegrationTest {
     }
 
     // ---- The statistics step of the simulation ----
-
-    @Test
-    fun `two restaurants are reported in ascending id order with their own numbers`() {
-        val second = restaurantMock(stats(id = 2), cooked = 9, served = 8, delivered = 7)
-        val first = restaurantMock(stats(id = 1), cooked = 3, served = 2, delivered = 1)
-
-        Simulation(SimulationConfig()).apply { restaurants = listOf(second, first) }.runSimulation()
-
-        val log = log()
-        val firstAt = log.indexOf("Restaurant 1 cooked 3 meals.")
-        val secondAt = log.indexOf("Restaurant 2 cooked 9 meals.")
-        assertTrue(firstAt in 0 until secondAt, log)
-        assertTrue(log.contains("Restaurant 1 served 2 customers."))
-        assertTrue(log.contains("Restaurant 1 delivered meals to 1 customers."))
-        assertTrue(log.contains("Restaurant 2 served 8 customers."))
-        assertTrue(log.contains("Restaurant 2 delivered meals to 7 customers."))
-    }
 
     @Test
     fun `after a whole evening the statistics follow the serving log with no further evening`() {

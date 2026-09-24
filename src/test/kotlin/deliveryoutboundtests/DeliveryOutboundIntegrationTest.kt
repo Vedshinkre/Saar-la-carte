@@ -106,7 +106,6 @@ class DeliveryOutboundIntegrationTest {
         assertTrue(lines.any { it.contains("Delivery Preparation (R 1): Driver 1 prepares driving") })
     }
 
-    // Regression: the driving used to start in the preparation tick itself (fixed in DeliveryProcessor).
     @Test
     fun `a one tick delivery prepared in tick 4 arrives in tick 5`() {
         val group = deliveryGroup(id = 1, distance = 5)
@@ -117,6 +116,11 @@ class DeliveryOutboundIntegrationTest {
 
         assertFalse(logLines().any { it.contains("Delivery Arrival") }, "must not arrive in the preparation tick")
         assertEquals(DriverState.DELIVERING, driver.state)
+
+        Time.tick += 1
+        pipeline.tick() // tick 5: the one driving tick, arrival at its end
+
+        assertTrue(logLines().any { it.contains("Delivery Arrival (R 1): Driver 1 arrived at group 1") })
     }
 
     @Test

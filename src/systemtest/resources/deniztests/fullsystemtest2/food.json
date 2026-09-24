@@ -1,0 +1,31 @@
+{
+  "ingredients": [
+    { "name": "tomato", "unit": "g", "packagingVolume": 20, "bestBefore": 5 },
+    { "name": "beef", "unit": "g", "packagingVolume": 30, "bestBefore": 5 },
+    { "name": "lettuce", "unit": "g", "packagingVolume": 20, "bestBefore": 5 }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "soup",
+      "duration": 10,
+      "cookType": ["EXEC"],
+      "ingredients": [{ "name": "tomato", "amount": 5 }],
+      "basicDishFor": "EUROPEAN"
+    },
+    {
+      "id": 2,
+      "dishName": "stew",
+      "duration": 12,
+      "cookType": ["TOURNANT"],
+      "ingredients": [{ "name": "beef", "amount": 8 }]
+    },
+    {
+      "id": 3,
+      "dishName": "salad",
+      "duration": 8,
+      "cookType": ["SOUS"],
+      "ingredients": [{ "name": "lettuce", "amount": 5 }]
+    }
+  ]
+}

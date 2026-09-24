@@ -1,8 +1,25 @@
 package de.unisaarland.cs.se.selab.systemtest.selab26.deniztests
 
 import de.unisaarland.cs.se.selab.systemtest.selab26.SystemTestSELab26
+import de.unisaarland.cs.se.selab.systemtest.selab26.regulareatingescortingtests.RegularEatingEscortingOrderedByIdNotFileOrderSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.regulareatingescortingtests.RegularEatingTakesTwoFullTicksThenEscortsSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.reservationdecisiontests.FailedReservationRatesAtFirstOpeningTickSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.reservationdecisiontests.RegularRatedBeforeCasualDespiteLowerIdSystemTest
 
-fun denizTests(): List<SystemTestSELab26> = listOf(
+fun denizTestsForReference(): List<SystemTestSELab26> = listOf(
+    DeliveryImpatienceCookBottleneckTest(),
+    RegularEatingEscortingOrderedByIdNotFileOrderSystemTest(),
+    RegularEatingTakesTwoFullTicksThenEscortsSystemTest(),
+    FailedReservationRatesAtFirstOpeningTickSystemTest(),
+    RegularRatedBeforeCasualDespiteLowerIdSystemTest(),
+    FullSystemTest1(),
+    FullSystemTest2(),
+    FullSystemTest3(),
+    FullSystemTest4(),
+    FullSystemTest5()
+)
+
+fun denizTestsPassing(): List<SystemTestSELab26> = listOf(
     PlanningSystemTest(),
     CookStaffSystemTest(),
     MenuSystemTest(),
@@ -15,5 +32,4 @@ fun denizTests(): List<SystemTestSELab26> = listOf(
     CasualBrowsingSystemTest(),
     EventBrowsingSystemTest(),
     EventVisitSystemTest(),
-    DeliveryImpatienceCookBottleneckTest()
 )

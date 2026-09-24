@@ -1,0 +1,56 @@
+{
+  "restaurants": [
+    {
+      "id": 1,
+      "name": "Grand Hall",
+      "type": "EUROPEAN",
+      "openingTickStart": 1,
+      "openingTickEnd": 24,
+      "deliveryDrivers": 0,
+      "event": true,
+      "positiveRatings": 4,
+      "negativeRatings": 0,
+      "recipes": [1, 2],
+      "kitchenStaff": {
+        "EXEC": 1,
+        "SOUS": 1,
+        "TOURNANT": 0,
+        "SAUCE": 0,
+        "FISH": 0,
+        "ROAST": 0,
+        "VEGETABLE": 0,
+        "PASTRY": 0
+      },
+      "waitstaff": 2,
+      "tables": [
+        { "id": 1, "type": "COMMON", "size": 8 },
+        { "id": 2, "type": "COMMON", "size": 8 },
+        { "id": 3, "type": "COMMON", "size": 2 }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Annex",
+      "type": "EUROPEAN",
+      "openingTickStart": 1,
+      "openingTickEnd": 24,
+      "deliveryDrivers": 0,
+      "event": false,
+      "positiveRatings": 1,
+      "negativeRatings": 0,
+      "recipes": [1, 2],
+      "kitchenStaff": {
+        "EXEC": 1,
+        "SOUS": 1,
+        "TOURNANT": 0,
+        "SAUCE": 0,
+        "FISH": 0,
+        "ROAST": 0,
+        "VEGETABLE": 0,
+        "PASTRY": 0
+      },
+      "waitstaff": 1,
+      "tables": [{ "id": 1, "type": "COMMON", "size": 2 }]
+    }
+  ]
+}

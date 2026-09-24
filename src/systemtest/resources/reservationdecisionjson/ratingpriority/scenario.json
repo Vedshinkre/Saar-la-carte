@@ -1,0 +1,29 @@
+{
+  "customerGroups": [
+    {
+      "id": 9,
+      "type": "REGULAR",
+      "size": 2,
+      "tableType": "COMMON",
+      "visitingTick": 1,
+      "visitingStart": 1,
+      "visitingPeriod": 1,
+      "restaurant": 1,
+      "foodPreferences": []
+    },
+    {
+      "id": 1,
+      "type": "CASUAL",
+      "size": 2,
+      "tableType": "COMMON",
+      "visitingTick": 1,
+      "restaurantTypes": ["EUROPEAN"],
+      "visitingEvenings": [1],
+      "ratingLikelihood": "ALWAYS",
+      "foodPreferences": []
+    }
+  ],
+  "incidents": [
+    { "id": 1, "type": "STAFF", "evening": 1, "restaurant": 1, "staffType": "WAITSTAFF", "number": -1 }
+  ]
+}

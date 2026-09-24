@@ -28,7 +28,8 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExampleEmptyTick
 import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExamplePreparationAndServingStartTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.basictests.ExampleSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.customerparsertests.customerParserSystemTests
-import de.unisaarland.cs.se.selab.systemtest.selab26.deniztests.denizTests
+import de.unisaarland.cs.se.selab.systemtest.selab26.deniztests.denizTestsForReference
+import de.unisaarland.cs.se.selab.systemtest.selab26.deniztests.denizTestsPassing
 import de.unisaarland.cs.se.selab.systemtest.selab26.eventtests.EventArrivalCasualTurnedAwaySystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.eventtests.EventArrivalCurrentLoadIgnoresEventSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.eventtests.EventArrivalRegularGroupsSeatedFirstSystemTest
@@ -303,7 +304,7 @@ object SystemTestRegistration {
         testSuite.registerTest(CookIdTieBreakLowestIdA())
         testSuite.registerTest(KitchenCookAssignmentSystemTest())
         testSuite.registerTest(CorrectPartialServing2())
-        denizTests().forEach { testSuite.registerTest(it) }
+        denizTestsForReference().forEach { testSuite.registerTest(it) }
     }
 
     /** AB tests for the two tick windows fo the serving phase */
@@ -383,6 +384,7 @@ object SystemTestRegistration {
         testSuite.registerTest(RegularFailedTest())
         anshSimulationMutantTests().forEach { testSuite.registerTest(it) }
         testSuite.registerTest(KitchenCookAssignmentSystemTest())
+        denizTestsPassing().forEach { testSuite.registerTest(it) }
     }
 
     /**

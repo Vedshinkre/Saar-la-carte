@@ -260,6 +260,7 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.staffchangetests.StaffChang
 import de.unisaarland.cs.se.selab.systemtest.selab26.staffchangetests.StaffChangeNoCookStillProcuresSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.staffchangetests.StaffChangeNoWaitstaffSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.staffchangetests.StaffChangeOnlyNamedRestaurantSystemTest
+import de.unisaarland.cs.se.selab.systemtest.selab26.anshtests.anshTests
 
 /**
  * Used for test registration
@@ -284,6 +285,7 @@ object SystemTestRegistration {
         registerSkerdiReferenceTests(testSuite)
         registeratharvaRefrenceTests(testSuite)
         fullScenarioSystemTests(false).forEach { testSuite.registerTest(it) }
+        anshTests().forEach { testSuite.registerTest(it) }
         testSuite.registerTest(DeliveryOrderSuccessTestA())
         testSuite.registerTest(PartialServiceSuccessTest())
         testSuite.registerTest(PartialDeliveryHandoverSystemTest())

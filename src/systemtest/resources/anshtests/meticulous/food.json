@@ -1,0 +1,34 @@
+{
+  "ingredients": [
+    {"name": "basil", "unit": "g", "packagingVolume": 200, "bestBefore": 2},
+    {"name": "egg", "unit": "X", "packagingVolume": 60, "bestBefore": 6},
+    {"name": "flour", "unit": "g", "packagingVolume": 2000, "bestBefore": 8},
+    {"name": "milk", "unit": "mL", "packagingVolume": 3000, "bestBefore": 3},
+    {"name": "mushroom", "unit": "g", "packagingVolume": 2000, "bestBefore": 2},
+    {"name": "rice", "unit": "g", "packagingVolume": 3000, "bestBefore": 5},
+    {"name": "salmon", "unit": "g", "packagingVolume": 2000, "bestBefore": 2},
+    {"name": "tofu", "unit": "g", "packagingVolume": 1500, "bestBefore": 4},
+    {"name": "tomato", "unit": "X", "packagingVolume": 50, "bestBefore": 5}
+  ],
+  "recipes": [
+    {"id": 20, "dishName": "margherita", "duration": 20, "cookType": ["EXEC", "TOURNANT"],
+     "ingredients": [{"name": "flour", "amount": 200}, {"name": "tomato", "amount": 2}, {"name": "basil", "amount": 10}],
+     "basicDishFor": "EUROPEAN"},
+    {"id": 21, "dishName": "tiramisu", "duration": 40, "cookType": ["PASTRY"],
+     "ingredients": [{"name": "egg", "amount": 2}, {"name": "flour", "amount": 50}, {"name": "milk", "amount": 50}]},
+    {"id": 22, "dishName": "risotto", "duration": 20, "cookType": ["SOUS", "VEGETABLE"],
+     "ingredients": [{"name": "rice", "amount": 150}, {"name": "mushroom", "amount": 100}, {"name": "milk", "amount": 50}]},
+    {"id": 23, "dishName": "mushroom soup", "duration": 11, "cookType": ["SAUCE"],
+     "ingredients": [{"name": "mushroom", "amount": 150}, {"name": "milk", "amount": 100}]},
+    {"id": 24, "dishName": "omelette", "duration": 10, "cookType": ["TOURNANT", "SAUCE"],
+     "ingredients": [{"name": "egg", "amount": 3}, {"name": "milk", "amount": 30}]},
+    {"id": 25, "dishName": "salmon nigiri", "duration": 20, "cookType": ["FISH", "SOUS"],
+     "ingredients": [{"name": "salmon", "amount": 100}, {"name": "rice", "amount": 80}], "basicDishFor": "ASIAN"},
+    {"id": 26, "dishName": "salmon teriyaki", "duration": 40, "cookType": ["FISH"],
+     "ingredients": [{"name": "salmon", "amount": 150}, {"name": "rice", "amount": 100}]},
+    {"id": 27, "dishName": "tofu bowl", "duration": 10, "cookType": ["VEGETABLE", "TOURNANT"],
+     "ingredients": [{"name": "tofu", "amount": 150}, {"name": "rice", "amount": 100}, {"name": "basil", "amount": 5}]},
+    {"id": 28, "dishName": "tamago", "duration": 10, "cookType": ["TOURNANT"],
+     "ingredients": [{"name": "egg", "amount": 2}]}
+  ]
+}

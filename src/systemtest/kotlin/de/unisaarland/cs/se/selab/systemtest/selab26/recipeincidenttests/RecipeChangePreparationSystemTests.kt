@@ -12,8 +12,10 @@ private const val TWO_EVENINGS = 48
 private fun inDir(file: String) = "$DIR/$file"
 
 /**
- * Probes for the RECIPE incident (specification page 26, lines 12-21 and forum topic 188), one
- * spec statement per test, all observed through the amounts procured in the preparation phase.
+ * Tests for the RECIPE incident (specification page 26, lines 12-21 and forum topic 188), one
+ * statement of the specification per test, each checked through the amount procured in the
+ * preparation phase. Written on Sep 21 to find out why recipe-change component tests failed. All
+ * of them passed on our implementation and on the reference, so they became regression tests.
  *
  * Every ingredient is sold in 1 g packages, so the procured amount equals the planned amount
  * exactly, and every restaurant has 10 seats that are not reserved, so the per-dish estimate

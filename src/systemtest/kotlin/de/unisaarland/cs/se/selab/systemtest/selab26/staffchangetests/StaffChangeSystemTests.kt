@@ -18,13 +18,14 @@ private fun probe(file: String) = "$DIR/$file"
 private fun stew(amount: Int) = mapOf(STEW to amount)
 
 /**
- * Probes for the STAFF change incident (specification page 26, lines 1-11, and forum topic 287:
- * incidents may reduce waitstaff, drivers or non-EXEC cooks to 0).
+ * Tests for the STAFF change incident (specification page 26, lines 1-11; forum topic 287:
+ * incidents may reduce waitstaff, drivers or non-EXEC cooks to 0). Written on Sep 21, next to the
+ * RECIPE incident tests. The procurement values were corrected in run 4, like the planning tests.
  *
- * A regular group of 2 visits every evening, reserves the 2 seat table and orders 2 meals of the
- * one dish. Lentil is sold in 1 g packages and the remaining 30 seats give an estimate of 3 meals,
- * so evening 1 always procures 30 g and every later evening plans 30 estimated plus 2 * 10 for the
- * visit in the history.
+ * One restaurant with a 2 and a 30 seat table, one waiter and one TOURNANT cook. A REGULAR group of
+ * 2 visits every evening, reserves the 2 seat table and orders 2 meals of the one dish (10 g of
+ * lentil, 1 g packages). Evening 1 buys 40 g (4 meals: the group's seats still count on its first
+ * visit). Later evenings plan 3 meals for the 30 other seats plus 2 * 10 g for the earlier visit.
  */
 abstract class StaffChangeSystemTest : ExampleSystemTestExtension() {
     override val logLevel = "DEBUG"
@@ -33,13 +34,10 @@ abstract class StaffChangeSystemTest : ExampleSystemTestExtension() {
 }
 
 /**
- * Losing the last cook of the only cook type makes every dish unorderable, because a dish can only
- * be ordered if an eligible cook exists in the restaurant (specification page 13, lines 14-15).
- *
- * The kitchen still buys the ingredients for it, though: the planning covers the whole menu
- * "including recipes for which they currently have no eligible cook" (page 12, line 3). Evening 2
- * therefore still procures the 40 g that the estimate and the history call for, and only the
- * ordering fails.
+ * Removing the only cook before evening 2 makes every dish unorderable: a dish needs an eligible
+ * cook in the restaurant (specification page 13, lines 14-15). The kitchen still plans the whole
+ * menu, "including recipes for which they currently have no eligible cook" (page 12, line 3).
+ * So evening 2 still buys 30 g (30 + 20 needed, 20 left over), and only the ordering fails.
  */
 class StaffChangeNoCookStillProcuresSystemTest : StaffChangeSystemTest() {
     override val name = "StaffChangeNoCookStillProcuresSystemTest"
@@ -71,10 +69,10 @@ class StaffChangeNoCookStillProcuresSystemTest : StaffChangeSystemTest() {
  * Two incidents of one evening are applied in ascending id order, and a reduction below zero leaves
  * zero rather than a negative count (specification page 26, lines 10-11).
  *
- * The restaurant has one TOURNANT cook. Incident 1 removes 2 of them, which clamps at 0, and
- * incident 2 hires one, so the evening runs with exactly one cook and the group can order. In the
- * other order the restaurant would end up with 2 - 2 = 0 cooks and the order would fail, and
- * without the clamp 1 - 2 + 1 would be 0 as well.
+ * One TOURNANT cook. Incident 1 removes 2 (clamped at 0), incident 2 hires 1, so evening 2 has one
+ * cook and the group places order 2. Both wrong implementations leave 0 cooks, so no order: the
+ * reverse order (1 + 1 - 2) and a missing clamp (1 - 2 + 1). The only thing checked is that
+ * order 2 exists.
  */
 class StaffChangeClampThenHireSystemTest : StaffChangeSystemTest() {
     override val name = "StaffChangeClampThenHireSystemTest"
@@ -97,12 +95,12 @@ class StaffChangeClampThenHireSystemTest : StaffChangeSystemTest() {
 }
 
 /**
- * Losing the last waiter leaves the group without anyone to seat it. The group tries again on the
- * next tick and then leaves (specification page 15, lines 29-33), so the "no free waitstaff" line
- * appears twice and only the first tick carries an arrival log.
+ * Removing the only waiter before evening 2 leaves nobody to seat the group. It gets "no free
+ * waitstaff" in tick 1 (right after its arrival), retries in tick 2, gets it again and then leaves
+ * (specification page 15, lines 29-33).
  *
- * Reserving tables is the manager's job and not a waiter's, so the reservation and the procurement
- * of the evening are unaffected.
+ * Reservations are made by the manager, not a waiter, so the reservation and the evening 2
+ * procurement (30 g, the same as with a waiter) are unaffected.
  */
 class StaffChangeNoWaitstaffSystemTest : StaffChangeSystemTest() {
     override val name = "StaffChangeNoWaitstaffSystemTest"
@@ -131,9 +129,9 @@ class StaffChangeNoWaitstaffSystemTest : StaffChangeSystemTest() {
 }
 
 /**
- * A STAFF incident names one restaurant and must leave every other restaurant alone. Two identical
- * EUROPEAN restaurants each lose nothing until evening 2, when restaurant 2 loses its only cook.
- * Restaurant 1 keeps taking orders, restaurant 2 can no longer take any.
+ * A STAFF incident affects only the restaurant it names. Two identical restaurants each have a
+ * REGULAR group. Before evening 2, restaurant 2 loses its only cook: restaurant 1 still takes
+ * order 3, and restaurant 2's group cannot order.
  */
 class StaffChangeOnlyNamedRestaurantSystemTest : StaffChangeSystemTest() {
     override val name = "StaffChangeOnlyNamedRestaurantSystemTest"

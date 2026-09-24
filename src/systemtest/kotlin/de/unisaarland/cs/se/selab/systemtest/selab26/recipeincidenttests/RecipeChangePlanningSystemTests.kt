@@ -12,27 +12,30 @@ private const val QUINOA = "quinoa"
 private fun planFile(file: String) = "$PLAN_DIR/$file"
 
 /**
- * Probes for the interaction between a RECIPE incident and the kitchen's ingredient planning
- * (specification page 11 lines 31-35 and page 12, and forum topic 131: the planning uses the
- * *current* recipes of the meals ordered on previous visits, not the amounts of back then).
+ * Tests for how a RECIPE incident affects the kitchen's ingredient planning (specification page 11,
+ * lines 31-35 and page 12). The planning uses the *current* recipes for the meals of earlier visits,
+ * not the amounts of back then (forum topic 131).
  *
- * Ingredients are sold in 1 g packages, so procured amounts equal planned amounts exactly.
+ * Written on Sep 21 to narrow down failing recipe-change component tests. Ingredients are sold in
+ * 1 g packages, so the procured amount is exactly the planned amount minus what is left in the
+ * pantry. The first two tests were corrected in run 4, once the reference showed that a first-time
+ * REGULAR's reserved seats still count towards the estimate.
  */
 abstract class RecipeChangePlanningSystemTest : ExampleSystemTestExtension() {
     override val logLevel = "DEBUG"
 }
 
 /**
- * A regular group of 2 visits every evening and orders 2 meals of the only dish. The restaurant
- * has a 2 seat table, which the group reserves, and a 30 seat table, which leaves 30 other seats,
- * so the estimate is 3 meals of the dish per evening.
+ * The meals of a REGULAR group's earlier visit are planned at the changed amount.
  *
- * Rice starts at 10 g. Evening 1 has no history: 3 * 10 = 30 planned and procured, the group
- * reserves 2 * 10 = 20 for its order, leaving 10 in the pantry. A +50% incident then raises the
- * recipe to 15 g before evening 2, where the estimate is 3 * 15 = 45 and the single visit in the
- * history is 2 * 15 = 30, so 75 are required and 65 are bought on top of the 10 left over.
+ * A REGULAR group of 2 visits every evening, reserves the 2 seat table (next to a 30 seat one) and
+ * orders 2 meals of the only dish. Rice starts at 10 g:
+ *  - evening 1: first visit, so all 32 seats count: 4 meals, 40 g bought, 20 g eaten, 20 g left;
+ *  - a +50% incident makes the recipe 15 g;
+ *  - evening 2: 3 meals for the 30 other seats (45) plus the one visit in the history (2 * 15),
+ *    75 g needed, so 55 g are bought.
  *
- * Planning the history with the old 10 g would require only 65 and buy 55.
+ * Planning the history at the old 10 g would buy 45 g.
  */
 class RecipeChangeOrderHistorySystemTest : RecipeChangePlanningSystemTest() {
     override val name = "RecipeChangeOrderHistorySystemTest"
@@ -62,17 +65,17 @@ class RecipeChangeOrderHistorySystemTest : RecipeChangePlanningSystemTest() {
 }
 
 /**
- * The same restaurant and group as [RecipeChangeOrderHistorySystemTest], but the incident only
- * fires before evening 4, by which time the group has visited three times. The kitchen plans for
- * the last three visits (specification page 11, line 34), all of them at the changed amount.
+ * The order history grows by one visit per evening, and after an incident every visit in it is
+ * planned at the changed amount.
  *
- * Quinoa runs 10 g for the first three evenings: 30 procured on evening 1 (estimate only), 40 on
- * evening 2 (30 estimated plus 20 of history, minus 10 left over) and 40 again on evening 3
- * (30 plus 40 of history, minus 30 left over). A +50% incident then makes it 15 g, so evening 4
- * needs 3 * 15 estimated plus 6 * 15 for the three visits in the history, that is 135, and buys
- * 85 on top of the 50 left in the pantry.
+ * Same restaurant and group as [RecipeChangeOrderHistorySystemTest], but the +50% incident only
+ * comes before evening 4. Quinoa is 10 g on evenings 1-3 and 15 g on evening 4:
+ *  - evening 2: 30 estimated + 20 for one visit - 20 left = 30 g bought;
+ *  - evening 3: 30 estimated + 40 for two visits - 30 left = 40 g bought;
+ *  - evening 4: 45 estimated + 90 for three visits - 50 left = 85 g bought.
  *
- * Counting a fourth visit would buy 115, and planning the history at the old 10 g would buy 55.
+ * Planning the history at the old 10 g would buy 55 g on evening 4. The group has exactly three
+ * earlier visits there, so the "last three visits" cap (page 11, line 34) is not exercised.
  */
 class RecipeChangeThreeVisitHistorySystemTest : RecipeChangePlanningSystemTest() {
     override val name = "RecipeChangeThreeVisitHistorySystemTest"
@@ -106,16 +109,15 @@ class RecipeChangeThreeVisitHistorySystemTest : RecipeChangePlanningSystemTest()
 }
 
 /**
- * An EVENT group of 4 reserves for evening 4 and the kitchen plans its favourite dish for every
- * customer of the group (specification page 12, line 1). A +50% incident before that evening has
- * to be part of that plan as well.
+ * An EVENT group's meals are planned at the changed amount. The kitchen plans one meal for every
+ * customer of an event (specification page 12, line 1).
  *
- * Truffle starts at 10 g. Evenings 1 to 3 only need the estimate of 2 meals for the 14 unreserved
- * seats, so 20 g are bought on evening 1 and nothing afterwards. On evening 4 the event reserves
- * the 4 seat table, leaving 10 other seats and an estimate of 1 meal, and the recipe is now 15 g:
- * 15 estimated plus 4 * 15 for the event, that is 75, minus the 20 in the pantry, so 55 are bought.
+ * An EVENT group of 4 comes on evening 4, which is also when a +50% incident hits. Truffle starts at
+ * 10 g. Evenings 1-3 need 2 meals for the 14 free seats, so 20 g are bought once. On evening 4 the
+ * event reserves the 4 seat table: 1 meal for the other 10 seats plus 4 for the event, at 15 g,
+ * is 75 g, and 55 g are bought on top of the 20 g left.
  *
- * Planning the event at the old 10 g would buy 35.
+ * Planning the event at the old 10 g would buy 35 g.
  */
 class RecipeChangeEventPlanningSystemTest : RecipeChangePlanningSystemTest() {
     override val name = "RecipeChangeEventPlanningSystemTest"

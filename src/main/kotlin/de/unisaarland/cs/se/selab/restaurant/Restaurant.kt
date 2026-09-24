@@ -35,7 +35,7 @@ class Restaurant(
         kitchen = Kitchen(staff.cooks, pantry, orderQueue, restaurantStats.restaurantType)
     }
 
-    /** Group type (REGULAR, EVENT, CASUAL) first, then ascending id. */
+    /** arrival order: group type (REGULAR, EVENT, CASUAL) first, then ascending id */
     val arrivalOrder: Comparator<CustomerGroup> = compareBy({
         when (it) {
             is RegularGroup -> 0
@@ -236,13 +236,13 @@ class Restaurant(
     fun isDriverAvailable(): Boolean = frontOfHouse.isDriverAvailable()
 
     // statistics
-    /** gets a number of cooked meals */
+    /** meals cooked in this restaurant over the whole simulation */
     fun getNumberOfCookedMeals(): Int = kitchen.numberOfCookedMeals
 
-    /** gets a number of cooked meals */
+    /** meals served to in-house customers over the whole simulation */
     fun getNumberOfCustomersServed(): Int = frontOfHouse.numberOfCustomersServed
 
-    /** gets a number of cooked meals */
+    /** customers reached by delivery over the whole simulation, one per delivered meal */
     fun getNumberOfCustomersDelivered(): Int = frontOfHouse.numberOfCustomersDelivered
 
     /** Call with CustomerGroup.

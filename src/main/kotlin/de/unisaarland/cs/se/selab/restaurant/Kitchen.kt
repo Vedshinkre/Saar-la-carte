@@ -601,7 +601,6 @@ class Kitchen(
             }
             totalMeals += totalAssigned
             finishedMeals += finished
-            // statistics
             numberOfCookedMeals += finished
 
             // Replaced with helper

@@ -22,8 +22,6 @@ import de.unisaarland.cs.se.selab.restaurant.helpers.EscortingProcessor
 import de.unisaarland.cs.se.selab.restaurant.helpers.RatingProcessor
 import de.unisaarland.cs.se.selab.restaurant.helpers.ServingProcessor
 
-// Priorities per customer group type, used when ordering groups for serving/eating/escorting/rating.
-// DOIT: maybe move this to the customer classes
 private const val REGULAR_PRIORITY = 0
 private const val EVENT_PRIORITY = 1
 private const val CASUAL_PRIORITY = 2
@@ -46,7 +44,7 @@ private fun sortWaitersByServableDishes(waiterToCookedDishes: Map<Waiter, Int>):
     return sortedWaiters
 }
 
-/** front of house */
+/** front of house: everything the waitstaff and drivers do for a restaurant's guests */
 class FrontOfHouse(
     private val tables: List<Table>,
     private val waiters: List<Waiter>,
@@ -72,7 +70,6 @@ class FrontOfHouse(
     // DOTO: use this consistently instead of adding lists everywhere
     private fun getSeatedGroups(): List<CustomerGroup> = getInHouseGroups() + eventGroups
 
-    // priority order used when sorting groups for serving/eating/escorting/rating; see the constants above.
     private fun getServingPriority(group: CustomerGroup): Int = when (group) {
         is RegularGroup -> REGULAR_PRIORITY
         is EventGroup -> EVENT_PRIORITY
@@ -80,6 +77,7 @@ class FrontOfHouse(
     }
 
     private fun getAssignedTableId(group: CustomerGroup): Id? = customerToTable[group]?.minOfOrNull { it.id }
+
     private val byDescendingLoadThenId: Comparator<Waiter> =
         compareByDescending<Waiter> { it.currentLoad }.thenBy(nullsLast()) { it.id }
 
@@ -169,7 +167,6 @@ class FrontOfHouse(
         getNextWaiterId = ::getNextWaiterId,
     )
 
-    // statistics: counted by the serving step, where the meals actually change hands (item 180)
     val numberOfCustomersServed: Int get() = serving.numberOfCustomersServed
 
     private val delivering = DeliveryProcessor(drivers = drivers, deliveryGroups = deliveryGroups)
@@ -239,10 +236,10 @@ class FrontOfHouse(
      *  time and no longer accepts new customers. */
     fun refuseLateArrival(customerGroup: CustomerGroup) = arrival.refuseLateArrival(customerGroup)
 
-    /** process serving */
+    /** serves cooked meals to seated groups and delivery drivers, then logs the serving status */
     fun processServing() = serving.processServing()
 
-    /** starts driving drivers who just received a full order, and advances already-driving drivers */
+    /** runs the delivery phase: preparation, driving, arrival, giving up and return */
     fun processDelivering() = delivering.processDelivering()
 
     /** whether any driver is currently free to take on a new delivery */ // DOTO this function doesn't need to exist

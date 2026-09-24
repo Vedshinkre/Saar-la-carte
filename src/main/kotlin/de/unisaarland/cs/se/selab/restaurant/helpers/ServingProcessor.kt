@@ -13,7 +13,19 @@ import de.unisaarland.cs.se.selab.food.Dish
 import de.unisaarland.cs.se.selab.food.Order
 import de.unisaarland.cs.se.selab.loggers.FohServiceLogger
 
-/** serving processor */
+/**
+ * hands cooked meals from the kitchen to seated groups and to waiting delivery drivers
+ *
+ * @param waiters all waiters of the restaurant
+ * @param drivers all delivery drivers of the restaurant
+ * @param deliveryGroups CASUAL groups with a delivery order
+ * @param getInHouseGroups every group currently seated, EVENT groups included
+ * @param waiterFor the waiter assigned to a REGULAR or CASUAL group
+ * @param getServingPriority sort key by group type (REGULAR, EVENT, CASUAL)
+ * @param getAssignedTableId the table an in-house group is logged against
+ * @param recruitWaitersForEventGroup picks the waiters that act for an EVENT group
+ * @param getNextWaiterId hands out the next waiter id of the evening
+ */
 class ServingProcessor(
     private val waiters: List<Waiter>,
     private val drivers: List<Driver>,
@@ -26,14 +38,17 @@ class ServingProcessor(
     private val getNextWaiterId: () -> Id,
 ) {
     var numberOfCustomersServed: Int = 0
-        private set // shouldn't be set from outside
+        private set
 
     private var nextDriverIdCounter: Id = 1
 
     private fun getNextDriverId() = nextDriverIdCounter++
 
-    /** driver ids are handed out per restaurant and evening, so the counter restarts every evening.
-     *  [start] lets the caller keep it above the ids of drivers that are still mid-trip. */
+    /**
+     * restarts the driver id counter, ids are handed out per restaurant and evening
+     *
+     * @param start first id to hand out, lets the caller stay above ids of drivers still mid-trip
+     */
     fun resetDriverIdCounter(start: Id = 1) {
         nextDriverIdCounter = start
     }
@@ -61,10 +76,8 @@ class ServingProcessor(
 
     /** serves a REGULAR or CASUAL group who always have an assigned waiter */
     private fun serveAssignedWaiterTable(group: CustomerGroup, order: Order) {
-        // DOTO: cleanup cases
         val waiter = waiterFor(group) ?: return
         val tableId = getAssignedTableId(group) ?: return
-        // NOTE: relies on the invariant that a seated group always has an assigned table.
 
         val servableDishes = order.getServableDishes()
         if (servableDishes.isEmpty()) return
@@ -72,21 +85,20 @@ class ServingProcessor(
         val complete = order.areAllDishesCooked()
         val capacity = Constants.ACTION_LIMIT - waiter.getTickLoad(ActionType.SERVE)
 
-        // proceed only if order is either complete or can be partially served yet
+        // an incomplete table waits for the rest while still inside the partial-serving window
         if (!order.hasServingStarted() && !complete && isWithinTimeWindow(order)) {
             logNoServing(waiter, servableDishes.size, tableId)
             return
         }
 
-        // if order is complete (and not started serving), waiter must be able to serve ALL servable dishes at once
+        // a complete table goes out all at once or not at all; if it doesn't fit, the waiter waits
+        // this tick and serves one by one from the next, which is what startServing switches on
         if (!order.hasServingStarted() && complete && capacity < servableDishes.size) {
-            // waiter doesn't have capacity to serve ALL servable dishes in the complete order, so they serve none
             order.startServing()
             logNoServing(waiter, servableDishes.size, tableId)
             return
         }
 
-        // can serve, serve as many as possible based on waiter's load
         order.startServing()
         val remaining = serveBatch(waiter, servableDishes, tableId, order)
         if (remaining.isNotEmpty()) {
@@ -104,11 +116,10 @@ class ServingProcessor(
 
         val complete = order.areAllDishesCooked()
 
-        // proceed only if the order is either complete or can be partially served
+        // an incomplete table waits for the rest while still inside the partial-serving window
         if (!order.hasServingStarted() && !complete && isWithinTimeWindow(order)) {
             val candidate = recruitWaitersForEventGroup(ActionType.SERVE, group).firstOrNull()
             logNoServing(candidate, readyDishes.size, tableId)
-            // logs with the FIRST waiter that could've served, if any
             return
         }
 
@@ -148,16 +159,15 @@ class ServingProcessor(
             // one that receives nothing would take it out of circulation for the rest of the evening
             val driver = driverHolding(group, order)
                 ?: if (assignWaiterForDelivery() != null) claimIdleDriver(group, order) else null
-            // val driver = getOrAssignDriver(group, order)
             if (driver != null) {
                 serveToDriver(order.getServableDishes(), driver, order)
             }
         }
     }
 
-    /** order queues until all meals are ready
-     * once the hand-off has begun, already handed-over meals are SERVED and wait with driver
-     * remaining cooked meals must keep being handed over in the following ticks
+    /**
+     * an order queues until all its meals are ready; once the hand-over has begun, meals already
+     * handed over wait with the driver and the rest keep going out in the following ticks
      */
     private fun isReadyForHandOver(group: CustomerGroup): Boolean {
         val order = group.currentOrder ?: return false
@@ -195,8 +205,8 @@ class ServingProcessor(
             waiter.serve(batch)
             waiter.addToTickLoad(ActionType.SERVE, batch.size)
 
-            val waiterId = waiter.ensureId(getNextWaiterId)
             // ids are handed out "at the moment they receive meals", so not before this point
+            val waiterId = waiter.ensureId(getNextWaiterId)
             val driverId = driver.id ?: getNextDriverId().also { driver.id = it }
 
             FohServiceLogger.logFohDelivery(waiterId, toDishNameAmounts(batch), driverId, order.id)
@@ -204,7 +214,7 @@ class ServingProcessor(
         }
     }
 
-    /** serves as many given dishes as waiter's remaining capacity allows. */
+    /** serves as many of the given dishes as the waiter's capacity allows, returns the rest */
     private fun serveBatch(waiter: Waiter, dishes: List<Dish>, tableId: Id, order: Order): List<Dish> {
         val capacity = Constants.ACTION_LIMIT - waiter.getTickLoad(ActionType.SERVE)
         if (capacity <= 0) return dishes
@@ -219,15 +229,11 @@ class ServingProcessor(
         return dishes.drop(batch.size)
     }
 
-    // HELPERS
-
     private fun isWithinTimeWindow(order: Order): Boolean {
-        // DOTO: look into how to set firstDishCookedAt
         val firstCooked = order.firstDishCookedAt ?: return true
         return Time.tick - firstCooked <= Constants.PARTIAL_SERVING_WAIT_TICKS
     }
 
-    // for logging, could also be moved to the logic in the logging function
     private fun toDishNameAmounts(dishes: List<Dish>): Map<String, Int> {
         val amounts = mutableMapOf<String, Int>()
         for (dish in dishes) {

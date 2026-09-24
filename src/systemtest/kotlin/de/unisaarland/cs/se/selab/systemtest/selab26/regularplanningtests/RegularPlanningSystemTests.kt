@@ -11,27 +11,29 @@ private const val THREE_EVENINGS = 72
 private fun probe(file: String) = "$DIR/$file"
 
 /**
- * Probes for the kitchen's ingredient planning for known REGULAR groups (specification page 11,
- * lines 31-35): only the regulars that are planning to visit tonight are planned for, with the
- * orders of their last three visits, on top of the estimate of ceil(otherSeats / 10) meals of
- * every dish on the menu (page 12).
+ * Tests for the kitchen's ingredient planning for known REGULAR groups (specification page 11,
+ * lines 31-35). Only the regulars visiting tonight are planned for, with the orders of their last
+ * three visits, on top of ceil(otherSeats / 10) meals of every dish on the menu (page 12).
  *
- * Every ingredient is sold in 1 g packages, so the amount procured equals the amount planned.
+ * Written on Sep 21 to narrow down the failing planning component tests. Corrected in run 4, once
+ * the reference showed that a REGULAR group's reserved seats count towards the estimate until the
+ * group has ordered once. Every ingredient comes in 1 g packages, so the amount bought is the
+ * amount planned minus what is left in the pantry.
  */
 abstract class RegularPlanningSystemTest : ExampleSystemTestExtension() {
     override val logLevel = "DEBUG"
 }
 
 /**
- * Two REGULAR groups of 2 visit the same restaurant every evening and each orders 2 meals of the
- * only dish (5 g each). They reserve the two 2 seat tables, leaving 60 other seats and an estimate
- * of 6 meals.
+ * The order histories of all regulars visiting tonight are added up.
  *
- * Evening 1 has no history: 6 * 5 = 30 procured, and the 4 meals ordered reserve 20, leaving 10.
- * Evening 2 plans the estimate of 30 plus *both* groups' single visit, 4 * 5 = 20, so 50 are
- * required and 40 are bought on top of the 10 left over.
+ * Two REGULAR groups of 2 visit every evening, reserve the two 2 seat tables (next to two 30 seat
+ * ones) and order 2 meals of a 5 g dish each:
+ *  - evening 1: first visits, so all 64 seats count: 7 meals, 35 g, of which 20 g are eaten;
+ *  - evening 2: 6 meals for the 60 other seats (30) plus both groups' visit (20), minus the 15 left
+ *    over: 35 g bought.
  *
- * Planning only one of the two groups would buy 30.
+ * Planning only one group's history would buy 25 g.
  */
 class RegularPlanningTwoGroupsSystemTest : RegularPlanningSystemTest() {
     override val name = "RegularPlanningTwoGroupsSystemTest"
@@ -61,17 +63,14 @@ class RegularPlanningTwoGroupsSystemTest : RegularPlanningSystemTest() {
 }
 
 /**
- * A REGULAR group of 2 with a visitingPeriod of 2 visits on evenings 1, 3, 5. On the evenings in
- * between it is not planning to visit, so its order history must not be planned for and its table
- * is not reserved either, which raises the estimate instead.
+ * A regular that does not visit tonight is not planned for, and its table is not reserved.
  *
- * Millet is 10 g. Evening 1: the group reserves the 2 seat table, 30 other seats give an estimate
- * of 3 meals, 30 procured, 20 reserved by the order, 10 left. Evening 2: no reservation, so all 32
- * seats are other seats and the estimate is 4 meals, 40 required and 30 bought. Evening 3: the
- * group is back, the estimate is 3 meals again and its one visit adds 2 * 10, so 50 are required
- * and 10 are bought on top of the 40 in the pantry.
+ * A REGULAR group of 2 with visitingPeriod 2 comes on evenings 1 and 3. Millet is 10 g:
+ *  - evening 1: first visit, 32 seats, 4 meals, 40 g bought, 20 g eaten;
+ *  - evening 2: no visit and no reservation, 32 seats, 40 g needed, 20 g bought;
+ *  - evening 3: 3 meals for the 30 other seats plus one visit (20), 50 g needed, 10 g bought.
  *
- * Planning the absent group's history on evening 2 would buy 50 there.
+ * Planning the absent group's history on evening 2 would buy 40 g there.
  */
 class RegularPlanningVisitingPeriodSystemTest : RegularPlanningSystemTest() {
     override val name = "RegularPlanningVisitingPeriodSystemTest"
@@ -107,19 +106,16 @@ class RegularPlanningVisitingPeriodSystemTest : RegularPlanningSystemTest() {
 }
 
 /**
- * A REGULAR group of 2 excludes the only ingredient of the only dish, so it is seated but nobody
- * can order. A visit without an order leaves nothing in the order history, so the next evening
- * plans the estimate alone.
+ * A visit without an order adds nothing to the order history.
  *
- * Barley is 10 g. The group keeps its empty history, so its 2 reserved seats keep counting and all
- * 32 seats are estimated for every evening: 4 meals, 40 g. Evening 1 buys all of it and none is
- * reserved, because the order fails. Evening 2 requires the same 40, which are already in the
- * pantry, so nothing at all is procured and the Restocked line follows the preparation line
- * directly. A phantom history entry of 2 meals would drop the requirement to 3 meals plus history.
+ * A REGULAR group of 2 excludes barley, the only ingredient of the only dish, so it is seated but
+ * cannot order. With an empty history its reserved seats keep counting: 32 seats, 4 meals, 40 g
+ * on every evening. Evening 1 buys the 40 g and nothing is eaten. Evening 2 needs the same 40 g, so
+ * nothing is bought and the restocked line follows the preparation line directly. A phantom
+ * history entry of 2 meals would plan 30 + 20 g and buy 10 g.
  *
- * The group also fails on evening 2, which is its second failed attempt, so it stops visiting
- * (specification page 20 and forum topic 299). Evening 3 estimates the same 32 seats, now all free,
- * so again nothing has to be bought.
+ * Evening 3 also buys nothing. That holds whether or not the group comes back after its second
+ * evening without an order, so it only checks that the estimate stays the same.
  */
 class RegularPlanningFailedOrderSystemTest : RegularPlanningSystemTest() {
     override val name = "RegularPlanningFailedOrderSystemTest"
@@ -139,7 +135,7 @@ class RegularPlanningFailedOrderSystemTest : RegularPlanningSystemTest() {
         assertNextLine(InitialAndPrepTestLogs.pantryRestocked(1))
         skipUntilString(noOrdering(1))
 
-        // after the second failed attempt the group stops visiting, but the seat count is unchanged
+        // evening 3: the same estimate, so still nothing to buy
         skipUntilString(InitialAndPrepTestLogs.prepStart(3))
         assertNextLine(InitialAndPrepTestLogs.pantryRestocked(1))
     }

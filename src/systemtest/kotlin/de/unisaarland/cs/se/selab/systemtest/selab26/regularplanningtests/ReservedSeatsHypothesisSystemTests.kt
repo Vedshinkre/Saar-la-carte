@@ -11,15 +11,13 @@ private const val RICE = "rice"
 private fun hypothesis(file: String) = "$HYP_DIR/$file"
 
 /**
- * [RegularReservationEstimateSystemTest] fails against the reference while
- * [CasualConsumptionCarryOverSystemTest] passes, so the difference is in the estimate of an evening
- * on which a REGULAR group holds a reservation, and nowhere else. The restaurant has a 2 seat and a
- * 30 seat table and a single 10 g dish; the group of 2 reserves on its first ever visit, so nothing
- * is planned for its table. We buy 3 meals (30 g), reading "the seats on all other tables"
- * (specification page 12, line 1) as every seat that is not on a reserved table.
+ * Written on Sep 21, after [CasualConsumptionCarryOverSystemTest] passed on the reference. That
+ * left the estimate on an evening with a REGULAR reservation as the only possible difference. At
+ * the time we read "the seats on all other tables" (specification page 12, line 1) as every seat
+ * not on a reserved table, and bought 3 meals (30 g). These two tests check the two other
+ * explanations. Both passed on the reference (run 3), and our implementation was fixed to match.
  *
- * These two tests state the two competing readings so that one run names the right one. They are
- * expected to fail against our own implementation: that is the point.
+ * A 2 seat and a 30 seat table, one 10 g dish, and a REGULAR group of 2 on its first visit.
  */
 abstract class ReservedSeatsHypothesisSystemTest : ExampleSystemTestExtension() {
     override val logLevel = "DEBUG"
@@ -30,17 +28,13 @@ abstract class ReservedSeatsHypothesisSystemTest : ExampleSystemTestExtension() 
 }
 
 /**
- * Reading A: "all other tables" means all tables that the kitchen did not already plan for. A
- * REGULAR group on its first visit has no order history, so nothing is planned for its table and
- * its 2 seats still count towards the guess: 32 seats, 4 meals, 40 g.
- *
- * That the reference computes 4 meals out of these same 32 seats is already established by
- * [CasualConsumptionCarryOverSystemTest], which uses this very restaurant shape without a
- * reservation and passes.
+ * "All other tables" means the tables the kitchen has not already planned for. A first-time
+ * REGULAR group has no history, so nothing is planned for its table and its 2 seats still count:
+ * 32 seats, 4 meals, 40 g.
  */
 class RegularFirstVisitCountsReservedSeatsSystemTest : ReservedSeatsHypothesisSystemTest() {
     override val name = "RegularFirstVisitCountsReservedSeatsSystemTest"
-    override val description = "Reading A: a first-visit REGULAR's reserved seats still count for the estimate"
+    override val description = "A first-visit REGULAR's reserved seats still count for the estimate"
 
     override suspend fun run() {
         skipUntilString(InitialAndPrepTestLogs.prepStart(1))
@@ -54,16 +48,13 @@ class RegularFirstVisitCountsReservedSeatsSystemTest : ReservedSeatsHypothesisSy
 }
 
 /**
- * Reading B: the reference picks a different table for the reservation. If the group of 2 were put
- * on the 30 seat table instead of the 2 seat one, only 2 seats would be left over and the estimate
- * would be a single meal, 10 g.
- *
- * The seating log of tick 1 names the reserved table directly, which settles the question on its
- * own: we reserve table 1, the perfect fit.
+ * Rules out the other explanation: that the reference reserves the 30 seat table, which would leave
+ * 2 other seats and plan 10 g. The seating line of tick 1 names the table: the group of 2 is seated
+ * at table 1, the exact fit.
  */
 class RegularReservedTableIsTheExactFitSystemTest : ReservedSeatsHypothesisSystemTest() {
     override val name = "RegularReservedTableIsTheExactFitSystemTest"
-    override val description = "Reading B: which table a REGULAR group of 2 reserves out of a 2 seat and a 30 seat one"
+    override val description = "A REGULAR group of 2 reserves the 2 seat table, not the 30 seat one"
 
     override suspend fun run() {
         skipUntilString(FohArrivalTestLogs.arrival(1, 1))

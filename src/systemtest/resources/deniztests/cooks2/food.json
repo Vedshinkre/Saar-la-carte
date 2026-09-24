@@ -1,0 +1,67 @@
+{
+  "ingredients": [
+    {
+      "name": "beef",
+      "unit": "g",
+      "packagingVolume": 1000,
+      "bestBefore": 5
+    },
+    {
+      "name": "potato",
+      "unit": "g",
+      "packagingVolume": 1000,
+      "bestBefore": 5
+    },
+    {
+      "name": "lettuce",
+      "unit": "g",
+      "packagingVolume": 500,
+      "bestBefore": 5
+    }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "steak",
+      "duration": 40,
+      "cookType": [
+        "TOURNANT"
+      ],
+      "ingredients": [
+        {
+          "name": "beef",
+          "amount": 200
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "dishName": "salad",
+      "duration": 20,
+      "cookType": [
+        "TOURNANT"
+      ],
+      "ingredients": [
+        {
+          "name": "lettuce",
+          "amount": 100
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "dishName": "potato soup",
+      "duration": 20,
+      "basicDishFor": "EUROPEAN",
+      "cookType": [
+        "TOURNANT"
+      ],
+      "ingredients": [
+        {
+          "name": "potato",
+          "amount": 150
+        }
+      ]
+    }
+  ]
+}

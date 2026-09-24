@@ -12,9 +12,9 @@ private const val EXEC = "EXEC"
 class CookStaffSystemTest : ExampleSystemTestExtension() {
     override val name = "CookStaffSystemTest"
     override val description = "Cook ranking, per-restaurant ids in order of first dish, only eligible cooks"
-    override val food = "deniztests/cookstaff/food.json"
-    override val restaurants = "deniztests/cookstaff/restaurants.json"
-    override val scenario = "deniztests/cookstaff/scenario.json"
+    override val food = "deniztests/cooks1/food.json"
+    override val restaurants = "deniztests/cooks1/restaurants.json"
+    override val scenario = "deniztests/cooks1/scenario.json"
     override val logLevel = "DEBUG"
     override val maxTicks = 5
 

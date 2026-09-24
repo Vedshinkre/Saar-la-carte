@@ -6,9 +6,11 @@ Run from anywhere inside the repo:
     python scripts/contrib_stats.py --ref origin/main
     python scripts/contrib_stats.py --csv stats.csv
 
-The per-area tables count Kotlin sources (.kt) only. The closing summaries show
-each person's share of surviving lines per area, once for Kotlin sources and
-once for every text file in the repo.
+The per-area tables count Kotlin code only: lines in .kt files that hold actual
+code, so blank lines and comments (including KDoc) are left out of added,
+removed and surviving counts alike. The closing summaries show each person's
+share of surviving lines per area, once for Kotlin code and once for every
+text file in the repo (there every line counts).
 
 Surviving = lines still attributed to a person by `git blame` at --ref.
 Share = that person's surviving lines as a percentage of all surviving lines
@@ -42,6 +44,9 @@ AREAS = {"main": "src/main/", "test": "src/test/", "systemtest": "src/systemtest
 
 # Scope name -> which files it counts.
 SCOPES = {"Kotlin": lambda path: path.endswith(".kt"), "Everything": lambda path: True}
+
+# Scopes that count only lines of actual code (no blanks or comments).
+CODE_ONLY = {"Kotlin"}
 
 EMPTY_TREE = "4b825dc642cb6eb9a060e54bf8d69288fbee4904"
 
@@ -163,6 +168,43 @@ def buckets_of(path):
             for area, prefix in AREAS.items() if path.startswith(prefix)]
 
 
+def scan(line, state=0):
+    """Classify one Kotlin line. `state` carries over between lines: 0 is plain
+    code, a positive number is the depth of nested block comments (Kotlin allows
+    nesting) and -1 is inside a raw string. Returns (has_code, state)."""
+    code, i, n = state == -1, 0, len(line)
+    while i < n:
+        if state == -1:  # raw string contents are code
+            code = True
+            end = line.find('"""', i)
+            if end < 0:
+                break
+            state, i = 0, end + 3
+        elif state > 0:
+            if line.startswith("/*", i):
+                state, i = state + 1, i + 2
+            elif line.startswith("*/", i):
+                state, i = state - 1, i + 2
+            else:
+                i += 1
+        elif line[i].isspace():
+            i += 1
+        elif line.startswith("//", i):
+            break
+        elif line.startswith("/*", i):
+            state, i = 1, i + 2
+        elif line.startswith('"""', i):
+            code, state, i = True, -1, i + 3
+        elif line[i] in "\"'":  # skip the literal so "//" or "/*" inside it is not a comment
+            quote, code, i = line[i], True, i + 1
+            while i < n and line[i] != quote:
+                i += 2 if line[i] == "\\" else 1
+            i += 1
+        else:
+            code, i = True, i + 1
+    return code, state
+
+
 def canonical(name, email):
     """Map a git identity to a team member, None if ignored."""
     hay = f"{name} {email}".lower()
@@ -197,6 +239,8 @@ def collect_history(ref, stats):
         touched = set()
         for added, removed, path in filter(None, map(parse_numstat, files)):
             for bucket in buckets_of(path):
+                if bucket[0] in CODE_ONLY:  # counted from the patches instead
+                    continue
                 touched.add(bucket)
                 stats[bucket][author].added += added
                 stats[bucket][author].removed += removed
@@ -204,22 +248,69 @@ def collect_history(ref, stats):
             stats[bucket][author].commits += 1
 
 
+def collect_code_history(ref, stats):
+    """Added/removed lines of actual code for the CODE_ONLY scopes, read from the
+    patches themselves. With no diff context, comment state is tracked across the
+    runs of added and of removed lines in each hunk, and a line starting with "*"
+    outside a known comment is taken to continue a comment the hunk began inside."""
+    progress.message = "Reading code changes…"
+    log = git("log", ref, "--no-merges", "--no-renames", "-p", "--unified=0",
+              "--format=%x00%aN\t%aE", "--", "*.kt")
+    for commit in log.split("\0")[1:]:
+        header, *lines = commit.splitlines()
+        author = canonical(*header.split("\t", 1))
+        if not author:
+            continue
+        counts = defaultdict(lambda: [0, 0])  # path -> [added, removed]
+        path, in_hunk, states = None, False, {}
+        for line in lines:
+            if line.startswith("diff --git "):
+                path, in_hunk = None, False
+            elif not in_hunk and line.startswith("+++ "):
+                path = line[6:] if line != "+++ /dev/null" else path
+            elif not in_hunk and line.startswith("--- ") and line != "--- /dev/null":
+                path = line[6:]
+            elif line.startswith("@@"):
+                in_hunk, states = True, {"+": 0, "-": 0}
+            elif in_hunk and path and line[:1] in states:
+                sign, text = line[0], line[1:]
+                state = states[sign]
+                if state == 0 and text.lstrip().startswith("*"):
+                    state = 1
+                code, states[sign] = scan(text, state)
+                if code:
+                    counts[path][sign == "-"] += 1
+        touched = set()
+        for path, (added, removed) in counts.items():
+            for bucket in buckets_of(path):
+                if bucket[0] in CODE_ONLY:
+                    touched.add(bucket)
+                    stats[bucket][author].added += added
+                    stats[bucket][author].removed += removed
+        for bucket in touched:
+            stats[bucket][author].commits += 1
+
+
 def blame_file(ref, path):
-    """Count surviving lines per author in one file."""
+    """Count surviving lines per author in one file: every line, and lines of code."""
     try:
         out = git("blame", "--line-porcelain", "-w", ref, "--", path)
     except RuntimeError:
-        return {}
-    counts = defaultdict(int)
-    name = None
+        return {}, {}
+    lines, code = defaultdict(int), defaultdict(int)
+    name = author = None
+    state = 0
     for line in out.splitlines():
         if line.startswith("author "):
             name = line.removeprefix("author ")
         elif line.startswith("author-mail "):
             author = canonical(name, line.removeprefix("author-mail ").strip("<>"))
+        elif line.startswith("\t"):  # the line's content ends each porcelain entry
+            has_code, state = scan(line[1:], state)
             if author:
-                counts[author] += 1
-    return counts
+                lines[author] += 1
+                code[author] += has_code
+    return lines, code
 
 
 def collect_survival(ref, stats):
@@ -228,9 +319,10 @@ def collect_survival(ref, stats):
     paths = [entry[2] for entry in map(parse_numstat, listing.splitlines()) if entry]
     with ThreadPoolExecutor(max_workers=8) as pool:
         results = pool.map(lambda p: blame_file(ref, p), paths)
-        for done, (path, counts) in enumerate(zip(paths, results), 1):
+        for done, (path, (lines, code)) in enumerate(zip(paths, results), 1):
             progress.message = f"Blaming files {done}/{len(paths)}…"
             for bucket in buckets_of(path):
+                counts = code if bucket[0] in CODE_ONLY else lines
                 for author, n in counts.items():
                     stats[bucket][author].surviving += n
 
@@ -295,6 +387,7 @@ def main():
     stats = defaultdict(lambda: defaultdict(Stats))
     with progress:
         collect_history(args.ref, stats)
+        collect_code_history(args.ref, stats)
         collect_survival(args.ref, stats)
 
     sha = git("rev-parse", "--short", args.ref).strip()

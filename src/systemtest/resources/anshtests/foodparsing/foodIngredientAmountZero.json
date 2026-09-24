@@ -1,0 +1,69 @@
+{
+  "ingredients": [
+    {
+      "name": "flour",
+      "unit": "g",
+      "packagingVolume": 100,
+      "bestBefore": 3
+    },
+    {
+      "name": "egg",
+      "unit": "X",
+      "packagingVolume": 6,
+      "bestBefore": 3
+    },
+    {
+      "name": "milk",
+      "unit": "mL",
+      "packagingVolume": 500,
+      "bestBefore": 3
+    }
+  ],
+  "recipes": [
+    {
+      "id": 1,
+      "dishName": "pancake",
+      "duration": 2,
+      "cookType": [
+        "EXEC"
+      ],
+      "ingredients": [
+        {
+          "name": "flour",
+          "amount": 150
+        },
+        {
+          "name": "egg",
+          "amount": 2
+        },
+        {
+          "name": "milk",
+          "amount": 300
+        }
+      ],
+      "basicDishFor": "EUROPEAN"
+    },
+    {
+      "id": 2,
+      "dishName": "crepe",
+      "duration": 40,
+      "cookType": [
+        "EXEC"
+      ],
+      "ingredients": [
+        {
+          "name": "flour",
+          "amount": 0
+        },
+        {
+          "name": "egg",
+          "amount": 1
+        },
+        {
+          "name": "milk",
+          "amount": 100
+        }
+      ]
+    }
+  ]
+}

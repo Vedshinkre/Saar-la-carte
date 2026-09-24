@@ -1,0 +1,23 @@
+{
+  "ingredients": [
+    {
+      "name": "flour",
+      "unit": "g",
+      "packagingVolume": 100,
+      "bestBefore": 3
+    },
+    {
+      "name": "egg",
+      "unit": "X",
+      "packagingVolume": 6,
+      "bestBefore": 3
+    },
+    {
+      "name": "milk",
+      "unit": "mL",
+      "packagingVolume": 500,
+      "bestBefore": 3
+    }
+  ],
+  "recipes": []
+}

@@ -1,0 +1,12 @@
+{
+  "ingredients": [
+    {"name": "tea leaves", "unit": "g", "packagingVolume": 1000, "bestBefore": 5},
+    {"name": "beef", "unit": "g", "packagingVolume": 1000, "bestBefore": 5}
+  ],
+  "recipes": [
+    {"id": 1, "dishName": "tea", "duration": 10, "cookType": ["EXEC"],
+     "ingredients": [{"name": "tea leaves", "amount": 10}], "basicDishFor": "EUROPEAN"},
+    {"id": 2, "dishName": "stew", "duration": 40, "cookType": ["EXEC"],
+     "ingredients": [{"name": "beef", "amount": 10}]}
+  ]
+}

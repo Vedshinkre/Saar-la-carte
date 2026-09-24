@@ -1,0 +1,12 @@
+{
+  "ingredients": [
+    {"name": "saffron", "unit": "g", "packagingVolume": 10, "bestBefore": 5},
+    {"name": "rice", "unit": "g", "packagingVolume": 10, "bestBefore": 5}
+  ],
+  "recipes": [
+    {"id": 1, "dishName": "paella", "duration": 10, "cookType": ["EXEC"],
+     "ingredients": [{"name": "saffron", "amount": 10}], "basicDishFor": "EUROPEAN"},
+    {"id": 2, "dishName": "risotto", "duration": 10, "cookType": ["EXEC"],
+     "ingredients": [{"name": "rice", "amount": 10}]}
+  ]
+}

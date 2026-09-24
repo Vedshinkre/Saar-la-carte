@@ -1,0 +1,12 @@
+{
+  "ingredients": [
+    {"name": "potato", "unit": "g", "packagingVolume": 1000, "bestBefore": 5},
+    {"name": "sugar", "unit": "g", "packagingVolume": 1000, "bestBefore": 5}
+  ],
+  "recipes": [
+    {"id": 1, "dishName": "potato soup", "duration": 10, "cookType": ["TOURNANT"],
+     "ingredients": [{"name": "potato", "amount": 10}], "basicDishFor": "EUROPEAN"},
+    {"id": 2, "dishName": "tart", "duration": 10, "cookType": ["PASTRY"],
+     "ingredients": [{"name": "sugar", "amount": 10}]}
+  ]
+}

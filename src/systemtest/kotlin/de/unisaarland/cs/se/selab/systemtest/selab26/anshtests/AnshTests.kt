@@ -15,6 +15,7 @@ fun anshTests(): List<SystemTestSELab26> = FoodParsingSystemTests.all() + listOf
     StaffChangeSystemTest(),
     UnavailabilitySystemTest(),
     EventsSystemTest(),
+    EventSeatingSystemTest(),
 )
 
 /** food parsing tests that pass against the reference, for the validation mutants */

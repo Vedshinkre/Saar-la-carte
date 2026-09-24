@@ -1,0 +1,26 @@
+{
+  "ingredients": [
+    {"name": "bun", "unit": "X", "packagingVolume": 50, "bestBefore": 3},
+    {"name": "cheese", "unit": "g", "packagingVolume": 2000, "bestBefore": 4},
+    {"name": "fish", "unit": "g", "packagingVolume": 2000, "bestBefore": 1},
+    {"name": "flour", "unit": "g", "packagingVolume": 2000, "bestBefore": 7},
+    {"name": "patty", "unit": "X", "packagingVolume": 50, "bestBefore": 2},
+    {"name": "potato", "unit": "g", "packagingVolume": 5000, "bestBefore": 5},
+    {"name": "sugar", "unit": "g", "packagingVolume": 500, "bestBefore": 10}
+  ],
+  "recipes": [
+    {"id": 10, "dishName": "burger", "duration": 20, "cookType": ["SOUS", "ROAST"],
+     "ingredients": [{"name": "bun", "amount": 1}, {"name": "patty", "amount": 1}, {"name": "cheese", "amount": 20}],
+     "basicDishFor": "AMERICAN"},
+    {"id": 11, "dishName": "fish and chips", "duration": 30, "cookType": ["FISH"],
+     "ingredients": [{"name": "fish", "amount": 150}, {"name": "potato", "amount": 200}]},
+    {"id": 12, "dishName": "fries", "duration": 10, "cookType": ["EXEC", "SOUS", "TOURNANT"],
+     "ingredients": [{"name": "potato", "amount": 150}]},
+    {"id": 13, "dishName": "apple pie", "duration": 20, "cookType": ["PASTRY"],
+     "ingredients": [{"name": "flour", "amount": 100}, {"name": "sugar", "amount": 30}]},
+    {"id": 14, "dishName": "cheese fries", "duration": 10, "cookType": ["EXEC"],
+     "ingredients": [{"name": "potato", "amount": 150}, {"name": "cheese", "amount": 30}]},
+    {"id": 15, "dishName": "steak", "duration": 30, "cookType": ["ROAST", "EXEC"],
+     "ingredients": [{"name": "patty", "amount": 2}]}
+  ]
+}

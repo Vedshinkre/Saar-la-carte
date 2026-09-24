@@ -1,0 +1,52 @@
+{
+  "restaurants": [
+    {
+      "id": 1, "name": "Lotus", "type": "ASIAN",
+      "openingTickStart": 1, "openingTickEnd": 24,
+      "deliveryDrivers": 2, "event": true,
+      "positiveRatings": 3, "negativeRatings": 1,
+      "recipes": [2, 7],
+      "kitchenStaff": {"EXEC": 0, "SOUS": 1, "TOURNANT": 1, "SAUCE": 0, "FISH": 0, "ROAST": 1, "VEGETABLE": 0, "PASTRY": 0},
+      "waitstaff": 2,
+      "tables": [
+        {"id": 1, "type": "COMMON", "size": 4},
+        {"id": 2, "type": "COMMON", "size": 6},
+        {"id": 3, "type": "COMMON", "size": 2},
+        {"id": 4, "type": "BAR", "size": 3},
+        {"id": 5, "type": "SEPARATED", "size": 8},
+        {"id": 6, "type": "COMMON", "size": 12},
+        {"id": 7, "type": "COMMON", "size": 8}
+      ]
+    },
+    {
+      "id": 2, "name": "Bistro", "type": "EUROPEAN",
+      "openingTickStart": 3, "openingTickEnd": 20,
+      "deliveryDrivers": 1, "event": true,
+      "positiveRatings": 2, "negativeRatings": 0,
+      "recipes": [4, 6],
+      "kitchenStaff": {"EXEC": 0, "SOUS": 0, "TOURNANT": 0, "SAUCE": 1, "FISH": 0, "ROAST": 1, "VEGETABLE": 0, "PASTRY": 1},
+      "waitstaff": 3,
+      "tables": [
+        {"id": 1, "type": "COMMON", "size": 4},
+        {"id": 2, "type": "COMMON", "size": 4},
+        {"id": 3, "type": "SEPARATED", "size": 6},
+        {"id": 4, "type": "BAR", "size": 4},
+        {"id": 5, "type": "COMMON", "size": 12}
+      ]
+    },
+    {
+      "id": 3, "name": "Savanna", "type": "AFRICAN",
+      "openingTickStart": 1, "openingTickEnd": 24,
+      "deliveryDrivers": 0, "event": false,
+      "positiveRatings": 0, "negativeRatings": 0,
+      "recipes": [7],
+      "kitchenStaff": {"EXEC": 0, "SOUS": 0, "TOURNANT": 1, "SAUCE": 0, "FISH": 0, "ROAST": 0, "VEGETABLE": 1, "PASTRY": 0},
+      "waitstaff": 1,
+      "tables": [
+        {"id": 1, "type": "COMMON", "size": 5},
+        {"id": 2, "type": "COMMON", "size": 3},
+        {"id": 3, "type": "BAR", "size": 4}
+      ]
+    }
+  ]
+}

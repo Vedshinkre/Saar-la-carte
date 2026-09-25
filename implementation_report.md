@@ -23,7 +23,7 @@ If responsibilities changed during implementation, keep the table factual for ac
 - **Day 2:**
   I completed `F05 (Parse Customers)` with a parser for each customer group type (regular, event and casual) as well as a parser for food preferences. On **Saturday**, I completed `F14 (FOH - Evening Table Reservation)` and `F15 (FOH - Table Merging & Tables)`.
 - **Day 3:**
-  I wrote all the parts of `F16 (FOH - Seating)`, `F17 (FOH - Staff Management)` and `P02 (FOH - Event Seating)` that could be written independently of the progress we had made and added experience changes into the seating process as part of `F22 (Customer - Regulars)`. I also added the experience changes for event and casual groups during the seating process, with agreement from Skerdi and Vlad, since it is only 5 lines spread all over the file and 3 of those are shared between their customer group type and regular groups, i.e. I had to write them for regular groups anyway.
+  I wrote all the parts of `F16 (FOH - Seating)`, `F17 (FOH - Staff Management)` and `P02 (FOH - Event Seating)` that could be written independently of the progress we had made and added experience changes into the seating process as part of `F22 (Customer - Regulars)`.
 - **Day 4:**
   I split the welcoming part (`F16`) - that I wrote - of `FrontOfHouse` into `ArrivalProcessor` to reduce the number of functions in `FrontOfHouse` so as to make it easier and more manageable to work individually without constant merge conflicts. I also made minor fixes in the `CustomerParser` and fixed/updated the `ArrivalProcessor` in accordance with the progess we had made.
 - **Day 5:**

@@ -602,8 +602,6 @@ class Kitchen(
             totalMeals += totalAssigned
             finishedMeals += finished
             numberOfCookedMeals += finished
-
-            // Replaced with helper
             if (finished > 0) {
                 logFinishedMeals(cook, finished, dishNameBeforeCooking, baseOrderIdBeforeCooking)
             }

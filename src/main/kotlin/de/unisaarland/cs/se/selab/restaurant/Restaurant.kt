@@ -129,7 +129,7 @@ class Restaurant(
         }
         refreshAvailableSeats()
         refreshAvailableDrivers()
-        if (tick == Constants.TICK_PER_EVENING) {
+        if (tick == Constants.TICKS_PER_EVENING) {
             endEvening()
         }
     }

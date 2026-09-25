@@ -33,7 +33,7 @@ object Constants {
     const val REGULAR_VISITING_TICK_BUFFER = 3
 
     /** Ticks in one evening. */
-    const val TICK_PER_EVENING = 24
+    const val TICKS_PER_EVENING = 24
 
     /** How much distance can be traveled in a tick */
     const val DISTANCE_PER_TICK = 5

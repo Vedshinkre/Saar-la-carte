@@ -133,7 +133,6 @@ I would like to bring to your attention that, on days, when I seemingly have lit
   - refined the implementation report
 
 - **Some notes:**
-  - Early during the implementation when we decided split some `FrontOfHouse` helpers into separate files, we rolled back a commit and then again decided to rollback that rollback on my laptop (as I was experienced with git) but unexpectedly all the code involved in the second rollback was reattributed to me. Since force pushes weren't allowed we had to manually empty out files and have the author of the code paste back them to fix the line attributions. This may have affected some of my git statistics e.g. inflated the number of lines added / removed
   - I have some really large full system tests with complex multiple evening scenarios (in the `fulltests` folder) that cover most of the implementation behavior. I wanted to keep the code for these minimal and maintainable by not having several calls to `assertNextLine` in the Kotlin code but rather storing them separately in `.log` files where every line is asserted by default and I used ellipses denote a `skipUntilString` (for places with ambiguity). This allows me to copy logs from our implementation run on my scenario JSONS and easily make changes wherever needed to then test against the reference / catch mutants. This way my actual "Kotlin" code for the full system tests was very minimal, so in the office hour I was given feedback to still write some larger system tests, so I also have 3 more full tests (with well thought large scenarios) done in the way my teammates did with several assert calls in the `anshtests` folder
   - I made some merges from dev to main on GitLab website which were attributed to a duplicate profile of mine. I have added a mailmap for this as recommended by our tutor. This only concerns merge commits, all line attributions are kept by my single original profile.
   - Ved and I pair programmed good incident tests together, hence one of the two tests was committed by him while the other by me. We didn't want spend much time finding a way to split it and thought this wouldn't be a big deal. We wanted to clarify it in the report for the record.
@@ -256,7 +255,35 @@ We are aware of the potential dangers of using these tools and take full respons
 * **F09 / P01 (Pantry Inventory & Expiry):** Implemented ingredient storage, best-before tracking, package disposal, and restocking in `Pantry`.
 * **F10, F11, F12 (Cooking — Queue, Staff Management, Cooking):** Implemented cook hierarchy selection (lowest-ranking eligible cook priority, tie-breaking by lowest ID), order queueing, dish batching across multiple orders, tick-by-tick preparation, and `CookResult` reporting in `Kitchen`, `Cook`, `CookResult`, `Dish`, and `Recipe`(some of my code got credieted to Vlad and we were not able to credit it back to me in Kitchen(where we log the kitchen status during each tick)).
   So implemented All of the  `Cook`,`Supplier`, `Ingredient`, and `IngredientPackage`,`CookResult`, `Dish`, `Recipe`, and most of the `Kitchen`(with few implementation from Skerdi and Ansh) and `Stock` (where Atharva has a function.) classes.
----
+
+### Ansh Shekhar Tiwatne
+- FO4: parse restaurants (parsing and validating restaurants)
+  - all of `RestaurantParser`, function calls in `ParserController`
+
+- F07: statistics (performing simulation statistics)
+  - small logger calls in `Simulation`, setting and incrementing statistics variables in `Kitchen`, `Restaurant`, `FrontOfHouse`
+  - some 7 lines in the `calculateStatistics()` function in `Simulation` somehow went to Vlad (probably after resolving a conflict), but we just let it be
+
+- F19: FOH - serving (serving meals from kitchen)
+  - most of `ServingProcessor`, high level serving calls in `FrontOfHouse`, serving related functions in `Waiter`
+  - the `serveEventTable()` function was written by Skerdi as P04 (which includes event customer serving) belongs to him
+  - the waiter recruiting functions for serving event groups were written by Atharva since P04 needs him to do waitstaff selection for all actions for event groups
+
+- F20: FOH - delivery (bringing meals from kitchen to drivers, managing drivers, restaurant status of drivers)
+  - all of `DeliveryProcessor`, all of `Driver` (shared logic with my F24 and F29)
+
+- F24: customer - casual delivery (performing casual customer delivery behavior, e.g. restaurant decision, accepting food, rating)
+  - all of `DeliveryProcessor`, all of `Driver` (shared logic with my F20 and F29)
+  - there was overlap for the "restaurant decision" with F25 which also has "deciding restaurant for casual delivery groups", this part was done by Atharva as he had all browsing service logic anyway
+  - there was overlap for the "rating" with Skerdi's P05, so we decided that setting delivery related experience will be handled by me (similarly for other people's features wherever experience needs to be updated), and then Skerdi will stick to logic to calculate the rating based on the set experience
+
+- F27: customer - waiting for food (waiting for food, eating, giving up)
+  - all of `EatingProcessor`, high level eating calls in `FrontOfHouse`
+  - code for the "giving up" part is in other parts of my own features (serving/delivery) based on wherever the "give up" is most sensible to be checked/handled e.g. `processGiveUps` in the delivery code
+
+- F29: delivery service (receiving meals from kitchen, transporting them, giving them to customers, returning)
+  - all of `Driver` (shared logic with my F20 and F24)
+  - note that we don't actually have a delivery service class in our design
 
 ## Unit test and System Test Placement
 
@@ -275,6 +302,7 @@ We are aware of the potential dangers of using these tools and take full respons
 * **F32 (Incident - Recipe Change):** Authored `RecipeChangeIntegrationTest.kt` and `Recipechangehappycases.kt` in package `recipechangeincidenttset` (collaborated with Skerdi, where i took the happy cases and the integration tests and Skerdi also implemented integgration tests and the edge cases).
 * **F34 (Incident - Ingredient Unavailability):** Just like F31, this was discussed and tested with Ansh but due to difficulties in dividing the code it was uploaded by Ansh completely.
 * **P05 (Customer - Rating):** Authored `RegularEventGroupRatingTest.kt` in package `ratingtests` (collaborated on regular/event rating scoring with Deniz, while he focused on testing the casual customer ratings).
+
 #### System Test Suite Contributions
 Authored, registered, and maintained 45 system tests and 8 shared logging/formatting utilities:
 * **`generaltests` (22 System Tests):** `CasualDeliveryTimeoutTest`, `CookChangeNoOrderTest`, `CorrectPartialServing1`, `DeliveryOrderScenarioTest`, `DeliveryOrderSuccessTestA`, `DeliveryOrderSuccessTestB`, `EventReservationConflictTest`, `ExactStockoutTest`, `ExhaustiveSimpleScenarioTest`(had to remove due the errors), `InvalidRestaurantParserTest`, `MyParserTest`, `OneCookTwoOrdersTest`, `PartialServiceSuccessTest`, `PartialServiceTimeoutTest`, `ProcurementLogicTestA`, `ProcurementLogicTestB`, `RecipeChangeAcrossRestaurantsTest`, `RestaurantClosingTest`, `SingleOrCouple`, `WaitstaffExhaustionTest`, `ZeroProcurementTestA`, `ZeroProcurementTestB`.

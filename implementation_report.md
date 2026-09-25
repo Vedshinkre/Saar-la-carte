@@ -586,6 +586,18 @@ We are aware of the potential dangers of using these tools and take full respons
 other content produced during the group phase.
 ...
 
+**Skerdi:**
+*Option 2:*
+In the implementation plan I announced GitHub Copilot Chat, ChatGPT (GPT-5), Claude (Sonnet 5) and Gemini (3.1 Pro). I diverted from this: I used only Claude, in the form of Claude Code (Claude Sonnet 5), and very minor usage of Chatgpt.
+
+Claude Code was used for debugging the implementation, for my tests. It was not used to write the implementation of my features.
+
+- review of my unit, integration and system tests against the specification and its adjustments (redundancy, coverage, correctness);
+- correcting outdated waiting-for-food and delivery tests, and writing the additional tests for the exception cases of the parsers to raise the coverage;
+- debugging of the implementation: finding why tests and system tests failed on our jar or on the reference implementation, for example a delivery driver in `DeliveryProcessor` that was never freed after a given-up delivery (fixed, with a test for it);
+- improving documentation of public methods.
+
+
 In case of option 2, add additional sentences in which you provide more details on which tools you used for which
 specific tasks and to which extent.
 

@@ -140,8 +140,8 @@ I would like to bring to your attention that, on days, when I seemingly have lit
 ### Ved Rahul Shinkre
 
 - **Day 1: September 10, 2026**
-- Implemented basic code for core food inventory domain models: `Ingredient`, `IngredientPackage`, and `Stock`.
-- Implemented the initial prototype of `FoodParser` for reading JSON configuration files.
+  - Implemented basic code for core food inventory domain models: `Ingredient`, `IngredientPackage`, and `Stock`.
+  - Implemented the initial prototype of `FoodParser` for reading JSON configuration files.
 
 - **Day 2: September 11, 2026**
   - Implemented entities: `Recipe`, `Dish`, `Supplier`, and `Pantry`.
@@ -153,67 +153,67 @@ I would like to bring to your attention that, on days, when I seemingly have lit
   - Introduced the `CookResult` data transfer class to report cook activity, assigned meal totals, and completion metrics.
   - Cleaned up formatting, whitespace, and Detekt-compliant spacing across `Ingredient`, `IngredientPackage`, `Recipe`, `Stock`, `Cook`, `Supplier`, and `Dish`.
   - Cleaned and refactored `FoodParser`.
--  Structured the kitchen order queue and cook assignment placeholders.
--  Refactored `Stock` to support dynamic recipe and ingredient change incidents.
--  Updated staff role enums and hierarchies (`WAITSTAFF` and `EXEC` rank ordering).
--  Implemented unit tests for `StaffIncidentParser` and `UnavailabilityIncidentParser`.
--  Implemented logging integration across `Kitchen`, `Cook`, and `Pantry`.
--  Re-integrated and validated interactions between `Kitchen`, `Cook`, and `Pantry`.
--  Implemented initial unit tests for table merging logic.
+  -  Structured the kitchen order queue and cook assignment placeholders.
+  -  Refactored `Stock` to support dynamic recipe and ingredient change incidents.
+  -  Updated staff role enums and hierarchies (`WAITSTAFF` and `EXEC` rank ordering).
+  -  Implemented unit tests for `StaffIncidentParser` and `UnavailabilityIncidentParser`.
+  -  Implemented logging integration across `Kitchen`, `Cook`, and `Pantry`.
+  -  Re-integrated and validated interactions between `Kitchen`, `Cook`, and `Pantry`.
+  -  Implemented initial unit tests for table merging logic.
 
 -  **Day 3: September 14, 2026**
--  Refactored domain classes (`Ingredient`, `IngredientPackage`, `Stock`, `Dish`, `Recipe`, `Supplier`, `Cook`, `Kitchen`, `Pantry`) to eliminate redundant getters and setters and enforce Kotlin property encapsulation as the group decided to move on from them .
--  Debugged and resolved kitchen execution and logging errors.
--  Implemented unit tests for `MenuAvailability`.
--  Refined schema parsing logic in `FoodParser` and standardized test file formats by adding log helper functions in `utils`.
+  -  Refactored domain classes (`Ingredient`, `IngredientPackage`, `Stock`, `Dish`, `Recipe`, `Supplier`, `Cook`, `Kitchen`, `Pantry`) to eliminate redundant getters and setters and enforce Kotlin property encapsulation as the group decided to move on from them .
+  -  Debugged and resolved kitchen execution and logging errors.
+  -  Implemented unit tests for `MenuAvailability`.
+  -  Refined schema parsing logic in `FoodParser` and standardized test file formats by adding log helper functions in `utils`.
 
 -  **Day 4: September 15, 2026**
--  Developed and registered end-to-end simulation system tests (`EventReservationConflictTest`, `ExhaustiveSimpleScenarioTest`, `WaitstaffExhaustionTest`, `OneCookTwoOrdersTest`).
--  Resolved test execution failures and assertions across unit and system test suites.
--  Updated `Cook` execution mechanics to support system test integration.
+  -  Developed and registered end-to-end simulation system tests (`EventReservationConflictTest`, `ExhaustiveSimpleScenarioTest`, `WaitstaffExhaustionTest`, `OneCookTwoOrdersTest`).
+  -  Resolved test execution failures and assertions across unit and system test suites.
+  -  Updated `Cook` execution mechanics to support system test integration.
 
 -  **Day 5: September 16, 2026**
--  Authored system tests for staff change incidents and registered them in the test suite.
--  Implemented unit and system tests for `StaffIncidentParser` and `UnavailabilityIncidentParser`.
--  Fixed parser bugs in `FoodParser` and updated corresponding parser test cases.
+  -  Authored system tests for staff change incidents and registered them in the test suite.
+  -  Implemented unit and system tests for `StaffIncidentParser` and `UnavailabilityIncidentParser`.
+  -  Fixed parser bugs in `FoodParser` and updated corresponding parser test cases.
 
 -  **Day 6: September 17, 2026**
--  Relaxed over-strict validation constraints in `FoodParser` and adjusted pantry stockout behaviors.
--  Implemented unit tests for casual customer delivery handling (`CasualCustomerDelivery`).
--  Created, updated, and registered multiple simulation system tests, including A/B system tests to verify ambiguous specification behaviors.
--  Refined inventory coordination between `Kitchen` and `Pantry`.
+  -  Relaxed over-strict validation constraints in `FoodParser` and adjusted pantry stockout behaviors.
+  -  Implemented unit tests for casual customer delivery handling (`CasualCustomerDelivery`).
+  -  Created, updated, and registered multiple simulation system tests, including A/B system tests to verify ambiguous specification behaviors.
+  -  Refined inventory coordination between `Kitchen` and `Pantry`.
 
 -  **Day 7: September 18, 2026**
--  Implemented and adjusted system test variants for simulation edge cases to kill mutants and strengthen assertion coverage.
--  Refined state tracking and lifecycle updates across `Cook`, `Kitchen`, `Dish`, and `Pantry`.
+  -  Implemented and adjusted system test variants for simulation edge cases to kill mutants and strengthen assertion coverage.
+  -  Refined state tracking and lifecycle updates across `Cook`, `Kitchen`, `Dish`, and `Pantry`.
 
 -  **Over the Weekend: September 19 – September 20, 2026**
--  Implemented integration tests for delivery workflows (`DeliveryIntegrationTest`) and CLI entry point handling (`MainIntegrationTest`).
--  Implemented simulation loop unit tests (`SimulationCoverageTest`).
--  Updated unit test suites for `Driver` class transitions and worked together with Ansh on `StaffChangeIncidenttest`.
--  Implemented integration tests for recipe adaptation incidents (`RecipeChangeIntegrationTest`).
--  Expanded unit tests for `CasualCustomerDelivery` and reservation table merging rules.
--  Authored, corrected, and registered delivery verification system tests.
+  -  Implemented integration tests for delivery workflows (`DeliveryIntegrationTest`) and CLI entry point handling (`MainIntegrationTest`).
+  -  Implemented simulation loop unit tests (`SimulationCoverageTest`).
+  -  Updated unit test suites for `Driver` class transitions and worked together with Ansh on `StaffChangeIncidenttest`.
+  -  Implemented integration tests for recipe adaptation incidents (`RecipeChangeIntegrationTest`).
+  -  Expanded unit tests for `CasualCustomerDelivery` and reservation table merging rules.
+  -  Authored, corrected, and registered delivery verification system tests.
 
 -  **Day 8: September 21, 2026**
--  Implemented unit tests for regular and event group rating evaluation(`RegularEventGroupRatingTest`).
--  Added unit test coverage for delivery logistics and created an exhaustive kitchen status debugging system test.
--  Resolved Detekt static analysis issues across test and production files.
--  Pair programmed F34 ingredient unavailibility tests with Ansh
+  -  Implemented unit tests for regular and event group rating evaluation(`RegularEventGroupRatingTest`).
+  -  Added unit test coverage for delivery logistics and created an exhaustive kitchen status debugging system test.
+  -  Resolved Detekt static analysis issues across test and production files.
+  -  Pair programmed F34 ingredient unavailibility tests with Ansh
 
 -  **Day 9: September 22, 2026**
--  Implemented unit tests for casual customer dish selection and countertop recipe availability.
--  Debugged and resolved system tests verifying driver availability logic and kitchen status outputs.
--  Enhanced `Dish` modeling and added system tests covering complex kitchen cooking edge cases.
+  -  Implemented unit tests for casual customer dish selection and countertop recipe availability.
+  -  Debugged and resolved system tests verifying driver availability logic and kitchen status outputs.
+  -  Enhanced `Dish` modeling and added system tests covering complex kitchen cooking edge cases.
 
 -  **Day 10: September 23, 2026**
--  Added edge-case system tests for cook order scheduling and updated driver unit tests.
--  Collaborated on team unit tests for Feature 13 (with Deniz).
--  Collaborated with team members to resolve failing tests on the shared test server.
--  Added comprehensive KDocs and inline comments across test suites covering Features 1, 6, 13, 15, 20, 24, 26, and 29.
+  -  Added edge-case system tests for cook order scheduling and updated driver unit tests.
+  -  Collaborated on team unit tests for Feature 13 (with Deniz).
+  -  Collaborated with team members to resolve failing tests on the shared test server.
+  -  Added comprehensive KDocs and inline comments across test suites covering Features 1, 6, 13, 15, 20, 24, 26, and 29.
 
 -  **Day 11: September 24, 2026**
--  Added complete class-level KDocs, parameter documentation, and targeted inline comments across all core implementation files (`Ingredient`, `IngredientPackage`, `Recipe`, `Stock`, `Supplier`, `Dish`, `Cook`, `CookResult`, `Kitchen`) without modifying underlying code logic
+  -  Added complete class-level KDocs, parameter documentation, and targeted inline comments across all core implementation files (`Ingredient`, `IngredientPackage`, `Recipe`, `Stock`, `Supplier`, `Dish`, `Cook`, `CookResult`, `Kitchen`) without modifying underlying code logic
 
 
 

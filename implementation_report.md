@@ -54,7 +54,7 @@
 |----------------------|-------------------------------------------------------------------------------------------------------------------------|---------|
 | *(root)*             | `Main` (`main`, `parseCommandLineArgs`, `setupLogging`), `Cliinfo`, `Time`, `Constants`, `Types`                        | F01     |
 | `system`             | `Simulation` (the evening / preparation / serving), `SimulationConfig`                                                  | F01     |
-| `restaurant`         | `Restaurant`: `simulateTick`, `simulateOpeningHoursTick`, (the per-tick flow of a restaurant)                           | F01     |
+| `restaurant`         | `Restaurant`: `simulateTick`, `simulateOpeningHoursTick`,`restaurant.Restaurant.prepareForEvening`                           | F01     |
 | `food`               | `Order`                                                                                                                 | F18     |
 | `restaurant`         | `Countertop`: `reserveIngredients`, `addOrder`                                                                          | F18     |
 | `customer`           | `CustomerGroup`: `placeOrder`, `registerDish`, `orderingSequence`, `WaiterRota`, `startNewVisit`, `getCustomersWhoLeft` | F18     |

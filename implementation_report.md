@@ -591,7 +591,6 @@ I used Claude Code with the models Claude Sonnet 5, Claude Opus 5 and Claude Opu
 
 Claude Code was used mainly for formatting, testing (generating fixtures and skeletons) and building scenarios for small system tests that compare our behaviour where the specification was ambiguous. All generated code and text was reviewed and adjusted by me before being committed.
 
-...
 
 **Skerdi:**
 *Option 2:*

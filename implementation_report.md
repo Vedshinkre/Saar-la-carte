@@ -6,236 +6,154 @@
 
 ### 1.1 Implementation
 
-| Package | Classes / functions | Feature |
-|---|---|---|
-| *(root)* | `Main` (`main`, `parseCommandLineArgs`, `setupLogging`), `Cliinfo`, `Time`, `Constants`, `Types` | F01 |
-| `system` | `Simulation` (the evening / preparation / serving), `SimulationConfig` | F01 |
-| `restaurant` | `Restaurant`: `simulateTick`, `simulateOpeningHoursTick`, (the per-tick flow of a restaurant) | F01 |
-| `food` | `Order` | F18 |
-| `restaurant` | `Countertop`: `reserveIngredients`, `addOrder` | F18 |
-| `customer` | `CustomerGroup`: `placeOrder`, `registerDish`, `orderingSequence`, `WaiterRota`, `startNewVisit`, `getCustomersWhoLeft` | F18 |
-| `restaurant.helpers` | `ArrivalProcessor`: `orderSuccess`, `logPlacedOrder`, the ordering part of `processArrival` and of the ordering status | F18 |
-| `customer` | `CasualGroup`: `isVisitingThisTick`, `isVisitingTonight`, `getDeliveryOrderTick`; `CustomerGroup.isVisitingThisTick` | F23 |
-| `customer` | `FoodPreference`: `decideDish`, `firstMatchingFavorite`, `mostPreferredIngredients` | F26 |
-| `incidents` | `StaffChangeIncident`; `actors.RestaurantStaff` | F31 |
-| `incidents` | `RecipeChangeIncident` | F32 |
+| Package              | Classes / functions                                                                                                     | Feature |
+|----------------------|-------------------------------------------------------------------------------------------------------------------------|---------|
+| *(root)*             | `Main` (`main`, `parseCommandLineArgs`, `setupLogging`), `Cliinfo`, `Time`, `Constants`, `Types`                        | F01     |
+| `system`             | `Simulation` (the evening / preparation / serving), `SimulationConfig`                                                  | F01     |
+| `restaurant`         | `Restaurant`: `simulateTick`, `simulateOpeningHoursTick`, (the per-tick flow of a restaurant)                           | F01     |
+| `food`               | `Order`                                                                                                                 | F18     |
+| `restaurant`         | `Countertop`: `reserveIngredients`, `addOrder`                                                                          | F18     |
+| `customer`           | `CustomerGroup`: `placeOrder`, `registerDish`, `orderingSequence`, `WaiterRota`, `startNewVisit`, `getCustomersWhoLeft` | F18     |
+| `restaurant.helpers` | `ArrivalProcessor`: `orderSuccess`, `logPlacedOrder`, the ordering part of `processArrival` and of the ordering status  | F18     |
+| `customer`           | `CasualGroup`: `isVisitingThisTick`, `isVisitingTonight`, `getDeliveryOrderTick`; `CustomerGroup.isVisitingThisTick`    | F23     |
+| `customer`           | `FoodPreference`: `decideDish`, `firstMatchingFavorite`, `mostPreferredIngredients`                                     | F26     |
+| `incidents`          | `StaffChangeIncident`; `actors.RestaurantStaff`                                                                         | F31     |
+| `incidents`          | `RecipeChangeIncident`                                                                                                  | F32     |
 
 ### 1.2 Testing
 
-| Feature (implementer) | Type | Package | Test classes |
-|---|---|---|---|
-| F05 (Deniz) | unit, integration | `customerparsertests` | `CustomerParserSharedFieldsTest`, `FoodPreferenceParserTest`, `CustomerParserIntegrationTest` (JSON fixtures in `customerparsertests/fixtures`) |
-| F05 (Deniz) | system | `customerparsertests` | `CustomerParserSystemTests` |
-| F07 (Ansh) | unit, integration | `simulationstatisticsdeliverytests` | `StatisticsDeliveredAndRatedTest`, `StatisticsDeliveredAndRatedIntegrationTest`, `StatisticsFixtures` |
-| F11 (Ved) | unit, integration | `kitchentests` | `KitchenSelectionUnitTest`, `KitchenAssignmentIntegrationTest` |
-| F14 (Deniz) | unit | `reservationtests` | `ReservationOutcomeTest`, `ReservationCancellationTest` |
-| F16 (Deniz) | unit, integration | `seatingtests` | `SeatingOutcomeTest`, `SeatingIntegrationTest` |
-| F16 (Deniz) | system | `generaltests` | `CasualAdHocTableMergingSystemTest`, `RegularRetrySucceedsSystemTest` |
-| F19 (Ansh) | unit, integration | `servingoutcometests` | `ServingOutcomeTest`, `ServingIntegrationTest` |
-| F19 (Ansh) | system | `generaltests` | `RegularBeforeCasualServingTest`, `RegularGradualCookServingTest` |
-| F25 (Atharva) | unit, integration | `casualbrowsingtests` | `CasualBrowsingDecisionTest`, `CasualBrowsingIntegrationTest` |
-| F25 (Atharva) | system | `generaltests` | `CasualDeliveryEarlyDecisionTest`, `CasualTiebreakLowestIdTest` |
-| F29 (Ansh) | unit, integration | `deliveryoutboundtests` | `DeliveryOutboundTripTest`, `DeliveryOutboundIntegrationTest` |
-| F29 (Ansh) | system | `generaltests` | `DeliveryOutboundTripSystemTest`, `DeliveryCumulativeDistanceSystemTest` |
-| P02 (Deniz) | unit, integration | `eventseatingoutcometests` | `EventSeatingOutcomeTest`, `EventSeatingOutcomeIntegrationTest`, `EventSeatingFixtures` |
-| P03 (Atharva) | unit, integration | `eventorderingtests` | `EventOrderingTest`, `EventOrderingIntegrationTest`, `EventOrderingFixtures` |
+| Feature (implementer) | Type              | Package                             | Test classes                                                                                                                                    |
+|-----------------------|-------------------|-------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
+| F05 (Deniz)           | unit, integration | `customerparsertests`               | `CustomerParserSharedFieldsTest`, `FoodPreferenceParserTest`, `CustomerParserIntegrationTest` (JSON fixtures in `customerparsertests/fixtures`) |
+| F05 (Deniz)           | system            | `customerparsertests`               | `CustomerParserSystemTests`                                                                                                                     |
+| F07 (Ansh)            | unit, integration | `simulationstatisticsdeliverytests` | `StatisticsDeliveredAndRatedTest`, `StatisticsDeliveredAndRatedIntegrationTest`, `StatisticsFixtures`                                           |
+| F11 (Ved)             | unit, integration | `kitchentests`                      | `KitchenSelectionUnitTest`, `KitchenAssignmentIntegrationTest`                                                                                  |
+| F14 (Deniz)           | unit              | `reservationtests`                  | `ReservationOutcomeTest`, `ReservationCancellationTest`                                                                                         |
+| F16 (Deniz)           | unit, integration | `seatingtests`                      | `SeatingOutcomeTest`, `SeatingIntegrationTest`                                                                                                  |
+| F16 (Deniz)           | system            | `generaltests`                      | `CasualAdHocTableMergingSystemTest`, `RegularRetrySucceedsSystemTest`                                                                           |
+| F19 (Ansh)            | unit, integration | `servingoutcometests`               | `ServingOutcomeTest`, `ServingIntegrationTest`                                                                                                  |
+| F19 (Ansh)            | system            | `generaltests`                      | `RegularBeforeCasualServingTest`, `RegularGradualCookServingTest`                                                                               |
+| F25 (Atharva)         | unit, integration | `casualbrowsingtests`               | `CasualBrowsingDecisionTest`, `CasualBrowsingIntegrationTest`                                                                                   |
+| F25 (Atharva)         | system            | `generaltests`                      | `CasualDeliveryEarlyDecisionTest`, `CasualTiebreakLowestIdTest`                                                                                 |
+| F29 (Ansh)            | unit, integration | `deliveryoutboundtests`             | `DeliveryOutboundTripTest`, `DeliveryOutboundIntegrationTest`                                                                                   |
+| F29 (Ansh)            | system            | `generaltests`                      | `DeliveryOutboundTripSystemTest`, `DeliveryCumulativeDistanceSystemTest`                                                                        |
+| P02 (Deniz)           | unit, integration | `eventseatingoutcometests`          | `EventSeatingOutcomeTest`, `EventSeatingOutcomeIntegrationTest`, `EventSeatingFixtures`                                                         |
+| P03 (Atharva)         | unit, integration | `eventorderingtests`                | `EventOrderingTest`, `EventOrderingIntegrationTest`, `EventOrderingFixtures`                                                                    |
 
-Extra system tests: `staffchangetests`, `recipeincidenttests` and `basicdishtests` for F31 and F32; `regularplanningtests` and `officehourprobes` across features.
+Extra system tests: `staffchangetests`, `recipeincidenttests` and `basicdishtests` for F31 and F32;
+`regularplanningtests` and `officehourprobes` across features.
 
 ### Skerdi Cuka
 
-
 ### 1.1 Implementation
 
-| Feature | What I implemented | Where the code lies |
-|---|---|---|
-| F02 Logging | All log messages of the simulation: log levels, output handle, the formatting rules of the specification (ids sorted ascending, `key:value` lists), one logger per phase | package `loggers`: `Logger`, `InitialAndPrepLogger`, `TickStatusLogger`, `FohReceptionLogger`, `FohServiceLogger`, `KitchenLogger`, `DeliveryLogger`, `StatisticsLogger` |
-| F13 Restaurant menu | Which dishes can currently be ordered (ingredients in the pantry and not reserved, expired packages ignored, an eligible cook exists) | `restaurant.Countertop` |
-| F21 FOH - escorting | Escorting of finished and unserved customers by their waiter (limit of 10 per tick, partial escorting, releasing the waiter's load, taking down the tables) for REGULAR and CASUAL groups; EVENT group escorting is Atharva's (P03), see section 2 | `restaurant.helpers.EscortingProcessor`, `actors.Waiter` |
-| F30 End of evening | End of the opening time and of the evening: closing ratings, escorting everyone out, dropping reservations, separating tables, resetting waiters, drivers, customers and the kitchen for the next evening | `restaurant.Restaurant` (end of opening time / evening), `FrontOfHouse` (closing), `Kitchen.resetKitchen` |
-| P05 Customer - rating | Rating of a group from its experience and rating likelihood, the restaurant's rating counters, rating logs, ratings at closing | `restaurant.helpers.RatingProcessor`, `customer.CustomerGroup` / `CasualGroup` (`determineRating`) |
-| P04 Customer - events | Shared with other members, see section 2. I did not write `EventGroup` | - |
+| Feature               | What I implemented                                                                                                                                                                                                                                 | Where the code lies                                                                                                                                                      |
+|-----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| F02 Logging           | All log messages of the simulation: log levels, output handle, the formatting rules of the specification (ids sorted ascending, `key:value` lists), one logger per phase                                                                           | package `loggers`: `Logger`, `InitialAndPrepLogger`, `TickStatusLogger`, `FohReceptionLogger`, `FohServiceLogger`, `KitchenLogger`, `DeliveryLogger`, `StatisticsLogger` |
+| F13 Restaurant menu   | Which dishes can currently be ordered (ingredients in the pantry and not reserved, expired packages ignored, an eligible cook exists)                                                                                                              | `restaurant.Countertop`                                                                                                                                                  |
+| F21 FOH - escorting   | Escorting of finished and unserved customers by their waiter (limit of 10 per tick, partial escorting, releasing the waiter's load, taking down the tables) for REGULAR and CASUAL groups; EVENT group escorting is Atharva's (P03), see section 2 | `restaurant.helpers.EscortingProcessor`, `actors.Waiter`                                                                                                                 |
+| F30 End of evening    | End of the opening time and of the evening: closing ratings, escorting everyone out, dropping reservations, separating tables, resetting waiters, drivers, customers and the kitchen for the next evening                                          | `restaurant.Restaurant` (end of opening time / evening), `FrontOfHouse` (closing), `Kitchen.resetKitchen`                                                                |
+| P05 Customer - rating | Rating of a group from its experience and rating likelihood, the restaurant's rating counters, rating logs, ratings at closing                                                                                                                     | `restaurant.helpers.RatingProcessor`, `customer.CustomerGroup` / `CasualGroup` (`determineRating`)                                                                       |
+| P04 Customer - events | Shared with other members, see section 2. I did not write `EventGroup`                                                                                                                                                                             | -                                                                                                                                                                        |
 
 ### 1.2 Testing
 
-I am tester of F01, F03, F04, F05, F08, F09, F18, F20, F22, F25, F27, F32, F33 and P01 (as in `feature_assignments.yaml`). For these features I wrote about 300 unit and integration test methods and 29 system tests. The main things I tested:
+I am tester of F01, F03, F04, F05, F08, F09, F18, F20, F22, F25, F27, F32, F33 and P01 (as in
+`feature_assignments.yaml`). For these features I wrote about 300 unit and integration test methods and 29 system tests.
+The main things I tested:
 
-- **F01 Simulation:** the whole run through the real `main`: the log framing of the specification for different `maxTicks`, evenings and ticks restarting, restaurants simulated in ascending id, the statistics lines, the incidents applied before each evening.
-- **F03 / F04 / F05 Parsers:** recipes (duration bounds, unique ids, basic dishes), the basic dish menu of a restaurant, the customer group types (REGULAR opening hours, CASUAL delivery lead time, EVENT favourite dishes), missing fields and unknown values, and the order of parsing and validation.
-- **F08 / F09 / P01 Supplier and pantry:** buying whole packages, the kitchen planning (last three visits of regulars, favourite dish of events, the estimate per menu dish), expiry of ingredients, the priority of open packages and the earliest best-before date, and unavailable ingredients.
-- **F18 Ordering:** the order of the customers within a group, dishes running out during an order, customers who find no dish, waiters at their order limit, the ordering and seating status logs.
-- **F20 Delivery:** hand-over of meals to the drivers (also split across waiters and ticks), driving and return trip, eating after delivery, deliveries that arrive too late or fail.
-- **F22 Regulars:** visiting periods, the last three visits, failed attempts and stopping after two, ratings of regular groups.
-- **F25 Restaurant decision:** the choice of restaurant for CASUAL and EVENT groups (ratings, seats, dietary restrictions, last opening ticks, drivers) and that events reserve their tables on the event evening.
-- **F27 Waiting for food:** how long customers wait, who leaves, the waiter's load when customers leave, partly served groups, eating time and given-up deliveries.
-- **F32 / F33 Incidents:** recipe amounts (rounding down, never below one, all restaurants) and packaging volume changes with the following purchases.
-- **System tests (29):** they were checked against the reference implementation, and the confirmed ones are registered for the mutants.
+- **F01 Simulation:** the whole run through the real `main`: the log framing of the specification for different
+  `maxTicks`, evenings and ticks restarting, restaurants simulated in ascending id, the statistics lines, the incidents
+  applied before each evening.
+- **F03 / F04 / F05 Parsers:** recipes (duration bounds, unique ids, basic dishes), the basic dish menu of a restaurant,
+  the customer group types (REGULAR opening hours, CASUAL delivery lead time, EVENT favourite dishes), missing fields
+  and unknown values, and the order of parsing and validation.
+- **F08 / F09 / P01 Supplier and pantry:** buying whole packages, the kitchen planning (last three visits of regulars,
+  favourite dish of events, the estimate per menu dish), expiry of ingredients, the priority of open packages and the
+  earliest best-before date, and unavailable ingredients.
+- **F18 Ordering:** the order of the customers within a group, dishes running out during an order, customers who find no
+  dish, waiters at their order limit, the ordering and seating status logs.
+- **F20 Delivery:** hand-over of meals to the drivers (also split across waiters and ticks), driving and return trip,
+  eating after delivery, deliveries that arrive too late or fail.
+- **F22 Regulars:** visiting periods, the last three visits, failed attempts and stopping after two, ratings of regular
+  groups.
+- **F25 Restaurant decision:** the choice of restaurant for CASUAL and EVENT groups (ratings, seats, dietary
+  restrictions, last opening ticks, drivers) and that events reserve their tables on the event evening.
+- **F27 Waiting for food:** how long customers wait, who leaves, the waiter's load when customers leave, partly served
+  groups, eating time and given-up deliveries.
+- **F32 / F33 Incidents:** recipe amounts (rounding down, never below one, all restaurants) and packaging volume changes
+  with the following purchases.
+- **System tests (29):** they were checked against the reference implementation, and the confirmed ones are registered
+  for the mutants.
     - Simulation and statistics (2): log framing of a run, statistics ordered by restaurant id.
-    - Supplier and pantry (6): procurement, unavailable ingredients and their duration, expiry on the right evening, alphabetical order of the removed ingredients, ingredients of abandoned dishes.
-    - Restaurant decision (5): the browsing rules for CASUAL and EVENT groups, no dine-in in the last three opening ticks, a driver incident lowering the available drivers, casual groups on bar tables.
-    - Waiting and leaving (6): patience, waiter load released when customers leave, escorting of partly served groups, log order of leaving and eating, late arrivals without a free waiter, orders blocked by the waiter's capacity.
-    - Delivery (4): a delayed order that times out, the return of a failed delivery, an order split across waiters, a delivery at the end of the evening.
-    - Regular groups (6): failed reservations and their rating in the right tick and evening, consecutive failures, reservation by ascending id, partly served groups, a positive rating.
+    - Supplier and pantry (6): procurement, unavailable ingredients and their duration, expiry on the right evening,
+      alphabetical order of the removed ingredients, ingredients of abandoned dishes.
+    - Restaurant decision (5): the browsing rules for CASUAL and EVENT groups, no dine-in in the last three opening
+      ticks, a driver incident lowering the available drivers, casual groups on bar tables.
+    - Waiting and leaving (6): patience, waiter load released when customers leave, escorting of partly served groups,
+      log order of leaving and eating, late arrivals without a free waiter, orders blocked by the waiter's capacity.
+    - Delivery (4): a delayed order that times out, the return of a failed delivery, an order split across waiters, a
+      delivery at the end of the evening.
+    - Regular groups (6): failed reservations and their rating in the right tick and evening, consecutive failures,
+      reservation by ascending id, partly served groups, a positive rating.
 
-### Ansh Shekhar Tiwatne
-### 1.1 Implementation
+---
 
-- **FO4: parse restaurants (parsing and validating restaurants)**
-    - all of `RestaurantParser`, function calls in `ParserController`
-- **F07: statistics (performing simulation statistics)**
-    - small logger calls in `Simulation`, setting and incrementing statistics variables in `Kitchen`, `Restaurant`,
-      `FrontOfHouse`
-    - some 7 lines in the `calculateStatistics()` function in `Simulation` somehow went to Vlad (probably after
-      resolving a conflict), but we just let it be
-- **F19: FOH - serving (serving meals from kitchen)**
-    - most of `ServingProcessor`, high level serving calls in `FrontOfHouse`, serving related functions in `Waiter`
-    - the `serveEventTable()` function was written by Skerdi as P04 (which includes event customer serving) belongs to
-      him
-    - the waiter recruiting functions for serving event groups were written by Atharva since P04 needs him to do
-      waitstaff selection for all actions for event groups
-- **F20: FOH - delivery (bringing meals from kitchen to drivers, managing drivers, restaurant status of drivers)**
-    - all of `DeliveryProcessor`, all of `Driver` (shared logic with my F24 and F29)
-- **F24: customer - casual delivery (performing casual customer delivery behavior, e.g. restaurant decision, accepting
-  food, rating)**
-    - all of `DeliveryProcessor`, all of `Driver` (shared logic with my F20 and F29)
-    - there was overlap for the "restaurant decision" with F25 which also has "deciding restaurant for casual delivery
-      groups", this part was done by Atharva as he had all browsing service logic anyway
-    - there was overlap for the "rating" with Skerdi's P05, so we decided that setting delivery related experience will
-      be handled by me (similarly for other people's features wherever experience needs to be updated), and then Skerdi
-      will stick to logic to calculate the rating based on the set experience
-- **F27: customer - waiting for food (waiting for food, eating, giving up)**
-    - all of `EatingProcessor`, high level eating calls in `FrontOfHouse`
-    - code for the "giving up" part is in other parts of my own features (serving/delivery) based on wherever the "give
-      up" is most sensible to be checked/handled e.g. `processGiveUps` in the delivery code
-- **F29: delivery service (receiving meals from kitchen, transporting them, giving them to customers, returning)**
-    - all of `Driver` (shared logic with my F20 and F24)
-    - note that we don't actually have a delivery service class in our design
-
-### 1.2 Testing
-- **F03 with Skerdi: parse ingredients & recipes**
-    - unit tests: I covered ingredient and recipe-ingredient interaction, Skerdi covered other recipe behavior
-    - integration tests: I covered one larger test for checking if a recipe was parsed with correct ingredients, Skerdi
-      covered two integration tests for recipe schema validation
-- **F12 with Atharva: cooking**
-    - unit tests: I covered parts after cooking start, Atharva covered parts roughly upto it
-    - integration tests: I covered process cooking and ingredient planning parts, Atharva did the rest
-- **F15 with Ved: table merging & tables**
-    - Ved did the part with merging tables for reservations in advance (in the prep phase)
-    - I did the part with merging tables for casuals (without reservation) during the serving phase
-- **F16 with Vlad: FOH seating**
-    - I tested waitstaff selection for seating and checking action loads
-    - Vlad tested the outcomes, logs and interaction with other groups
-- **F21 with Deniz: FOH escorting**
-    - I tested event related escorting
-    - Deniz tested casual/regular (assigned waiter) escorting
-- **F23 with Deniz: customer - casual**
-    - I tested casual experience setting and rating outcomes
-    - Deniz tested casual group visit schedule, delivery timing
-- **F28 with Deniz: browsing service**
-    - I tested event group related logic
-    - Deniz tested casual customer related logic
-- **F30 with Atharva:**
-    - I did the strictly end of evening part (endEvening, resetDrivers, 24-th tick stuff)
-    - he did end of opening time (startFohClosing, escortAllAtClosing, endOfOpeningTime, and kitchen side of it)
-    - we both also look over each other's tests and work together
-- **F31 with Ved: incident - staff change**
-    - Ved and I discussed and made tests together, we decided Ved could commit it
-- **F34 with Ved: incident - ingredient unavailability**
-    - Ved and I discussed and made tests together, we decided I could commit it
-- **P02 with Vlad: FOH - event seating**
-    - I tested waitstaff selection for seating and checking action loads
-    - Vlad tested the outcomes, logs and interaction with other groups
-    - It's similar testing responsibility division to F16 that we also worked on together
-- **P03 with Vlad: FOH - event other actions**
-    - I tested the escorting and serving waitstaff selection
-    - Vlad tested the ordering
-- **P04 with Deniz: customer - events**
-    - I tested booking, arrival, event dish choice
-    - Deniz tested ordering and the event favorite dish
-- **System tests**
-    - some large full tests in `fulltests`
-    - system tests for testing responsibilities in `anshtests`
-    - some full tests (`EnormousTest`, `MeticulousTest`, `ThoroughTest`) also in `anshtests`
-    - AB Tests in `abtests`
-
-### Ved Rahul Shinkre
+### Atharva
 
 ### 1.1 Implementation
 
-* **F03 (Parse Ingredients & Recipes):** Implemented schema parsing, type checking, validation rules, and error
-  propagation for food configuration files Food Parser.
-* **F08 (Supplier):** Implemented supplier inventory interactions, ingredient procurement calculation, and packaging
-  units in `Supplier`, `Stock`, `Ingredient`, and `IngredientPackage`.
-* **F09 / P01 (Pantry Inventory & Expiry):** Implemented ingredient storage, best-before tracking, package disposal, and
-  restocking in `Pantry`.
-* **F10, F11, F12 (Cooking — Queue, Staff Management, Cooking):** Implemented cook hierarchy selection (lowest-ranking
-  eligible cook priority, tie-breaking by lowest ID), order queueing, dish batching across multiple orders, tick-by-tick
-  preparation, and `CookResult` reporting in `Kitchen`, `Cook`, `CookResult`, `Dish`, and `Recipe`(some of my code got
-  credieted to Vlad and we were not able to credit it back to me in Kitchen (where we log the kitchen status during each
-  tick)).
-  So implemented All of the  `Cook`,`Supplier`, `Ingredient`, and `IngredientPackage`,`CookResult`, `Dish`, `Recipe`,
-  and most of the `Kitchen`(with few implementation from Skerdi and Ansh) and `Stock` (where Atharva has a function.)
-  classes.
+| Package              | Classes / functions                                                                                                                                      | Feature |
+|----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------|---------|
+| `parsers`            | `IncidentParser` (all); wired into `ParserController`                                                                                                    | F06     |
+| `restaurant`         | `BrowsingService` (all)                                                                                                                                  | F28     |
+| `customer`           | `EventGroup`: `visitingInThreeEvenings`; the restaurant-decision use of `BrowsingService`                                                                | F25     |
+| `restaurant`         | `RestaurantStats`: reporting event-group activity from browsing decisions                                                                                | F25     |
+| `incidents`          | `PackagingChangeIncident` (all)                                                                                                                          | F33     |
+| `incidents`          | `UnavailabilityIncident` (all)                                                                                                                           | F34     |
+| `customer`           | `EventGroup`: `placeOrder`, `getCurrentEventDish`                                                                                                        | P03     |
+| `restaurant`         | `FrontOfHouse`: `recruitWaitersForEventGroup`, `recruitWaitersOrderedBy`, `recruitWaiterForServing` (waitstaff selection for event ordering and serving) | P03     |
+| `restaurant.helpers` | `EscortingProcessor`: `escortEventGroup`, `escortAssignedGroup`, `escortWith`                                                                            | P03     |
+| `actors`             | `Waiter`: `escortEventGroups` ,`recruitWaiters for all actions`                                                                                          | P03     |
+
+Note on P03: Event Seating (P02) is a separate feature, not mine. Event Serving for event groups isn't named in the
+spec's "FOH Event - Ordering, Escorting" subtitle for P03, but in practice the waiter-recruiting functions above were
+implemented by me together with Ansh (see his F19 note).
 
 ### 1.2 Testing
 
-* **F01 (Simulation):** Authored `MainIntegrationTest.kt` and `SimulationCoverageTest.kt` in package `simulationtests`
-  (collaborated on execution flow with Skerdi, where he covered more of the simulation , while i foused more on the main
-  and covering remainder of simulation).
-* **F06 (Parse Incidents):** Authored `StaffIncidentParserTest.kt` and `UnavailabilityIncidentParserTest.kt` in package
-  `incidentparsertests` (collaborated with Deniz, who covered the remaining two incident parsers (4 incidents equally
-  divded in two)).
-* **F13 (Restaurant - Menue):** Authored `CasualDishSelectionTest.kt` and `CountertopIntegrationTest.kt` (along with
-  `Decidedishforcasuals.kt`) in package `menuselection` and `CountertopIntegrationTest`respectively (collaborated on
-  menu availability logic with Deniz, where he worked on dish selection by regulars and event individuals and i focused
-  on in house and delivery casuals).
-* **F15 (FOH - Table Merging & Tables):** Authored `ReservationTableMergingTest.kt`and
-  `ReservationTableMerging2Test.kt` in package `mergetablestest` (collaborated on table merging and reservation
-  validation with Ansh, where he looked after the tble merging logic of the casuals, and i foucsed on the event and
-  regular customers).
-* **F17 (FOH - Staff Management):** (Atharva tested majority of this feature as we found it very difficult to divide
-  this feature in two and helped him diagnose any missing coverage and missing testing logic.)
-* **F20 (FOH - Delivery):** Authored `DeliveryIntegrationTest.kt` and `DriverTest.kt` in package `deliveryservicetest`
-  (collaborated on waitstaff to driver handoff logic with Skerdi, where he worked mostly on the serving to the drivers
-  logic, and i wokred on the driver class and the delivering logic itself).
-* **F24 (Customer - Casual Delivery):** Authored `CasualCustomerDelivery.kt` in package `casualcustomerdeliverytests` (I
-  covered most of the testing for this feature as just like feature F17 it was very difficult to divide this feature in
-  two for testing, but Atharva had contributions in testing logic).
-* **F26 (Customer - Food Preferences):** Authored `CasualDishSelectionTest.kt` in package `menuselection` (collaborated
-  on customer food preference with Deniz).
-* **F29 (Delivery Service):** Authored `DeliveryIntegrationTest.kt` in package `deliveryservicetest` (collaborated on
-  with Vlad, where i focused on end-to-end driver transit, route timing, and handover).
-* **F31 (Incident - Staff Change):** Authored `StaffChangeIncidentTest.kt` in package `staffchangeincidenttests`
-  (collaborated on with Ansh, we both worked on this and F34 feature together but felt that dividng the testing code was
-  difficult, so i upladed the incident staff change tests).
-* **F32 (Incident - Recipe Change):** Authored `RecipeChangeIntegrationTest.kt` and `Recipechangehappycases.kt` in
-  package `recipechangeincidenttset` (collaborated with Skerdi, where i took the happy cases and the integration tests
-  and Skerdi also implemented integgration tests and the edge cases).
-* **F34 (Incident - Ingredient Unavailability):** Just like F31, this was discussed and tested with Ansh but due to
-  difficulties in dividing the code it was uploaded by Ansh completely.
-* **P05 (Customer - Rating):** Authored `RegularEventGroupRatingTest.kt` in package `ratingtests` (collaborated on
-  regular/event rating scoring with Deniz, while he focused on testing the casual customer ratings).
+I am tester of F02, F04, F07, F08, F10, F12, F14, F17, F22, F24, F27, F30 and P01 (as in `feature_assignments.yaml`).
 
-Authored, registered, and maintained 45 system tests and 8 shared logging/formatting utilities:
+| Feature (implementer)        | Package                             | Test classes                                                                                                                                                                                 |
+|------------------------------|-------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| F02 (Skerdi)                 | `loggertests`                       | `InitialAndPrepLoggerTest`, `LoggerCoreTest`, `StatisticsLoggerTest`, `TickStatusLoggerTest` (co-authored)                                                                                   |
+| F02 (Skerdi)                 | `parsertests`                       | `ParserControllerLogTest`                                                                                                                                                                    |
+| F04 (Ansh)                   | `restaurantparsertests`             | `RestaurantParserTest`, `RestaurantParserDuplicateAndExecTest`, `RestaurantParserTestDiffrentFoodConfigs`                                                                                    |
+| F07 (Ansh)                   | `simulationstatisticsdeliverytests` | `StatisticsCookedAndDeliveredRealRestaurantTest`                                                                                                                                             |
+| F08 (Ved)                    | `suppliertests`                     | `SupplierTest`                                                                                                                                                                               |
+| F10 (Ved)                    | `cookingtests`                      | `OrderQueueLifecycleTest`                                                                                                                                                                    |
+| F12 (Ved)                    | `cookingtests`                      | `CookUnitTest`, `KitchenCookingProcessTest` (co-authored with Ansh)                                                                                                                          |
+| F17 (Deniz)                  | `fohstaffmanagement`                | `FohStaffFixtures`, `WaiterAssignmentTieBreakTest`, `WaiterEnsureIdTest`, `WaiterFirstActionTriggerTest`, `WaiterIdEventGroupTest`, `WaiterIdLifecycleTest`, `WaiterWorkloadIntegrationTest` |
+| F22 (Deniz)                  | `planningtests`                     | `RegularCustomersKitchenPlanningTest`                                                                                                                                                        |
+| F27 (Ansh)                   | `waitingforfoodtests`               | `WaitingForEventFoodTest`, `WaitingFixtures` (co-authored)                                                                                                                                   |
+| F30 (Skerdi)                 | `eveningclosetests`                 | `FrontOfHouseClosingTest`, `KitchenResetTest`, `ClosingCompositionTest`, `EveningCloseFixtures` (co-authored)                                                                                |
+| P01 (Ved)                    | `pantrytests`                       | `PantryTest` (co-authored)                                                                                                                                                                   |
+| F25 / P03 (own feature)      | `eventorderingtests`                | `EventOrderingSpecTest`                                                                                                                                                                      |
+| F26 (Vlad, informal support) | `dishdecisiontests`                 | `DishDecisionFixtures`, `DishDecisionPermutationTest`, `DishDecisionRuleTest` (not a formal testing assignment — written because my own event-ordering code depends on this function)        |
 
-* **`generaltests` (22 System Tests):** `CasualDeliveryTimeoutTest`, `CookChangeNoOrderTest`, `CorrectPartialServing1`,
-  `DeliveryOrderScenarioTest`, `DeliveryOrderSuccessTestA`, `DeliveryOrderSuccessTestB`, `EventReservationConflictTest`,
-  `ExactStockoutTest`, `ExhaustiveSimpleScenarioTest`(had to remove due the errors), `InvalidRestaurantParserTest`,
-  `MyParserTest`, `OneCookTwoOrdersTest`, `PartialServiceSuccessTest`, `PartialServiceTimeoutTest`,
-  `ProcurementLogicTestA`, `ProcurementLogicTestB`, `RecipeChangeAcrossRestaurantsTest`, `RestaurantClosingTest`,
-  `SingleOrCouple`, `WaitstaffExhaustionTest`, `ZeroProcurementTestA`, `ZeroProcurementTestB`.
-* **`incidentparsersystemtests` (9 System Tests):** `IncidentCookTypeExecForbiddenRejectedSystemTest`,
-  `IncidentDriverWithCookTypeRejectedSystemTest`, `IncidentNegativeEveningRejectedSystemTest`,
-  `IncidentStaffWithIngredientRejectedSystemTest`, `IncidentUnavailabilityNegativeDurationRejectedSystemTest`,
-  `IncidentUnavailabilityProhibitedPropertyRejectedSystemTest`, `IncidentUnavailabilityZeroDurationRejectedSystemTest`,
-  `IncidentWaitstaffWithCookTypeRejectedSystemTest`, `IncidentZeroStaffNumberRejectedSystemTest`.
-* **`losttest` (14 System Tests):** `CanvisitA`, `CanvisitB`, `CookIdTieBreakHighestIdB`, `CookIdTieBreakLowestIdA`,
-  `CorrectPartialServing2`, `DeliveryBasicDishPriorityA`, `DeliveryBasicDishPriorityB`, `DeliveryBrowsingTickResetA`,
-  `DeliveryBrowsingTickResetB`, `IdleCookReuseA`, `IdleCookReuseB`, `KitchenCookAssignmentSystemTest`,
-  `RegularFailedTest`, `SomeDeliveryTest.
-* **`utils` (8 Test Support Modules):** `DeliveryTestLogs`, `FohArrivalTestLogs`, `FohServiceTestLogs`,
-  `InitialAndPrepTestLogs`, `KitchenTestLogs`, `StatisticsTestLogs`, `TestLogFormatter`, `TickStatusTestLogs`.
+### 1.3 System Testing
 
+| Package                                      | Test classes                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+|----------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `eventtests` (F25/P03, own feature, 6)       | `EventArrivalSeatingSystemTest`, `EventEscortingSystemTest`, `EventOrderTakersSystemTest`, `EventOrderingSystemTest`, `EventServingCapacityWaitSystemTest`, `EventServingWaiterPrioritySystemTest`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `kitchenschedulingtests` (F12, Ved, 6)       | `BasicDishPrecedenceOverLowerIdSystemTest`, `BatchDoesNotAbsorbLaterArrivingOrderSystemTest`, `LowestRankingCookAssignedAcrossHierarchySystemTest`, `NonBasicDishesTieBreakByAscendingIdSystemTest`, `TieBreakSameCookTypeByLowestExistingIdSystemTest`, `UncookableDishIsSkippedForCookableOneSystemTest`                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| `parserlogtests` (F02/F06 validation, 2)     | `ParserControllerLogSystemTest`, `UnavailabilityDifferentIngredientsOverlapAcceptedSystemTest`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| `generaltests` (F14/F17/F25/P03/support, 21) | `CasualMergeTrimTieBreakSystemTest`, `CasualNoDecisionNoSpaceTest`, `CasualTableExclusionSystemTest`, `CasualTableNoLiftSystemTest`, `EatingFinishedAndEscortedSameTickTest`, `EventSeatingCapacityBoundaryTests`, `EventSeatingLoadPriorityTests`, `EventSeatingSharedCapacityTests`, `EventSeatingSpecExampleTests`, `EventTableMergingSystemTest`, `KitchenAndBrowsingEdgeCasesSystemTest`, `RecipeChangeRoundingSystemTest`, `StaffIdResetAcrossEveningsSystemTest`, `StaffLoadBalancingFallbackSystemTest`, `StaffLoadConcentrationSystemTest`, `StaffMultiWaiterExhaustionSystemTest`, `TableMergingLifecycleSystemTest`, `TableReservationConflictsSystemTest`, `TableReservationMergeSystemTest`, `TableReservationSingleTableSystemTest`, `TableTypeRestrictionsSystemTest` |
+
+86 of these classes (30 validation, 56 simulation) are also registered against the released mutants, in my own
+registration functions in `SystemTestRegistration.kt`. Cross-checked against an external mutation-testing run (38/40
+mutants found): 12 mutants confirmed killed across 10 of my tests, including `TableMergingLifecycleSystemTest`
+catching 3 by itself (Denkmalschutz, Grindset, KingOfTheHill).
 
 ---
 
@@ -243,34 +161,73 @@ Authored, registered, and maintained 45 system tests and 8 shared logging/format
 
 ### Deniz Firat Sag
 
-It took me longer to get some of the parts of `ArrivalProcessor` to a decently working state, as I had to update my code to keep the project working with the changes my teammates were making. For this reason, I could not start working on my testing responsibilities until 20th September, Sunday. I deemed it a better choice to first get the parts of the project that I was responsible for to a relatively stable and correct state than for my code to block the rest of the simulation, stopping us from getting further results, and to write tests for components that did end up changing anyway.
+It took me longer to get some of the parts of `ArrivalProcessor` to a decently working state, as I had to update my code
+to keep the project working with the changes my teammates were making. For this reason, I could not start working on my
+testing responsibilities until 20th September, Sunday. I deemed it a better choice to first get the parts of the project
+that I was responsible for to a relatively stable and correct state than for my code to block the rest of the
+simulation, stopping us from getting further results, and to write tests for components that did end up changing anyway.
 
 ### Skerdi Cuka
-- **P04 (Customer - events) was shared with other members.** The specification describes events in several places (restaurant decision, reservation, seating, ordering, serving, escorting, rating), and most of these are covered by other features (F25, P02, P03, P05). It was ambiguous what P04 itself should contain, so we decided in the group to share it with members who had less contribution so far. `EventGroup` was written by Atharva, Vlad and Deniz. My part is the rating of EVENT groups (in P05) and the tests of the event restaurant decision (F25).
-- **F21: the escorting of EVENT groups was implemented by Atharva as part of P03 (event other actions),** as we decided in the group (Mon 14 Sep). While adding it to `EscortingProcessor` he also edited the REGULAR and CASUAL escorting in the same class (escorting by the assigned waiter and the log of the escorted customers), so `git blame` shows these lines under his name. They belong to my F21 work; we discussed the changes together and they should be attributed to me.
-- **F30:** It touches the kitchen, the front of house and the customers, and was changed afterwards by the specification adjustments 16, 17 and 20. It was planned for one day (Mon 14 Sep); I started it on Tue 15 Sep and worked on it until Wed 23 Sep.
-- **Structure changed from the design.** Escorting and rating were planned as methods of `FrontOfHouse`. On Tue 15 Sep I moved them into `EscortingProcessor` and `RatingProcessor`, next to the other processors of the front of house.
-- **Schedule.** F13 was done on Fri 11 Sep (planned Sat 12 Sep). F21 got its first version on Mon 14 Sep (planned Sun 13 Sep). P05 was started on Mon 14 Sep together with escorting (planned Wed 16 Sep). F02 was done on Thu 10 Sep as planned and corrected until Thu 17 Sep.
-- **Testing started later than planned.** The plan asked for tests from Sat 12 Sep on. My first system tests are from Wed 16 Sep, and most tests of my testing features were written between Thu 17 Sep and Wed 23 Sep. On Mon 21 Sep I replaced tests that only repeated what the JSON schema already enforces with new ones. From Mon 21 Sep the system tests were written to find out why we fail the mandatory tests and were checked against the reference implementation.
-- **Tests outside my assigned testing features:** `WaiterEscortTest` (F21, which I implemented), `SimulationStatisticsTest` (F07) and `StaggeredOrderWaitWindowTest` (serving wait window, F19).
-- The work continued after the planned end (Mon 21 Sep) until Thu 24 Sep with test corrections, fixes after reference runs and the mutant registration.
+
+- **P04 (Customer - events) was shared with other members.** The specification describes events in several places
+  (restaurant decision, reservation, seating, ordering, serving, escorting, rating), and most of these are covered by
+  other features (F25, P02, P03, P05). It was ambiguous what P04 itself should contain, so we decided in the group to
+  share it with members who had less contribution so far. `EventGroup` was written by Atharva, Vlad and Deniz. My part
+  is the rating of EVENT groups (in P05) and the tests of the event restaurant decision (F25).
+- **F21: the escorting of EVENT groups was implemented by Atharva as part of P03 (event other actions),** as we decided
+  in the group (Mon 14 Sep). While adding it to `EscortingProcessor` he also edited the REGULAR and CASUAL escorting in
+  the same class (escorting by the assigned waiter and the log of the escorted customers), so `git blame` shows these
+  lines under his name. They belong to my F21 work; we discussed the changes together and they should be attributed to
+  me.
+- **F30:** It touches the kitchen, the front of house and the customers, and was changed afterwards by the specification
+  adjustments 16, 17 and 20. It was planned for one day (Mon 14 Sep); I started it on Tue 15 Sep and worked on it until
+  Wed 23 Sep.
+- **Structure changed from the design.** Escorting and rating were planned as methods of `FrontOfHouse`. On Tue 15 Sep I
+  moved them into `EscortingProcessor` and `RatingProcessor`, next to the other processors of the front of house.
+- **Schedule.** F13 was done on Fri 11 Sep (planned Sat 12 Sep). F21 got its first version on Mon 14 Sep (planned Sun 13
+  Sep). P05 was started on Mon 14 Sep together with escorting (planned Wed 16 Sep). F02 was done on Thu 10 Sep as
+  planned and corrected until Thu 17 Sep.
+- **Testing started later than planned.** The plan asked for tests from Sat 12 Sep on. My first system tests are from
+  Wed 16 Sep, and most tests of my testing features were written between Thu 17 Sep and Wed 23 Sep. On Mon 21 Sep I
+  replaced tests that only repeated what the JSON schema already enforces with new ones. From Mon 21 Sep the system
+  tests were written to find out why we fail the mandatory tests and were checked against the reference implementation.
+- **Tests outside my assigned testing features:** `WaiterEscortTest` (F21, which I implemented),
+  `SimulationStatisticsTest` (F07) and `StaggeredOrderWaitWindowTest` (serving wait window, F19).
+- The work continued after the planned end (Mon 21 Sep) until Thu 24 Sep with test corrections, fixes after reference
+  runs and the mutant registration.
 
 ### Vlad Mihai Marciu
 
-Days are counted as working days (Monday to Friday) from Thursday, Sep 10. Work done on Saturdays and Sundays is listed separately as "over the weekend".
+Days are counted as working days (Monday to Friday) from Thursday, Sep 10. Work done on Saturdays and Sundays is listed
+separately as "over the weekend".
 
-- **F01 was finished over the weekend:** planned for Days 1-2, it was started on Day 1 and was finished over the first weekend. Fixes followed until the second weekend (`--help`, tick logging, the `maxTicks` range check, the output path).
-- **Different feature order:** F26 (food preferences), F31 (staff change incident) and F32 (recipe change incident) were all implemented on Day 3, instead of on Days 6, 7 and 5 due to them being more isolated and easier to implement without requiring other parts of the system. F23 (casual customer behaviour) was implemented on Day 5 instead of Day 4.
-- **F18 (ordering) took longer than planned:** planned for Day 3, it was started over the first weekend and worked on until Day 6. This was due to the feature being a bit more complicated than it seemed at first glance,
-- **Work over the weekends:** both weekends were used. The first finished F01 and started F18. The second covered the tests for F07, P02 and P03, and the recipe change fix.
+- **F01 was finished over the weekend:** planned for Days 1-2, it was started on Day 1 and was finished over the first
+  weekend. Fixes followed until the second weekend (`--help`, tick logging, the `maxTicks` range check, the output
+  path).
+- **Different feature order:** F26 (food preferences), F31 (staff change incident) and F32 (recipe change incident) were
+  all implemented on Day 3, instead of on Days 6, 7 and 5 due to them being more isolated and easier to implement
+  without requiring other parts of the system. F23 (casual customer behaviour) was implemented on Day 5 instead of Day
+    4.
+- **F18 (ordering) took longer than planned:** planned for Day 3, it was started over the first weekend and worked on
+  until Day 6. This was due to the feature being a bit more complicated than it seemed at first glance,
+- **Work over the weekends:** both weekends were used. The first finished F01 and started F18. The second covered the
+  tests for F07, P02 and P03, and the recipe change fix.
 - **Work that is related to my features**
     - the restaurant's preparation phase (Day 5)
     - refusing customers in the last three opening ticks (Day 7)
     - refreshing the browsing estimates every tick, and the ingredient planning fix for regular groups (Day 8)
-- **Testing of my assigned features:** started on Day 5 as planned, but ran until the second weekend (F07, P02 and P03 were tested over the weekend) instead of being finished by Day 8.
-- **Days 8-10:** the plan had these days for multi-evening system tests, mutant runs and bug fixing. They went mainly into probe system tests against the reference implementation, which narrowed down where the specification was ambiguous. They also went into fixing the defects these revealed (recipe change incident, driver availability, regular ingredient planning, serving meals of customers who walked out) and moving the system tests that pass on the reference implementation to the mutant lists.
-- **Attribution mistakes:** Final statistics in Simulation (logging code) because of a merge conflict in main. The attributions are accidentally assigned to me but the code is actually authored by Ansh. Same thing happened with the logging code in Kitchen at the end of `executeCookingStep()`. The code is actually authored by Ved
+- **Testing of my assigned features:** started on Day 5 as planned, but ran until the second weekend (F07, P02 and P03
+  were tested over the weekend) instead of being finished by Day 8.
+- **Days 8-10:** the plan had these days for multi-evening system tests, mutant runs and bug fixing. They went mainly
+  into probe system tests against the reference implementation, which narrowed down where the specification was
+  ambiguous. They also went into fixing the defects these revealed (recipe change incident, driver availability, regular
+  ingredient planning, serving meals of customers who walked out) and moving the system tests that pass on the reference
+  implementation to the mutant lists.
+- **System tests outside of the assigned features:**
+- **Attribution mistakes:** Final statistics in Simulation (logging code) because of a merge conflict in main. The
+  attributions are accidentaly assigned to me but the code is actually authored by Ansh
 
+### Atharva
 
 ## Detailed Timeline
 
@@ -327,25 +284,40 @@ to spend some time reading through their code to understand it and could not jus
 like to mention here as well that I did not use any generative AI for debugging.
 
 ### Skerdi Cuka
+
 ### During the week (Mon-Fri)
 
 - **Thu 10 Sep:** started logger classes (F02).
 - **Fri 11 Sep:** finished logger; documented the logger, `getAvailableRecipes()` for the menu (F13).
-- **Mon 14 Sep:** finished the first escorting version (F21), first version of the rating (P05), moved escorting and rating to the end of the tick processing, handed EVENT group escorting to Atharva, fixed the printing of lists and key-value pairs in the logger.
-- **Tue 15 Sep:** start of the end of the evening (F30): closing ratings, cleanup of the front of house, `resetKitchen`; escorting and rating moved into `restaurant.helpers`.
-- **Wed 16 Sep:** first version of the end of the opening time and of the evening, drivers removed after the evening, waiter counter reset; first system tests (simulation, supplier, statistics order). We spent a lot of time fixing build and detekt issues, until the project built.
-- **Thu 17 Sep:** we spent a lot of time fixing build and detekt issues again, until the project built. Tick status log adapted to the specification adjustments, kitchen reset fixes; food parser unit and integration tests; supplier, pantry and customer parser tests; pantry expiry and unavailability system tests.
-- **Fri 18 Sep:** end of evening fixes, customer reset for a new evening, countertop and escorting fixes, simulation integration test.
-- **Mon 21 Sep:** delivery unit and integration tests (hand-over, eating, return), waiting-for-food unit, integration and system tests, packaging change and stock tests, ordering, kitchen planning, group behaviour and simulation run tests, replaced the schema-redundant tests, system tests for the failing mandatory tests.
-- **Tue 22 Sep:** system tests for the customers' patience, log order of eating and delivery at the end of the evening; unit tests adjusted after the fix of aborted dishes.
-- **Wed 23 Sep:** end of evening adapted to specification adjustment 20 (aborted dishes), system tests for delivery, pantry and browsing, fixes after the reference runs, registration of the confirmed system tests for the mutants.
+- **Mon 14 Sep:** finished the first escorting version (F21), first version of the rating (P05), moved escorting and
+  rating to the end of the tick processing, handed EVENT group escorting to Atharva, fixed the printing of lists and
+  key-value pairs in the logger.
+- **Tue 15 Sep:** start of the end of the evening (F30): closing ratings, cleanup of the front of house, `resetKitchen`;
+  escorting and rating moved into `restaurant.helpers`.
+- **Wed 16 Sep:** first version of the end of the opening time and of the evening, drivers removed after the evening,
+  waiter counter reset; first system tests (simulation, supplier, statistics order). We spent a lot of time fixing build
+  and detekt issues, until the project built.
+- **Thu 17 Sep:** we spent a lot of time fixing build and detekt issues again, until the project built. Tick status log
+  adapted to the specification adjustments, kitchen reset fixes; food parser unit and integration tests; supplier,
+  pantry and customer parser tests; pantry expiry and unavailability system tests.
+- **Fri 18 Sep:** end of evening fixes, customer reset for a new evening, countertop and escorting fixes, simulation
+  integration test.
+- **Mon 21 Sep:** delivery unit and integration tests (hand-over, eating, return), waiting-for-food unit, integration
+  and system tests, packaging change and stock tests, ordering, kitchen planning, group behaviour and simulation run
+  tests, replaced the schema-redundant tests, system tests for the failing mandatory tests.
+- **Tue 22 Sep:** system tests for the customers' patience, log order of eating and delivery at the end of the evening;
+  unit tests adjusted after the fix of aborted dishes.
+- **Wed 23 Sep:** end of evening adapted to specification adjustment 20 (aborted dishes), system tests for delivery,
+  pantry and browsing, fixes after the reference runs, registration of the confirmed system tests for the mutants.
 - **Thu 24 Sep:** added tests for the exception cases of the parsers, review of my tests against the specification.
 
 ### Over the weekend
 
 - **Sat 12 Sep:** started the escorting code, first unit test of the simulation.
 - **Sun 13 Sep:** fixed typos in the log messages.
-- **Sat 19 Sep:** system tests for customer behaviour and late casual groups, restaurant and customer parser integration tests, recipe change edge cases, event restaurant decision tests, registration of the system tests for the reference and the mutants.
+- **Sat 19 Sep:** system tests for customer behaviour and late casual groups, restaurant and customer parser integration
+  tests, recipe change edge cases, event restaurant decision tests, registration of the system tests for the reference
+  and the mutants.
 - **Sun 20 Sep:** worked locally on testing the features I am assigned to.
 
 ### Ansh Shekhar Tiwatne
@@ -564,7 +536,7 @@ like to mention here as well that I did not use any generative AI for debugging.
     - Collaborated on team unit tests for Feature 13 (with Deniz).
     - Collaborated with team members to resolve failing tests on the shared test server.
     - Added comprehensive KDocs and inline comments across test suites covering Features 1, 6, 13, 15, 20, 24, 26, and
-      29.
+        29.
 
 - **Day 11: September 24, 2026**
     - Added complete class-level KDocs, parameter documentation, and targeted inline comments across all core
@@ -625,7 +597,8 @@ implementation files, no logic changes.
 **Fri 25 Sep** — found and fixed a bug in a shared test helper the same day: it collapsed event and casual serving
 priority into one tier instead of ranking regular/event/casual separately, unnoticed until an event group was run
 through it for the first time. Added coverage for event ordering (`EventOrderingSpecTest`), FOH waiter-id/event-group
-(`WaiterIdEventGroupTest`), restaurant-parser edge cases, plus new F07 (`StatisticsCookedAndDeliveredRealRestaurantTest`)
+(`WaiterIdEventGroupTest`), restaurant-parser edge cases, plus new F07
+(`StatisticsCookedAndDeliveredRealRestaurantTest`)
 and F27 (`WaitingForEventFoodTest`) tests.
 
 ### Over the weekend (recorded separately, not part of the week)
@@ -649,84 +622,93 @@ the reference implementation's behaviour.
 
 #### Week 1
 
-- **Day 1 (Thu, Sep 10):** Started F01 as planned: the time and type classes, `Simulation`, `SimulationConfig` and `CliInfo`, and a first version of `Main` parsing the command-line arguments.
+- **Day 1 (Thu, Sep 10):** Started F01 as planned: the time and type classes, `Simulation`, `SimulationConfig` and
+  `CliInfo`, and a first version of `Main` parsing the command-line arguments.
 - **Day 2 (Fri, Sep 11):** Continued working on F01 and helped the rest of the team with parsing
 
 #### Over the weekend (Sep 12-13)
 
-- **Saturday:** Finished the first version of F01: completed `Main` and implemented `Simulation`. Started F18: implemented the `Order` class and the countertop (adding orders and reserving ingredients).
+- **Saturday:** Finished the first version of F01: completed `Main` and implemented `Simulation`. Started F18:
+  implemented the `Order` class and the countertop (adding orders and reserving ingredients).
 - **Sunday:** Looked over teammates implementation progress and code.
 
 #### Week 2
 
-- **Day 3 (Mon, Sep 14):** Continued F18 as planned: `placeOrder` following the sequence diagram. Implemented F26 (dish choice from food preferences), F31 (staff change incident) and F32 (recipe change incident). Added stub functions across the restaurant, front-of-house and customer classes and fixed `detekt` issues to try to make the project build.
-- **Day 4 (Tue, Sep 15):** Connected ordering to the arrival stage, so orders reach both the customer and the kitchen's order queue. More `detekt` clean-up.
+- **Day 3 (Mon, Sep 14):** Continued F18 as planned: `placeOrder` following the sequence diagram. Implemented F26 (dish
+  choice from food preferences), F31 (staff change incident) and F32 (recipe change incident). Added stub functions
+  across the restaurant, front-of-house and customer classes and fixed `detekt` issues to try to make the project build.
+- **Day 4 (Tue, Sep 15):** Connected ordering to the arrival stage, so orders reach both the customer and the kitchen's
+  order queue. More `detekt` clean-up.
 - **Day 5 (Wed, Sep 16):**
-  - F18: ordering and no-ordering logs, delivery orders, `placeOrder` returns when nobody in the group could order.
-  - F23: casual visiting behaviour (visiting tonight / this tick, computing the ordering tick of a delivery).
-  - Integration: implemented the preparation phase of a restaurant (event and regular table reservations with their logs, free-seat count, up to ingredient planning) and the event restaurant-decision log.
-  - Started testing with F05: JSON fixtures, and unit and integration tests for food preferences and customer groups.
-  - Helped the rest of the team with detekt clean-up and making the project build
+    - F18: ordering and no-ordering logs, delivery orders, `placeOrder` returns when nobody in the group could order.
+    - F23: casual visiting behaviour (visiting tonight / this tick, computing the ordering tick of a delivery).
+    - Integration: implemented the preparation phase of a restaurant (event and regular table reservations with their
+      logs, free-seat count, up to ingredient planning) and the event restaurant-decision log.
+    - Started testing with F05: JSON fixtures, and unit and integration tests for food preferences and customer groups.
+    - Helped the rest of the team with detekt clean-up and making the project build
 - **Day 6 (Thu, Sep 17):**
-  - Testing F05: customer-parser system tests and further unit and integration tests.
-  - Integration fixes:
-    - customer clean-up that could never run;
-    - duplicated no-ordering, no-reservation and pantry logs;
-    - regular groups being sent to every restaurant;
-    - `--help` in `Main`;
-    - sorting customer lists by id;
-    - event groups deciding in the first tick.
-  - F23: fixed the visiting-tick check. F01: the tick log now uses elapsed ticks.
-  - F18: ordering status log, and ordering logs for all customer types; `placeOrder` extended for event groups.
-  - As tester of F11 and F14: kitchen unit tests, cooking integration tests, and reservation tests.
-  - Managed to make the project build together with the rest of the team
+    - Testing F05: customer-parser system tests and further unit and integration tests.
+    - Integration fixes:
+        - customer clean-up that could never run;
+        - duplicated no-ordering, no-reservation and pantry logs;
+        - regular groups being sent to every restaurant;
+        - `--help` in `Main`;
+        - sorting customer lists by id;
+        - event groups deciding in the first tick.
+    - F23: fixed the visiting-tick check. F01: the tick log now uses elapsed ticks.
+    - F18: ordering status log, and ordering logs for all customer types; `placeOrder` extended for event groups.
+    - As tester of F11 and F14: kitchen unit tests, cooking integration tests, and reservation tests.
+    - Managed to make the project build together with the rest of the team
 - **Day 7 (Fri, Sep 18):**
-  - As tester of F16, F19, F25 and F29:
-    - F16: unit, integration and system tests for seating.
-    - F19: tests for serving non-event groups.
-    - F25: tests for the casual restaurant decision.
-    - F29: tests for outgoing deliveries.
-  - Fixes: order ids reset per run, stock unavailability refreshed, customers reset before each evening, range check for `maxTicks`, and refusing customers in the last three opening ticks.
+    - As tester of F16, F19, F25 and F29:
+        - F16: unit, integration and system tests for seating.
+        - F19: tests for serving non-event groups.
+        - F25: tests for the casual restaurant decision.
+        - F29: tests for outgoing deliveries.
+    - Fixes: order ids reset per run, stock unavailability refreshed, customers reset before each evening, range check
+      for `maxTicks`, and refusing customers in the last three opening ticks.
 
 #### Over the weekend (Sep 19-20)
 
 - **Saturday:**
-  - As tester of P02 and P03: unit and integration tests for event seating and event ordering.
-  - Removed or disabled (in case they were not mine) tests  made obsolete by the JSON schemas update.
-  - F01: fixed the output-path check.
+    - As tester of P02 and P03: unit and integration tests for event seating and event ordering.
+    - Removed or disabled (in case they were not mine) tests made obsolete by the JSON schemas update.
+    - F01: fixed the output-path check.
 - **Sunday:**
-  - As tester of F07: unit and integration tests for statistics (delivery ratings, end of evening).
-  - F32: fixed the recipe change being applied twice to recipes sharing an ingredient, with system tests for it and for basic dishes under recipe changes.
-  - Moved the system tests that pass on the reference implementation to the mutant lists.
+    - As tester of F07: unit and integration tests for statistics (delivery ratings, end of evening).
+    - F32: fixed the recipe change being applied twice to recipes sharing an ingredient, with system tests for it and
+      for basic dishes under recipe changes.
+    - Moved the system tests that pass on the reference implementation to the mutant lists.
 
 #### Week 3
 
 - **Day 8 (Mon, Sep 21):**
-  - F32: further system tests for the failing recipe-change component tests.
-  - F31: system tests for the staff change incident.
-  - Fixed available drivers not being refreshed every tick.
-  - Ingredient planning for regular groups without an order history: probed the reference implementation with system tests, then fixed it according to the result.
-  - Refactored ordering so event ordering can reuse it.
-  - Went through the disabled tests and documented why they fail.
-  - Wrote probe tests from the office-hour feedback.
+    - F32: further system tests for the failing recipe-change component tests.
+    - F31: system tests for the staff change incident.
+    - Fixed available drivers not being refreshed every tick.
+    - Ingredient planning for regular groups without an order history: probed the reference implementation with system
+      tests, then fixed it according to the result.
+    - Refactored ordering so event ordering can reuse it.
+    - Went through the disabled tests and documented why they fail.
+    - Wrote probe tests from the office-hour feedback.
 - **Day 9 (Tue, Sep 22):**
-  - New probe tests after the reference run (extended patience, recipe scope, partial serving).
-  - Serving now ignores meals of customers who walked out.
-  - System tests for ratings around the end of the evening.
+    - New probe tests after the reference run (extended patience, recipe scope, partial serving).
+    - Serving now ignores meals of customers who walked out.
+    - System tests for ratings around the end of the evening.
 - **Day 10 (Wed, Sep 23):**
-  - Registered probe tests for deliveries given up and for hand-overs to drivers split across ticks.
-  - Added probes for choosing between two free cooks of the same type.
-  - Analysed disabled tests that no longer matched our implementation.
-  - Fixed a few deprecated unit tests (mine) so they check the current behaviour.
-  - Updated KDoc documentation for all my classes and functions.
+    - Registered probe tests for deliveries given up and for hand-overs to drivers split across ticks.
+    - Added probes for choosing between two free cooks of the same type.
+    - Analysed disabled tests that no longer matched our implementation.
+    - Fixed a few deprecated unit tests (mine) so they check the current behaviour.
+    - Updated KDoc documentation for all my classes and functions.
 - **Day 11 (Thu, Sep 24):**
-  - Started working on my part of the implementation report
-  - Updated descriptions for my system tests
-  - Started doing clean-up in my parts of the implementation
-  - Slight changes to unit/integration tests to improve their quality
+    - Started working on my part of the implementation report
+    - Updated descriptions for my system tests
+    - Started doing clean-up in my parts of the implementation
+    - Slight changes to unit/integration tests to improve their quality
 - **Day 12 (Fri, Sep 25):**
-  - Continued with clean-up of my parts of the project(removed comments, unused functions, etc.)
-  - Finished my part of the implementation report
+    - Continued with clean-up of my parts of the project (removed comments, unused functions, etc.)
+    - Finished my part of the implementation report
 
 ---
 
@@ -760,22 +742,30 @@ other content produced during the group phase.
 
 **Vlad Mihai Marciu:**
 *Option 2:*
-I used Claude Code with the models Claude Sonnet 5, Claude Opus 5 and Claude Opus 5.5 in the implementation phase. This is different from the implementation plan, which instead listed GitHub Copilot Chat, ChatGPT (GPT-5), Claude (Sonnet 5) and Gemini (3.1 Pro). I did not end up using those tools
+I used Claude Code with the models Claude Sonnet 5, Claude Opus 5 and Claude Opus 5.5 in the implementation phase. This
+is different from the implementation plan, which instead listed GitHub Copilot Chat, ChatGPT (GPT-5), Claude (Sonnet 5)
+and Gemini (3.1 Pro). I did not end up using those tools
 
-Claude Code was used mainly for formatting, testing (generating fixtures and skeletons) and building scenarios for small system tests that compare our behaviour where the specification was ambiguous. All generated code and text was reviewed and adjusted by me before being committed.
-
+Claude Code was used mainly for formatting, testing (generating fixtures and skeletons) and building scenarios for small
+system tests that compare our behaviour where the specification was ambiguous. All generated code and text was reviewed
+and adjusted by me before being committed.
 
 **Skerdi:**
 *Option 2:*
-In the implementation plan I announced GitHub Copilot Chat, ChatGPT (GPT-5), Claude (Sonnet 5) and Gemini (3.1 Pro). I diverted from this: I used only Claude, in the form of Claude Code (Claude Sonnet 5), and very minor usage of Chatgpt.
+In the implementation plan I announced GitHub Copilot Chat, ChatGPT (GPT-5), Claude (Sonnet 5) and Gemini (3.1 Pro). I
+diverted from this: I used only Claude, in the form of Claude Code (Claude Sonnet 5), and very minor usage of Chatgpt.
 
-Claude Code was used for debugging the implementation, for my tests. It was not used to write the implementation of my features.
+Claude Code was used for debugging the implementation, for my tests. It was not used to write the implementation of my
+features.
 
-- review of my unit, integration and system tests against the specification and its adjustments (redundancy, coverage, correctness);
-- correcting outdated waiting-for-food and delivery tests, and writing the additional tests for the exception cases of the parsers to raise the coverage;
-- debugging of the implementation: finding why tests and system tests failed on our jar or on the reference implementation, for example a delivery driver in `DeliveryProcessor` that was never freed after a given-up delivery (fixed, with a test for it);
+- review of my unit, integration and system tests against the specification and its adjustments (redundancy, coverage,
+  correctness);
+- correcting outdated waiting-for-food and delivery tests, and writing the additional tests for the exception cases of
+  the parsers to raise the coverage;
+- debugging of the implementation: finding why tests and system tests failed on our jar or on the reference
+  implementation, for example a delivery driver in `DeliveryProcessor` that was never freed after a given-up delivery
+  (fixed, with a test for it);
 - improving documentation of public methods.
-
 
 In case of option 2, add additional sentences in which you provide more details on which tools you used for which
 specific tasks and to which extent.
@@ -809,3 +799,166 @@ In practice I only used **Claude (Sonnet 5)** during the implementation phase
 
 We are aware of the potential dangers of using these tools and take full responsibility for any code, documents and other content produced during the group phase.
 ---
+
+## Feature Implementation and Placement
+
+### Ved Rahul Shinkre
+
+#### Feature Implementations (Core Domain)
+
+* **F03 (Parse Ingredients & Recipes):** Implemented schema parsing, type checking, validation rules, and error
+  propagation for food configuration files Food Parser.
+* **F08 (Supplier):** Implemented supplier inventory interactions, ingredient procurement calculation, and packaging
+  units in `Supplier`, `Stock`, `Ingredient`, and `IngredientPackage`.
+* **F09 / P01 (Pantry Inventory & Expiry):** Implemented ingredient storage, best-before tracking, package disposal, and
+  restocking in `Pantry`.
+* **F10, F11, F12 (Cooking — Queue, Staff Management, Cooking):** Implemented cook hierarchy selection (lowest-ranking
+  eligible cook priority, tie-breaking by lowest ID), order queueing, dish batching across multiple orders, tick-by-tick
+  preparation, and `CookResult` reporting in `Kitchen`, `Cook`, `CookResult`, `Dish`, and `Recipe`(some of my code got
+  credieted to Vlad and we were not able to credit it back to me in Kitchen (where we log the kitchen status during each
+  tick)).
+  So implemented All of the  `Cook`,`Supplier`, `Ingredient`, and `IngredientPackage`,`CookResult`, `Dish`, `Recipe`,
+  and most of the `Kitchen`(with few implementation from Skerdi and Ansh) and `Stock` (where Atharva has a function.)
+  classes.
+
+### Ansh Shekhar Tiwatne
+
+- **FO4: parse restaurants (parsing and validating restaurants)**
+    - all of `RestaurantParser`, function calls in `ParserController`
+- **F07: statistics (performing simulation statistics)**
+    - small logger calls in `Simulation`, setting and incrementing statistics variables in `Kitchen`, `Restaurant`,
+      `FrontOfHouse`
+    - some 7 lines in the `calculateStatistics()` function in `Simulation` somehow went to Vlad (probably after
+      resolving a conflict), but we just let it be
+- **F19: FOH - serving (serving meals from kitchen)**
+    - most of `ServingProcessor`, high level serving calls in `FrontOfHouse`, serving related functions in `Waiter`
+    - the `serveEventTable()` function was written by Skerdi as P04 (which includes event customer serving) belongs to
+      him
+    - the waiter recruiting functions for serving event groups were written by Atharva since P04 needs him to do
+      waitstaff selection for all actions for event groups
+- **F20: FOH - delivery (bringing meals from kitchen to drivers, managing drivers, restaurant status of drivers)**
+    - all of `DeliveryProcessor`, all of `Driver` (shared logic with my F24 and F29)
+- **F24: customer - casual delivery (performing casual customer delivery behavior, e.g. restaurant decision, accepting
+  food, rating)**
+    - all of `DeliveryProcessor`, all of `Driver` (shared logic with my F20 and F29)
+    - there was overlap for the "restaurant decision" with F25 which also has "deciding restaurant for casual delivery
+      groups", this part was done by Atharva as he had all browsing service logic anyway
+    - there was overlap for the "rating" with Skerdi's P05, so we decided that setting delivery related experience will
+      be handled by me (similarly for other people's features wherever experience needs to be updated), and then Skerdi
+      will stick to logic to calculate the rating based on the set experience
+- **F27: customer - waiting for food (waiting for food, eating, giving up)**
+    - all of `EatingProcessor`, high level eating calls in `FrontOfHouse`
+    - code for the "giving up" part is in other parts of my own features (serving/delivery) based on wherever the "give
+      up" is most sensible to be checked/handled e.g. `processGiveUps` in the delivery code
+- **F29: delivery service (receiving meals from kitchen, transporting them, giving them to customers, returning)**
+    - all of `Driver` (shared logic with my F20 and F24)
+    - note that we don't actually have a delivery service class in our design
+
+## Unit test and System Test Placement
+
+### Ved Rahul Shinkre
+
+* **F01 (Simulation):** Authored `MainIntegrationTest.kt` and `SimulationCoverageTest.kt` in package `simulationtests`
+  (collaborated on execution flow with Skerdi, where he covered more of the simulation , while i foused more on the main
+  and covering remainder of simulation).
+* **F06 (Parse Incidents):** Authored `StaffIncidentParserTest.kt` and `UnavailabilityIncidentParserTest.kt` in package
+  `incidentparsertests` (collaborated with Deniz, who covered the remaining two incident parsers (4 incidents equally
+  divded in two)).
+* **F13 (Restaurant - Menue):** Authored `CasualDishSelectionTest.kt` and `CountertopIntegrationTest.kt` (along with
+  `Decidedishforcasuals.kt`) in package `menuselection` and `CountertopIntegrationTest`respectively (collaborated on
+  menu availability logic with Deniz, where he worked on dish selection by regulars and event individuals and i focused
+  on in house and delivery casuals).
+* **F15 (FOH - Table Merging & Tables):** Authored `ReservationTableMergingTest.kt`and
+  `ReservationTableMerging2Test.kt` in package `mergetablestest` (collaborated on table merging and reservation
+  validation with Ansh, where he looked after the tble merging logic of the casuals, and i foucsed on the event and
+  regular customers).
+* **F17 (FOH - Staff Management):** (Atharva tested majority of this feature as we found it very difficult to divide
+  this feature in two and helped him diagnose any missing coverage and missing testing logic.)
+* **F20 (FOH - Delivery):** Authored `DeliveryIntegrationTest.kt` and `DriverTest.kt` in package `deliveryservicetest`
+  (collaborated on waitstaff to driver handoff logic with Skerdi, where he worked mostly on the serving to the drivers
+  logic, and i wokred on the driver class and the delivering logic itself).
+* **F24 (Customer - Casual Delivery):** Authored `CasualCustomerDelivery.kt` in package `casualcustomerdeliverytests` (I
+  covered most of the testing for this feature as just like feature F17 it was very difficult to divide this feature in
+  two for testing, but Atharva had contributions in testing logic).
+* **F26 (Customer - Food Preferences):** Authored `CasualDishSelectionTest.kt` in package `menuselection` (collaborated
+  on customer food preference with Deniz).
+* **F29 (Delivery Service):** Authored `DeliveryIntegrationTest.kt` in package `deliveryservicetest` (collaborated on
+  with Vlad, where i focused on end-to-end driver transit, route timing, and handover).
+* **F31 (Incident - Staff Change):** Authored `StaffChangeIncidentTest.kt` in package `staffchangeincidenttests`
+  (collaborated on with Ansh, we both worked on this and F34 feature together but felt that dividng the testing code was
+  difficult, so i upladed the incident staff change tests).
+* **F32 (Incident - Recipe Change):** Authored `RecipeChangeIntegrationTest.kt` and `Recipechangehappycases.kt` in
+  package `recipechangeincidenttset` (collaborated with Skerdi, where i took the happy cases and the integration tests
+  and Skerdi also implemented integgration tests and the edge cases).
+* **F34 (Incident - Ingredient Unavailability):** Just like F31, this was discussed and tested with Ansh but due to
+  difficulties in dividing the code it was uploaded by Ansh completely.
+* **P05 (Customer - Rating):** Authored `RegularEventGroupRatingTest.kt` in package `ratingtests` (collaborated on
+  regular/event rating scoring with Deniz, while he focused on testing the casual customer ratings).
+
+Authored, registered, and maintained 45 system tests and 8 shared logging/formatting utilities:
+
+* **`generaltests` (22 System Tests):** `CasualDeliveryTimeoutTest`, `CookChangeNoOrderTest`, `CorrectPartialServing1`,
+  `DeliveryOrderScenarioTest`, `DeliveryOrderSuccessTestA`, `DeliveryOrderSuccessTestB`, `EventReservationConflictTest`,
+  `ExactStockoutTest`, `ExhaustiveSimpleScenarioTest`(had to remove due the errors), `InvalidRestaurantParserTest`,
+  `MyParserTest`, `OneCookTwoOrdersTest`, `PartialServiceSuccessTest`, `PartialServiceTimeoutTest`,
+  `ProcurementLogicTestA`, `ProcurementLogicTestB`, `RecipeChangeAcrossRestaurantsTest`, `RestaurantClosingTest`,
+  `SingleOrCouple`, `WaitstaffExhaustionTest`, `ZeroProcurementTestA`, `ZeroProcurementTestB`.
+* **`incidentparsersystemtests` (9 System Tests):** `IncidentCookTypeExecForbiddenRejectedSystemTest`,
+  `IncidentDriverWithCookTypeRejectedSystemTest`, `IncidentNegativeEveningRejectedSystemTest`,
+  `IncidentStaffWithIngredientRejectedSystemTest`, `IncidentUnavailabilityNegativeDurationRejectedSystemTest`,
+  `IncidentUnavailabilityProhibitedPropertyRejectedSystemTest`, `IncidentUnavailabilityZeroDurationRejectedSystemTest`,
+  `IncidentWaitstaffWithCookTypeRejectedSystemTest`, `IncidentZeroStaffNumberRejectedSystemTest`.
+* **`losttest` (14 System Tests):** `CanvisitA`, `CanvisitB`, `CookIdTieBreakHighestIdB`, `CookIdTieBreakLowestIdA`,
+  `CorrectPartialServing2`, `DeliveryBasicDishPriorityA`, `DeliveryBasicDishPriorityB`, `DeliveryBrowsingTickResetA`,
+  `DeliveryBrowsingTickResetB`, `IdleCookReuseA`, `IdleCookReuseB`, `KitchenCookAssignmentSystemTest`,
+  `RegularFailedTest`, `SomeDeliveryTest.
+* **`utils` (8 Test Support Modules):** `DeliveryTestLogs`, `FohArrivalTestLogs`, `FohServiceTestLogs`,
+  `InitialAndPrepTestLogs`, `KitchenTestLogs`, `StatisticsTestLogs`, `TestLogFormatter`, `TickStatusTestLogs`.
+
+### Ansh Shekhar Tiwatne
+
+- **F03 with Skerdi: parse ingredients & recipes**
+    - unit tests: I covered ingredient and recipe-ingredient interaction, Skerdi covered other recipe behavior
+    - integration tests: I covered one larger test for checking if a recipe was parsed with correct ingredients, Skerdi
+      covered two integration tests for recipe schema validation
+- **F12 with Atharva: cooking**
+    - unit tests: I covered parts after cooking start, Atharva covered parts roughly upto it
+    - integration tests: I covered process cooking and ingredient planning parts, Atharva did the rest
+- **F15 with Ved: table merging & tables**
+    - Ved did the part with merging tables for reservations in advance (in the prep phase)
+    - I did the part with merging tables for casuals (without reservation) during the serving phase
+- **F16 with Vlad: FOH seating**
+    - I tested waitstaff selection for seating and checking action loads
+    - Vlad tested the outcomes, logs and interaction with other groups
+- **F21 with Deniz: FOH escorting**
+    - I tested event related escorting
+    - Deniz tested casual/regular (assigned waiter) escorting
+- **F23 with Deniz: customer - casual**
+    - I tested casual experience setting and rating outcomes
+    - Deniz tested casual group visit schedule, delivery timing
+- **F28 with Deniz: browsing service**
+    - I tested event group related logic
+    - Deniz tested casual customer related logic
+- **F30 with Atharva:**
+    - I did the strictly end of evening part (endEvening, resetDrivers, 24-th tick stuff)
+    - he did end of opening time (startFohClosing, escortAllAtClosing, endOfOpeningTime, and kitchen side of it)
+    - we both also look over each other's tests and work together
+- **F31 with Ved: incident - staff change**
+    - Ved and I discussed and made tests together, we decided Ved could commit it
+- **F34 with Ved: incident - ingredient unavailability**
+    - Ved and I discussed and made tests together, we decided I could commit it
+- **P02 with Vlad: FOH - event seating**
+    - I tested waitstaff selection for seating and checking action loads
+    - Vlad tested the outcomes, logs and interaction with other groups
+    - It's similar testing responsibility division to F16 that we also worked on together
+- **P03 with Vlad: FOH - event other actions**
+    - I tested the escorting and serving waitstaff selection
+    - Vlad tested the ordering
+- **P04 with Deniz: customer - events**
+    - I tested booking, arrival, event dish choice
+    - Deniz tested ordering and the event favorite dish
+- **System tests**
+    - some large full tests in `fulltests`
+    - system tests for testing responsibilities in `anshtests`
+    - some full tests (`EnormousTest`, `MeticulousTest`, `ThoroughTest`) also in `anshtests`
+    - AB Tests in `abtests`

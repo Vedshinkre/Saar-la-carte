@@ -81,6 +81,10 @@ I am tester of F01, F03, F04, F05, F08, F09, F18, F20, F22, F25, F27, F32, F33 a
 
 ## Adjustments from the Implementation Plan
 
+### Deniz Firat Sag
+
+It took me longer to get some of the parts of `ArrivalProcessor` to a decently working state, as I had to update my code to keep the project working with the changes my teammates were making. For this reason, I could not start working on my testing responsibilities until 20th September, Sunday. I deemed it a better choice to first get the parts of the project that I was responsible for to a relatively stable and correct state than for my code to block the rest of the simulation, stopping us from getting further results, and to write tests for components that did end up changing anyway.
+
 ### Skerdi Cuka
 - **P04 (Customer - events) was shared with other members.** The specification describes events in several places (restaurant decision, reservation, seating, ordering, serving, escorting, rating), and most of these are covered by other features (F25, P02, P03, P05). It was ambiguous what P04 itself should contain, so we decided in the group to share it with members who had less contribution so far. `EventGroup` was written by Atharva, Vlad and Deniz. My part is the rating of EVENT groups (in P05) and the tests of the event restaurant decision (F25).
 - **F21: the escorting of EVENT groups was implemented by Atharva as part of P03 (event other actions),** as we decided in the group (Mon 14 Sep). While adding it to `EscortingProcessor` he also edited the REGULAR and CASUAL escorting in the same class (escorting by the assigned waiter and the log of the escorted customers), so `git blame` shows these lines under his name. They belong to my F21 work; we discussed the changes together and they should be attributed to me.

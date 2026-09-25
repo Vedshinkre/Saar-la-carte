@@ -71,6 +71,28 @@ simulation and had to make sure that the invariants my teammates were expecting 
 to spend some time reading through their code to understand it and could not just work on my own code by myself. I would
 like to mention here as well that I did not use any generative AI for debugging.
 
+### Skerdi Cuka
+### During the week (Mon-Fri)
+
+- **Thu 10 Sep:** started logger classes (F02).
+- **Fri 11 Sep:** finished logger; documented the logger, `getAvailableRecipes()` for the menu (F13).
+- **Mon 14 Sep:** finished the first escorting version (F21), first version of the rating (P05), moved escorting and rating to the end of the tick processing, handed EVENT group escorting to Atharva, fixed the printing of lists and key-value pairs in the logger.
+- **Tue 15 Sep:** start of the end of the evening (F30): closing ratings, cleanup of the front of house, `resetKitchen`; escorting and rating moved into `restaurant.helpers`.
+- **Wed 16 Sep:** first version of the end of the opening time and of the evening, drivers removed after the evening, waiter counter reset; first system tests (simulation, supplier, statistics order). We spent a lot of time fixing build and detekt issues, until the project built.
+- **Thu 17 Sep:** we spent a lot of time fixing build and detekt issues again, until the project built. Tick status log adapted to the specification adjustments, kitchen reset fixes; food parser unit and integration tests; supplier, pantry and customer parser tests; pantry expiry and unavailability system tests.
+- **Fri 18 Sep:** end of evening fixes, customer reset for a new evening, countertop and escorting fixes, simulation integration test.
+- **Mon 21 Sep:** delivery unit and integration tests (hand-over, eating, return), waiting-for-food unit, integration and system tests, packaging change and stock tests, ordering, kitchen planning, group behaviour and simulation run tests, replaced the schema-redundant tests, system tests for the failing mandatory tests.
+- **Tue 22 Sep:** system tests for the customers' patience, log order of eating and delivery at the end of the evening; unit tests adjusted after the fix of aborted dishes.
+- **Wed 23 Sep:** end of evening adapted to specification adjustment 20 (aborted dishes), system tests for delivery, pantry and browsing, fixes after the reference runs, registration of the confirmed system tests for the mutants.
+- **Thu 24 Sep:** added tests for the exception cases of the parsers, review of my tests against the specification.
+
+### Over the weekend
+
+- **Sat 12 Sep:** started the escorting code, first unit test of the simulation.
+- **Sun 13 Sep:** fixed typos in the log messages.
+- **Sat 19 Sep:** system tests for customer behaviour and late casual groups, restaurant and customer parser integration tests, recipe change edge cases, event restaurant decision tests, registration of the system tests for the reference and the mutants.
+- **Sun 20 Sep:** worked locally on testing the features I am assigned to.
+
 ### Ansh Shekhar Tiwatne
 
 - **Day 1:**

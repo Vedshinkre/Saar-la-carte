@@ -199,6 +199,166 @@ registration functions in `SystemTestRegistration.kt`. Cross-checked against an 
 mutants found): 12 mutants confirmed killed across 10 of my tests, including `TableMergingLifecycleSystemTest`
 catching 3 by itself (Denkmalschutz, Grindset, KingOfTheHill).
 
+### Ansh Shekhar Tiwatne
+### 1.1 Implementation
+
+- **FO4: parse restaurants (parsing and validating restaurants)**
+    - all of `RestaurantParser`, function calls in `ParserController`
+- **F07: statistics (performing simulation statistics)**
+    - small logger calls in `Simulation`, setting and incrementing statistics variables in `Kitchen`, `Restaurant`,
+      `FrontOfHouse`
+    - some 7 lines in the `calculateStatistics()` function in `Simulation` somehow went to Vlad (probably after
+      resolving a conflict), but we just let it be
+- **F19: FOH - serving (serving meals from kitchen)**
+    - most of `ServingProcessor`, high level serving calls in `FrontOfHouse`, serving related functions in `Waiter`
+    - the `serveEventTable()` function was written by Skerdi as P04 (which includes event customer serving) belongs to
+      him
+    - the waiter recruiting functions for serving event groups were written by Atharva since P04 needs him to do
+      waitstaff selection for all actions for event groups
+- **F20: FOH - delivery (bringing meals from kitchen to drivers, managing drivers, restaurant status of drivers)**
+    - all of `DeliveryProcessor`, all of `Driver` (shared logic with my F24 and F29)
+- **F24: customer - casual delivery (performing casual customer delivery behavior, e.g. restaurant decision, accepting
+  food, rating)**
+    - all of `DeliveryProcessor`, all of `Driver` (shared logic with my F20 and F29)
+    - there was overlap for the "restaurant decision" with F25 which also has "deciding restaurant for casual delivery
+      groups", this part was done by Atharva as he had all browsing service logic anyway
+    - there was overlap for the "rating" with Skerdi's P05, so we decided that setting delivery related experience will
+      be handled by me (similarly for other people's features wherever experience needs to be updated), and then Skerdi
+      will stick to logic to calculate the rating based on the set experience
+- **F27: customer - waiting for food (waiting for food, eating, giving up)**
+    - all of `EatingProcessor`, high level eating calls in `FrontOfHouse`
+    - code for the "giving up" part is in other parts of my own features (serving/delivery) based on wherever the "give
+      up" is most sensible to be checked/handled e.g. `processGiveUps` in the delivery code
+- **F29: delivery service (receiving meals from kitchen, transporting them, giving them to customers, returning)**
+    - all of `Driver` (shared logic with my F20 and F24)
+    - note that we don't actually have a delivery service class in our design
+
+### 1.2 Testing
+- **F03 with Skerdi: parse ingredients & recipes**
+    - unit tests: I covered ingredient and recipe-ingredient interaction, Skerdi covered other recipe behavior
+    - integration tests: I covered one larger test for checking if a recipe was parsed with correct ingredients, Skerdi
+      covered two integration tests for recipe schema validation
+- **F12 with Atharva: cooking**
+    - unit tests: I covered parts after cooking start, Atharva covered parts roughly upto it
+    - integration tests: I covered process cooking and ingredient planning parts, Atharva did the rest
+- **F15 with Ved: table merging & tables**
+    - Ved did the part with merging tables for reservations in advance (in the prep phase)
+    - I did the part with merging tables for casuals (without reservation) during the serving phase
+- **F16 with Vlad: FOH seating**
+    - I tested waitstaff selection for seating and checking action loads
+    - Vlad tested the outcomes, logs and interaction with other groups
+- **F21 with Deniz: FOH escorting**
+    - I tested event related escorting
+    - Deniz tested casual/regular (assigned waiter) escorting
+- **F23 with Deniz: customer - casual**
+    - I tested casual experience setting and rating outcomes
+    - Deniz tested casual group visit schedule, delivery timing
+- **F28 with Deniz: browsing service**
+    - I tested event group related logic
+    - Deniz tested casual customer related logic
+- **F30 with Atharva:**
+    - I did the strictly end of evening part (endEvening, resetDrivers, 24-th tick stuff)
+    - he did end of opening time (startFohClosing, escortAllAtClosing, endOfOpeningTime, and kitchen side of it)
+    - we both also look over each other's tests and work together
+- **F31 with Ved: incident - staff change**
+    - Ved and I discussed and made tests together, we decided Ved could commit it
+- **F34 with Ved: incident - ingredient unavailability**
+    - Ved and I discussed and made tests together, we decided I could commit it
+- **P02 with Vlad: FOH - event seating**
+    - I tested waitstaff selection for seating and checking action loads
+    - Vlad tested the outcomes, logs and interaction with other groups
+    - It's similar testing responsibility division to F16 that we also worked on together
+- **P03 with Vlad: FOH - event other actions**
+    - I tested the escorting and serving waitstaff selection
+    - Vlad tested the ordering
+- **P04 with Deniz: customer - events**
+    - I tested booking, arrival, event dish choice
+    - Deniz tested ordering and the event favorite dish
+- **System tests**
+    - some large full tests in `fulltests`
+    - system tests for testing responsibilities in `anshtests`
+    - some full tests (`EnormousTest`, `MeticulousTest`, `ThoroughTest`) also in `anshtests`
+    - AB Tests in `abtests`
+
+### Ved Rahul Shinkre
+
+### 1.1 Implementation
+
+* **F03 (Parse Ingredients & Recipes):** Implemented schema parsing, type checking, validation rules, and error
+  propagation for food configuration files Food Parser.
+* **F08 (Supplier):** Implemented supplier inventory interactions, ingredient procurement calculation, and packaging
+  units in `Supplier`, `Stock`, `Ingredient`, and `IngredientPackage`.
+* **F09 / P01 (Pantry Inventory & Expiry):** Implemented ingredient storage, best-before tracking, package disposal, and
+  restocking in `Pantry`.
+* **F10, F11, F12 (Cooking — Queue, Staff Management, Cooking):** Implemented cook hierarchy selection (lowest-ranking
+  eligible cook priority, tie-breaking by lowest ID), order queueing, dish batching across multiple orders, tick-by-tick
+  preparation, and `CookResult` reporting in `Kitchen`, `Cook`, `CookResult`, `Dish`, and `Recipe`(some of my code got
+  credieted to Vlad and we were not able to credit it back to me in Kitchen (where we log the kitchen status during each
+  tick)).
+  So implemented All of the  `Cook`,`Supplier`, `Ingredient`, and `IngredientPackage`,`CookResult`, `Dish`, `Recipe`,
+  and most of the `Kitchen`(with few implementation from Skerdi and Ansh) and `Stock` (where Atharva has a function.)
+  classes.
+
+### 1.2 Testing
+
+* **F01 (Simulation):** Authored `MainIntegrationTest.kt` and `SimulationCoverageTest.kt` in package `simulationtests`
+  (collaborated on execution flow with Skerdi, where he covered more of the simulation , while i foused more on the main
+  and covering remainder of simulation).
+* **F06 (Parse Incidents):** Authored `StaffIncidentParserTest.kt` and `UnavailabilityIncidentParserTest.kt` in package
+  `incidentparsertests` (collaborated with Deniz, who covered the remaining two incident parsers (4 incidents equally
+  divded in two)).
+* **F13 (Restaurant - Menue):** Authored `CasualDishSelectionTest.kt` and `CountertopIntegrationTest.kt` (along with
+  `Decidedishforcasuals.kt`) in package `menuselection` and `CountertopIntegrationTest`respectively (collaborated on
+  menu availability logic with Deniz, where he worked on dish selection by regulars and event individuals and i focused
+  on in house and delivery casuals).
+* **F15 (FOH - Table Merging & Tables):** Authored `ReservationTableMergingTest.kt`and
+  `ReservationTableMerging2Test.kt` in package `mergetablestest` (collaborated on table merging and reservation
+  validation with Ansh, where he looked after the tble merging logic of the casuals, and i foucsed on the event and
+  regular customers).
+* **F17 (FOH - Staff Management):** (Atharva tested majority of this feature as we found it very difficult to divide
+  this feature in two and helped him diagnose any missing coverage and missing testing logic.)
+* **F20 (FOH - Delivery):** Authored `DeliveryIntegrationTest.kt` and `DriverTest.kt` in package `deliveryservicetest`
+  (collaborated on waitstaff to driver handoff logic with Skerdi, where he worked mostly on the serving to the drivers
+  logic, and i wokred on the driver class and the delivering logic itself).
+* **F24 (Customer - Casual Delivery):** Authored `CasualCustomerDelivery.kt` in package `casualcustomerdeliverytests` (I
+  covered most of the testing for this feature as just like feature F17 it was very difficult to divide this feature in
+  two for testing, but Atharva had contributions in testing logic).
+* **F26 (Customer - Food Preferences):** Authored `CasualDishSelectionTest.kt` in package `menuselection` (collaborated
+  on customer food preference with Deniz).
+* **F29 (Delivery Service):** Authored `DeliveryIntegrationTest.kt` in package `deliveryservicetest` (collaborated on
+  with Vlad, where i focused on end-to-end driver transit, route timing, and handover).
+* **F31 (Incident - Staff Change):** Authored `StaffChangeIncidentTest.kt` in package `staffchangeincidenttests`
+  (collaborated on with Ansh, we both worked on this and F34 feature together but felt that dividng the testing code was
+  difficult, so i upladed the incident staff change tests).
+* **F32 (Incident - Recipe Change):** Authored `RecipeChangeIntegrationTest.kt` and `Recipechangehappycases.kt` in
+  package `recipechangeincidenttset` (collaborated with Skerdi, where i took the happy cases and the integration tests
+  and Skerdi also implemented integgration tests and the edge cases).
+* **F34 (Incident - Ingredient Unavailability):** Just like F31, this was discussed and tested with Ansh but due to
+  difficulties in dividing the code it was uploaded by Ansh completely.
+* **P05 (Customer - Rating):** Authored `RegularEventGroupRatingTest.kt` in package `ratingtests` (collaborated on
+  regular/event rating scoring with Deniz, while he focused on testing the casual customer ratings).
+
+Authored, registered, and maintained 45 system tests and 8 shared logging/formatting utilities:
+
+* **`generaltests` (22 System Tests):** `CasualDeliveryTimeoutTest`, `CookChangeNoOrderTest`, `CorrectPartialServing1`,
+  `DeliveryOrderScenarioTest`, `DeliveryOrderSuccessTestA`, `DeliveryOrderSuccessTestB`, `EventReservationConflictTest`,
+  `ExactStockoutTest`, `ExhaustiveSimpleScenarioTest`(had to remove due the errors), `InvalidRestaurantParserTest`,
+  `MyParserTest`, `OneCookTwoOrdersTest`, `PartialServiceSuccessTest`, `PartialServiceTimeoutTest`,
+  `ProcurementLogicTestA`, `ProcurementLogicTestB`, `RecipeChangeAcrossRestaurantsTest`, `RestaurantClosingTest`,
+  `SingleOrCouple`, `WaitstaffExhaustionTest`, `ZeroProcurementTestA`, `ZeroProcurementTestB`.
+* **`incidentparsersystemtests` (9 System Tests):** `IncidentCookTypeExecForbiddenRejectedSystemTest`,
+  `IncidentDriverWithCookTypeRejectedSystemTest`, `IncidentNegativeEveningRejectedSystemTest`,
+  `IncidentStaffWithIngredientRejectedSystemTest`, `IncidentUnavailabilityNegativeDurationRejectedSystemTest`,
+  `IncidentUnavailabilityProhibitedPropertyRejectedSystemTest`, `IncidentUnavailabilityZeroDurationRejectedSystemTest`,
+  `IncidentWaitstaffWithCookTypeRejectedSystemTest`, `IncidentZeroStaffNumberRejectedSystemTest`.
+* **`losttest` (14 System Tests):** `CanvisitA`, `CanvisitB`, `CookIdTieBreakHighestIdB`, `CookIdTieBreakLowestIdA`,
+  `CorrectPartialServing2`, `DeliveryBasicDishPriorityA`, `DeliveryBasicDishPriorityB`, `DeliveryBrowsingTickResetA`,
+  `DeliveryBrowsingTickResetB`, `IdleCookReuseA`, `IdleCookReuseB`, `KitchenCookAssignmentSystemTest`,
+  `RegularFailedTest`, `SomeDeliveryTest.
+* **`utils` (8 Test Support Modules):** `DeliveryTestLogs`, `FohArrivalTestLogs`, `FohServiceTestLogs`,
+  `InitialAndPrepTestLogs`, `KitchenTestLogs`, `StatisticsTestLogs`, `TestLogFormatter`, `TickStatusTestLogs`.
+
+
 ---
 
 ## Adjustments from the Implementation Plan
@@ -844,165 +1004,4 @@ In practice I only used **Claude (Sonnet 5)** during the implementation phase
 We are aware of the potential dangers of using these tools and take full responsibility for any code, documents and other content produced during the group phase.
 ---
 
-## Feature Implementation and Placement
 
-### Ved Rahul Shinkre
-
-#### Feature Implementations (Core Domain)
-
-* **F03 (Parse Ingredients & Recipes):** Implemented schema parsing, type checking, validation rules, and error
-  propagation for food configuration files Food Parser.
-* **F08 (Supplier):** Implemented supplier inventory interactions, ingredient procurement calculation, and packaging
-  units in `Supplier`, `Stock`, `Ingredient`, and `IngredientPackage`.
-* **F09 / P01 (Pantry Inventory & Expiry):** Implemented ingredient storage, best-before tracking, package disposal, and
-  restocking in `Pantry`.
-* **F10, F11, F12 (Cooking — Queue, Staff Management, Cooking):** Implemented cook hierarchy selection (lowest-ranking
-  eligible cook priority, tie-breaking by lowest ID), order queueing, dish batching across multiple orders, tick-by-tick
-  preparation, and `CookResult` reporting in `Kitchen`, `Cook`, `CookResult`, `Dish`, and `Recipe`(some of my code got
-  credieted to Vlad and we were not able to credit it back to me in Kitchen (where we log the kitchen status during each
-  tick)).
-  So implemented All of the  `Cook`,`Supplier`, `Ingredient`, and `IngredientPackage`,`CookResult`, `Dish`, `Recipe`,
-  and most of the `Kitchen`(with few implementation from Skerdi and Ansh) and `Stock` (where Atharva has a function.)
-  classes.
-
-### Ansh Shekhar Tiwatne
-
-- **FO4: parse restaurants (parsing and validating restaurants)**
-    - all of `RestaurantParser`, function calls in `ParserController`
-- **F07: statistics (performing simulation statistics)**
-    - small logger calls in `Simulation`, setting and incrementing statistics variables in `Kitchen`, `Restaurant`,
-      `FrontOfHouse`
-    - some 7 lines in the `calculateStatistics()` function in `Simulation` somehow went to Vlad (probably after
-      resolving a conflict), but we just let it be
-- **F19: FOH - serving (serving meals from kitchen)**
-    - most of `ServingProcessor`, high level serving calls in `FrontOfHouse`, serving related functions in `Waiter`
-    - the `serveEventTable()` function was written by Skerdi as P04 (which includes event customer serving) belongs to
-      him
-    - the waiter recruiting functions for serving event groups were written by Atharva since P04 needs him to do
-      waitstaff selection for all actions for event groups
-- **F20: FOH - delivery (bringing meals from kitchen to drivers, managing drivers, restaurant status of drivers)**
-    - all of `DeliveryProcessor`, all of `Driver` (shared logic with my F24 and F29)
-- **F24: customer - casual delivery (performing casual customer delivery behavior, e.g. restaurant decision, accepting
-  food, rating)**
-    - all of `DeliveryProcessor`, all of `Driver` (shared logic with my F20 and F29)
-    - there was overlap for the "restaurant decision" with F25 which also has "deciding restaurant for casual delivery
-      groups", this part was done by Atharva as he had all browsing service logic anyway
-    - there was overlap for the "rating" with Skerdi's P05, so we decided that setting delivery related experience will
-      be handled by me (similarly for other people's features wherever experience needs to be updated), and then Skerdi
-      will stick to logic to calculate the rating based on the set experience
-- **F27: customer - waiting for food (waiting for food, eating, giving up)**
-    - all of `EatingProcessor`, high level eating calls in `FrontOfHouse`
-    - code for the "giving up" part is in other parts of my own features (serving/delivery) based on wherever the "give
-      up" is most sensible to be checked/handled e.g. `processGiveUps` in the delivery code
-- **F29: delivery service (receiving meals from kitchen, transporting them, giving them to customers, returning)**
-    - all of `Driver` (shared logic with my F20 and F24)
-    - note that we don't actually have a delivery service class in our design
-
-## Unit test and System Test Placement
-
-### Ved Rahul Shinkre
-
-* **F01 (Simulation):** Authored `MainIntegrationTest.kt` and `SimulationCoverageTest.kt` in package `simulationtests`
-  (collaborated on execution flow with Skerdi, where he covered more of the simulation , while i foused more on the main
-  and covering remainder of simulation).
-* **F06 (Parse Incidents):** Authored `StaffIncidentParserTest.kt` and `UnavailabilityIncidentParserTest.kt` in package
-  `incidentparsertests` (collaborated with Deniz, who covered the remaining two incident parsers (4 incidents equally
-  divded in two)).
-* **F13 (Restaurant - Menue):** Authored `CasualDishSelectionTest.kt` and `CountertopIntegrationTest.kt` (along with
-  `Decidedishforcasuals.kt`) in package `menuselection` and `CountertopIntegrationTest`respectively (collaborated on
-  menu availability logic with Deniz, where he worked on dish selection by regulars and event individuals and i focused
-  on in house and delivery casuals).
-* **F15 (FOH - Table Merging & Tables):** Authored `ReservationTableMergingTest.kt`and
-  `ReservationTableMerging2Test.kt` in package `mergetablestest` (collaborated on table merging and reservation
-  validation with Ansh, where he looked after the tble merging logic of the casuals, and i foucsed on the event and
-  regular customers).
-* **F17 (FOH - Staff Management):** (Atharva tested majority of this feature as we found it very difficult to divide
-  this feature in two and helped him diagnose any missing coverage and missing testing logic.)
-* **F20 (FOH - Delivery):** Authored `DeliveryIntegrationTest.kt` and `DriverTest.kt` in package `deliveryservicetest`
-  (collaborated on waitstaff to driver handoff logic with Skerdi, where he worked mostly on the serving to the drivers
-  logic, and i wokred on the driver class and the delivering logic itself).
-* **F24 (Customer - Casual Delivery):** Authored `CasualCustomerDelivery.kt` in package `casualcustomerdeliverytests` (I
-  covered most of the testing for this feature as just like feature F17 it was very difficult to divide this feature in
-  two for testing, but Atharva had contributions in testing logic).
-* **F26 (Customer - Food Preferences):** Authored `CasualDishSelectionTest.kt` in package `menuselection` (collaborated
-  on customer food preference with Deniz).
-* **F29 (Delivery Service):** Authored `DeliveryIntegrationTest.kt` in package `deliveryservicetest` (collaborated on
-  with Vlad, where i focused on end-to-end driver transit, route timing, and handover).
-* **F31 (Incident - Staff Change):** Authored `StaffChangeIncidentTest.kt` in package `staffchangeincidenttests`
-  (collaborated on with Ansh, we both worked on this and F34 feature together but felt that dividng the testing code was
-  difficult, so i upladed the incident staff change tests).
-* **F32 (Incident - Recipe Change):** Authored `RecipeChangeIntegrationTest.kt` and `Recipechangehappycases.kt` in
-  package `recipechangeincidenttset` (collaborated with Skerdi, where i took the happy cases and the integration tests
-  and Skerdi also implemented integgration tests and the edge cases).
-* **F34 (Incident - Ingredient Unavailability):** Just like F31, this was discussed and tested with Ansh but due to
-  difficulties in dividing the code it was uploaded by Ansh completely.
-* **P05 (Customer - Rating):** Authored `RegularEventGroupRatingTest.kt` in package `ratingtests` (collaborated on
-  regular/event rating scoring with Deniz, while he focused on testing the casual customer ratings).
-
-Authored, registered, and maintained 45 system tests and 8 shared logging/formatting utilities:
-
-* **`generaltests` (22 System Tests):** `CasualDeliveryTimeoutTest`, `CookChangeNoOrderTest`, `CorrectPartialServing1`,
-  `DeliveryOrderScenarioTest`, `DeliveryOrderSuccessTestA`, `DeliveryOrderSuccessTestB`, `EventReservationConflictTest`,
-  `ExactStockoutTest`, `ExhaustiveSimpleScenarioTest`(had to remove due the errors), `InvalidRestaurantParserTest`,
-  `MyParserTest`, `OneCookTwoOrdersTest`, `PartialServiceSuccessTest`, `PartialServiceTimeoutTest`,
-  `ProcurementLogicTestA`, `ProcurementLogicTestB`, `RecipeChangeAcrossRestaurantsTest`, `RestaurantClosingTest`,
-  `SingleOrCouple`, `WaitstaffExhaustionTest`, `ZeroProcurementTestA`, `ZeroProcurementTestB`.
-* **`incidentparsersystemtests` (9 System Tests):** `IncidentCookTypeExecForbiddenRejectedSystemTest`,
-  `IncidentDriverWithCookTypeRejectedSystemTest`, `IncidentNegativeEveningRejectedSystemTest`,
-  `IncidentStaffWithIngredientRejectedSystemTest`, `IncidentUnavailabilityNegativeDurationRejectedSystemTest`,
-  `IncidentUnavailabilityProhibitedPropertyRejectedSystemTest`, `IncidentUnavailabilityZeroDurationRejectedSystemTest`,
-  `IncidentWaitstaffWithCookTypeRejectedSystemTest`, `IncidentZeroStaffNumberRejectedSystemTest`.
-* **`losttest` (14 System Tests):** `CanvisitA`, `CanvisitB`, `CookIdTieBreakHighestIdB`, `CookIdTieBreakLowestIdA`,
-  `CorrectPartialServing2`, `DeliveryBasicDishPriorityA`, `DeliveryBasicDishPriorityB`, `DeliveryBrowsingTickResetA`,
-  `DeliveryBrowsingTickResetB`, `IdleCookReuseA`, `IdleCookReuseB`, `KitchenCookAssignmentSystemTest`,
-  `RegularFailedTest`, `SomeDeliveryTest.
-* **`utils` (8 Test Support Modules):** `DeliveryTestLogs`, `FohArrivalTestLogs`, `FohServiceTestLogs`,
-  `InitialAndPrepTestLogs`, `KitchenTestLogs`, `StatisticsTestLogs`, `TestLogFormatter`, `TickStatusTestLogs`.
-
-### Ansh Shekhar Tiwatne
-
-- **F03 with Skerdi: parse ingredients & recipes**
-    - unit tests: I covered ingredient and recipe-ingredient interaction, Skerdi covered other recipe behavior
-    - integration tests: I covered one larger test for checking if a recipe was parsed with correct ingredients, Skerdi
-      covered two integration tests for recipe schema validation
-- **F12 with Atharva: cooking**
-    - unit tests: I covered parts after cooking start, Atharva covered parts roughly upto it
-    - integration tests: I covered process cooking and ingredient planning parts, Atharva did the rest
-- **F15 with Ved: table merging & tables**
-    - Ved did the part with merging tables for reservations in advance (in the prep phase)
-    - I did the part with merging tables for casuals (without reservation) during the serving phase
-- **F16 with Vlad: FOH seating**
-    - I tested waitstaff selection for seating and checking action loads
-    - Vlad tested the outcomes, logs and interaction with other groups
-- **F21 with Deniz: FOH escorting**
-    - I tested event related escorting
-    - Deniz tested casual/regular (assigned waiter) escorting
-- **F23 with Deniz: customer - casual**
-    - I tested casual experience setting and rating outcomes
-    - Deniz tested casual group visit schedule, delivery timing
-- **F28 with Deniz: browsing service**
-    - I tested event group related logic
-    - Deniz tested casual customer related logic
-- **F30 with Atharva:**
-    - I did the strictly end of evening part (endEvening, resetDrivers, 24-th tick stuff)
-    - he did end of opening time (startFohClosing, escortAllAtClosing, endOfOpeningTime, and kitchen side of it)
-    - we both also look over each other's tests and work together
-- **F31 with Ved: incident - staff change**
-    - Ved and I discussed and made tests together, we decided Ved could commit it
-- **F34 with Ved: incident - ingredient unavailability**
-    - Ved and I discussed and made tests together, we decided I could commit it
-- **P02 with Vlad: FOH - event seating**
-    - I tested waitstaff selection for seating and checking action loads
-    - Vlad tested the outcomes, logs and interaction with other groups
-    - It's similar testing responsibility division to F16 that we also worked on together
-- **P03 with Vlad: FOH - event other actions**
-    - I tested the escorting and serving waitstaff selection
-    - Vlad tested the ordering
-- **P04 with Deniz: customer - events**
-    - I tested booking, arrival, event dish choice
-    - Deniz tested ordering and the event favorite dish
-- **System tests**
-    - some large full tests in `fulltests`
-    - system tests for testing responsibilities in `anshtests`
-    - some full tests (`EnormousTest`, `MeticulousTest`, `ThoroughTest`) also in `anshtests`
-    - AB Tests in `abtests`

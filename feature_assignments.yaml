@@ -1,0 +1,250 @@
+group:
+  name: Group 10
+  members:
+    - gitlab_user: ansh.tiwatne
+      name: Ansh Shekhar Tiwatne
+    - gitlab_user: atko00001
+      name: Atharva Kore
+    - gitlab_user: DenizFirat.Sag
+      name: Deniz Firat Sag
+    - gitlab_user: skerdi
+      name: Skerdi Cuka
+    - gitlab_user: Ved
+      name: Ved Shinkre
+    - gitlab_user: Vlad07
+      name: Vlad Mihai Marcio
+assignments:
+  - feature_id: F01
+    implementation_responsible: Vlad07
+    testing_responsible:
+      - skerdi
+      - Ved
+    note: Simulation managing.
+  - feature_id: F02
+    implementation_responsible: skerdi
+    testing_responsible:
+      - atko00001
+      - DenizFirat.Sag
+    note: Logging.
+  - feature_id: F03
+    implementation_responsible: Ved
+    testing_responsible:
+      - ansh.tiwatne
+      - skerdi
+    note: Parse ingredients and recipes.
+  - feature_id: F04
+    implementation_responsible: ansh.tiwatne
+    testing_responsible:
+      - skerdi
+      - atko00001
+    note: Parse restaurants.
+  - feature_id: F05
+    implementation_responsible: DenizFirat.Sag
+    testing_responsible:
+      - Vlad07
+      - skerdi
+    note: Parse customers.
+  - feature_id: F06
+    implementation_responsible: atko00001
+    testing_responsible:
+      - Ved
+      - DenizFirat.Sag
+    note: Parse incidents.
+  - feature_id: F07
+    implementation_responsible: ansh.tiwatne
+    testing_responsible:
+      - Vlad07
+      - atko00001
+    note: Statistics.
+  - feature_id: F08
+    implementation_responsible: Ved
+    testing_responsible:
+      - skerdi
+      - atko00001
+    note: Supplier.
+  - feature_id: F09
+    implementation_responsible: Ved
+    testing_responsible:
+      - skerdi
+      - DenizFirat.Sag
+    note: Pantry - buying ingredients.
+  - feature_id: F10
+    implementation_responsible: Ved
+    testing_responsible:
+      - DenizFirat.Sag
+      - atko00001
+    note: Cooking - order queue.
+  - feature_id: F11
+    implementation_responsible: Ved
+    testing_responsible:
+      - DenizFirat.Sag
+      - Vlad07
+    note: Cooking - staff and staff management.
+  - feature_id: F12
+    implementation_responsible: Ved
+    testing_responsible:
+      - ansh.tiwatne
+      - atko00001
+    note: Cooking.
+  - feature_id: F13
+    implementation_responsible: skerdi
+    testing_responsible:
+      - Ved
+      - DenizFirat.Sag
+    note: Restaurant menu.
+  - feature_id: F14
+    implementation_responsible: DenizFirat.Sag
+    testing_responsible:
+      - Vlad07
+      - atko00001
+    note: FOH - evening table reservation.
+  - feature_id: F15
+    implementation_responsible: DenizFirat.Sag
+    testing_responsible:
+      - ansh.tiwatne
+      - Ved
+    note: FOH - table merging and tables.
+  - feature_id: F16
+    implementation_responsible: DenizFirat.Sag
+    testing_responsible:
+      - Vlad07
+      - ansh.tiwatne
+    note: FOH - seating.
+  - feature_id: F17
+    implementation_responsible: DenizFirat.Sag
+    testing_responsible:
+      - Ved
+      - atko00001
+    note: FOH - staff management.
+  - feature_id: F18
+    implementation_responsible: Vlad07
+    testing_responsible:
+      - DenizFirat.Sag
+      - skerdi
+    note: FOH - ordering.
+  - feature_id: F19
+    implementation_responsible: ansh.tiwatne
+    testing_responsible:
+      - Vlad07
+      - DenizFirat.Sag
+    note: FOH - serving.
+  - feature_id: F20
+    implementation_responsible: ansh.tiwatne
+    testing_responsible:
+      - Ved
+      - skerdi
+    note: FOH - delivery.
+  - feature_id: F21
+    implementation_responsible: skerdi
+    testing_responsible:
+      - DenizFirat.Sag
+      - ansh.tiwatne
+    note: FOH - escorting.
+  - feature_id: F22
+    implementation_responsible: DenizFirat.Sag
+    testing_responsible:
+      - skerdi
+      - atko00001
+    note: Customer - regulars.
+  - feature_id: F23
+    implementation_responsible: Vlad07
+    testing_responsible:
+      - ansh.tiwatne
+      - DenizFirat.Sag
+    note: Customer - casual.
+  - feature_id: F24
+    implementation_responsible: ansh.tiwatne
+    testing_responsible:
+      - atko00001
+      - Ved
+    note: Customer - casual delivery.
+  - feature_id: F25
+    implementation_responsible: atko00001
+    testing_responsible:
+      - skerdi
+      - Vlad07
+    note: Customer - restaurant decision.
+  - feature_id: F26
+    implementation_responsible: Vlad07
+    testing_responsible:
+      - DenizFirat.Sag
+      - Ved
+    note: Customer - food preferences.
+  - feature_id: F27
+    implementation_responsible: ansh.tiwatne
+    testing_responsible:
+      - skerdi
+      - atko00001
+    note: Customer - waiting for food.
+  - feature_id: F28
+    implementation_responsible: atko00001
+    testing_responsible:
+      - ansh.tiwatne
+      - DenizFirat.Sag
+    note: Browsing service.
+  - feature_id: F29
+    implementation_responsible: ansh.tiwatne
+    testing_responsible:
+      - Ved
+      - Vlad07
+    note: Delivery service.
+  - feature_id: F30
+    implementation_responsible: skerdi
+    testing_responsible:
+      - atko00001
+      - ansh.tiwatne
+    note: End of evening.
+  - feature_id: F31
+    implementation_responsible: Vlad07
+    testing_responsible:
+      - Ved
+      - ansh.tiwatne
+    note: Incident - staff change.
+  - feature_id: F32
+    implementation_responsible: Vlad07
+    testing_responsible:
+      - skerdi
+      - Ved
+    note: Incident - recipe change.
+  - feature_id: F33
+    implementation_responsible: atko00001
+    testing_responsible:
+      - skerdi
+      - DenizFirat.Sag
+    note: Incident - packaging change.
+  - feature_id: F34
+    implementation_responsible: atko00001
+    testing_responsible:
+      - Ved
+      - ansh.tiwatne
+    note: Incident - ingredient unavailability.
+  - feature_id: P01
+    implementation_responsible: Ved
+    testing_responsible:
+      - atko00001
+      - skerdi
+    note: Pantry - best before, reservations.
+  - feature_id: P02
+    implementation_responsible: DenizFirat.Sag
+    testing_responsible:
+      - ansh.tiwatne
+      - Vlad07
+    note: FOH - event seating.
+  - feature_id: P03
+    implementation_responsible: atko00001
+    testing_responsible:
+      - DenizFirat.Sag
+      - ansh.tiwatne
+    note: FOH - event other actions.
+  - feature_id: P04
+    implementation_responsible: skerdi
+    testing_responsible:
+      - DenizFirat.Sag
+      - ansh.tiwatne
+    note: Customer - events.
+  - feature_id: P05
+    implementation_responsible: skerdi
+    testing_responsible:
+      - DenizFirat.Sag
+      - Ved
+    note: Customer - rating.

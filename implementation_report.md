@@ -659,7 +659,7 @@ writing or debugging implementation code (code under `src/main/`).
 Alice used the following tools in the implementation phase:
 Tool-1 for code completion and tool Tool-2 for ... . In addition, she used Tool-3 for ...
 
-**Ansh:** Option 2
+**Ansh Shekhar Tiwatne:** Option 2
 - used **NotebookLM** (Gemini 3.1 Pro I think) where I uploaded the specification and adjustments so I can easily use it for quickly querying any doubts I had (saved me a lot of time of scrolling through pages)
 - used **Claude Code** (mostly Sonnet 5, sometimes Opus 5) 1. to build good scenarios for tests (given specifications e.g. x restaurants of y type with z customers or given particular cases) 2. to help refine and better document code I wrote (wanted to get my logic to work as simply with few lines and following Kotlin best practices wherever possible) 3. to quickly write some AB tests after office hours 4. to help debug: did most debugging manually to avoid AI false positive, but used some aid for tricker bugs
 
@@ -855,3 +855,8 @@ Authored, registered, and maintained 45 system tests and 8 shared logging/format
 - **P04 with Deniz: customer - events**
     - I tested booking, arrival, event dish choice
     - Deniz tested ordering and the event favorite dish
+- **System tests**
+  - some large full tests in `fulltests`
+  - system tests for testing responsibilities in `anshtests`
+  - some full tests (`EnormousTest`, `MeticulousTest`, `ThoroughTest`) also in `anshtests`
+  - AB Tests in `abtests`

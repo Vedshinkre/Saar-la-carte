@@ -14,7 +14,7 @@ private const val BOWL = "Bowl"
  * that our main branch did not continue a hand-over in the next tick. The specification says the
  * waiters "deliver meals to the drivers [...] until their limit is reached", and adjustment #8
  * splits a hand-over across ticks and waiters. The reference passes HandOverContinuesInTheNextTick
- * and HandOverCountsInTheServingStatus (runs 9-12). The other three fail there by design.
+ * and HandOverCountsInTheServingStatus (runs 9-12). The other two fail there by design.
  *
  * One waiter, one driver. In tick 2 a dine-in group of eight and a delivery group of four order
  * the only dish, which is cooked at once. The table is served first, so the waiter has 2 of their
@@ -83,22 +83,6 @@ class HandOverWaitsForTheWholeOrderSystemTest : SplitHandOverScenario() {
                 "Expected the first hand-over to be\n    ${handOver(4)}\nbut got\n    $first"
             )
         }
-    }
-}
-
-/**
- * Reading C (rejected, fails by design): 2 meals are handed over in tick 2 and the rest never, so
- * the driver never leaves and the group gives up. This is not a reading of the specification. It
- * is the behaviour the office hour reported for our main branch, and it checked whether the
- * reference stalls the same way (it does not).
- */
-class HandOverNeverCompletesSystemTest : SplitHandOverScenario() {
-    override val name = "HandOverNeverCompletesSystemTest"
-    override val description = "A delivery handed over only partly is never completed"
-
-    override suspend fun run() {
-        assertFirstInTick(2, HAND_OVER_PREFIX, handOver(2))
-        skipUntilString(DeliveryTestLogs.deliveryGivenUp(1, 2, 2))
     }
 }
 

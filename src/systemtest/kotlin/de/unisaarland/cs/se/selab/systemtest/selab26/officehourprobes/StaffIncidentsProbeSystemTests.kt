@@ -14,9 +14,8 @@ private const val NEGATIVE = "NEGATIVE"
  * Narrowing probes (Sep 23) for FullTest-staff-incidents, which passed on our implementation and
  * failed on the reference (run 10). The full test replays a whole log, so its failure does not say
  * where the difference is. Each probe checks one of the places where that log is asserted line by
- * line. On the reference (runs 11-12) six of them pass. Only
- * [StaffIncidentsLateCasualLeavesSilentlySystemTest] fails, which puts the difference in tick 22
- * of evening 3.
+ * line. All six pass on the reference (runs 11-12), which leaves tick 22 of evening 3 as the only
+ * difference: the reference logs something there for CASUAL group 10, which is still waiting.
  *
  * Private copy of `fulltests/scenarios/staff-incidents`: one SOUS cook, two waiters, two COMMON
  * tables of 4. REGULAR groups 1 and 2 (4 people each) reserve them every evening. REGULAR group 3
@@ -78,31 +77,6 @@ class StaffIncidentsRegularStopsAfterTwoFailuresSystemTest : StaffIncidentsScena
 
     private companion object {
         const val NO_RESERVING_PREFIX = "[IMPORTANT] FOH No Reserving"
-    }
-}
-
-/**
- * Expects nothing to be logged for CASUAL group 10 in tick 22 of evening 3. The group found no
- * free waiter in tick 21, and no customers are seated in the last three ticks. So the restaurant
- * start should be followed directly by an empty seating status.
- *
- * This expectation was a guess, not a paired reading. It fails on the reference (runs 11-12), which
- * logs a line for the waiting group there (adjustments #16 and #17 cover waiting customers in the
- * last three ticks).
- */
-class StaffIncidentsLateCasualLeavesSilentlySystemTest : StaffIncidentsScenario() {
-    override val name = "StaffIncidentsLateCasualLeavesSilentlySystemTest"
-    override val description = "A CASUAL group still waiting in the last three ticks leaves without a log"
-
-    override suspend fun run() {
-        skipUntilString(TickStatusTestLogs.tickStart(LAST_OPEN_TICK + 1, EVENING))
-        assertNextLine(TickStatusTestLogs.restStart(1))
-        assertNextLine(FohArrivalTestLogs.seatingStatus(1, 0, 0, 0))
-    }
-
-    private companion object {
-        const val LAST_OPEN_TICK = 21
-        const val EVENING = 3
     }
 }
 

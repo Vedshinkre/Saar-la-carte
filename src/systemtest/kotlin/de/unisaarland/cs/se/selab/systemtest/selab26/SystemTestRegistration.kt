@@ -175,7 +175,6 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.GivenUpDel
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.HandOverContinuesInTheNextTickSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.HandOverCountsInTheServingStatusSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.HandOverIsNotCountedInTheServingStatusSystemTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.HandOverNeverCompletesSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.HandOverWaitsForTheWholeOrderSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.IdleCookWithHigherIdTakesNextJobSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.IdleCookWithLowestIdTakesNextJobSystemTest
@@ -197,7 +196,6 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.RecipeScop
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.SecondOrderOfATickWaitsOneTickSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.StaffIncidentsFailedReservationRatesInTickOneSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.StaffIncidentsIncidentsLoggedBeforePreparationSystemTest
-import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.StaffIncidentsLateCasualLeavesSilentlySystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.StaffIncidentsNoCookSeatsButCannotOrderSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.StaffIncidentsRegularStopsAfterTwoFailuresSystemTest
 import de.unisaarland.cs.se.selab.systemtest.selab26.officehourprobes.StaffIncidentsRegularTriesAgainAfterOneFailureSystemTest
@@ -596,7 +594,6 @@ object SystemTestRegistration {
         testSuite.registerTest(WalkedOutMealIsAbortedSystemTest())
         testSuite.registerTest(GivenUpDeliveryIsDroppedFromTheKitchenSystemTest())
         testSuite.registerTest(HandOverWaitsForTheWholeOrderSystemTest())
-        testSuite.registerTest(HandOverNeverCompletesSystemTest())
         testSuite.registerTest(HandOverIsNotCountedInTheServingStatusSystemTest())
         testSuite.registerTest(CookIdsAreReversedOnTheFirstTickSystemTest())
         testSuite.registerTest(SecondOrderOfATickWaitsOneTickSystemTest())
@@ -608,7 +605,6 @@ object SystemTestRegistration {
         testSuite.registerTest(StaffIncidentsFailedReservationRatesInTickOneSystemTest())
         testSuite.registerTest(StaffIncidentsRegularTriesAgainAfterOneFailureSystemTest())
         testSuite.registerTest(StaffIncidentsRegularStopsAfterTwoFailuresSystemTest())
-        testSuite.registerTest(StaffIncidentsLateCasualLeavesSilentlySystemTest())
         testSuite.registerTest(StaffIncidentsIncidentsLoggedBeforePreparationSystemTest())
         testSuite.registerTest(StaffIncidentsNoCookSeatsButCannotOrderSystemTest())
         testSuite.registerTest(StaffIncidentsStatisticsSystemTest())

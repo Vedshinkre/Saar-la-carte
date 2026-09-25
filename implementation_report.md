@@ -591,7 +591,13 @@ compliant KDoc comments and suggesting descriptive test names. Generative AI was
 write core implmentation code, or generate any kind of business logic.
 We are aware of the potential dangers of using these tools and take full responsibility for any code, documents, and
 other content produced during the group phase.
-...
+
+**Vlad Mihai Marciu:**
+*Option 2:*
+I used Claude Code with the models Claude Sonnet 5, Claude Opus 5 and Claude Opus 5.5 in the implementation phase. This is different from the implementation plan, which instead listed GitHub Copilot Chat, ChatGPT (GPT-5), Claude (Sonnet 5) and Gemini (3.1 Pro). I did not end up using those tools
+
+Claude Code was used mainly for formatting, testing (generating fixtures and skeletons) and building scenarios for small system tests that compare our behaviour where the specification was ambiguous. All generated code and text was reviewed and adjusted by me before being committed.
+
 
 **Skerdi:**
 *Option 2:*

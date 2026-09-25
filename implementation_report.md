@@ -433,6 +433,30 @@ separately as "over the weekend".
 
 ### Atharva
 
+- **The plan leaves a gap for me on Day 3 (Mon 14 Sep) and an incomplete entry on Day 4 (Tue 15 Sep)** — no task is
+  listed for Day 3, and Day 4 just says "Work on." I used that opening to pull F28, F33, F34 and P03 forward from their
+  scheduled Day 6/Day 7 slots — Browsing Service and Unavailability Incident work landed on the very first weekend
+  (Sun 13 Sep) — matching the plan's own note that F28/F25 must exist before F23/F24/P04 can be tested.
+- **F17 (Deniz) and F24 (Ansh) were planned jointly with Ved, then split by authorship.** Ved and I designed the test
+  plan and edge cases for both together, but I committed F17's suite (`fohstaffmanagement/`) and Ved committed F24's
+  (`casualcustomerdeliverytests/`) alone. Ved's own report confirms the same split from his side, and also notes I
+  went beyond a pure testing role on F17, fixing staff/driver-availability logic directly, not just writing tests.
+- **A few cross-feature fixes and a same-file merge were informal, not routed through a scheduled handoff:** a
+  stock-interaction fix in `UnavailabilityIncident` at Ved's direction (Sat 12 Sep), an end-of-evening fix in
+  `Restaurant` at Skerdi's direction (Tue 15 Sep), and a same-day reconciliation of two competing edits to
+  `IncidentParser.kt` with Ansh (Wed 16 Sep) — my sole-owned F06 file, which the plan assumes I'd own end-to-end alone.
+- **One same-day implement-then-revert:** added a calculation for when an event group's kitchen prep needed to finish
+  by, then removed it a few commits later the same day after realising it computed the wrong tick (Wed 23 Sep).
+- **The two hardening pushes (Sat 19 - Sun 20 Sep, Wed 23 Sep) produced disabled/removed tests rather than "fix and
+  add a test" as the plan's Day 10 calls for** — several tests were commented out to keep the build green and cleaned
+  up later (Thu 24 Sep), so coverage regressed temporarily instead of growing monotonically.
+- **`EventOrderingSpecTest.kt` was written ahead of the implementation and, for a few days, documented a real gap:**
+  event orders should be capped at each waiter's per-tick limit, but the implementation still took a whole group's
+  order in one go when the test was written; fixed a few days later (Mon 21 - Tue 22 Sep), so the test's own
+  "expected to fail today" doc-comment is now stale. Because that fix landed late, Day 8 (Mon 21 Sep) — which the
+  plan earmarks for shifting onto assigned-feature testing — was instead spent finishing my own F25/P03 work; I only
+  moved onto F17/F07/F14/F22 testing starting Tue 22 Sep.
+
 ## Detailed Timeline
 
 ### Deniz Firat Sag

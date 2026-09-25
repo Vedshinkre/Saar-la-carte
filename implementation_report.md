@@ -649,6 +649,7 @@ Tool-1 for code completion and tool Tool-2 for ... . In addition, she used Tool-
   wrote (wanted to get my logic to work as simply with few lines and following Kotlin best practices wherever possible)
     3. to quickly write some AB tests after office hours 4. to help debug: did most debugging manually to avoid AI false
        positive, but used some aid for tricker bugs
+- no AI was used for writing the implementation report
 
 **Ved Rahul Shinkre:** Option 2
 I used **Gemini** and **ChatGPT** during the implementation phase. These tools were used strictly for debugging test

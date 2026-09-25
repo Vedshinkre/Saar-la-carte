@@ -6,8 +6,40 @@ Resubmit `feature_assignments.yaml` and make sure to update it if anything chang
 should be at the root of your group's repository. Only include major contributions (no minor bugfixes or tiny code
 additions).
 
-If responsibilities changed during implementation, keep the table factual for actual work and document all changes in
-the adjustments section below.
+### Skerdi Cuka
+
+
+### 1.1 Implementation
+
+| Feature | What I implemented | Where the code lies |
+|---|---|---|
+| F02 Logging | All log messages of the simulation: log levels, output handle, the formatting rules of the specification (ids sorted ascending, `key:value` lists), one logger per phase | package `loggers`: `Logger`, `InitialAndPrepLogger`, `TickStatusLogger`, `FohReceptionLogger`, `FohServiceLogger`, `KitchenLogger`, `DeliveryLogger`, `StatisticsLogger` |
+| F13 Restaurant menu | Which dishes can currently be ordered (ingredients in the pantry and not reserved, expired packages ignored, an eligible cook exists) | `restaurant.Countertop` |
+| F21 FOH - escorting | Escorting of finished and unserved customers by their waiter (limit of 10 per tick, partial escorting, releasing the waiter's load, taking down the tables) for REGULAR and CASUAL groups; EVENT group escorting is Atharva's (P03), see section 2 | `restaurant.helpers.EscortingProcessor`, `actors.Waiter` |
+| F30 End of evening | End of the opening time and of the evening: closing ratings, escorting everyone out, dropping reservations, separating tables, resetting waiters, drivers, customers and the kitchen for the next evening | `restaurant.Restaurant` (end of opening time / evening), `FrontOfHouse` (closing), `Kitchen.resetKitchen` |
+| P05 Customer - rating | Rating of a group from its experience and rating likelihood, the restaurant's rating counters, rating logs, ratings at closing | `restaurant.helpers.RatingProcessor`, `customer.CustomerGroup` / `CasualGroup` (`determineRating`) |
+| P04 Customer - events | Shared with other members, see section 2. I did not write `EventGroup` | - |
+
+### 1.2 Testing
+
+I am tester of F01, F03, F04, F05, F08, F09, F18, F20, F22, F25, F27, F32, F33 and P01 (as in `feature_assignments.yaml`). For these features I wrote about 300 unit and integration test methods and 29 system tests. The main things I tested:
+
+- **F01 Simulation:** the whole run through the real `main`: the log framing of the specification for different `maxTicks`, evenings and ticks restarting, restaurants simulated in ascending id, the statistics lines, the incidents applied before each evening.
+- **F03 / F04 / F05 Parsers:** recipes (duration bounds, unique ids, basic dishes), the basic dish menu of a restaurant, the customer group types (REGULAR opening hours, CASUAL delivery lead time, EVENT favourite dishes), missing fields and unknown values, and the order of parsing and validation.
+- **F08 / F09 / P01 Supplier and pantry:** buying whole packages, the kitchen planning (last three visits of regulars, favourite dish of events, the estimate per menu dish), expiry of ingredients, the priority of open packages and the earliest best-before date, and unavailable ingredients.
+- **F18 Ordering:** the order of the customers within a group, dishes running out during an order, customers who find no dish, waiters at their order limit, the ordering and seating status logs.
+- **F20 Delivery:** hand-over of meals to the drivers (also split across waiters and ticks), driving and return trip, eating after delivery, deliveries that arrive too late or fail.
+- **F22 Regulars:** visiting periods, the last three visits, failed attempts and stopping after two, ratings of regular groups.
+- **F25 Restaurant decision:** the choice of restaurant for CASUAL and EVENT groups (ratings, seats, dietary restrictions, last opening ticks, drivers) and that events reserve their tables on the event evening.
+- **F27 Waiting for food:** how long customers wait, who leaves, the waiter's load when customers leave, partly served groups, eating time and given-up deliveries.
+- **F32 / F33 Incidents:** recipe amounts (rounding down, never below one, all restaurants) and packaging volume changes with the following purchases.
+- **System tests (29):** they were checked against the reference implementation, and the confirmed ones are registered for the mutants.
+    - Simulation and statistics (2): log framing of a run, statistics ordered by restaurant id.
+    - Supplier and pantry (6): procurement, unavailable ingredients and their duration, expiry on the right evening, alphabetical order of the removed ingredients, ingredients of abandoned dishes.
+    - Restaurant decision (5): the browsing rules for CASUAL and EVENT groups, no dine-in in the last three opening ticks, a driver incident lowering the available drivers, casual groups on bar tables.
+    - Waiting and leaving (6): patience, waiter load released when customers leave, escorting of partly served groups, log order of leaving and eating, late arrivals without a free waiter, orders blocked by the waiter's capacity.
+    - Delivery (4): a delayed order that times out, the return of a failed delivery, an order split across waiters, a delivery at the end of the evening.
+    - Regular groups (6): failed reservations and their rating in the right tick and evening, consecutive failures, reservation by ascending id, partly served groups, a positive rating.
 
 ---
 

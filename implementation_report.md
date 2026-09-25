@@ -45,7 +45,7 @@ If responsibilities changed during implementation, keep the table factual for ac
 
 I would like to bring to your attention that, on days, when I seemingly have little contribution, the bug fixes I were making took a long time, since, being responsible for customer arrivals, I was interacting with many components of the simulation and had to make sure that the invariants my teammates were expecting were being held. This meant that I had to spend some time reading through their code to understand it and could not just work on my own code by myself. I would like to mention here as well that I did not use any generative AI for debugging.
 
-### Ansh
+### Ansh Shekhar Tiwatne
 
 - **Day 1:**
   - worked on project skeleton with team based on our class diagram

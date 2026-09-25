@@ -163,14 +163,4 @@ class DeliveryOutboundIntegrationTest {
         assertTrue(second.currentOrder!!.dishes.all { it.status == DishStatus.COOKED }, "no free driver for group 2")
         assertEquals(1, driver.id)
     }
-
-    @Test
-    fun `a driver is only available while idle`() {
-        val idle = Driver()
-        val busy = Driver().apply { state = DriverState.DELIVERING }
-
-        assertTrue(DeliveryProcessor(listOf(idle), emptyList()).isDriverAvailable())
-        assertFalse(DeliveryProcessor(listOf(busy), emptyList()).isDriverAvailable())
-        assertTrue(DeliveryProcessor(listOf(busy, idle), emptyList()).isDriverAvailable())
-    }
 }

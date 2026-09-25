@@ -194,10 +194,6 @@ I am tester of F02, F04, F07, F08, F10, F12, F14, F17, F22, F24, F27, F30 and P0
 | `parserlogtests` (F02/F06 validation, 2)     | `ParserControllerLogSystemTest`, `UnavailabilityDifferentIngredientsOverlapAcceptedSystemTest`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | `generaltests` (F14/F17/F25/P03/support, 21) | `CasualMergeTrimTieBreakSystemTest`, `CasualNoDecisionNoSpaceTest`, `CasualTableExclusionSystemTest`, `CasualTableNoLiftSystemTest`, `EatingFinishedAndEscortedSameTickTest`, `EventSeatingCapacityBoundaryTests`, `EventSeatingLoadPriorityTests`, `EventSeatingSharedCapacityTests`, `EventSeatingSpecExampleTests`, `EventTableMergingSystemTest`, `KitchenAndBrowsingEdgeCasesSystemTest`, `RecipeChangeRoundingSystemTest`, `StaffIdResetAcrossEveningsSystemTest`, `StaffLoadBalancingFallbackSystemTest`, `StaffLoadConcentrationSystemTest`, `StaffMultiWaiterExhaustionSystemTest`, `TableMergingLifecycleSystemTest`, `TableReservationConflictsSystemTest`, `TableReservationMergeSystemTest`, `TableReservationSingleTableSystemTest`, `TableTypeRestrictionsSystemTest` |
 
-86 of these classes (30 validation, 56 simulation) are also registered against the released mutants, in my own
-registration functions in `SystemTestRegistration.kt`. Cross-checked against an external mutation-testing run (38/40
-mutants found): 12 mutants confirmed killed across 10 of my tests, including `TableMergingLifecycleSystemTest`
-catching 3 by itself (Denkmalschutz, Grindset, KingOfTheHill).
 
 ### Ansh Shekhar Tiwatne
 ### 1.1 Implementation

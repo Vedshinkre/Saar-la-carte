@@ -39,7 +39,7 @@ If responsibilities changed during implementation, keep the table factual for ac
 - **Day 10:**
   I wrote a system test. Then, I wrote unit and integration tests for `F28 (Browsing Service)`, `F13 (Restaurant - Menue)`, `F26 (Customer - Food Preferences)`, `F21 (FOH - Escorting)`, `P04 (Customer - Events)`.
 - **Day 11:**
-  I wrote unit and integration tests for `F23 (Customer - Casual)` and system tests for my features that I had not written system tests for with the exception of `F02 (Logging)`, for which it does not make sense to write system tests. I then wrote further system tests targeting remaining mutants, after which I went on with writing unit and integration tests for `F09 (Pantry - Buying Ingredients)`, `F10 (Cooking - Order Queue)`, `F11 (Cooking - Staff & Staff Management)`, `F18 (FOH - Ordering)`, `F19 (FOH - Serving)`.
+  I wrote unit and integration tests for `F23 (Customer - Casual)` and system tests for my features that I had not written system tests for with the exception of `F02 (Logging)`, for which it does not make sense to write system tests. I then wrote further system tests aiming to catch remaining mutants, after which I went on with writing unit and integration tests for `F09 (Pantry - Buying Ingredients)`, `F10 (Cooking - Order Queue)`, `F11 (Cooking - Staff & Staff Management)`, `F18 (FOH - Ordering)`, `F19 (FOH - Serving)`.
 - **Day 12:**
   I finalized my part of the implementation report.
 

@@ -3,6 +3,7 @@ package waitingforfoodtests
 import de.unisaarland.cs.se.selab.Time
 import de.unisaarland.cs.se.selab.customer.CasualGroup
 import de.unisaarland.cs.se.selab.customer.CustomerGroup
+import de.unisaarland.cs.se.selab.customer.EventGroup
 import de.unisaarland.cs.se.selab.customer.RegularGroup
 import de.unisaarland.cs.se.selab.enums.CookType
 import de.unisaarland.cs.se.selab.enums.DishStatus
@@ -17,6 +18,11 @@ import de.unisaarland.cs.se.selab.loggers.Logger
 import de.unisaarland.cs.se.selab.restaurant.helpers.EatingProcessor
 import java.io.PrintWriter
 import java.io.StringWriter
+
+// Mirrors FrontOfHouse's private getServingPriority: REGULAR, then EVENT, then CASUAL.
+private const val REGULAR_PRIORITY = 1
+private const val EVENT_PRIORITY = 2
+private const val CASUAL_PRIORITY = 3
 
 /** shared setup for the F27 (customer waiting for food) tests: log capture, groups with orders, processors */
 internal class WaitingFixtures {
@@ -72,6 +78,18 @@ internal class WaitingFixtures {
             restaurantId = 1
         ).also { it.currentOrder = order }
 
+    fun event(id: Int, order: Order?, size: Int = order?.dishes?.size ?: 1): EventGroup =
+        EventGroup(
+            id = id,
+            size = size,
+            tableType = TableType.COMMON,
+            visitingAt = orderTick,
+            foodPreferences = emptyList(),
+            restaurantTypes = listOf(RestaurantType.EUROPEAN),
+            eventEvening = 1,
+            eventDishes = emptyMap()
+        ).also { it.currentOrder = order }
+
     /** a delivery group (delivery distance > 0) that wanted its food at [visitingAt] */
     fun deliveryGroup(id: Int, order: Order, visitingAt: Int = orderTick): CasualGroup =
         CasualGroup(
@@ -95,7 +113,13 @@ internal class WaitingFixtures {
     ): EatingProcessor = EatingProcessor(
         deliveryGroups = deliveryGroups,
         getInHouseGroups = { inHouse },
-        getServingPriority = { if (it is RegularGroup) 1 else 2 },
+        getServingPriority = { group ->
+            when (group) {
+                is RegularGroup -> REGULAR_PRIORITY
+                is EventGroup -> EVENT_PRIORITY
+                else -> CASUAL_PRIORITY
+            }
+        },
         getAssignedTableId = { tables[it] },
         addCustomersDelivered = { delivered.add(it) },
     )

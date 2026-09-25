@@ -1,5 +1,6 @@
 package de.unisaarland.cs.se.selab.system
 
+import de.unisaarland.cs.se.selab.Constants
 import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.Time
 import de.unisaarland.cs.se.selab.customer.CasualGroup
@@ -142,12 +143,12 @@ class Simulation(simdata: SimulationConfig) {
         val casualsTonight = getCasualsForTonight()
         var stoppedEarly = false
 
-        while (Time.getCurrentTick() <= TICKS_PER_EVENING) {
+        while (Time.getCurrentTick() <= Constants.TICKS_PER_EVENING) {
             executeSingleTick(casualsTonight, eventGroupsDecidingTonight)
 
             Time.incrementTicksElapsed()
             val reachedMax = Time.ticksElapsed >= Time.getMaxTicks()
-            val reachedEndOfEvening = Time.getCurrentTick() == TICKS_PER_EVENING
+            val reachedEndOfEvening = Time.getCurrentTick() == Constants.TICKS_PER_EVENING
 
             if (reachedMax && !reachedEndOfEvening) {
                 // maxTicks is not a multiple of 24: stop right here, no "Serving ends" log.
@@ -221,9 +222,4 @@ class Simulation(simdata: SimulationConfig) {
 
     /** The restaurant with the given [id]. */
     private fun getRestaurantById(id: Id): Restaurant = restaurants.first { it.getRestaurantStats().restaurantId == id }
-
-    /** Constants of the simulation loop. */
-    private companion object {
-        const val TICKS_PER_EVENING = 24
-    }
 }

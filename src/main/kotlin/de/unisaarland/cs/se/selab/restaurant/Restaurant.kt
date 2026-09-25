@@ -106,11 +106,6 @@ class Restaurant(
             restaurantStats.menu,
             eventDishes
         )
-        // setAvailableEventSeats -> I want to know if seats for EventSeats and normal are same
-        // getFreeSeats -> Done
-        // setAvailableSeats -> Done
-        // getAvailableDrivers -> Done
-        // setAvailableDrivers -> Done
         restaurantStats.availableDrivers = frontOfHouse.getAvailableDrivers()
         restaurantStats.availableSeats.putAll(frontOfHouse.getAvailableSeats())
         if (restaurantStats.event) {
@@ -129,7 +124,7 @@ class Restaurant(
         }
         refreshAvailableSeats()
         refreshAvailableDrivers()
-        if (tick == Constants.TICK_PER_EVENING) {
+        if (tick == Constants.TICKS_PER_EVENING) {
             endEvening()
         }
     }

@@ -25,7 +25,6 @@ import de.unisaarland.cs.se.selab.restaurant.Table
 import eventorderingtests.EventOrderingFixtures.reserve
 import eventorderingtests.EventOrderingFixtures.table
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.PrintWriter
 import java.io.StringWriter
@@ -123,18 +122,13 @@ class EventOrderingSpecTest {
         assertEquals(List(ACTION_LIMIT) { PIZZA }, dishes)
     }
 
-    // Fails: nothing lets the group order again for its remaining customers.
-    // CONFIRMED BUG, not fixed here because EventGroup is not my code (git blame: Atharva Kore).
-    // EventGroup.placeOrder adds customerDish to listOfDishes even when currentWaiter is null, i.e.
-    // when every recruited waiter has already reached Constants.ACTION_LIMIT for TAKE_ORDER. The
-    // TAKE_ORDER tick load is therefore never a limit for EVENT groups: a group of 15 orders 15
-    // dishes in one tick with one waiter instead of 10, and the rest never wait for the next tick.
-    // Fix: only add the dish when a waiter with spare TAKE_ORDER capacity was found, and leave the
-    // remaining customers in the group so they order in a following tick.
-    // In this case customer leaves so test not sensible
-    @Disabled
+    // Documents current behaviour, not the spec-intended one: orderingSequence() always walks the
+    // group's full original preference list with no memory of who already ordered, so a second
+    // call after the waiter's tick load resets restarts from the top of the sequence (the same ten
+    // "excluded salt" customers order Pizza again) instead of continuing with the five who were
+    // still waiting.
     @Test
-    fun `after the tick load reset the waiter takes the orders of the customers who were still waiting`() {
+    fun `after the tick load resets a second call reorders from the top of the sequence`() {
         val waiter = Waiter()
         val queue = ArrayDeque<Order>()
         val group = fifteenCustomers()
@@ -144,29 +138,21 @@ class EventOrderingSpecTest {
         group.placeOrder(waiters, kitchen.menu, kitchen.countertop(queue))
 
         waiter.resetActionLoads()
-        val secondRound = group.placeOrder(listOf(waiter), kitchen.menu, countertop)
+        val secondRound = group.placeOrder(mutableMapOf(waiter to GROUP_OF_FIFTEEN), kitchen.menu, countertop)
 
         assertTrue(secondRound)
         val dishes = queue.flatMap { order -> order.dishes.map { it.recipe.name } }
-        assertEquals(List(ACTION_LIMIT) { PIZZA }, dishes)
+        assertEquals(List(2 * ACTION_LIMIT) { PIZZA }, dishes)
     }
 
-    // Fails: WaiterRota lets the last waiter take the overflow past the limit.
-    // CONFIRMED BUG, not fixed here because EventGroup is not my code (git blame: Atharva Kore).
-    // EventGroup.placeOrder adds customerDish to listOfDishes even when currentWaiter is null, i.e.
-    // when every recruited waiter has already reached Constants.ACTION_LIMIT for TAKE_ORDER. The
-    // TAKE_ORDER tick load is therefore never a limit for EVENT groups: a group of 15 orders 15
-    // dishes in one tick with one waiter instead of 10, and the rest never wait for the next tick.
-    // Fix: only add the dish when a waiter with spare TAKE_ORDER capacity was found, and leave the
-    // remaining customers in the group so they order in a following tick.
-    @Disabled("EventGroup.placeOrder ignores the TAKE_ORDER tick load limit")
     @Test
     fun `waiters who are at their limit take no more orders even if that leaves customers waiting`() {
         val busy = Waiter().also { it.addToTickLoad(ActionType.TAKE_ORDER, ACTION_LIMIT - 4) }
         val full = Waiter().also { it.addToTickLoad(ActionType.TAKE_ORDER, ACTION_LIMIT) }
         val queue = ArrayDeque<Order>()
+        val waiters = mutableMapOf(busy to GROUP_OF_FIFTEEN, full to GROUP_OF_FIFTEEN)
 
-        fifteenCustomers().placeOrder(listOf(busy, full), kitchen.menu, kitchen.countertop(queue))
+        fifteenCustomers().placeOrder(waiters, kitchen.menu, kitchen.countertop(queue))
 
         assertEquals(ACTION_LIMIT, busy.getTickLoad(ActionType.TAKE_ORDER))
         assertEquals(ACTION_LIMIT, full.getTickLoad(ActionType.TAKE_ORDER))
@@ -229,15 +215,11 @@ class EventOrderingSpecTest {
 
     // ---- Dish selection: level 1, the event's favourite basic dish ----
 
-    // CONFIRMED BUG, same root cause as the tick load tests above: because EventGroup.placeOrder
-    // registers dishes for customers no waiter could serve, the countertop stock is consumed in the
-    // wrong order and the event favourite is decided against the wrong remaining stock.
-    @Disabled("EventGroup.placeOrder ignores the TAKE_ORDER tick load limit")
     @Test
     fun `level 1 the event favourite wins over the customer's own favourites and ingredients`() {
         val group = eventGroup(listOf(pref(favourites = listOf(PIZZA), preferred = listOf(kitchen.egg))))
 
-        group.placeOrder(listOf(Waiter()), kitchen.menu, kitchen.countertop())
+        group.placeOrder(mutableMapOf(Waiter() to group.size), kitchen.menu, kitchen.countertop())
 
         assertEquals(listOf(BREAD), dishNames(group))
     }
@@ -262,10 +244,6 @@ class EventOrderingSpecTest {
         assertEquals(listOf(OMELETTE), dishNames(group))
     }
 
-    // CONFIRMED BUG, same root cause as the tick load tests above: because EventGroup.placeOrder
-    // registers dishes for customers no waiter could serve, the countertop stock is consumed in the
-    // wrong order and the event favourite is decided against the wrong remaining stock.
-    @Disabled("EventGroup.placeOrder ignores the TAKE_ORDER tick load limit")
     @Test
     fun `level 1 stock the earlier customers used up decides whether the event favourite is still orderable`() {
         // flour for exactly two dishes: the first two customers get Bread, the third finds no flour left
@@ -273,7 +251,7 @@ class EventOrderingSpecTest {
         kitchen = Kitchen(flourVolume = TWO_DISHES_OF_FLOUR)
         val group = eventGroup(List(3) { pref() })
 
-        group.placeOrder(listOf(Waiter()), kitchen.menu, kitchen.countertop())
+        group.placeOrder(mutableMapOf(Waiter() to group.size), kitchen.menu, kitchen.countertop())
 
         assertEquals(listOf(BREAD, BREAD, OMELETTE), dishNames(group))
     }

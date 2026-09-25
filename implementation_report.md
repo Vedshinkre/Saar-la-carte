@@ -730,8 +730,8 @@ Tool-1 for code completion and tool Tool-2 for ... . In addition, she used Tool-
 - used **Claude Code** (mostly Sonnet 5, sometimes Opus 5) 1. to build good scenarios for tests (given specifications
   e.g. x restaurants of y type with z customers or given particular cases) 2. to help refine and better document code I
   wrote (wanted to get my logic to work as simply with few lines and following Kotlin best practices wherever possible)
-  3. to quickly write some AB tests after office hours 4. to help debug: did most debugging manually to avoid AI false
-  positive, but used some aid for tricker bugs
+    3. to quickly write some AB tests after office hours 4. to help debug: did most debugging manually to avoid AI false
+       positive, but used some aid for tricker bugs
 
 **Ved Rahul Shinkre:** Option 2
 I used **Gemini** and **ChatGPT** during the implementation phase. These tools were used strictly for debugging test
@@ -774,18 +774,33 @@ specific tasks and to which extent.
 We are aware of the potential dangers of using these tools and take full responsibility for any code, documents and
 other content produced during the group phase.
 
-**Atharva**
+**Atharva Kore:**
 
-Option 2
-Generative AI was not used to find bugs or fix them: the log-walkthrough use above was purely mechanical — the AI read
-long log output back to me in
-summarized form, but I was the one who decided what was actually wrong and how to correct it, not the AI. It was not
-used to think up scenarios for system or unit testing, and it did not find edge cases against the specification on
-its own — every scenario and edge case came from my own reading of the spec, worked out before AI was involved at
-all. Its actual role was closer to a hired writer than a collaborator: given a scenario I'd already decided on, a set
-of edge cases I'd already identified, and my own calculated expected values and pre/post-conditions, it wrote the
-JSON fixtures and the test code to that specification — it did not choose what to test, why to test it, or what the
-correct result should be.
+*Option 2* (the implementation plan lists this as "Option 1" for me, which appears to be a labelling slip carried over
+from the plan template — Deniz's genuine "no AI" declaration is the real Option 1; the content of my entry describes
+tool usage, so it is Option 2 in substance):
+
+In practice I only used **Claude (Sonnet 5)** during the implementation phase
+
+- **System tests:** I worked out the scenarios and edge cases myself, against the specification — what should happen,
+  and why — then made up the concrete scenarios and had the AI generate the JSON fixture files (food/restaurants/
+  scenario configs) matching them. I wrote the actual system test code (the assertions and log-line sequencing)
+  myself.
+- **Unit tests:** I identified the edge cases and worked out the expected behaviour myself, including my own
+  calculations and the pre- and post-conditions for each case, then had the AI turn that specification into the
+  actual test code — the test logic and expected values were mine, not generated independently.
+- **Log debugging:** simulation runs produce far more log output than is practical to read line by line by hand, so I
+  had the AI walk through the logs and summarize them for me, to find where the actual behaviour diverged from what I
+  expected.
+- **Code documentation:** for the KDoc comments added across my implementation files, I gave the AI my own
+  explanation of what each piece of code does and why — the constraints, the intent, anything non-obvious from just
+  reading it — and had it turn that into properly formatted KDoc; it wasn't left to infer the documentation from the
+  code by itself.
+- **This implementation report:** I had the AI cross-reference my own `git log` history against
+  `implementation_plan.md` and `feature_assignments.yaml` — verifying every claim (which feature, which day, which
+  test, which bug) against the actual commits and source rather than accepting a guess — and present the result as
+  this formally structured report.
+
 ---
 
 ## Feature Implementation and Placement

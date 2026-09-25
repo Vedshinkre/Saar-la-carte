@@ -458,160 +458,77 @@ like to mention here as well that I did not use any generative AI for debugging.
 
 ### Atharva
 
-**Thu 10 Sep**
+**Thu 10 Sep** — basic parser controller and first incident-parsing pass (F06); undid a bad change to the simulation
+entry point.
 
-- *Implementation:* basic parser controller; first incident-parsing pass — F06.
-- *Bugs found/fixed:* undid a bad change to the simulation entry point; detekt auto-corrections applied to the
-  incident parser.
+**Fri 11 Sep** — Parser Controller + Incident Parser beta, wired into `FoodParser`, incident parsing working end to
+end; fixed detekt issues in the new parser code. First logger unit tests (F02) and first Restaurant Parser system
+tests.
 
-**Fri 11 Sep**
+**Mon 14 Sep** — `recruitWaitersForEvents` ~80% done and Event Group work (F25); Packaging Change Incident started
+(F33); event escorting started (P03); Browsing Service made detekt-clean (F28); a couple of minor bug fixes along the
+way.
 
-- *Implementation:* Parser Controller + Incident Parser beta; wired `ParserController`'s arguments through to
-  `FoodParser`; incident parser working end to end.
-- *Bugs found/fixed:* detekt issues in the new parser code.
-- *Unit/integration tests:* first logger tests, F02.
-- *System tests:* first Restaurant Parser system tests.
+**Tue 15 Sep** — sim-config parsing fix in `ParserController`; fixed a bug in `Restaurant`'s end-of-evening flow at
+Skerdi's request, not my feature (see section 1); fixed the simulation being able to start even after being told a
+config file was invalid. Incident-parser cleanup, attribution/KDoc fixes, and the first parser system test.
 
-**Mon 14 Sep**
+**Wed 16 Sep** (28 commits, the busiest weekday) — Event Group work (F25), `getCurrentEventDish()`, two rounds of
+Browsing Service updates (F28), Event Escorting updates (P03), `RestaurantStats` reporting from browsing decisions.
+`IncidentParser` needed a same-day reconciliation between two competing edits from Ansh and me. Sequence-diagram-2
+unit and system test.
 
-- *Implementation:* `recruitWaitersForEvents` ~80% done and Event Group minors, F25; Packaging Change Incident
-  started, F33; event-customer escorting started, P03; Browsing Service made detekt-clean, F28.
-- *Bugs found/fixed:* a function-signature bug; a minor FOH bug.
+**Thu 17 Sep** — Event Group place-order logic (F25); Browsing Service minors (F28). Cooking tests covering F10/F12
+(`CookUnitTest`, `KitchenCookingProcessTest`, section 4); "more than 1 EXEC cook" and restaurant system tests.
 
-**Tue 15 Sep**
+**Fri 18 Sep** — FOH log corrections and fixes. Supplier unit test (F08); Staff Management system tests (F17).
 
-- *Implementation:* sim-config parsing fix in `ParserController`.
-- *Bugs found/fixed:* fixed a bug in `Restaurant`'s end-of-evening flow at Skerdi's request, not my feature (see
-  section 1); the simulation could still start after being told a config file was invalid, because the entry point
-  wasn't actually checking that flag.
-- *Unit/integration tests:* incident-parser cleanup and detekt-driven fixes across the suite; attribution/KDoc fixes
-  on tests.
-- *System tests:* first parser system test covering the `wasInvalidFile` fix.
+**Mon 21 Sep** — introduced and fixed the same regression the same day: a morning change weakened the browsing
+service's check for whether a restaurant has room for a walk-in dine-in group, letting it point a group at a
+restaurant without enough seats; caught and reverted it that evening, also fixing the event-restaurant open check to
+look at the right evening. Separately fixed a crash risk in the event favourite-dish lookup, and closed the real gap
+`EventOrderingSpecTest` had been documenting since it was written — event orders are now capped correctly at a
+waiter's per-tick limit ("Event Ordering is now fixed", see section 2). `CountertopAvailabilityTest` disabled rather
+than fixed on the spot. A wider code review of the browsing service and event ordering that day found more than the
+one regression above: two issues are **still open** as of this report (the free-seat count doesn't subtract dine-in
+customers already decided but not yet seated; the event-seat estimate only looks at tables free *tonight*, not prior
+reservations), and one has since been **fixed** (event orders weren't appearing in the ordering log at all).
 
-**Wed 16 Sep** (28 commits, the busiest weekday)
+**Tue 22 Sep** — `EventOrderingSpecTest` fixed for real; available-drivers logic corrected. Browsing Service
+delivery-side updates (F28). Explicit F22 unit tests; F10 order-queue and F30 end-of-evening tests
+(`OrderQueueLifecycleTest`/`eveningclosetests`). FOH Staff Management + Statistics system test (F17/F07); the
+`kitchenschedulingtests` suite. Also confirmed (not a bug) that the browsing step's looser bar-table seat check is
+safely caught by the later seating step, and wrote a test documenting that.
 
-- *Implementation:* Event Group minors x4, F25; `getCurrentEventDish()` added; two separate rounds of Browsing
-  Service updates, F28; Event Escorting update x2, P03; `RestaurantStats` updated to report from browsing decisions.
-- *Bugs found/fixed:* `IncidentParser` had two competing edits from Ansh and me on the same file the same day,
-  needing a same-day reconciliation rather than one clean pass ("according to ansh", then "according to me").
-- *Unit/integration tests:* tests written specifically to debug the parser.
-- *System tests:* sequence-diagram-2 unit and system test.
+**Wed 23 Sep** — added, then same-day reverted, a wrong tick calculation for when an event group's kitchen prep
+needed to finish by. Fixed the driver-availability count to exclude drivers still returning from a delivery.
+System-test clean-up.
 
-**Thu 17 Sep**
+**Thu 24 Sep** — removed stale commented-out system tests from the Sep 19-21 hardening push. KDoc/comments across
+implementation files, no logic changes.
 
-- *Implementation:* Event Group place-order logic, F25; Browsing Service minors, F28.
-- *Bugs found/fixed:* a failing test fixed.
-- *Unit/integration tests:* cooking tests covering F10/F12 — this is where `CookUnitTest` and
-  `KitchenCookingProcessTest` (F12, section 4) picked up most of their content.
-- *System tests:* "more than 1 EXEC cook" scenario, F12 testing; restaurant tests; Seq2 system test.
-
-**Fri 18 Sep**
-
-- *Bugs found/fixed:* FOH log corrections x2; a one-line FOH fix; further FOH changes.
-- *Unit/integration tests:* Supplier unit test, F08 testing.
-- *System tests:* Seq 2/3 tests; Staff Management system tests, F17 testing.
-
-**Mon 21 Sep**
-
-- *Bugs found/fixed:* introduced and fixed the same regression the same day — a morning change accidentally weakened
-  the browsing service's check for whether a restaurant actually has room for a walk-in dine-in group, so it could
-  point a group at a restaurant that doesn't have enough seats for them. I caught it myself that evening and put the
-  proper capacity check back, and in the same fix also made sure an event group's restaurant-availability check looks
-  at the correct evening, not just the time of day. Separately, fixed a spot where looking up an event's favourite
-  dish could crash the simulation if that lookup ever came back empty, and removed a leftover branch of dead,
-  incorrect logic alongside it. This also closed the real gap between spec and implementation that
-  `EventOrderingSpecTest` had been documenting since it was written — event groups were no longer capped correctly at
-  a waiter's per-tick order limit ("Event Ordering is now fixed", see section 2).
-- *Unit/integration tests, system tests:* `CountertopAvailabilityTest` disabled to keep the build green rather than
-  fixed on the spot (see section 2's note on this pattern).
-- *Bugs found by code review, beyond what a commit diff shows:* a wider audit of the browsing service and event
-  ordering turned up more than the one seat-check regression above, with mixed fix status (checked against the
-  current source as of this report, not just the day they were found):
-    - The restaurant's free-seat count doesn't subtract customers who have already decided to dine in but haven't been
-      seated yet, so it can briefly overcount how many seats are actually free later in the same tick — **still open**,
-      unconfirmed against the reference implementation.
-    - The seat count used for event reservations only looks at what's free *tonight*, so a table reserved for a regular
-      customer tonight can make those seats invisible to an event group trying to book several evenings ahead — **still
-      open**, and only a plausible reading, since the spec doesn't spell out the intended behaviour.
-    - When an event group places an order, it's assigned to whichever waiter happens to have spare capacity rather than
-      to the specific waiter who actually seated that customer, which is what the forum's ruling on this spec ambiguity
-      requires — **still open**.
-    - Event groups' orders weren't showing up in the ordering log at all, and a "nothing to order" line was printed
-      twice instead of once — **fixed** at some point after this was found.
-    - Event groups could fall back to a generic customer-ordering path that doesn't know about their favourite dish,
-      which was the actual reason two spec-derived tests were disabled at the time.
-
-**Tue 22 Sep**
-
-- *Bugs found/fixed:* `EventOrderingSpecTest` fixed for real after Monday's change; available-drivers logic
-  corrected, following up on Monday's fix.
-- *Implementation:* Browsing Service delivery-side updates, F28.
-- *Unit/integration tests:* explicit F22 unit tests x2; explicit F10 order-queue and F30 end-of-evening
-  unit/integration tests, `OrderQueueLifecycleTest`/`eveningclosetests`.
-- *System tests:* FOH Staff Management + Statistics test, F17/F07 testing; cooking system tests, the
-  `kitchenschedulingtests` suite. Also checked a specific case for bar-style tables: the browsing step's free-seat
-  count pools every bar table's size together rather than checking any single table's capacity, even though bar
-  tables can never be combined — that's not a bug, since the later seating step still correctly turns the group away
-  at the door if no single table actually fits them; wrote a test confirming that two-step behaviour (browsing
-  accepts, seating correctly rejects) rather than treating the browsing step's looser check as something to fix.
-- Cleanup: removed "appendix" tests judged not useful.
-
-**Wed 23 Sep**
-
-- *Bugs found/fixed:* added a calculation meant to estimate when an event group's kitchen prep needed to finish by,
-  found it computed the wrong tick, and removed it the same day (see section 2); fixed the driver-availability count
-  so it only counts drivers that are actually free right now, not ones still on their way back from a delivery.
-- *Unit/integration tests, system tests:* system-test clean-up; two tests flagged as needing correction rather than
-  fixed on the spot.
-
-**Thu 24 Sep**
-
-- Cleanup: removed the now-stale commented-out system tests from the Sep 19-21 hardening push.
-- Documentation: KDoc/comments added across my implementation files, no logic changes.
-
-**Fri 25 Sep**
-
-- *Bugs found/fixed:* found and fixed the same day while writing the new F27 test — one of the shared test helpers
-  only distinguished "regular customers" from "everyone else" for serving order, instead of ranking regular, event,
-  and casual customers separately the way the real app does; nothing had run an event group through that helper
-  before, so it had gone unnoticed. Fixed it to match the real three-way ranking.
-- *Unit/integration tests:* added coverage for event ordering (`EventOrderingSpecTest`), FOH waiter-id/event-group
-  (`WaiterIdEventGroupTest`), and restaurant-parser edge cases, plus two brand-new tests — a F07 statistics test
-  (`StatisticsCookedAndDeliveredRealRestaurantTest`) and a F27 waiting-for-event-food test (`WaitingForEventFoodTest`).
-- Documentation: comments across my tests and system tests.
+**Fri 25 Sep** — found and fixed a bug in a shared test helper the same day: it collapsed event and casual serving
+priority into one tier instead of ranking regular/event/casual separately, unnoticed until an event group was run
+through it for the first time. Added coverage for event ordering (`EventOrderingSpecTest`), FOH waiter-id/event-group
+(`WaiterIdEventGroupTest`), restaurant-parser edge cases, plus new F07 (`StatisticsCookedAndDeliveredRealRestaurantTest`)
+and F27 (`WaitingForEventFoodTest`) tests.
 
 ### Over the weekend (recorded separately, not part of the week)
 
-**Sat 12 Sep**
+**Sat 12 Sep** — re-added and adjusted `ParserController`; fixed `ScenarioParser`; adjusted `UnavailabilityIncident`'s
+stock interaction per Ved's review (F09/F34 overlap, see section 1). Restaurant-parser testing.
 
-- *Implementation:* re-added and adjusted `ParserController`; fixed `ScenarioParser`.
-- *Bugs found/fixed:* adjusted `UnavailabilityIncident`'s `food.Stock` interaction per Ved's review of the stock
-  behaviour, F09/F34 overlap (see section 1).
-- *Unit/integration tests:* restaurant-parser testing.
+**Sun 13 Sep** — Browsing Service (F28) first complete pass; Unavailability Incident (F34) made available — both
+roughly 4-5 days ahead of the plan's Day 6/7 slots (see section 2).
 
-**Sun 13 Sep**
+**Sat 19 Sep** — an escorting-log bug fix and further event-escorting work (P03); pantry test updates (P01); fixed a
+`skipUntilString` misuse in my own test; browsing/escorting edge-case tests; commented out/disabled a couple of
+failing tests to keep the build green (the pattern flagged in section 2).
 
-- *Implementation:* Browsing Service (F28) first complete pass; Unavailability Incident (F34) made available — both
-  roughly 4-5 days ahead of the plan's Day 6/7 slots (see section 2).
-- *Bugs found/fixed:* minor browsing-service fixes the same weekend.
-
-**Sat 19 Sep**
-
-- *Bugs found/fixed:* an escorting-log bug, P03.
-- *Implementation:* further event-escorting work, P03.
-- *Unit/integration tests:* pantry test updates, P01 testing; fixed a `skipUntilString` misuse in my own test.
-- *System tests:* browsing/escorting edge-case tests.
-- Cleanup: commented out currently-failing tests to keep the suite green; disabled a failing incident test — both
-  examples of the pattern flagged in section 2.
-
-**Sun 20 Sep** (23 commits, the single heaviest day of the project)
-
-- *Implementation:* two more rounds of Browsing Service updates, F28; FOH recruit-waiters fixes x2; Incident Parser
-  minors x2.
-- *Unit/integration tests:* recipe-change-incident tests; several "Edge Case Test" commits.
-- *System tests:* Event Group tests x2; registered the reference/mutant test suites (see section 6), while disabling
-  one restaurant-parser test that didn't match the reference implementation's behaviour rather than chasing it
-  further that day.
+**Sun 20 Sep** (23 commits, the single heaviest day of the project) — more Browsing Service updates (F28), FOH
+recruit-waiters fixes, Incident Parser minors; recipe-change-incident and several edge-case tests; Event Group tests;
+registered the reference/mutant test suites (see section 6), disabling one restaurant-parser test that didn't match
+the reference implementation's behaviour.
 
 ### Vlad Mihai Marciu
 

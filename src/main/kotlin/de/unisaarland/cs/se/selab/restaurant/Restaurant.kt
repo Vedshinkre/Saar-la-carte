@@ -94,9 +94,7 @@ class Restaurant(
         val regularSeatsWithNoHistory = comingRegulars.filter { it.orderHistory.isEmpty() }
             .sumOf { frontOfHouse.getReservedSeats(it) }
         val freeSeats = frontOfHouse.getFreeSeats().values.sum() + regularSeatsWithNoHistory
-        val eventDishes = mutableListOf<Pair<Recipe, Int>>()/*
-
-             */
+        val eventDishes = mutableListOf<Pair<Recipe, Int>>()
         for (eventGroup in comingEventGroups) {
             val eventDishName = eventGroup.getCurrentEventDish()
             val eventDish = restaurantStats.menu.filter { it.name == eventDishName }.first()
@@ -234,10 +232,6 @@ class Restaurant(
             FohReceptionLogger.logRestaurantArrival(customerGroup.id)
         }
     }
-
-    /** returns whether a driver is available */
-    // DOTO this function doesn't need to exist
-    fun isDriverAvailable(): Boolean = frontOfHouse.isDriverAvailable()
 
     // statistics
     /** meals cooked in this restaurant over the whole simulation */

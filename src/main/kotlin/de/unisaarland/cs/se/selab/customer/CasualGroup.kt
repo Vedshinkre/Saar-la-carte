@@ -1,5 +1,6 @@
 package de.unisaarland.cs.se.selab.customer
 
+import de.unisaarland.cs.se.selab.Constants
 import de.unisaarland.cs.se.selab.Evening
 import de.unisaarland.cs.se.selab.Id
 import de.unisaarland.cs.se.selab.Tick
@@ -11,12 +12,6 @@ import de.unisaarland.cs.se.selab.enums.RestaurantType
 import de.unisaarland.cs.se.selab.enums.TableType
 import kotlin.math.absoluteValue
 import kotlin.math.sign
-
-// move this to a common constants file
-private const val DISTANCE_PER_TICK = 5
-
-/** extra ticks a delivery order factors in for cooking, in addition to travel time */
-private const val DELIVERY_COOKING_TICKS = 3
 
 /** Represents a casual customer group. */
 class CasualGroup(
@@ -65,7 +60,9 @@ class CasualGroup(
      * (distance / 5, rounded up) before its visiting tick.
      */
     private fun getDeliveryOrderTick(): Tick {
-        val orderTick = visitingAt - DELIVERY_COOKING_TICKS - deliveryDistance.ceilDiv(DISTANCE_PER_TICK)
+        val cookingTicks = Constants.DELIVERY_COOKING_TICKS
+        val deliveryTicks = deliveryDistance.ceilDiv(Constants.DISTANCE_PER_TICK)
+        val orderTick = visitingAt - cookingTicks - deliveryTicks
         return orderTick
     }
 

@@ -34,4 +34,10 @@ object Constants {
 
     /** Ticks in one evening. */
     const val TICK_PER_EVENING = 24
+
+    /** How much distance can be traveled in a tick */
+    const val DISTANCE_PER_TICK = 5
+
+    /** extra ticks a delivery order factors in for cooking, in addition to travel time */
+    const val DELIVERY_COOKING_TICKS = 3
 }

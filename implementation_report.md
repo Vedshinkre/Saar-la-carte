@@ -1022,6 +1022,3 @@ In practice I only used **Claude (Sonnet 5)** during the implementation phase
   this formally structured report.
 
 We are aware of the potential dangers of using these tools and take full responsibility for any code, documents and other content produced during the group phase.
----
-
-

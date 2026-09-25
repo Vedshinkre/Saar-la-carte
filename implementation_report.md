@@ -451,6 +451,89 @@ like to mention here as well that I did not use any generative AI for debugging.
   one restaurant-parser test that didn't match the reference implementation's behaviour rather than chasing it
   further that day.
 
+### Vlad Mihai Marciu
+
+#### Week 1
+
+- **Day 1 (Thu, Sep 10):** Started F01 as planned: the time and type classes, `Simulation`, `SimulationConfig` and `CliInfo`, and a first version of `Main` parsing the command-line arguments.
+- **Day 2 (Fri, Sep 11):** Continued working on F01 and helped the rest of the team with parsing
+
+#### Over the weekend (Sep 12-13)
+
+- **Saturday:** Finished the first version of F01: completed `Main` and implemented `Simulation`. Started F18: implemented the `Order` class and the countertop (adding orders and reserving ingredients).
+- **Sunday:** Looked over teammates implementation progress and code.
+
+#### Week 2
+
+- **Day 3 (Mon, Sep 14):** Continued F18 as planned: `placeOrder` following the sequence diagram. Implemented F26 (dish choice from food preferences), F31 (staff change incident) and F32 (recipe change incident). Added stub functions across the restaurant, front-of-house and customer classes and fixed `detekt` issues to try to make the project build.
+- **Day 4 (Tue, Sep 15):** Connected ordering to the arrival stage, so orders reach both the customer and the kitchen's order queue. More `detekt` clean-up.
+- **Day 5 (Wed, Sep 16):**
+  - F18: ordering and no-ordering logs, delivery orders, `placeOrder` returns when nobody in the group could order.
+  - F23: casual visiting behaviour (visiting tonight / this tick, computing the ordering tick of a delivery).
+  - Integration: implemented the preparation phase of a restaurant (event and regular table reservations with their logs, free-seat count, up to ingredient planning) and the event restaurant-decision log.
+  - Started testing with F05: JSON fixtures, and unit and integration tests for food preferences and customer groups.
+  - Helped the rest of the team with detekt clean-up and making the project build
+- **Day 6 (Thu, Sep 17):**
+  - Testing F05: customer-parser system tests and further unit and integration tests.
+  - Integration fixes:
+    - customer clean-up that could never run;
+    - duplicated no-ordering, no-reservation and pantry logs;
+    - regular groups being sent to every restaurant;
+    - `--help` in `Main`;
+    - sorting customer lists by id;
+    - event groups deciding in the first tick.
+  - F23: fixed the visiting-tick check. F01: the tick log now uses elapsed ticks.
+  - F18: ordering status log, and ordering logs for all customer types; `placeOrder` extended for event groups.
+  - As tester of F11 and F14: kitchen unit tests, cooking integration tests, and reservation tests.
+  - Managed to make the project build together with the rest of the team
+- **Day 7 (Fri, Sep 18):**
+  - As tester of F16, F19, F25 and F29:
+    - F16: unit, integration and system tests for seating.
+    - F19: tests for serving non-event groups.
+    - F25: tests for the casual restaurant decision.
+    - F29: tests for outgoing deliveries.
+  - Fixes: order ids reset per run, stock unavailability refreshed, customers reset before each evening, range check for `maxTicks`, and refusing customers in the last three opening ticks.
+
+#### Over the weekend (Sep 19-20)
+
+- **Saturday:**
+  - As tester of P02 and P03: unit and integration tests for event seating and event ordering.
+  - Removed or disabled (in case they were not mine) tests  made obsolete by the JSON schemas update.
+  - F01: fixed the output-path check.
+- **Sunday:**
+  - As tester of F07: unit and integration tests for statistics (delivery ratings, end of evening).
+  - F32: fixed the recipe change being applied twice to recipes sharing an ingredient, with system tests for it and for basic dishes under recipe changes.
+  - Moved the system tests that pass on the reference implementation to the mutant lists.
+
+#### Week 3
+
+- **Day 8 (Mon, Sep 21):**
+  - F32: further system tests for the failing recipe-change component tests.
+  - F31: system tests for the staff change incident.
+  - Fixed available drivers not being refreshed every tick.
+  - Ingredient planning for regular groups without an order history: probed the reference implementation with system tests, then fixed it according to the result.
+  - Refactored ordering so event ordering can reuse it.
+  - Went through the disabled tests and documented why they fail.
+  - Wrote probe tests from the office-hour feedback.
+- **Day 9 (Tue, Sep 22):**
+  - New probe tests after the reference run (extended patience, recipe scope, partial serving).
+  - Serving now ignores meals of customers who walked out.
+  - System tests for ratings around the end of the evening.
+- **Day 10 (Wed, Sep 23):**
+  - Registered probe tests for deliveries given up and for hand-overs to drivers split across ticks.
+  - Added probes for choosing between two free cooks of the same type.
+  - Analysed disabled tests that no longer matched our implementation.
+  - Fixed a few deprecated unit tests (mine) so they check the current behaviour.
+  - Updated KDoc documentation for all my classes and functions.
+- **Day 11 (Thu, Sep 24):**
+  - Started working on my part of the implementation report
+  - Updated descriptions for my system tests
+  - Started doing clean-up in my parts of the implementation
+  - Slight changes to unit/integration tests to improve their quality
+- **Day 12 (Fri, Sep 25):**
+  - Continued with clean-up of my parts of the project(removed comments, unused functions, etc.)
+  - Finished my part of the implementation report
+
 ### Bob
 
 ---

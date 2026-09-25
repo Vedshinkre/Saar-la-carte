@@ -359,6 +359,8 @@ Authored, registered, and maintained 45 system tests and 8 shared logging/format
 
 ## Adjustments from the Implementation Plan
 
+Early during the implementation phase, as a team we decided to move the logic for the main functions in FOH to separate helper classes in the `helpers` directory. We made this split as FOH was getting too large (due to several people adding several private functions in one place which isn't good and also eventually caused a detekt warning). It was also challenging to have several people concurrently commiting to the same file, especially since we had to be careful not to overwrite others' code. Hence we created a helper class for each of the major FOH public functions (`processArrivals`, `processDelivering`, `processEating`, `processEscorting`, `processRatings`, `processServing`). Since we purely moved function logic to helper classes and did not change the public class signature of FOH we didn't consider this to be a design change in particular, and this made it much easier for us to work separately.
+
 ### Deniz Firat Sag
 
 It took me longer to get some of the parts of `ArrivalProcessor` to a decently working state, as I had to update my code

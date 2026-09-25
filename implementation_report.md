@@ -2,6 +2,50 @@
 
 ## Individual Contributions
 
+### Feature Assignment
+
+| Feature | Implementer | Testers |
+|---|---|---|
+| F01 | Vlad | Skerdi, Ved |
+| F02 | Skerdi | Atharva, Deniz |
+| F03 | Ved | Ansh, Skerdi |
+| F04 | Ansh | Skerdi, Atharva |
+| F05 | Deniz | Vlad, Skerdi |
+| F06 | Atharva | Ved, Deniz |
+| F07 | Ansh | Vlad, Atharva |
+| F08 | Ved | Skerdi, Atharva |
+| F09 | Ved | Skerdi, Deniz |
+| F10 | Ved | Deniz, Atharva |
+| F11 | Ved | Deniz, Vlad |
+| F12 | Ved | Ansh, Atharva |
+| F13 | Skerdi | Ved, Deniz |
+| F14 | Deniz | Vlad, Atharva |
+| F15 | Deniz | Ansh, Ved |
+| F16 | Deniz | Vlad, Ansh |
+| F17 | Deniz | Ved, Atharva |
+| F18 | Vlad | Deniz, Skerdi |
+| F19 | Ansh | Vlad, Deniz |
+| F20 | Ansh | Ved, Skerdi |
+| F21 | Skerdi | Deniz, Ansh |
+| F22 | Deniz | Skerdi, Atharva |
+| F23 | Vlad | Ansh, Deniz |
+| F24 | Ansh | Atharva, Ved |
+| F25 | Atharva | Skerdi, Vlad |
+| F26 | Vlad | Deniz, Ved |
+| F27 | Ansh | Skerdi, Atharva |
+| F28 | Atharva | Ansh, Deniz |
+| F29 | Ansh | Ved, Vlad |
+| F30 | Skerdi | Atharva, Ansh |
+| F31 | Vlad | Ved, Ansh |
+| F32 | Vlad | Skerdi, Ved |
+| F33 | Atharva | Skerdi, Deniz |
+| F34 | Atharva | Ved, Ansh |
+| P01 | Ved | Atharva, Skerdi |
+| P02 | Deniz | Ansh, Vlad |
+| P03 | Atharva | Ansh, Vlad |
+| P04 | Skerdi | Deniz, Ansh |
+| P05 | Skerdi | Deniz, Ved |
+
 ### Vlad Mihai Marciu
 
 ### 1.1 Implementation

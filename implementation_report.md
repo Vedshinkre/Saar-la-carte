@@ -992,9 +992,7 @@ features.
   implementation, for example a delivery driver in `DeliveryProcessor` that was never freed after a given-up delivery
   (fixed, with a test for it);
 - improving documentation of public methods.
-
-In case of option 2, add additional sentences in which you provide more details on which tools you used for which
-specific tasks and to which extent.
+- creating scenarios for system tests
 
 **Atharva Kore:**
 

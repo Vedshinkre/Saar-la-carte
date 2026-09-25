@@ -11,9 +11,9 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
+import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 /**
@@ -77,11 +77,35 @@ class RestaurantParserDuplicateAndExecTest {
         assertInvalidRestaurants("restaurantsDuplicateTableIds.json")
     } // Ansh Fix Head Cooks
 
-    // At most one EXEC cook is now enforced only by restaurant.schema. Remove this
-    @Disabled("Enforced by schema, not the parser")
+    // At most one EXEC cook is now enforced only by restaurant.schema, not by RestaurantParser
+    // itself, so a direct parser call (as this unit test makes, bypassing schema) accepts a
+    // restaurant with multiple EXEC cooks instead of rejecting it.
     @Test
-    fun `restaurantsMultipleExecCooks should fail`() {
-        assertInvalidRestaurants("restaurantsMultipleExecCooks.json")
+    fun `restaurantsMultipleExecCooks is accepted when the parser is driven directly`() {
+        val file = File(basePath + "restaurantsMultipleExecCooks.json")
+        val jsonArray = Json.parseToJsonElement(file.readText()).jsonObject.getValue("restaurants").jsonArray
+        val rice = Ingredient(
+            name = "rice",
+            unit = MeasurementUnit.G,
+            bestBefore = 5,
+            initialPackagingVolume = 20
+        )
+        val recipes = listOf(
+            Recipe(
+                id = 1,
+                name = "Rice Bowl",
+                duration = 2,
+                cookType = listOf(CookType.EXEC),
+                ingredients = mutableMapOf(rice to 1),
+                basicDishFor = RestaurantType.ASIAN
+            )
+        )
+        val stock = Stock(listOf(rice))
+
+        val (stats, restaurants) = parser.parseRestaurants(jsonArray, recipes = recipes, stock = stock)
+
+        assertEquals(listOf("Golden Wok"), restaurants.map { it.name })
+        assertEquals(1, stats.size)
     }
 
     @Test

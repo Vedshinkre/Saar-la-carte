@@ -11,7 +11,6 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.assertFailsWith
@@ -95,17 +94,38 @@ class RestaurantParserTest {
         assertInvalidRestaurants("restaurantsNoTableExists.json")
     }
 
-    // NOT A BUG - wrong layer and a stale premise. restaurantsNoRecipieExists.json has no "event"
-    // key, so restaurant.schema rejects the file long before RestaurantParser sees it; driving the
-    // parser directly makes it throw NoSuchElementException("Key event is missing in the map")
-    // instead of the IllegalArgumentException this test expects.
-    // An empty "recipes" list is legal in itself - EmptyRestaurantRecipesAcceptedSystemTest passes
-    // against the reference - so the fixture only fails because its EUROPEAN type has no basic dish.
-    // Do not add "event" to the fixture: RestaurantsNoRecipieExistsRejectedSystemTest shares it.
-    @Disabled("fixture is rejected by restaurant.schema, so the parser never reaches its own check")
+    // Wrong layer, not a parser bug: restaurantsNoRecipieExists.json has no "event" key, so
+    // restaurant.schema rejects the file long before RestaurantParser sees it in the real pipeline.
+    // Called directly (bypassing schema, as this unit test does), the parser reaches
+    // jsonObject.getValue("event") and throws NoSuchElementException instead of the
+    // IllegalArgumentException assertInvalidRestaurants() expects. This test documents that
+    // directly-observed exception rather than changing the shared fixture (RestaurantsNoRecipieExistsRejectedSystemTest
+    // relies on the current fixture content) or the parser itself.
     @Test
-    fun `restaurantsNoRecipieExists should fail`() {
-        assertInvalidRestaurants("restaurantsNoRecipieExists.json")
+    fun `restaurantsNoRecipieExists fails with NoSuchElementException when the parser is driven directly`() {
+        val file = File(basePath + "restaurantsNoRecipieExists.json")
+        val jsonArray = Json.parseToJsonElement(file.readText()).jsonObject.getValue("restaurants").jsonArray
+        val rice = Ingredient(
+            name = "rice",
+            unit = MeasurementUnit.G,
+            bestBefore = 5,
+            initialPackagingVolume = 20
+        )
+        val recipes = listOf(
+            Recipe(
+                id = 1,
+                name = "Rice Bowl",
+                duration = 2,
+                cookType = listOf(CookType.EXEC),
+                ingredients = mutableMapOf(rice to 1),
+                basicDishFor = RestaurantType.ASIAN
+            )
+        )
+        val stock = Stock(listOf(rice))
+
+        assertFailsWith<NoSuchElementException> {
+            parser.parseRestaurants(jsonArray, recipes = recipes, stock = stock)
+        }
     }
 
     @Test

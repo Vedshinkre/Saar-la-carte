@@ -24,8 +24,10 @@ import java.io.StringWriter
 import kotlin.test.assertTrue
 
 /**
- *  F22 kitchen planning: it must (a) combine the order
- * history of every coming REGULAR into one list for the kitchen
+ * F22 kitchen planning for REGULAR groups: [Restaurant.prepareForEvening] must (a) pool the order
+ * history of every REGULAR coming that evening into one combined list for the kitchen's menu
+ * estimate, and (b) still count a first-time REGULAR's reserved seats as free capacity for that
+ * estimate, since it has no history of its own to contribute.
  */
 class RegularCustomersKitchenPlanningTest {
     private lateinit var output: StringWriter

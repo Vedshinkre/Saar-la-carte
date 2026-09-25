@@ -11,20 +11,15 @@ private const val THREE_EVENINGS = 72
 private fun visitFile(file: String) = "$VISIT_DIR/$file"
 
 /**
- * The specification calls the regulars that are planned for by their order history the "known"
- * ones, "so those REGULAR groups that already have visited the restaurant at least once"
- * (page 11, lines 32-33), and leaves open what counts as having visited. The two readings only
- * differ for a group that was seated but never managed to order, so that is what this scenario
- * builds.
+ * The kitchen plans "known" REGULAR groups, "those REGULAR groups that already have visited the
+ * restaurant at least once" (page 11, lines 32-33), by their order history. The specification does
+ * not say whether being seated without ordering counts as a visit. Written on Sep 21 as an A/B pair
+ * to find out. The reference chose "only an order counts" (runs 3-8, later confirmed in forum topic
+ * 328), and the losing test was removed.
  *
- * The restaurant has a 2 seat and a 30 seat table and one dish of 100 g of barley, sold in 1 g
- * packages with a best before of one evening, so every evening starts from an empty pantry and the
- * procured amount is exactly the amount planned. The REGULAR group of 2 excludes barley, so it is
- * seated every evening and can never order, and it never builds an order history.
- *
- * Evening 1 is the same under both readings: the group has neither visited nor ordered, so its 2
- * reserved seats count towards the guess, 32 seats give 4 meals and 400 g are bought. Evening 2 is
- * where the readings split. Exactly one of the two tests below should pass.
+ * One dish of 100 g of barley, 1 g packages, best before one evening, so every evening starts with
+ * an empty pantry. The REGULAR group of 2 excludes barley: it is seated every evening but never
+ * orders. Evening 1: its reserved seats count, 32 seats, 4 meals, 400 g.
  */
 abstract class RegularKnownVisitSystemTest : ExampleSystemTestExtension() {
     override val logLevel = "DEBUG"
@@ -53,13 +48,13 @@ abstract class RegularKnownVisitSystemTest : ExampleSystemTestExtension() {
 }
 
 /**
- * Reading B: "visited" means having placed an order. A group that was seated but never ordered is
- * still unknown, so its 2 reserved seats keep counting towards the guess until it manages to order
- * for the first time: 32 seats, 4 meals, 400 g again on evening 2.
+ * A group that was seated but never ordered is still unknown on evening 2, so its reserved seats
+ * still count: 400 g again. The losing reading (seated counts as a visit) would plan only the 30
+ * other seats and buy 300 g.
  */
 class RegularSeatedWithoutOrderKeepsCountingSystemTest : RegularKnownVisitSystemTest() {
     override val name = "RegularSeatedWithoutOrderKeepsCountingSystemTest"
-    override val description = "Reading B: a REGULAR stays unknown until it places its first order"
+    override val description = "A REGULAR stays unknown until it places its first order"
 
     override suspend fun run() {
         assertSharedFirstEvening()

@@ -44,8 +44,6 @@ sealed class CustomerGroup(
     val foodPreferences: List<FoodPreference>, // Could you make this public
 ) {
     var experience = ExperienceType.NEUTRAL
-
-    // relevant to F27
     var currentOrder: Order? = null
     var customersRemainingInRestaurant = size
 

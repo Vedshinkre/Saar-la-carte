@@ -80,8 +80,6 @@ class Order(val dishes: List<Dish>) {
         return cookedDishes.sortedWith(compareBy({ !it.isBasic }, { it.recipe.id }))
     }
 
-    // functions with logic
-
     /** The dishes that have been served and are not eaten yet. */
     fun getServedDishes(): List<Dish> {
         val servedDishes = mutableListOf<Dish>()
@@ -139,12 +137,6 @@ class Order(val dishes: List<Dish>) {
             }
         }
         return true
-    }
-
-    /** Whether at least 2 ticks have passed since the order was placed. Currently unused. */
-    fun needsToBePartiallyServed(): Boolean {
-        val currentTime = Time.tick
-        return currentTime - orderedAt >= 2
     }
 
     /** How many of each dish were ordered, by dish name, for the ordering log. */

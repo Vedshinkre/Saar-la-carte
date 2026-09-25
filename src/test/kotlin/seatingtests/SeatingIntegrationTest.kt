@@ -150,6 +150,7 @@ class SeatingIntegrationTest {
 
         assertEquals(TableStatus.OCCUPIED, table.status)
         assertEquals(ExperienceType.NEGATIVE, secondGroup.experience)
+        assertTrue(lines().any { it.endsWith("but no table available, group 2 is sent away.") }, lines().toString())
         assertEquals(4, secondGroup.customersRemainingInRestaurant, "no one from group 2 was ever seated or served")
     }
 

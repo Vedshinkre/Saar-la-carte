@@ -10,26 +10,22 @@ private const val TWO_EVENINGS = 48
 private fun isolation(file: String) = "$PROBE_DIR/$file"
 
 /**
- * Every planning test of ours that asserts a procurement on an evening where a REGULAR group is
- * involved fails against the reference, while the ones without customers, and the one with an
- * EVENT group, pass. These two tests split that difference into its two halves so that the next
- * reference run says which half is wrong.
+ * Written on Sep 21, when every planning test with a REGULAR group failed on the reference while
+ * the ones without customers passed. Two causes were possible: what an order takes out of the
+ * pantry, or how a REGULAR reservation changes the estimate. This test isolates the first one.
+ * It passed on the reference from run 2 onward, so the difference had to be in the estimate. The
+ * follow-up tests are in ReservedSeatsHypothesisSystemTests.kt.
  */
 abstract class PlanningIsolationSystemTest : ExampleSystemTestExtension() {
     override val logLevel = "DEBUG"
 }
 
 /**
- * What an order leaves in the pantry, without any REGULAR order history in the picture.
+ * What an order leaves in the pantry, with no REGULAR group and no order history involved.
  *
- * A CASUAL group of 2 visits on evening 1 only. CASUAL groups reserve nothing, so both tables count
- * as other seats on both evenings and the estimate is ceil(32 / 10) = 4 meals of the 10 g dish.
- * Evening 1 buys 40 and the group's 2 meals take 20 of it. Evening 2 needs the same 40 and finds 20
- * in the pantry, so it buys 20. CASUAL groups keep no order history, so this is purely the estimate
- * and what the order consumed.
- *
- * A failure here means we consume or carry over ingredients differently from the reference, which
- * would explain the planning failures without the order history being at fault at all.
+ * A CASUAL group of 2 visits on evening 1 only. CASUAL groups reserve nothing, so all 32 seats
+ * count on both evenings: ceil(32 / 10) = 4 meals of the 10 g dish. Evening 1 buys 40 g and the
+ * group's 2 meals use 20 g. Evening 2 needs the same 40 g, finds 20 g, and buys 20 g.
  */
 class CasualConsumptionCarryOverSystemTest : PlanningIsolationSystemTest() {
     override val name = "CasualConsumptionCarryOverSystemTest"

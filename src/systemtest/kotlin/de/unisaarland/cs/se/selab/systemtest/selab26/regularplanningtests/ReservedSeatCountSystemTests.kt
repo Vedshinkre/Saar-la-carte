@@ -11,14 +11,12 @@ private const val TWO_EVENINGS_HERE = 48
 private fun seatsFile(file: String) = "$SEATS_DIR/$file"
 
 /**
- * The reference counts a REGULAR group's reserved seats towards the guess until that group has
- * placed its first order, which [RegularSeatedWithoutOrderKeepsCountingSystemTest] established.
- * Two follow-up questions are left open, and each is asked here as a pair of tests that state the
- * competing answers, so one run settles both.
+ * Two A/B pairs written on Sep 21 as follow-ups to [RegularSeatedWithoutOrderKeepsCountingSystemTest]
+ * (reserved seats count until the group's first order). Each pair states two answers to one open
+ * question, so exactly one of them can pass. The reference chose answer A both times (runs 4-6).
  *
- * The dish costs 100 g of barley, sold in 1 g packages with a best before of one evening, so every
- * evening starts from an empty pantry and the procured amount is exactly the amount planned. One
- * meal is therefore 100 g and every reading is a clearly different number.
+ * The dish costs 100 g of barley (1 g packages, best before one evening), so every evening starts
+ * with an empty pantry, one meal is 100 g, and each answer gives a clearly different amount.
  */
 abstract class ReservedSeatCountSystemTest : ExampleSystemTestExtension() {
     override val logLevel = "DEBUG"
@@ -26,15 +24,10 @@ abstract class ReservedSeatCountSystemTest : ExampleSystemTestExtension() {
 }
 
 /**
- * Question one: how many seats does a reservation contribute, the seats of the reserved table or
- * the size of the group sitting on it?
+ * Question one: does a reservation add the seats of the reserved table or the size of the group?
+ * A REGULAR group of 2 reserves the 12 seat table (the smallest that fits), next to a 30 seat one.
  *
- * The restaurant has a 12 seat and a 30 seat table, and a REGULAR group of 2 reserves. No table is
- * a three quarter fit for a group of 2, so the lifted rule puts the group on the smallest table
- * that fits, the 12 seat one, and the 30 seat table is left over.
- *
- * Answer A, the one we implement: the reserved table contributes all 12 of its seats, so 42 seats
- * give 5 meals and 500 g.
+ * Answer A (the reference's, also forum topic 142): the whole table counts, 42 seats, 5 meals, 500 g.
  */
 class ReservedSeatsAreTheWholeTableSystemTest : ReservedSeatCountSystemTest() {
     override val name = "ReservedSeatsAreTheWholeTableSystemTest"
@@ -55,8 +48,8 @@ class ReservedSeatsAreTheWholeTableSystemTest : ReservedSeatCountSystemTest() {
 }
 
 /**
- * Question one, answer B: only the 2 customers of the group count, not the 10 empty seats they
- * leave on the 12 seat table, so 32 seats give 4 meals and 400 g.
+ * Question one, answer B (rejected by the reference, fails by design): only the group's 2 seats
+ * count, 32 seats, 4 meals, 400 g.
  */
 class ReservedSeatsAreTheGroupSizeSystemTest : ReservedSeatCountSystemTest() {
     override val name = "ReservedSeatsAreTheGroupSizeSystemTest"
@@ -78,14 +71,11 @@ class ReservedSeatsAreTheGroupSizeSystemTest : ReservedSeatCountSystemTest() {
 
 /**
  * Question two: does a group that arrives but is never seated count as having visited?
+ * A STAFF incident removes the only waiter before evening 1, so the REGULAR group of 2 reserves,
+ * arrives, is never seated and leaves. Evening 1 is the same under both answers: 32 seats, 400 g.
  *
- * A STAFF incident takes the only waiter away before evening 1, so the REGULAR group of 2 reserves
- * the 2 seat table, arrives, finds nobody to seat it on both of its attempts and leaves, twice over.
- * Its order history stays empty and it is never seated, so every reading agrees on evening 1:
- * 32 seats, 4 meals, 400 g.
- *
- * Answer A, the one we implement: only an order makes a group known, so on evening 2 its seats
- * still count and the plan is the same 400 g.
+ * Answer A (the reference's, also forum topic 328): only an order makes a group known, so its seats
+ * still count on evening 2: 400 g again.
  */
 class ArrivedWithoutSeatingStillCountsSystemTest : ReservedSeatCountSystemTest() {
     override val name = "ArrivedWithoutSeatingStillCountsSystemTest"
@@ -106,9 +96,8 @@ class ArrivedWithoutSeatingStillCountsSystemTest : ReservedSeatCountSystemTest()
 }
 
 /**
- * Question two, answer B: showing up at all is enough to make the group known, so from evening 2
- * its empty history is planned for instead of its seats and only the 30 seats of the other table
- * are guessed for: 3 meals, 300 g.
+ * Question two, answer B (rejected by the reference, fails by design): arriving makes the group
+ * known, so on evening 2 only the 30 other seats are estimated: 3 meals, 300 g.
  */
 class ArrivedWithoutSeatingCountsAsVisitSystemTest : ReservedSeatCountSystemTest() {
     override val name = "ArrivedWithoutSeatingCountsAsVisitSystemTest"

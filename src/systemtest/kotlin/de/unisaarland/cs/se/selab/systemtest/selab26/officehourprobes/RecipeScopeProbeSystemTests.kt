@@ -7,16 +7,15 @@ private const val UNIT = "g"
 private const val CHICKEN = "chicken"
 
 /**
- * Narrowing probes for RecipeChangeAcrossRestaurantsTest, which passes on our implementation but
- * fails against the reference, so one of its two procurement lines is not what the reference logs.
- * That test asserts both restaurants in one run, which cannot say which of the two diverges.
+ * Narrowing probes (Sep 22) for RecipeChangeAcrossRestaurantsTest, which at the time passed on our
+ * implementation and failed on the reference. That test asserts both restaurants' procurement in
+ * one run, so its failure could not say which line differs. Here each restaurant's line is its own
+ * A/B pair. The reference chose reading A for both (runs 6-12).
  *
- * The scenario: recipe 1 is the basic dish of ASIAN and needs 100 g of chicken, recipe 2 carries the
- * same dish name without being a basic dish and needs 200 g. Restaurant 1 lists only recipe 1,
- * restaurant 2 only recipe 2, both are ASIAN with ten seats, and a RECIPE incident raises chicken by
- * 5 % before evening 1. Chicken is sold in packages of 10 g.
- *
- * Ten free seats make the estimate ceil(10 / 10) = 1 meal of every dish on the menu.
+ * Recipe 1 is the ASIAN basic dish (100 g of chicken). Recipe 2 has the same dish name without
+ * being a basic dish (200 g). Restaurant 1 lists only recipe 1 and restaurant 2 only recipe 2. Both
+ * are ASIAN with ten free seats (1 meal of each dish on the menu). A RECIPE incident raises chicken
+ * by 5% before evening 1. Chicken comes in 10 g packages.
  */
 abstract class RecipeScopeScenario : ExampleSystemTestExtension() {
     override val restaurants = "officehourjson/recipescope/restaurants.json"
@@ -32,10 +31,10 @@ abstract class RecipeScopeScenario : ExampleSystemTestExtension() {
 }
 
 /**
- * First question: are the files accepted at all? A recipe that repeats the dish name of the basic
- * dish of its type without being one is how a restaurant adapts that basic dish, so the reference
- * should take the food file. If this probe fails, the whole scenario is rejected there and the
- * amounts below say nothing.
+ * Premise: the files are accepted, so the procurement probes below mean something. A recipe that
+ * reuses the name of its type's basic dish without `basicDishFor` is an adaptation (forum topic
+ * 78). The simulation only starts once all three files are valid, so the first incident line after
+ * the start is enough.
  */
 class RecipeScopeFilesAcceptedSystemTest : RecipeScopeScenario() {
     override val name = "RecipeScopeFilesAcceptedSystemTest"
@@ -49,8 +48,8 @@ class RecipeScopeFilesAcceptedSystemTest : RecipeScopeScenario() {
 }
 
 /**
- * Restaurant 1, reading A: 100 g raised to 105 g, bought as 11 packages of 10 g. This is what we
- * procure, and the reading every other procurement test of ours agrees with.
+ * Restaurant 1, reading A (the reference's): 100 g raised to 105 g, bought as whole 10 g packages,
+ * 110 g.
  */
 class RecipeScopeRestaurantOneBuysWholePackagesSystemTest : RecipeScopeScenario() {
     override val name = "RecipeScopeRestaurantOneBuysWholePackagesSystemTest"
@@ -59,7 +58,7 @@ class RecipeScopeRestaurantOneBuysWholePackagesSystemTest : RecipeScopeScenario(
     override suspend fun run() = assertProcured(1, 110)
 }
 
-/** Restaurant 1, reading B: the changed amount is procured as it is, without whole packages. */
+/** Restaurant 1, reading B (rejected, fails by design): the changed 105 g are bought as they are. */
 class RecipeScopeRestaurantOneBuysExactAmountSystemTest : RecipeScopeScenario() {
     override val name = "RecipeScopeRestaurantOneBuysExactAmountSystemTest"
     override val description = "Restaurant 1 procures exactly the 105 g the changed recipe needs"
@@ -68,8 +67,8 @@ class RecipeScopeRestaurantOneBuysExactAmountSystemTest : RecipeScopeScenario() 
 }
 
 /**
- * Restaurant 2, reading A: the adapted recipe 2 replaces the basic dish on the menu, so the menu is
- * one dish of 200 g, raised to 210 g, which is already a whole number of packages. This is ours.
+ * Restaurant 2, reading A (the reference's, as in forum topic 78): the adapted recipe replaces the
+ * basic dish on the menu, so one dish of 200 g, raised to 210 g.
  */
 class RecipeScopeAdaptedDishReplacesBasicSystemTest : RecipeScopeScenario() {
     override val name = "RecipeScopeAdaptedDishReplacesBasicSystemTest"
@@ -79,9 +78,8 @@ class RecipeScopeAdaptedDishReplacesBasicSystemTest : RecipeScopeScenario() {
 }
 
 /**
- * Restaurant 2, reading B: the basic dish of the type stays on the menu next to the adapted recipe,
- * so the menu is two dishes and the estimate plans one meal of each: 210 g plus 105 g is 315 g,
- * bought as 32 packages.
+ * Restaurant 2, reading B (rejected, fails by design): the basic dish stays on the menu next to
+ * the adapted one, so 210 g + 105 g = 315 g, bought as 320 g.
  */
 class RecipeScopeAdaptedDishAddsToBasicSystemTest : RecipeScopeScenario() {
     override val name = "RecipeScopeAdaptedDishAddsToBasicSystemTest"

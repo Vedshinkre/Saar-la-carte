@@ -115,10 +115,10 @@ class KitchenSelectionUnitTest {
     }
 
     @Test
-    fun `between two eligible cook types the less skilled one is spared - EXEC is reserved`() {
+    fun `between EXEC and PASTRY the lower-ranked PASTRY cook is chosen - EXEC is kept free`() {
         val exec = Cook(CookType.EXEC)
         val pastry = Cook(CookType.PASTRY)
-        val kitchen = kitchen(listOf(exec, pastry))
+        val kitchen = kitchen(listOf(pastry, exec))
         val recipeForEither = recipe(1, cookTypes = listOf(CookType.EXEC, CookType.PASTRY))
 
         val chosen = kitchen.chooseCook(recipeForEither)
@@ -142,7 +142,7 @@ class KitchenSelectionUnitTest {
     fun `two eligible cooks of the same type tie break on the lowest id`() {
         val higherId = cookWithId(id = 5, type = CookType.TOURNANT)
         val lowerId = cookWithId(id = 2, type = CookType.TOURNANT)
-        val kitchen = kitchen(listOf(higherId, lowerId))
+        val kitchen = kitchen(listOf(lowerId, higherId))
 
         val chosen = kitchen.chooseCook(recipe(1, cookTypes = listOf(CookType.TOURNANT)))
 

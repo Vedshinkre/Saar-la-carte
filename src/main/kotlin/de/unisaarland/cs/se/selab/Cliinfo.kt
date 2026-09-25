@@ -7,7 +7,6 @@ import de.unisaarland.cs.se.selab.enums.LogLevel
  *
  * @property outputPath the log file, or an empty string to log to stdout
  */
-// rename to CliInfo
 data class Cliinfo(
     val foodFilePath: String,
     val restaurantFilePath: String,

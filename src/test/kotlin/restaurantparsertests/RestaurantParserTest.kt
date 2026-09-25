@@ -16,11 +16,15 @@ import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.assertFailsWith
 
+/**
+ * Unit tests for [RestaurantParser.parseRestaurants]: each fixture is a restaurant list that
+ * violates one specific validation rule (duplicate ids/names, non-unique tables, a missing cook,
+ * waiter, table or recipe, more than one EXEC cook, an invalid table size or opening-tick range, or
+ * an invalid initial rating), so every test expects an [IllegalArgumentException].
+ */
 class RestaurantParserTest {
 
-    // DETEKT Needless blank lines
-    private val basePath =
-        "src/systemtest/resources/RestaurantParserTests/"
+    private val basePath = "src/systemtest/resources/RestaurantParserTests/"
 
     private lateinit var parser: RestaurantParser
 

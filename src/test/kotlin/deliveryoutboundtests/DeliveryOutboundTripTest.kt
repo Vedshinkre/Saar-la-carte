@@ -258,9 +258,9 @@ class DeliveryOutboundTripTest {
     @Test
     fun `a driver keeps driving after the customer gave up and fails on arrival`() {
         val order = servedOrder()
-        val group = deliveryGroup(distance = 13, visitingAt = 5)
+        val group = deliveryGroup(distance = 13, visitingAt = 7)
         val driver = drivingDriver(group, order, oneWayTicks = 3)
-        Time.tick = 8 // tick() advances to 9, well past the customer's patience
+        Time.tick = 9 // tick() advances to 10 = visitingTick + 3, the tick the group gives up
 
         tick(driver, group)
 
@@ -281,9 +281,9 @@ class DeliveryOutboundTripTest {
     @Test
     fun `a customer who gave up gets a negative experience and their order is flagged as given up`() {
         val order = servedOrder()
-        val group = deliveryGroup(distance = 13, visitingAt = 5)
+        val group = deliveryGroup(distance = 13, visitingAt = 7)
         val driver = drivingDriver(group, order, oneWayTicks = 3)
-        Time.tick = 8
+        Time.tick = 9
 
         tick(driver, group)
 
@@ -294,9 +294,9 @@ class DeliveryOutboundTripTest {
 
     @Test
     fun `giving up is logged only once`() {
-        val group = deliveryGroup(distance = 13, visitingAt = 5)
+        val group = deliveryGroup(distance = 13, visitingAt = 7)
         val driver = drivingDriver(group, servedOrder(), oneWayTicks = 3)
-        Time.tick = 8
+        Time.tick = 9
 
         repeat(3) { tick(driver, group) }
 

@@ -277,18 +277,21 @@ class ServingOutcomeTest {
      * test runs only the ServingProcessor, so it sets that field itself.
      */
     @Test
-    fun `a partially cooked table is eventually served one dish at a time once the wait window passes`() {
+    fun `a partially cooked table waits out the window and is served one dish at a time right after it`() {
         val cookedDish = Dish(recipe(1, "Soup")).apply { status = DishStatus.COOKED }
         val stillCooking = Dish(recipe(2, "Bread"))
         val order = Order(listOf(cookedDish, stillCooking)).apply { firstDishCookedAt = 1 }
         val group = regularGroup(1, order)
         val waiter = waiterWithId(1)
 
-        // Well past PARTIAL_SERVING_WAIT_TICKS since the order was placed / first cooked.
-        Time.tick = 1 + Constants.PARTIAL_SERVING_WAIT_TICKS + 5
-
+        // spec p. 16: not served in the tick the first meal was cooked nor in the following tick
+        Time.tick = 1 + Constants.PARTIAL_SERVING_WAIT_TICKS
         processor(listOf(waiter), listOf(group), mapOf(group to waiter), mapOf(group to 1)).processServing()
+        assertEquals(DishStatus.COOKED, cookedDish.status, "still inside the wait window")
 
-        assertEquals(DishStatus.SERVED, cookedDish.status)
+        Time.tick += 1
+        processor(listOf(waiter), listOf(group), mapOf(group to waiter), mapOf(group to 1)).processServing()
+        assertEquals(DishStatus.SERVED, cookedDish.status, "first tick after the window")
+        assertEquals(DishStatus.UNCOOKED, stillCooking.status)
     }
 }

@@ -8,6 +8,7 @@ import de.unisaarland.cs.se.selab.enums.CookType
 import de.unisaarland.cs.se.selab.enums.MeasurementUnit
 import de.unisaarland.cs.se.selab.enums.RatingLikelihood
 import de.unisaarland.cs.se.selab.enums.RestaurantType
+import de.unisaarland.cs.se.selab.enums.TableType
 import de.unisaarland.cs.se.selab.food.Ingredient
 import de.unisaarland.cs.se.selab.food.Recipe
 import de.unisaarland.cs.se.selab.parsers.CustomerParser
@@ -420,5 +421,116 @@ class CustomerParserTypeSpecificTest {
 
         assertEquals(listOf(RestaurantType.AMERICAN), group.restaurantTypes)
         assertEquals("American Burger", group.eventDishes[RestaurantType.AMERICAN])
+    }
+
+    // ---- values the JSON schema normally keeps out: the parser rejects them on its own as well
+
+    @Test
+    fun `a customer group type that does not exist is rejected`() {
+        val exception = assertThrows<IllegalArgumentException> {
+            parse(regularGroup(id = 1) { put("type", "TOURIST") })
+        }
+
+        assertTrue(exception.message!!.contains("TOURIST"))
+    }
+
+    @Test
+    fun `CASUAL restaurant type that does not exist is rejected`() {
+        val exception = assertThrows<IllegalArgumentException> {
+            parse(casualGroup(id = 1, restaurantTypes = listOf("ASIAN", "MARTIAN")))
+        }
+
+        assertTrue(exception.message!!.contains("MARTIAN"))
+    }
+
+    @Test
+    fun `EVENT restaurant type that does not exist is rejected`() {
+        assertThrows<IllegalArgumentException> {
+            parse(
+                eventGroup(
+                    id = 1,
+                    restaurantTypes = listOf("MARTIAN"),
+                    favoriteDishes = mapOf("MARTIAN" to "Rice Bowl")
+                )
+            )
+        }
+    }
+
+    @Test
+    fun `CASUAL ratingLikelihood that does not exist is rejected`() {
+        val exception = assertThrows<IllegalArgumentException> {
+            parse(casualGroup(id = 1, ratingLikelihood = "OFTEN"))
+        }
+
+        assertTrue(exception.message!!.contains("OFTEN"))
+    }
+
+    @Test
+    fun `CASUAL ratingLikelihood ALWAYS is parsed`() {
+        val group = parse(casualGroup(id = 1, ratingLikelihood = "ALWAYS")).single() as CasualGroup
+
+        assertEquals(RatingLikelihood.ALWAYS, group.ratingLikelihood)
+    }
+
+    @Test
+    fun `the table type of the JSON is kept for every table type`() {
+        val groups = parse(
+            casualGroup(id = 1) { put("tableType", "COMMON") },
+            casualGroup(id = 2) { put("tableType", "BAR") },
+            casualGroup(id = 3) { put("tableType", "SEPARATED") }
+        )
+
+        assertEquals(listOf(TableType.COMMON, TableType.BAR, TableType.SEPARATED), groups.map { it.tableType })
+    }
+
+    @Test
+    fun `an omitted or unknown table type falls back to COMMON`() {
+        val groups = parse(
+            casualGroup(id = 1),
+            casualGroup(id = 2) { put("tableType", "ROOFTOP") }
+        )
+
+        assertEquals(listOf(TableType.COMMON, TableType.COMMON), groups.map { it.tableType })
+    }
+
+    // The parser has to compare whole strings. Each lookalike has the hash code of a valid value, so it is only
+    // accepted if the comparison stopped at the hash.
+
+    @Test
+    fun `a customer group type with the hash code of a valid type is rejected`() {
+        val lookalikes = mapOf("REGULAR" to "REGULB3", "CASUAL" to "CASUB-", "EVENT" to "EVEO5")
+
+        lookalikes.forEach { (valid, lookalike) ->
+            assertEquals(valid.hashCode(), lookalike.hashCode())
+            assertThrows<IllegalArgumentException> { parse(regularGroup(id = 1) { put("type", lookalike) }) }
+        }
+    }
+
+    @Test
+    fun `a ratingLikelihood with the hash code of a valid one is rejected`() {
+        val lookalikes = mapOf("NEVER" to "NEVF3", "SOME" to "SON&", "ALWAYS" to "ALWAZ4")
+
+        lookalikes.forEach { (valid, lookalike) ->
+            assertEquals(valid.hashCode(), lookalike.hashCode())
+            assertThrows<IllegalArgumentException> { parse(casualGroup(id = 1, ratingLikelihood = lookalike)) }
+        }
+    }
+
+    @Test
+    fun `a table type with the hash code of a valid one falls back to COMMON`() {
+        val lookalikes = mapOf("COMMON" to "COMMP/", "BAR" to "BB3", "SEPARATED" to "SEPARATF%")
+
+        lookalikes.forEach { (valid, lookalike) ->
+            assertEquals(valid.hashCode(), lookalike.hashCode())
+            val group = parse(casualGroup(id = 1) { put("tableType", lookalike) }).single()
+            assertEquals(TableType.COMMON, group.tableType)
+        }
+    }
+
+    @Test
+    fun `two customer groups with the same id are rejected`() {
+        assertThrows<IllegalArgumentException> {
+            parse(casualGroup(id = 1), casualGroup(id = 1))
+        }
     }
 }

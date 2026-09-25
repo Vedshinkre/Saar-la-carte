@@ -27,7 +27,7 @@ import de.unisaarland.cs.se.selab.restaurant.Pantry
 import de.unisaarland.cs.se.selab.restaurant.Table
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import kotlin.test.assertFalse
+import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 /**
@@ -142,6 +142,6 @@ class ServingIntegrationTest {
         val casualDishes = requireNotNull(casual.currentOrder).dishes
         assertTrue(regularDishes.all { it.status == DishStatus.SERVED }, "REGULAR takes the only remaining capacity")
         assertTrue(casualDishes.all { it.status == DishStatus.COOKED }, "CASUAL gets nothing this tick")
-        assertFalse(waiter.id == null, "sanity check: seating must have assigned the shared waiter an id")
+        assertNotNull(waiter.id, "sanity check: seating must have assigned the shared waiter an id")
     }
 }

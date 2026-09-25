@@ -5,10 +5,12 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.utils.FohServiceTestLogs
 import de.unisaarland.cs.se.selab.systemtest.selab26.utils.TickStatusTestLogs
 
 /**
- * A REGULAR and a CASUAL group both have fully cooked orders ready in the same tick,
- * served by the same single waiter. F19: SERVING is performed for REGULAR groups before
- * CASUAL groups, regardless of arrival order or id - REGULAR's "FOH Serving" line must
- * appear before CASUAL's, even though group 2 (CASUAL) has the lower id.
+ * REGULAR group 1 (table 1) and CASUAL group 2 (table 2) both have a complete order in tick 1 and
+ * share one waiter. The serving lines must come REGULAR first, then CASUAL (specification page 35,
+ * line 4), followed directly by the serving status.
+ *
+ * In this fixture the REGULAR group also has the lower group id and the lower table id, so the
+ * expected order is the same as serving by id. Written as tester of the serving feature (Sep 18).
  */
 class RegularBeforeCasualServingTest : ExampleSystemTestExtension() {
     override val name = "RegularBeforeCasualServingTest"

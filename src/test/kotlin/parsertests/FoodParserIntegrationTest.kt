@@ -105,6 +105,24 @@ class FoodParserIntegrationTest {
     }
 
     @Test
+    fun `a recipe that lists the same ingredient twice is an invalid food file`() {
+        val food = tempDir.resolve("food.json").toFile().also {
+            it.writeText(
+                """{"ingredients": [{"name": "rice", "unit": "g", "packagingVolume": 500, "bestBefore": 3}],
+                    "recipes": [{"id": 1, "dishName": "Rice Bowl", "duration": 20, "basicDishFor": "EUROPEAN",
+                    "cookType": ["EXEC"],
+                    "ingredients": [{"name": "rice", "amount": 100}, {"name": "rice", "amount": 50}]}]}"""
+            )
+        }
+
+        val result = parse(food.path)
+
+        assertTrue(result.wasInvalidFile)
+        assertTrue(result.recipes.isEmpty())
+        assertTrue(output.toString().contains("${food.path} is invalid."))
+    }
+
+    @Test
     fun `a food file that does not exist is an invalid file`() {
         val missing = tempDir.resolve("missing.json").toString()
 

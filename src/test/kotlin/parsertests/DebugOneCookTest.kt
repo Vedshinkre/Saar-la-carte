@@ -9,6 +9,12 @@ import org.junit.jupiter.api.Test
 import java.io.PrintWriter
 import java.io.StringWriter
 
+/**
+ * Manual debugging harness, not a regression test: runs the `notablereservationjson` scenario for
+ * 5 ticks at DEBUG log level and dumps the parser result, any exception and the full simulation
+ * log to stderr for inspection. It asserts nothing, so it always passes; it exists to reproduce and
+ * inspect a scenario's behavior by eye rather than to catch regressions.
+ */
 class DebugOneCookTest {
     @Test
     fun debug() {

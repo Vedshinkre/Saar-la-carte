@@ -8,7 +8,7 @@ import de.unisaarland.cs.se.selab.enums.ActionType
 import de.unisaarland.cs.se.selab.enums.DishStatus
 import de.unisaarland.cs.se.selab.food.Dish
 
-/** waiter */
+/** waiter: seats, takes orders, serves and escorts; gets an id the first time they act each evening */
 class Waiter {
 
     var id: Id? = null
@@ -20,23 +20,39 @@ class Waiter {
         Pair(ActionType.ESCORT, 0)
     )
 
-    /** adds to the number of customers being waited on */
+    /**
+     * adds to the number of customers this waiter is looking after
+     *
+     * @param number customers to add, negative when customers leave
+     */
     fun addToCurrentLoad(number: Int) {
         currentLoad += number
     }
 
-    /** get how many actions of a given type the waiter performed this tick */
+    /**
+     * @param action the action type to look up
+     * @return how many actions of that type the waiter performed this tick
+     */
     fun getTickLoad(action: ActionType): Int = tickLoads[action] ?: 0
 
     /** Returns the waiter's current id or assigns a new one if it does not exist. */
     fun ensureId(getNextWaiterId: () -> Id): Id = id ?: getNextWaiterId().also { id = it }
 
-    /** add to how many actions of the given type this waiter performed this tick */
+    /**
+     * adds to how many actions of the given type this waiter performed this tick
+     *
+     * @param action the action type to count
+     * @param number how many actions to add
+     */
     fun addToTickLoad(action: ActionType, number: Int) {
         tickLoads[action] = getTickLoad(action) + number
     }
 
-    /** mark the given dishes as served */
+    /**
+     * marks the given dishes as SERVED, the caller handles tick load and logging
+     *
+     * @param dishes the dishes to serve
+     */
     fun serve(dishes: List<Dish>) {
         for (dish in dishes) {
             dish.status = DishStatus.SERVED
@@ -75,7 +91,9 @@ class Waiter {
     }
 
     /**
-     * To Escort Event Groups
+     * Escorts as many of an event group's remaining customers out of the restaurant as this
+     * tick's escort action limit still allows.
+     * @param eventGroup the event group to escort
      */
     fun escortEventGroups(eventGroup: EventGroup) {
         val customersToEscort = minOf(

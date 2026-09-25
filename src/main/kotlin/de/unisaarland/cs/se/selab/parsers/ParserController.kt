@@ -23,7 +23,16 @@ class ParserController {
     private val scenarioParser = ScenarioParser()
     private val simConfig = SimulationConfig()
 
-    /** delegates JsonObjects to multiple Parsers and Validates File with JsonSkema **/
+    /**
+     * Delegates JsonObjects to multiple parsers and validates each file against its JSON schema,
+     * stopping and returning early at the first invalid file.
+     *
+     * @param foodFilePath path to the food configuration file (ingredients and recipes)
+     * @param restaurantsFilePath path to the restaurants configuration file
+     * @param scenarioFilePath path to the scenario file (incidents and customer groups)
+     * @return the populated [SimulationConfig], or a config with [SimulationConfig.wasInvalidFile]
+     *   set once the first invalid file is hit
+     */
     fun parseFiles(
         foodFilePath: String,
         restaurantsFilePath: String,

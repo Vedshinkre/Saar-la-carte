@@ -12,15 +12,20 @@ import de.unisaarland.cs.se.selab.food.Order
 import de.unisaarland.cs.se.selab.loggers.DeliveryLogger
 import de.unisaarland.cs.se.selab.loggers.FohServiceLogger
 
-// NOTE: used comparison with null instead of Elvis operator everywhere in my code
-// e.g. `if (order == null) continue` instead of `val order = group.currentOrder ?: continue`
-// detekt is not able to resolve Elvis operator jumps in loops and marks the loop body as unreachable
-// found this documentation of the issue: https://github.com/detekt/detekt/issues/6129
+// `if (order == null) continue` instead of `?: continue` on purpose: detekt can't follow elvis
+// jumps inside loops and flags the loop body as unreachable (https://github.com/detekt/detekt/issues/6129)
 
 /**
- * handles EATING phase of a tick: progressing in-house and delivery groups' eating
- * drops customers who waited too long for unserved dishes
- * decides a group's experience once its order is fully served
+ * handles the EATING phase of a tick: drops customers who waited too long for their meals,
+ * decides a group's experience once its order is fully served and progresses in-house and
+ * delivery eating
+ *
+ * @param deliveryGroups CASUAL groups with a delivery order
+ * @param getInHouseGroups every group currently seated, EVENT groups included
+ * @param getServingPriority sort key by group type (REGULAR, EVENT, CASUAL)
+ * @param getAssignedTableId the table an in-house group is logged against
+ * @param addCustomersDelivered adds to the restaurant's delivered customers statistic
+ * @param releaseWaiterLoad takes customers that walked out without being ESCORTED off their waiter's load
  */
 class EatingProcessor(
     private val deliveryGroups: List<CustomerGroup>,
@@ -28,16 +33,15 @@ class EatingProcessor(
     private val getServingPriority: (CustomerGroup) -> Int,
     private val getAssignedTableId: (CustomerGroup) -> Id?,
     private val addCustomersDelivered: (Int) -> Unit,
-    /** a waiter also stops waiting on customers that left without being ESCORTED */
     private val releaseWaiterLoad: (CustomerGroup, Int) -> Unit = { _, _ -> },
 ) {
-    /** main eating function: makes customers that waited too long leave and customers eating progress eating */
+    /** runs the eating phase for in-house and delivery groups and logs the eating status */
     fun processEating() {
         var eatingCount = 0
-        var finishedCount = 0 // for logging
+        var finishedCount = 0
 
-        // the two kinds of log are each their own run over all groups (EatingOrderIsPerGroupSystemTest A/B test)
-        // every walk-out of the tick is logged before the first "finished eating" line
+        // two separate runs over all groups, so every walk-out of the tick is logged before the
+        // first "finished eating" line
         val sortedGroups = getInHouseGroups().sortedWith(compareBy({ getServingPriority(it) }, { it.id }))
             .mapNotNull { group ->
                 val order = group.currentOrder
@@ -53,7 +57,7 @@ class EatingProcessor(
         }
 
         for ((group, order, tableId) in sortedGroups) {
-            handleFullyServedOrder(group, order) // for experience
+            handleFullyServedOrder(group, order)
 
             val (eating, finished) = progressEating(order)
             eatingCount += eating
@@ -78,25 +82,23 @@ class EatingProcessor(
                     it.status == DishStatus.COOKED
                 )
         }
-        if (unservedDishes.isEmpty()) return // everyone served
+        if (unservedDishes.isEmpty()) return
 
         val ticksSinceOrder = Time.tick - order.orderedAt
 
         val noDishServed = !(order.dishes.any { wasServed(it) })
-        // potential off by one error fix based on OH feedback
+        // -1 as clarified in office hours
         val basePatience = Constants.UNSERVED_WAIT_TICKS - 1
         val unservedCustomersLeave = if (noDishServed) {
             ticksSinceOrder >= basePatience
         } else {
-            // wait another 2 ticks if someone in the group was served
             ticksSinceOrder >= basePatience + Constants.ADDITIONAL_UNSERVED_WAIT_TICKS
         }
 
         if (!unservedCustomersLeave) return
 
-        // all unserved customers leave
-        // their meals are not aborted: the kitchen carries on with them
-        // they never get served (CorrectPartialServing2)
+        // all unserved customers leave; their meals aren't aborted, the kitchen carries on with
+        // them but they never get served
         unservedDishes.forEach { it.abandoned = true }
         val leavingCustomers = if (noDishServed) {
             // nobody was served: the whole group walks out, which is a failed attempt for a REGULAR group
@@ -127,7 +129,7 @@ class EatingProcessor(
         // experience is negative as soon as food arrives too late or not at all for at least one customer
         if (group.experience == ExperienceType.NEGATIVE) return
 
-        // the 4 tick expectation window might be counted inclusively, changed <= to <
+        // the 4 tick expectation window is counted inclusively
         group.experience = if (Time.tick - order.orderedAt < Constants.EXPECTATION_WINDOW_TICKS) {
             ExperienceType.POSITIVE
         } else {
@@ -153,9 +155,9 @@ class EatingProcessor(
             val order = group.currentOrder
             if (order == null || order.deliveredAt == null || order.areAllDishesEaten()) continue
 
-            // for statistics, runs exactly once per order (when driver hands over the order).
+            // counted once, in the tick the driver hands the order over
             if (order.deliveredAt == Time.tick) {
-                addCustomersDelivered(order.dishes.size) // order.dishes.size <= group.size
+                addCustomersDelivered(order.dishes.size)
             }
 
             order.dishes.forEach { dish ->
@@ -167,8 +169,6 @@ class EatingProcessor(
             }
         }
     }
-
-    // HELPERS
 
     private fun wasServed(dish: Dish): Boolean = dish.status == DishStatus.SERVED || dish.status == DishStatus.EATEN
 }

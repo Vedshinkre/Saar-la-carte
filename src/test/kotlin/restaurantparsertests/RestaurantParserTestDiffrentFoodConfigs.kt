@@ -14,6 +14,12 @@ import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.assertFailsWith
 
+/**
+ * Unit tests for [RestaurantParser.parseRestaurants] where the rejection depends on the recipes and
+ * stock passed alongside the restaurant fixture, rather than on the restaurant JSON alone: a
+ * duplicate dish name across two recipes, no basic dish covering one of the restaurant's types, and
+ * a restaurant referencing a recipe id that is not in the supplied recipe list.
+ */
 class RestaurantParserTestDiffrentFoodConfigs {
     private val basePath =
         "src/systemtest/resources/RestaurantParserTests/"

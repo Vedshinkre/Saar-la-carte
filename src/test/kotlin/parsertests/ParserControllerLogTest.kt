@@ -21,7 +21,10 @@ private const val RESTAURANTS_VALID = RESTAURANT_FIXTURES + "Restaurants.json"
 private const val SCENARIO_VALID = FIXTURES + "scenarioValid.json"
 
 /**
- * Tests all logs of pareser
+ * Tests the INFO/IMPORTANT logs [ParserController] emits while parsing food, restaurants and
+ * scenario files: success and failure lines in order, short-circuiting on the first invalid file,
+ * incident crossvalidation (duplicate ids, overlapping unavailability), and one test per rejected
+ * restaurant/food fixture covering a distinct validation branch.
  */
 class ParserControllerLogTest {
 

@@ -16,6 +16,12 @@ import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.assertFailsWith
 
+/**
+ * Unit tests for [RestaurantParser.parseRestaurants]: each fixture describes a restaurant list
+ * that should be rejected (duplicate restaurant or table ids, a cook-count rule now enforced by
+ * the schema instead, a non-existing recipe reference, or a duplicate id/name), so every test
+ * expects an [IllegalArgumentException].
+ */
 class RestaurantParserDuplicateAndExecTest {
 
     private val basePath = "src/systemtest/resources/RestaurantParserTests/"

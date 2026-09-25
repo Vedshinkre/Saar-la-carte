@@ -4,10 +4,13 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.utils.ExampleSystemTestExte
 import de.unisaarland.cs.se.selab.systemtest.selab26.utils.TickStatusTestLogs
 
 /**
- * A CASUAL delivery group (distance 5, visitingTick 10) must decide on a restaurant early,
- * at visitingTick - ceil(distance/5) - 3 = 10 - 1 - 3 = tick 6 - not at tick 10 itself.
- * F25: the "Restaurant Decision" log fires at tick 6, and the group does not reconsider or
- * decide again at its actual visitingTick.
+ * A CASUAL delivery group (5 km, visitingTick 10) decides on a restaurant at
+ * visitingTick - ceil(distance / 5) - 3 = tick 6 (specification adjustment #10), and not again
+ * at tick 10.
+ *
+ * The decision must be the first line of tick 6, so a decision in any other tick fails, and the
+ * restaurant start must be the first line of tick 10, so a second decision there fails too.
+ * Written as tester of the browsing feature (Sep 18).
  */
 class CasualDeliveryEarlyDecisionTest : ExampleSystemTestExtension() {
     override val name = "CasualDeliveryEarlyDecisionTest"
@@ -19,18 +22,12 @@ class CasualDeliveryEarlyDecisionTest : ExampleSystemTestExtension() {
     override val maxTicks = 10
 
     override suspend fun run() {
-        // Ticks 1-5: the group is not being considered for a decision yet.
-        for (tick in 1..5) {
-            skipUntilString(TickStatusTestLogs.tickStart(tick, 1))
-        }
-
         // Tick 6: the early delivery-order tick - the group decides now.
         skipUntilString(TickStatusTestLogs.tickStart(6, 1))
         assertNextLine(TickStatusTestLogs.restDecision(1, 1))
 
-        // Tick 10, the group's actual visitingTick: no further restaurant decision log for
-        // this group - they already decided and do not reconsider. If one fired here,
-        // this assertion would fail with a "Restaurant Decision" line instead.
+        // Tick 10, the group's actual visitingTick: a second decision would come before the
+        // restaurant start line.
         skipUntilString(TickStatusTestLogs.tickStart(10, 1))
         assertNextLine(TickStatusTestLogs.restStart(1))
     }

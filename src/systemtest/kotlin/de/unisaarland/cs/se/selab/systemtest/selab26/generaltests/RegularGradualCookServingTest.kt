@@ -10,10 +10,17 @@ private const val QUICK_SOUP = "Quick Soup"
 private const val SLOW_ROAST = "Slow Roast"
 
 /**
- * A REGULAR group orders two dishes cooked by two different cooks with different
- * durations, so one finishes the tick it was ordered and the other only the tick after.
- * F19: the table waits for the WHOLE order to be cooked (FOH No Serving while waiting)
- * and is then served in a single batch, with the correct ticks-since-ordering value.
+ * A REGULAR group of 2 orders Quick Soup (basic dish, 10 min) and Slow Roast (20 min). They are
+ * cooked by a TOURNANT and a ROAST cook, so the soup is ready in tick 1 and the roast in tick 2.
+ *
+ * Asserts both ticks line by line:
+ *  - the basic dish is assigned first;
+ *  - tick 1 logs "FOH No Serving" for the partly cooked table;
+ *  - tick 2 serves both dishes in one line, 1 tick after ordering;
+ *  - every status line in between.
+ *
+ * The roast is ready inside the two-tick hold of a partly cooked table, so this does not separate
+ * "wait for the whole order" from that hold. Written as tester of the serving feature (Sep 18).
  */
 class RegularGradualCookServingTest : ExampleSystemTestExtension() {
     override val name = "RegularGradualCookServingTest"

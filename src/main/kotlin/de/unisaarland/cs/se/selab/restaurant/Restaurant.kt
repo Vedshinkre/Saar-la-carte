@@ -35,7 +35,7 @@ class Restaurant(
         kitchen = Kitchen(staff.cooks, pantry, orderQueue, restaurantStats.restaurantType)
     }
 
-    /** Group type (REGULAR, EVENT, CASUAL) first, then ascending id. */
+    /** arrival order: group type (REGULAR, EVENT, CASUAL) first, then ascending id */
     val arrivalOrder: Comparator<CustomerGroup> = compareBy({
         when (it) {
             is RegularGroup -> 0
@@ -45,14 +45,18 @@ class Restaurant(
     }, { it.id })
 
     /**
-     * sake of detect
+     * The restaurant's live capacity and rating statistics.
+     *
+     * @return this restaurant's [RestaurantStats]
      */
     fun getRestaurantStats(): RestaurantStats {
         return restaurantStats
     }
 
     /**
-     * sake of detect
+     * The restaurant's front-of-house and kitchen staff.
+     *
+     * @return this restaurant's [RestaurantStaff]
      */
     fun getRestaurantStaff(): RestaurantStaff {
         return staff
@@ -90,9 +94,7 @@ class Restaurant(
         val regularSeatsWithNoHistory = comingRegulars.filter { it.orderHistory.isEmpty() }
             .sumOf { frontOfHouse.getReservedSeats(it) }
         val freeSeats = frontOfHouse.getFreeSeats().values.sum() + regularSeatsWithNoHistory
-        val eventDishes = mutableListOf<Pair<Recipe, Int>>()/*
-
-             */
+        val eventDishes = mutableListOf<Pair<Recipe, Int>>()
         for (eventGroup in comingEventGroups) {
             val eventDishName = eventGroup.getCurrentEventDish()
             val eventDish = restaurantStats.menu.filter { it.name == eventDishName }.first()
@@ -231,18 +233,14 @@ class Restaurant(
         }
     }
 
-    /** returns whether a driver is available */
-    // DOTO this function doesn't need to exist
-    fun isDriverAvailable(): Boolean = frontOfHouse.isDriverAvailable()
-
     // statistics
-    /** gets a number of cooked meals */
+    /** meals cooked in this restaurant over the whole simulation */
     fun getNumberOfCookedMeals(): Int = kitchen.numberOfCookedMeals
 
-    /** gets a number of cooked meals */
+    /** meals served to in-house customers over the whole simulation */
     fun getNumberOfCustomersServed(): Int = frontOfHouse.numberOfCustomersServed
 
-    /** gets a number of cooked meals */
+    /** customers reached by delivery over the whole simulation, one per delivered meal */
     fun getNumberOfCustomersDelivered(): Int = frontOfHouse.numberOfCustomersDelivered
 
     /** Call with CustomerGroup.

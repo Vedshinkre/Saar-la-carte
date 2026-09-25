@@ -5,8 +5,9 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.utils.InitialAndPrepTestLog
 
 /**
  * Verifies the "must remain positive" half of the RECIPE incident rule (specification page 26,
- * lines 19-21): the scaled amount is rounded down, but an amount that would land on 0 stays at 1.
- * [RecipeChangeRoundingSystemTest] only covers drops that stay well above 1.
+ * lines 19-21, forum topic 188): the scaled amount is rounded down, but an amount that would land
+ * on 0 stays at 1. Written to cover the lower boundary, since [RecipeChangeRoundingSystemTest]
+ * only covers drops that stay well above 1.
  *
  * The one dish of the restaurant uses four ingredients, each hit by its own incident, and all of
  * them are sold in 1 g packages. The restaurant has 10 free seats, so the estimate multiplier is 1

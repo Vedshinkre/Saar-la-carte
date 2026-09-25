@@ -129,8 +129,10 @@ class Pantry(
     }
 
     /**
-     * Reserves a Single Ingredient based on its quantity.
-     */ // Needed this extra function to reduce complexity error by detekt
+     * Removes [requiredAmount] units of [ingredient] from the pantry's non-expired packages,
+     * preferring open packages over closed ones and, within each group, the package with the
+     * earliest expiry date. Packages left empty afterward are dropped from the inventory.
+     */
     private fun reserveSingleIngredient(ingredient: Ingredient, requiredAmount: Int) {
         var amountNeeded = requiredAmount
 

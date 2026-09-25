@@ -12,14 +12,22 @@ import de.unisaarland.cs.se.selab.food.Order
 import de.unisaarland.cs.se.selab.loggers.DeliveryLogger
 import kotlin.math.ceil
 
-/** delivery coordinator */
+/**
+ * moves delivery drivers through preparation, driving, hand-over and return
+ *
+ * @param drivers all delivery drivers of the restaurant
+ * @param deliveryGroups CASUAL groups with a delivery order
+ */
 class DeliveryProcessor(
     private val drivers: List<Driver>,
     private val deliveryGroups: List<CustomerGroup>,
 ) {
-    // log every delivery log type for all drivers that need it in asc group id, before next type follows
-    // one phase per log type instead of per driver
-    /** process delivery */
+    /**
+     * runs the delivery phase of a tick
+     *
+     * works one log type at a time: each type is logged for every driver that needs it, by
+     * ascending group id, before the next type follows
+     */
     fun processDelivering() {
         // the drivers that were already on the road when this tick started: a driver that only
         // prepares in this tick starts driving in the next one
@@ -41,9 +49,8 @@ class DeliveryProcessor(
         arriving.forEach { it.handOverToCustomer() }
 
         // 5. delivery given up
-        processAbortions()
+        processGivenUp()
 
-        // DOTO: check if this fix is required and if there's a neater way to refactor later
         // release drivers still waiting for the rest of an order that will never be completed
         // (given up, or aborted because the kitchen stopped)
         releaseStrandedDrivers()
@@ -53,8 +60,8 @@ class DeliveryProcessor(
     }
 
     /**
-     * Frees drivers that are still waiting outside with an order that can no longer be completed.
-     * They never left the restaurant, so nothing is logged; they become available again
+     * frees drivers still waiting outside with an order that can no longer be completed
+     * they never left the restaurant, so nothing is logged
      */
     private fun releaseStrandedDrivers() {
         for (driver in driversInState(DriverState.WAITING)) {
@@ -87,29 +94,23 @@ class DeliveryProcessor(
     }
 
     // abort if not reached by end of third tick after order was wanted, decided per delivery group
-    private fun processAbortions() {
+    private fun processGivenUp() {
         val rejecting = deliveryGroups.sortedBy { it.id }
             .mapNotNull { group -> group.currentOrder?.let { order -> group to order } }
-            .filter { (group, order) -> hasAborted(group, order) }
+            .filter { (group, order) -> hasGivenUp(group, order) }
 
         for ((group, order) in rejecting) {
-            // NOTE: no more setting ABORTED, it will be deprecated later when code is desphagettified
-            // order.dishes.forEach { if (it.status != DishStatus.EATEN) it.status = DishStatus.ABORTED }
             order.deliveryGivenUp = true
             group.experience = ExperienceType.NEGATIVE
             DeliveryLogger.logDeliveryGivenUp(group.id, order.id)
         }
     }
 
-    private fun hasAborted(group: CustomerGroup, order: Order): Boolean {
-        if (order.deliveredAt != null) {
-            return false
-        }
-        // a delivery is only given up once, but a group whose meals were aborted for another
-        // reason (never cooked, kitchen closed) is still waiting and still gives up
-        if (order.deliveryGivenUp) {
-            return false
-        }
+    private fun hasGivenUp(group: CustomerGroup, order: Order): Boolean {
+        if (order.deliveredAt != null) return false
+        if (order.deliveryGivenUp) return false
+        // a group whose meals were aborted for another reason (never cooked) is still waiting and gives up
+
         return Time.tick >= group.visitingAt + Constants.CUSTOMER_DELIVERY_WAIT_TICKS
     }
 

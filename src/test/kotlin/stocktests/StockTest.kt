@@ -88,4 +88,16 @@ class StockTest {
         stock.applyUnavailableDurations()
         assertTrue(stock.isIngredientAvailable(rice), "the duration never drops below zero")
     }
+
+    @Test
+    fun `the packaging volume of an ingredient can only be changed to a positive value`() {
+        val rice = ingredient("rice")
+
+        assertFailsWith<IllegalArgumentException> { rice.packagingVolume = 0 }
+        assertFailsWith<IllegalArgumentException> { rice.packagingVolume = -5 }
+        assertEquals(500, rice.packagingVolume, "a rejected value leaves the volume as it was")
+
+        rice.packagingVolume = 250
+        assertEquals(250, rice.packagingVolume)
+    }
 }

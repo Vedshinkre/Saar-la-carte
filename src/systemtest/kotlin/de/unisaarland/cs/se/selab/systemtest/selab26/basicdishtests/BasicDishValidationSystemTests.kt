@@ -13,10 +13,13 @@ private const val RESTAURANTS_MAIN = "restaurants.json"
 private fun inDir(file: String) = "$DIR/$file"
 
 /**
- * Probes for the basic-dish rules of the food file, so that the reference implementation tells us
- * which reading of "there must exist exactly 1 recipe per basic dish name" (specification page 29,
- * line 27) it uses. Each test states the reading we implement today; a failure against the
- * reference tells us that reading is wrong.
+ * Validation tests for the basic-dish rule of the food file, "there must exist exactly 1 recipe per
+ * basic dish name" (specification page 29, line 27). Together they cover whether the recipes carry
+ * `basicDishFor` (both, one, none) and whether the types are the same: two invalid and two valid
+ * cases, plus a restaurant with no recipes of its own.
+ *
+ * Written on Sep 20 alongside the basic-dish incident tests, to find out which reading of the rule
+ * the reference uses. All five pass on the reference.
  */
 abstract class BasicDishValidationSystemTest : ExampleSystemTestExtension() {
     override val logLevel = "DEBUG"
@@ -26,9 +29,9 @@ abstract class BasicDishValidationSystemTest : ExampleSystemTestExtension() {
 }
 
 /**
- * Two recipes carry `basicDishFor` for the same dish name but for different restaurant types.
- * We read "exactly 1 recipe per basic dish name" as global in the dish name (forum topic 78: only
- * the default recipe carries the property) and reject the file.
+ * Invalid: two recipes carry `basicDishFor` for the same dish name, for different restaurant types.
+ * The rule holds per dish name, not per type (forum topic 78: only the default recipe carries the
+ * property), so the food file is rejected and that is the first line of the log.
  */
 class SameBasicDishNameTwoTypesRejectedSystemTest : BasicDishValidationSystemTest() {
     override val name = "SameBasicDishNameTwoTypesRejectedSystemTest"
@@ -45,8 +48,8 @@ class SameBasicDishNameTwoTypesRejectedSystemTest : BasicDishValidationSystemTes
 }
 
 /**
- * Two recipes carry `basicDishFor` for the same dish name and the same restaurant type. This is
- * the unambiguous case of the rule and has to be rejected under every reading.
+ * Invalid: two recipes carry `basicDishFor` for the same dish name and the same type. This case is
+ * invalid under every reading of the rule, so it is the control case for the test above.
  */
 class SameBasicDishNameSameTypeRejectedSystemTest : BasicDishValidationSystemTest() {
     override val name = "SameBasicDishNameSameTypeRejectedSystemTest"
@@ -63,8 +66,8 @@ class SameBasicDishNameSameTypeRejectedSystemTest : BasicDishValidationSystemTes
 }
 
 /**
- * The adaptation case of forum topic 78: a second recipe with the dish name of a basic dish, but
- * without `basicDishFor` of its own, is accepted. Restaurant 1 owns the adapted recipe alone.
+ * Valid: a second recipe with the dish name of a basic dish but without `basicDishFor` is how a
+ * restaurant adapts the basic dish (forum topic 78). All three files are accepted.
  */
 class AdaptedBasicDishAcceptedSystemTest : BasicDishValidationSystemTest() {
     override val name = "AdaptedBasicDishAcceptedSystemTest"
@@ -80,9 +83,8 @@ class AdaptedBasicDishAcceptedSystemTest : BasicDishValidationSystemTest() {
 }
 
 /**
- * Two recipes share a dish name and neither of them is a basic dish. Forum topic 287 states that
- * several recipe objects may share a dish name and that `basicDishFor` is only required when the
- * dish name is a basic dish, so the file is accepted.
+ * Valid: two recipes share a dish name that is not a basic dish, and no restaurant lists both.
+ * Dish names only have to be unique within a restaurant (forum topic 258), so the file is accepted.
  */
 class DuplicateNonBasicDishNameAcceptedSystemTest : BasicDishValidationSystemTest() {
     override val name = "DuplicateNonBasicDishNameAcceptedSystemTest"
@@ -101,9 +103,9 @@ class DuplicateNonBasicDishNameAcceptedSystemTest : BasicDishValidationSystemTes
 }
 
 /**
- * A restaurant with an empty `recipes` array. Forum topic 202 carries a tutor correction saying
- * the list may be empty, because the restaurant offers the basic dishes of its type anyway and
- * those satisfy "per restaurant there must exist at least one recipe".
+ * Valid: a restaurant with an empty `recipes` array. The basic dishes of its type are always on its
+ * menu and satisfy "per restaurant there must exist at least one recipe" (tutor correction in forum
+ * topic 202). Only checks that the files are accepted.
  */
 class EmptyRestaurantRecipesAcceptedSystemTest : BasicDishValidationSystemTest() {
     override val name = "EmptyRestaurantRecipesAcceptedSystemTest"

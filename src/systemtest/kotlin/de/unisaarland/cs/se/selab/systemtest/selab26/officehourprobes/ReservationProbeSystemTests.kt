@@ -9,12 +9,12 @@ import de.unisaarland.cs.se.selab.systemtest.selab26.utils.TickStatusTestLogs
 private const val DISH = "Rice Bowl"
 
 /**
- * Probe for the "FOH No Reserving" line the tutors named as missing in the ReservedForMe component
- * test (specification page 30): the waitstaff manager reserves before the kitchen plans, and a group
- * it cannot seat is told immediately so it never shows up.
+ * Written on Sep 21 after the office hour, where the tutors said the ReservedForMe component test
+ * was missing the "FOH No Reserving" line (specification page 30). The manager reserves before the
+ * kitchen plans, and a group that gets no table never arrives.
  *
- * The restaurant has a single COMMON table of two seats. Group 1 (ten customers) cannot be given a
- * table by any of the six reservation steps, group 2 (two customers) fits it perfectly.
+ * One COMMON table of two seats. REGULAR group 1 (ten people) cannot get a table by any of the six
+ * reservation steps. Group 2 (two people) fits it exactly.
  */
 abstract class NoReservationScenario : ExampleSystemTestExtension() {
     override val restaurants = "officehourjson/noreservation/restaurants.json"
@@ -24,7 +24,11 @@ abstract class NoReservationScenario : ExampleSystemTestExtension() {
     override val maxTicks = 3
 }
 
-/** The failed reservation is logged in the preparation phase, before the kitchen plans. */
+/**
+ * The failed reservation is the first line of the preparation phase, before the kitchen procures.
+ * Rice comes in one 1000 g package, so the procurement line shows the order of the lines but not
+ * how many meals were planned.
+ */
 class NoReservationIsLoggedSystemTest : NoReservationScenario() {
     override val name = "NoReservationIsLoggedSystemTest"
     override val description = "A REGULAR group that gets no table is logged with FOH No Reserving"
@@ -33,15 +37,16 @@ class NoReservationIsLoggedSystemTest : NoReservationScenario() {
         // three "Initialization Info" lines precede the preparation
         skipUntilString(InitialAndPrepTestLogs.prepStart(1))
         assertNextLine(InitialAndPrepTestLogs.fohNoReserving(1, 1))
-        // only the group that kept its reservation is planned for: two meals of the only dish
+        // then the kitchen buys one 1000 g package and the preparation ends
         assertNextLine(InitialAndPrepTestLogs.pantryProcured(1, 1000, "g", "rice"))
         assertNextLine(InitialAndPrepTestLogs.pantryRestocked(1))
     }
 }
 
 /**
- * The group that lost its table never arrives, and rates the restaurant in the first tick of the
- * evening (specification page 22: "or in the first tick of the evening when the reservations failed").
+ * The group without a table never arrives (tick 1 starts with group 2's arrival and seating). It
+ * rates NEGATIVE right after the escorting status of tick 1 (specification page 22; adjustment #25
+ * says the opening tick, which is tick 1 here).
  */
 class NoReservationRatesInTheFirstTickSystemTest : NoReservationScenario() {
     override val name = "NoReservationRatesInTheFirstTickSystemTest"
@@ -61,10 +66,10 @@ class NoReservationRatesInTheFirstTickSystemTest : NoReservationScenario() {
 }
 
 /**
- * Probe for the merging log the tutors asked us to check (specification page 14, step 4): the
- * tables are merged from the smallest upwards and the smallest ones are then dropped again as long
- * as the rest still seats the group. Tables of 2, 3 and 4 seats for a group of six become 3 + 4,
- * and the merged table keeps the lowest id of the tables it was built from.
+ * Written on Sep 21 to check the merging log the tutors asked about (specification page 14,
+ * step 4). Tables are merged from the smallest upwards, then the smallest are dropped again while
+ * the rest still seats the group. Tables of 2, 3 and 4 seats for a group of six become 3 + 4. The
+ * merged table keeps the lowest id, 3.
  */
 abstract class MergingScenario : ExampleSystemTestExtension() {
     override val restaurants = "officehourjson/merging/restaurants.json"
@@ -74,7 +79,10 @@ abstract class MergingScenario : ExampleSystemTestExtension() {
     override val maxTicks = 5
 }
 
-/** The merge is logged before the seating and names the tables it was built from. */
+/**
+ * Arrival, merge (3 and 4 into 3), seating, order and seating status follow each other directly.
+ * The merged table counts once in the status (adjustment #7).
+ */
 class MergedTablesAreLoggedSystemTest : MergingScenario() {
     override val name = "MergedTablesAreLoggedSystemTest"
     override val description = "Merging two tables for a REGULAR group is logged with both table ids"
@@ -89,7 +97,7 @@ class MergedTablesAreLoggedSystemTest : MergingScenario() {
     }
 }
 
-/** Every later log of the group uses the merged table, not the tables it was built from. */
+/** The serving and finished-eating lines of the merged group name the merged table 3. */
 class MergedTableIsUsedForServingSystemTest : MergingScenario() {
     override val name = "MergedTableIsUsedForServingSystemTest"
     override val description = "Serving and eating of a merged group are logged on the merged table id"

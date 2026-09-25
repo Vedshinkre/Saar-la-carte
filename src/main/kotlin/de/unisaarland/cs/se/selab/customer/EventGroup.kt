@@ -29,29 +29,36 @@ class EventGroup(
     var currentRestaurantType: RestaurantType? = null
 
     /**
-     * beep beep I;m a document
+     * Whether the event this group is attending falls exactly three evenings from now.
+     *
+     * @return `true` if [eventEvening] is the current evening plus three
      */
     fun visitingInThreeEvenings(): Boolean {
         return Time.evening + 3 == eventEvening
     }
 
     /**
-     * sake of detect
+     * Whether the group visits its restaurant tonight, i.e. on the evening the event is held.
+     *
+     * @return `true` if the current evening is [eventEvening]
      */
-
     override fun isVisitingTonight(): Boolean {
         return eventEvening == Time.evening
     }
 
     /**
-     * sake of detect
+     * Whether the group arrives at its table in the current tick.
+     *
+     * @return `true` if the current tick is [visitingAt]
      */
     override fun isVisitingThisTick(): Boolean {
         return visitingAt == Time.tick
     }
 
     /**
-     * sake of detect
+     * The event's featured dish for the restaurant type the group currently sits at, if any.
+     *
+     * @return the dish name from [eventDishes], or `null` before the group has been seated at a restaurant
      */
     fun getCurrentEventDish(): String? {
         if (currentRestaurantType != null) {
@@ -61,7 +68,16 @@ class EventGroup(
     }
 
     /**
-     * takes the order of a customer group
+     * Lets every customer in the group choose a dish and places the order with the kitchen,
+     * using waiters that still have order-taking capacity left in [waitersToTakeOrder]. Each
+     * waiter's remaining capacity is decremented as it is used; customers who find no dish leave,
+     * which makes the experience negative.
+     *
+     * @param waitersToTakeOrder waiters still available to take an order, mapped to how many more
+     *   orders each can take this tick
+     * @param menu the recipes the restaurant can currently prepare from
+     * @param countertop the countertop to reserve ingredients from and place the order on
+     * @return `false` if nobody could order, in which case no order is placed
      */
     fun placeOrder(waitersToTakeOrder: MutableMap<Waiter, Int>, menu: List<Recipe>, countertop: Countertop): Boolean {
         val listOfDishes = mutableListOf<Dish>()

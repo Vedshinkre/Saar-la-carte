@@ -569,8 +569,6 @@ the reference implementation's behaviour.
   - Continued with clean-up of my parts of the project(removed comments, unused functions, etc.)
   - Finished my part of the implementation report
 
-### Bob
-
 ---
 
 ## Usage of Generative AI
@@ -581,11 +579,6 @@ In the implementation plan, I stated that I would not use generative AI in the i
 **no longer up-to-date** as I changed my mind and **did use generative AI**. I used Claude Code (Sonnet 5, Opus 5 and
 Opus 5.5) and Gemini (3.1 Pro) for writing unit, integration and system tests. I did not use any generative AI for
 writing or debugging implementation code (code under `src/main/`).
-
-*Option 2:*
-(insert tool names properly; if applicable add links or add version numbers of the used tools)
-Alice used the following tools in the implementation phase:
-Tool-1 for code completion and tool Tool-2 for ... . In addition, she used Tool-3 for ...
 
 **Ansh Shekhar Tiwatne:** Option 2
 
@@ -628,9 +621,6 @@ Claude Code was used for debugging the implementation, for my tests. It was not 
 In case of option 2, add additional sentences in which you provide more details on which tools you used for which
 specific tasks and to which extent.
 
-We are aware of the potential dangers of using these tools and take full responsibility for any code, documents and
-other content produced during the group phase.
-
 **Atharva Kore:**
 
 *Option 2* (the implementation plan lists this as "Option 1" for me, which appears to be a labelling slip carried over
@@ -658,6 +648,7 @@ In practice I only used **Claude (Sonnet 5)** during the implementation phase
   test, which bug) against the actual commits and source rather than accepting a guess — and present the result as
   this formally structured report.
 
+We are aware of the potential dangers of using these tools and take full responsibility for any code, documents and other content produced during the group phase.
 ---
 
 ## Feature Implementation and Placement
